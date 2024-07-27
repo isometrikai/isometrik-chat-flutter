@@ -2,7 +2,7 @@ name: isometrik_chat_flutter
 description: A new Flutter plugin project.
 version: 1.0.0
 publish_to: none
-homepage: https://github.com/appscrip-3embed/flutter_appscrip_chat.git
+homepage: https://github.com/isometrikai/isometrik-chat-flutter.git
 
 environment:
   sdk: ">=3.2.0 <4.0.0"
