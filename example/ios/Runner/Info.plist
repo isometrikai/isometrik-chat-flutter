@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		</array>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true/>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDisplayName</key>
+		<string>Flutter Chat</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>chat_component_example</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(FLUTTER_BUILD_NAME)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>Bundle Id</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.flutterChatDemo.ios</string>
+				</array>
+			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.996154286571-ltmcivnf4o5a8p1rg5i65fb3qudtujbk</string>
+				</array>
+			</dict>
+		</array>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true/>
+		<key>LSSupportsOpeningDocumentsInPlace</key>
+		<true/>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+			<key>NSAllowsArbitraryLoadsForMedia</key>
+			<true/>
+		</dict>
+		<key>NSAppleMusicUsageDescription</key>
+		<string>We need access to Apple Music for audio playback.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Used to demonstrate image picker plugin</string>
+		<key>NSContactsUsageDescription</key>
+		<string>This app requires contacts access to function properly.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>This app needs access to your location permisison</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>This app needs access to your location permisison</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app needs access to your location permisison</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>We need access to the microphone to record audio.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Used to demonstrate image picker plugin</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>Used to demonstrate gal plugin</string>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>processing</string>
+			<string>remote-notification</string>
+			<string>audio</string>
+		</array>
+		<key>UIFileSharingEnabled</key>
+		<true/>
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UIUserInterfaceStyle</key>
+		<string>Light</string>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<false/>
+		<key>com.apple.security.app-sandbox</key>
+		<true/>
+		<key>com.apple.security.network.client</key>
+		<true/>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>sms</string>
+			<string>tel</string>
+		</array>
+		<key>FirebaseScreenReportingEnabled</key>
+		<true/>
+		<key>FirebaseAppDelegateProxyEnabled</key>
+		<false/>
+	</dict>
+</plist>

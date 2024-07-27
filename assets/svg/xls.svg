@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <g id="Group_28355" data-name="Group 28355" transform="translate(-12377 17869)">
+    <rect id="Rectangle_19589" data-name="Rectangle 19589" width="60" height="60" transform="translate(12377 -17869)" fill="none"/>
+    <g id="google-sheets" transform="translate(12327 -17864)">
+      <g id="Sheet_2_" transform="translate(61)">
+        <g id="Group_28339" data-name="Group 28339" transform="translate(0)">
+          <g id="Group_28336" data-name="Group 28336">
+            <g id="Group_28335" data-name="Group 28335">
+              <g id="Group_28334" data-name="Group 28334">
+                <g id="Group_28333" data-name="Group 28333">
+                  <path id="Path_72195" data-name="Path 72195" d="M98.715,13.055l-10.154-2.9L85.659,0H63.9A2.9,2.9,0,0,0,61,2.9v43.71a2.9,2.9,0,0,0,2.9,2.9H95.813a2.9,2.9,0,0,0,2.9-2.9Z" transform="translate(-61)" fill="#59c36a"/>
+                </g>
+              </g>
+            </g>
+          </g>
+          <g id="Sheet_3_" transform="translate(19.089)">
+            <g id="Group_28338" data-name="Group 28338">
+              <g id="Group_28337" data-name="Group 28337">
+                <path id="Path_72196" data-name="Path 72196" d="M277.026,13.055V46.611a2.9,2.9,0,0,1-2.9,2.9H258.4V0h5.57l2.9,10.154Z" transform="translate(-258.401)" fill="#00a66c"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+      <path id="Path_72197" data-name="Path 72197" d="M169.857,211H152.451A1.45,1.45,0,0,0,151,212.451v17.407a1.45,1.45,0,0,0,1.451,1.451h17.407a1.45,1.45,0,0,0,1.451-1.451V212.451A1.45,1.45,0,0,0,169.857,211ZM153.9,219.7h5.8v2.9h-5.8Zm8.7,0h5.8v2.9h-5.8Zm5.8-2.9h-5.8v-2.9h5.8Zm-8.7-2.9v2.9h-5.8v-2.9Zm-5.8,11.6h5.8v2.9h-5.8Zm8.7,2.9v-2.9h5.8v2.9Z" transform="translate(-81.297 -190.595)" fill="#fff5f5"/>
+      <path id="Path_72198" data-name="Path 72198" d="M266.9,211h-8.468v20.308H266.9a1.45,1.45,0,0,0,1.451-1.451V212.451A1.45,1.45,0,0,0,266.9,211Zm-1.451,17.407h-5.8v-2.9h5.8Zm0-5.8h-5.8v-2.9h5.8Zm0-5.8h-5.8v-2.9h5.8Z" transform="translate(-178.34 -190.595)" fill="#e3e7ea"/>
+      <path id="Path_72199" data-name="Path 72199" d="M329.055,13.055H318.9a2.91,2.91,0,0,1-2.9-2.9V0a1.36,1.36,0,0,1,1.015.435l11.6,11.6A1.36,1.36,0,0,1,329.055,13.055Z" transform="translate(-230.341)" fill="#a0deb0"/>
+    </g>
+  </g>
+</svg>

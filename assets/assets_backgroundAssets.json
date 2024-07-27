@@ -1,0 +1,170 @@
+{
+    "images": [
+        {
+            "srNo": 1,
+            "path": "image1.jpg"
+        },
+        {
+            "srNo": 2,
+            "path": "image2.jpg"
+        },
+        {
+            "srNo": 3,
+            "path": "image3.jpg"
+        },
+        {
+            "srNo": 4,
+            "path": "image4.jpg"
+        },
+        {
+            "srNo": 5,
+            "path": "image5.jpg"
+        },
+        {
+            "srNo": 6,
+            "path": "image6.jpg"
+        },
+        {
+            "srNo": 7,
+            "path": "image7.jpg"
+        },
+        {
+            "srNo": 8,
+            "path": "image8.jpg"
+        },
+        {
+            "srNo": 9,
+            "path": "image9.jpg"
+        },
+        {
+            "srNo": 10,
+            "path": "image10.jpg"
+        },
+        {
+            "srNo": 11,
+            "path": "image11.jpg"
+        },
+        {
+            "srNo": 12,
+            "path": "image12.jpg"
+        },
+        {
+            "srNo": 13,
+            "path": "image13.jpg"
+        },
+        {
+            "srNo": 14,
+            "path": "image14.jpg"
+        },
+        {
+            "srNo": 15,
+            "path": "image15.jpg"
+        },
+        {
+            "srNo": 16,
+            "path": "image16.jpg"
+        },
+        {
+            "srNo": 17,
+            "path": "image17.jpg"
+        },
+        {
+            "srNo": 18,
+            "path": "image18.jpg"
+        },
+        {
+            "srNo": 19,
+            "path": "image19.jpg"
+        },
+        {
+            "srNo": 20,
+            "path": "image20.jpg"
+        },
+        {
+            "srNo": 21,
+            "path": "image21.jpg"
+        }
+    ],
+    "colors": [
+        {
+            "srNo": 1,
+            "color": "FF80ED"
+        },
+        {
+            "srNo": 2,
+            "color": "065535"
+        },
+        {
+            "srNo": 3,
+            "color": "ffe4e1"
+        },
+        {
+            "srNo": 4,
+            "color": "ff0000"
+        },
+        {
+            "srNo": 5,
+            "color": "ffd700"
+        },
+        {
+            "srNo": 6,
+            "color": "00ffff"
+        },
+        {
+            "srNo": 7,
+            "color": "c6e2ff"
+        },
+        {
+            "srNo": 8,
+            "color": "0000ff"
+        },
+        {
+            "srNo": 9,
+            "color": "40e0d0"
+        },
+        {
+            "srNo": 10,
+            "color": "d3ffce"
+        },
+        {
+            "srNo": 11,
+            "color": "40E0D0"
+        },
+        {
+            "srNo": 12,
+            "color": "800000"
+        },
+        {
+            "srNo": 13,
+            "color": "003366"
+        },
+        {
+            "srNo": 14,
+            "color": "00ff00"
+        },
+        {
+            "srNo": 15,
+            "color": "FFC3A0"
+        },
+        {
+            "srNo": 16,
+            "color": "3399FF"
+        },
+        {
+            "srNo": 17,
+            "color": "c0d6e4"
+        },
+        {
+            "srNo": 18,
+            "color": "daa520"
+        },
+        {
+            "srNo": 19,
+            "color": "ff1493"
+        },
+        {
+            "srNo": 20,
+            "color": "554506"
+        }
+    ]
+}

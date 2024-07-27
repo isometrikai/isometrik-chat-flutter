@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+    <base href="$FLUTTER_BASE_HREF" />
+
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta
+      name="description"
+      content="Demonstrates how to use the isometrik_chat_flutter plugin."
+    />
+
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="chat_component_example" />
+    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="fevicons.png" />
+
+    <title>chat_component_example</title>
+    <link rel="manifest" href="manifest.json" />
+
+    <script>
+      // The value below is injected by flutter build, do not touch.
+      var serviceWorkerVersion = null;
+    </script>
+    <!-- This script adds the flutter initialization JS code -->
+    <script src="flutter.js" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2YXqs5H8QSfN1NVsZKsP11XLZhfGVGPI"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2YXqs5H8QSfN1NVsZKsP11XLZhfGVGPI&libraries=drawing"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2YXqs5H8QSfN1NVsZKsP11XLZhfGVGPI&libraries=drawing,visualization,places"></script>
+    <!-- Croppie -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.css"
+    />
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <style>
+      .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .indicator {
+        width: 30vw;
+        height: 40vh;
+      }
+
+      @media only screen and (max-width: 800px) {
+        .indicator {
+          width: 30vw;
+          height: 50vh;
+        }
+      }
+
+      @media only screen and (min-width: 800px) and (max-width: 1100px) {
+        .indicator {
+          width: 30vw;
+          height: 50vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body style="overflow: hidden">
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyBkkA_YzsiAVybrsr1M3EYTjFYceg47KNE",
+        authDomain: "chat-1572b.firebaseapp.com",
+        projectId: "chat-1572b",
+        storageBucket: "chat-1572b.appspot.com",
+        messagingSenderId: "996154286571",
+        appId: "1:996154286571:web:605deb2c0a47607e9f39ae",
+        measurementId: "G-5BGGY5M3Z1",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
+    <!-- IMPORTANT: load pdfjs files -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.min.js"
+      type="text/javascript"
+    ></script>
+    <script type="text/javascript">
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.worker.min.js";
+      pdfRenderOptions = {
+        // where cmaps are downloaded from
+        cMapUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/cmaps/",
+        // The cmaps are compressed in the case
+        cMapPacked: true,
+        // any other options for pdfjsLib.getDocument.
+        // params: {}
+      };
+    </script>
+    <div id="loading_indicator" class="container">
+      <img class="indicator" src="./fevicons.png" alt="Image-for-splash" />
+    </div>
+    <script>
+      window.addEventListener("load", function (ev) {
+        // Download main.dart.js
+        _flutter.loader.loadEntrypoint({
+          serviceWorker: {
+            serviceWorkerVersion: serviceWorkerVersion,
+          },
+          onEntrypointLoaded: function (engineInitializer) {
+            var loadingIndicator = document.getElementById("loading_indicator");
+            if (loadingIndicator) {
+              loadingIndicator.remove();
+            }
+            // Initialize the Flutter engine
+            engineInitializer.initializeEngine().then(function (appRunner) {
+              // Run the app
+              appRunner.runApp();
+            });
+          },
+        });
+      });
+      const isReloaded =
+        (window.performance.navigation &&
+          window.performance.navigation.type === 1) ||
+        window.performance
+          .getEntriesByType("navigation")
+          .map((nav) => nav.type)
+          .includes("reload");
+      if (isReloaded) {
+        var loadingIndicator = document.getElementById("loading_indicator");
+        if (loadingIndicator) {
+          loadingIndicator.remove();
+        }
+      }
+    </script>
+  </body>
+</html>

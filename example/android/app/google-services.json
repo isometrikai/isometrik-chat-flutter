@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "996154286571",
+    "project_id": "chat-1572b",
+    "storage_bucket": "chat-1572b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996154286571:android:a6ea29efb420f0629f39ae",
+        "android_client_info": {
+          "package_name": "com.flutterChat.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996154286571-cm6lesvb3due2agfrrni1vn8p3m90e10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm5vniEotrP5qxhFJdgAH2vN3YWhWhsPk"
+        },
+        {
+          "current_key": "AIzaSyBMEQz0yxuPXnLBnUIcORBTZF-zZaKOJ4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996154286571-cm6lesvb3due2agfrrni1vn8p3m90e10.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "996154286571-hqijebcuhkb9ie5pjsnv9k496hj5p5hl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.door3customer.iosBeta",
+                "app_store_id": "6446028139"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996154286571:android:dfdf42f941d948b59f39ae",
+        "android_client_info": {
+          "package_name": "io.isometrik.samples.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996154286571-20cn1qmmn6csopkpchtej67cg6gur5ob.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.isometrik.samples.chat",
+            "certificate_hash": "4551cc126aa7936afc1f48eaddb4c81f82409fe9"
+          }
+        },
+        {
+          "client_id": "996154286571-cm6lesvb3due2agfrrni1vn8p3m90e10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm5vniEotrP5qxhFJdgAH2vN3YWhWhsPk"
+        },
+        {
+          "current_key": "AIzaSyBMEQz0yxuPXnLBnUIcORBTZF-zZaKOJ4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996154286571-cm6lesvb3due2agfrrni1vn8p3m90e10.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "996154286571-hqijebcuhkb9ie5pjsnv9k496hj5p5hl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.door3customer.iosBeta",
+                "app_store_id": "6446028139"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
