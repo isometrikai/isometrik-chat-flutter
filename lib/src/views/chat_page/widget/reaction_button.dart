@@ -1,7 +1,7 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class ReactionGrid extends StatelessWidget {
   ReactionGrid(this.message, {super.key})
@@ -16,11 +16,12 @@ class ReactionGrid extends StatelessWidget {
         borderRadius: BorderRadius.circular(IsmChatDimens.sixteen),
         child: Container(
           alignment: Alignment.center,
-          height: Responsive.isWeb(context)
+          height: IsmChatResponsive.isWeb(context)
               ? IsmChatDimens.seventy
               : IsmChatDimens.hundred + IsmChatDimens.eight,
-          width:
-              Responsive.isWeb(context) ? IsmChatDimens.twoHundredFifty : null,
+          width: IsmChatResponsive.isWeb(context)
+              ? IsmChatDimens.twoHundredFifty
+              : null,
           child: GridView.builder(
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -41,22 +42,18 @@ class ReactionGrid extends StatelessWidget {
                     reaction: Reaction(
                       reactionType: IsmChatEmoji.fromEmoji(reaciton),
                       messageId: message.messageId ?? '',
-                      conversationId:
-                          _controller.conversation?.conversationId ?? '',
+                      conversationId: _controller.conversation!.conversationId!,
                     ),
                   );
                 },
                 config: Config(
-                    categoryViewConfig: CategoryViewConfig(
-                        indicatorColor: IsmChatConfig.chatTheme.primaryColor ??
-                            IsmChatColors.primaryColorLight),
-                    emojiViewConfig: EmojiViewConfig(
-                      emojiSizeMax: IsmChatDimens.twentyFour,
-                      backgroundColor:
-                          IsmChatConfig.chatTheme.backgroundColor ??
-                              IsmChatConfig.chatTheme.primaryColor ??
-                              IsmChatColors.primaryColorLight,
-                    )),
+                  categoryViewConfig: CategoryViewConfig(
+                      indicatorColor: IsmChatConfig.chatTheme.primaryColor!),
+                  emojiViewConfig: EmojiViewConfig(
+                    emojiSizeMax: IsmChatDimens.twentyFour,
+                    backgroundColor: IsmChatConfig.chatTheme.backgroundColor!,
+                  ),
+                ),
               );
             },
           ),

@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatPageView extends StatefulWidget {
   const IsmChatPageView({
@@ -112,7 +111,7 @@ class _IsmChatPageView extends StatelessWidget {
                     image: controller.backgroundImage.isValidUrl
                         ? NetworkImage(controller.backgroundImage)
                         : controller.backgroundImage.contains(
-                                'packages/isometrik_chat_flutter/assets')
+                                'packages/isometrik_flutter_chat/assets')
                             ? AssetImage(controller.backgroundImage)
                                 as ImageProvider
                             : FileImage(
@@ -145,7 +144,7 @@ class _IsmChatPageView extends StatelessWidget {
                         controller.selectedMessage.clear();
                       },
                       child: Icon(
-                        Responsive.isWeb(context)
+                        IsmChatResponsive.isWeb(context)
                             ? Icons.close_rounded
                             : Icons.arrow_back_rounded,
                       ),
@@ -187,7 +186,7 @@ class _IsmChatPageView extends StatelessWidget {
                             null
                         ? () => IsmChatProperties
                             .chatPageProperties.header?.onProfileTap
-                            ?.call(controller.conversation)
+                            ?.call(controller.conversation!)
                         : IsmChatProperties.chatPageProperties.header
                                     ?.profileImageBuilder !=
                                 null
@@ -195,7 +194,7 @@ class _IsmChatPageView extends StatelessWidget {
                             : controller.isActionAllowed == false
                                 ? () {
                                     if (controller.isActionAllowed == false &&
-                                        controller.isTemporaryChat == false) {
+                                        controller.isBroadcast == false) {
                                       if (!(controller
                                                   .conversation
                                                   ?.lastMessageDetails
@@ -208,7 +207,7 @@ class _IsmChatPageView extends StatelessWidget {
                                                   ?.userId ==
                                               IsmChatConfig.communicationConfig
                                                   .userConfig.userId)) {
-                                        if (Responsive.isWeb(context)) {
+                                        if (IsmChatResponsive.isWeb(context)) {
                                           Get.find<IsmChatConversationsController>()
                                                   .isRenderChatPageaScreen =
                                               IsRenderChatPageScreen
@@ -222,9 +221,10 @@ class _IsmChatPageView extends StatelessWidget {
                                   }
                                 : null,
                   ),
-            body: Responsive.isWeb(context) && controller.webMedia.isNotEmpty
+            body: IsmChatResponsive.isWeb(context) &&
+                    controller.webMedia.isNotEmpty
                 ? const WebMediaPreview()
-                : Responsive.isWeb(context) && controller.isCameraView
+                : IsmChatResponsive.isWeb(context) && controller.isCameraView
                     ? const IsmChatCameraView()
                     : Stack(
                         alignment: Alignment.bottomRight,
@@ -306,8 +306,9 @@ class _IsmChatPageView extends StatelessWidget {
                                                         ),
                                                 Obx(() => Align(
                                                       alignment:
-                                                          Responsive.isWeb(
-                                                                  context)
+                                                          IsmChatResponsive
+                                                                  .isWeb(
+                                                                      context)
                                                               ? Alignment
                                                                   .bottomCenter
                                                               : Alignment
@@ -361,7 +362,7 @@ class _IsmChatPageView extends StatelessWidget {
                                                     .isShowTextfiledConfig!
                                                     .isShowMessageAllowed
                                                     .call(context,
-                                                        controller.conversation)
+                                                        controller.conversation!)
                                             ? _MessgeNotAllowdWidget(
                                                 showMessage: IsmChatProperties
                                                         .chatPageProperties
@@ -371,7 +372,7 @@ class _IsmChatPageView extends StatelessWidget {
                                                         .call(
                                                             context,
                                                             controller
-                                                                .conversation) ??
+                                                                .conversation!) ??
                                                     '',
                                               )
                                             : Container(

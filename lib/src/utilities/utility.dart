@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:permission_handler/permission_handler.dart';
@@ -23,10 +23,16 @@ import 'package:url_launcher/url_launcher.dart';
 class IsmChatUtility {
   const IsmChatUtility._();
 
-  static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
+  static void dismissKeyBoard() {
+    FocusScope.of(Get.context!).unfocus();
+  }
 
-  static void openKeyboard() =>
-      FocusManager.instance.primaryFocus?.requestFocus();
+  /// Method for Do Work After Frame Call Back
+  static void doLater(VoidCallback? work) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      work?.call();
+    });
+  }
 
   /// Show loader
   static void showLoader() async {
@@ -135,10 +141,12 @@ class IsmChatUtility {
 
   /// Returns true if the internet connection is available.
   static Future<bool> get isNetworkAvailable async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult.contains(ConnectivityResult.mobile) ||
-        connectivityResult.contains(ConnectivityResult.wifi) ||
-        connectivityResult.contains(ConnectivityResult.ethernet);
+    final result = await Connectivity().checkConnectivity();
+    return result.any((e) => [
+          ConnectivityResult.mobile,
+          ConnectivityResult.wifi,
+          ConnectivityResult.ethernet,
+        ].contains(e));
   }
 
   /// common header for All api
@@ -213,6 +221,7 @@ class IsmChatUtility {
   static Future<List<XFile?>> pickMedia(ImageSource source,
       {bool isVideoAndImage = false}) async {
     List<XFile?> result;
+
     if (isVideoAndImage) {
       result = await ImagePicker().pickMultipleMedia(
         imageQuality: 25,
@@ -220,7 +229,10 @@ class IsmChatUtility {
       );
     } else {
       result = [
-        await ImagePicker().pickImage(imageQuality: 25, source: source)
+        await ImagePicker().pickImage(
+          imageQuality: 25,
+          source: source,
+        )
       ];
     }
 
@@ -552,4 +564,33 @@ class IsmChatUtility {
     //   }
     // }
   }
+
+  static Widget buildSusWidget(String susTag) => Container(
+        padding: IsmChatDimens.edgeInsets10_0,
+        height: IsmChatDimens.forty,
+        width: double.infinity,
+        alignment: Alignment.centerLeft,
+        child: susTag != '#'
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    susTag,
+                    textScaler: const TextScaler.linear(1.5),
+                    style: IsmChatStyles.w600Black14,
+                  ),
+                  if (!IsmChatResponsive.isWeb(Get.context!))
+                    SizedBox(
+                        width: IsmChatDimens.percentWidth(.8),
+                        child: Divider(
+                          height: .0,
+                          indent: IsmChatDimens.ten,
+                        ))
+                ],
+              )
+            : Text(
+                '${IsmChatStrings.inviteToChat} ${IsmChatConfig.communicationConfig.projectConfig.appName}',
+                style: IsmChatStyles.w600Black14
+                    .copyWith(color: const Color(0xff9E9CAB))),
+      );
 }

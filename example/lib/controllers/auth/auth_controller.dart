@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class AuthController extends GetxController {
   final AuthViewModel _viewModel;
@@ -120,7 +120,7 @@ class AuthController extends GetxController {
     Uint8List? bytes;
     String? extension;
     if (result != null) {
-      if (!Responsive.isWeb(Get.context!)) {
+      if (!IsmChatResponsive.isWeb(Get.context!)) {
         var croppedFile = await ImageCropper().cropImage(
           sourcePath: result.path,
           compressQuality: 100,
@@ -139,26 +139,20 @@ class AuthController extends GetxController {
             ),
             WebUiSettings(
               context: Get.context!,
-              customDialogBuilder: (
-                _,
-                __,
-                ___,
-                ____,
-                _____,
-              ) {
+              customDialogBuilder: (cropper, _, __, ___, ____) {
                 return Dialog(
                   child: Builder(
                     builder: (context) {
                       return SizedBox(
                         height: 200,
                         width: 200,
-                        child: _,
+                        child: cropper,
                       );
                     },
                   ),
                 );
               },
-            )
+            ),
           ],
         );
         bytes = File(croppedFile!.path).readAsBytesSync();

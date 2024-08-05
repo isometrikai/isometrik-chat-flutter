@@ -1,12 +1,10 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPageViewModel {
   IsmChatPageViewModel(this._repository);
 
   final IsmChatPageRepository _repository;
-
-  final _commonController = Get.find<IsmChatCommonController>();
 
   Future<List<IsmChatMessageModel>> getChatMessages({
     required String conversationId,
@@ -15,7 +13,7 @@ class IsmChatPageViewModel {
     int skip = 0,
     String? searchText,
     bool isLoading = false,
-    bool isTemporaryChat = false,
+    bool isBroadcast = false,
   }) async {
     var messages = await _repository.getChatMessages(
       conversationId: conversationId,
@@ -37,12 +35,12 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.conversationDetailsUpdated.name,
         ].contains(e.action));
     if (searchText == null || searchText.isEmpty) {
-      if (Get.find<IsmChatPageController>().messages.isNotEmpty) {
-        messages.removeWhere((e) =>
-            e.messageId ==
-            Get.find<IsmChatPageController>().messages.last.messageId);
+      final controller = Get.find<IsmChatPageController>();
+      if (controller.messages.isNotEmpty) {
+        messages.removeWhere(
+            (e) => e.messageId == controller.messages.last.messageId);
       }
-      if (!isTemporaryChat) {
+      if (!isBroadcast) {
         var conversation = await IsmChatConfig.dbWrapper!
             .getConversation(conversationId: conversationId);
 
@@ -52,10 +50,69 @@ class IsmChatPageViewModel {
               .saveConversation(conversation: conversation);
         }
       } else {
-        messages = _commonController.sortMessages(messages);
+        messages = messages;
       }
     } else {
-      messages = _commonController.sortMessages(messages);
+      messages = messages;
+    }
+    return messages;
+  }
+
+  Future<List<IsmChatMessageModel>> getBroadcastMessages({
+    required String groupcastId,
+    int lastMessageTimestamp = 0,
+    int limit = 20,
+    int skip = 0,
+    int sort = -1,
+    bool isLoading = false,
+    List<String>? ids,
+    String? searchText,
+    String? messageTypes,
+    String? customTypes,
+    String? attachmentTypes,
+    String? showInConversation,
+    String? parentMessageId,
+    bool isBroadcast = false,
+  }) async {
+    var messages = await _repository.getBroadcastMessages(
+      groupcastId: groupcastId,
+      hideNewConversationsForSender: false,
+      sendPushForNewConversationCreated: true,
+      notifyOnCompletion: true,
+      executionFinished: false,
+      attachmentTypes: attachmentTypes,
+      customTypes: customTypes,
+      ids: ids,
+      isLoading: isLoading,
+      lastMessageTimestamp: lastMessageTimestamp,
+      limit: limit,
+      messageTypes: messageTypes,
+      parentMessageId: parentMessageId,
+      searchText: searchText,
+      showInConversation: showInConversation,
+      skip: skip,
+      sort: sort,
+    );
+
+    if (messages == null) {
+      return [];
+    }
+    messages.removeWhere((e) => [
+          IsmChatActionEvents.clearConversation.name,
+          IsmChatActionEvents.deleteConversationLocally.name,
+          IsmChatActionEvents.reactionAdd.name,
+          IsmChatActionEvents.reactionRemove.name,
+          IsmChatActionEvents.conversationDetailsUpdated.name,
+        ].contains(e.action));
+    if (searchText == null || searchText.isEmpty) {
+      final controller = Get.find<IsmChatPageController>();
+      if (controller.messages.isNotEmpty) {
+        messages.removeWhere(
+            (e) => e.messageId == controller.messages.last.messageId);
+      }
+      messages = messages;
+    } else {
+      messages = messages;
     }
     return messages;
   }
@@ -455,8 +512,11 @@ class IsmChatPageViewModel {
       await _repository.getReacton(reaction: reaction);
 
   Future<IsmChatResponseModel?> sendBroadcastMessage(
-          {required List<String> userIds,
-          required bool showInConversation,
+          {required bool showInConversation,
+          required bool sendPushForNewConversationCreated,
+          required bool notifyOnCompletion,
+          required bool hideNewConversationsForSender,
+          required String groupcastId,
           required int messageType,
           required bool encrypted,
           required String deviceId,
@@ -464,14 +524,19 @@ class IsmChatPageViewModel {
           required String notificationBody,
           required String notificationTitle,
           List<String>? searchableTags,
+          String? parentMessageId,
           IsmChatMetaData? metaData,
           Map<String, dynamic>? events,
           String? customType,
           List<Map<String, dynamic>>? attachments,
+          List<Map<String, dynamic>>? mentionedUsers,
           bool isLoading = false}) async =>
       await _repository.sendBroadcastMessage(
-        userIds: userIds,
         showInConversation: showInConversation,
+        sendPushForNewConversationCreated: sendPushForNewConversationCreated,
+        notifyOnCompletion: notifyOnCompletion,
+        hideNewConversationsForSender: hideNewConversationsForSender,
+        groupcastId: groupcastId,
         messageType: messageType,
         encrypted: encrypted,
         deviceId: deviceId,
@@ -481,8 +546,29 @@ class IsmChatPageViewModel {
         attachments: attachments,
         customType: customType,
         events: events,
+        isLoading: isLoading,
+        mentionedUsers: mentionedUsers,
+        metaData: metaData,
+        parentMessageId: parentMessageId,
+        searchableTags: searchableTags,
+      );
+
+  Future<String?> createBroadcastConversation({
+    bool isLoading = false,
+    List<String>? searchableTags,
+    Map<String, dynamic>? metaData,
+    required String groupcastTitle,
+    required String groupcastImageUrl,
+    String? customType,
+    required List<String> membersId,
+  }) async =>
+      _repository.createBroadcastConversation(
+        groupcastTitle: groupcastTitle,
+        groupcastImageUrl: groupcastImageUrl,
+        membersId: membersId,
+        customType: customType,
+        isLoading: isLoading,
         metaData: metaData,
         searchableTags: searchableTags,
-        isLoading: isLoading,
       );
 }

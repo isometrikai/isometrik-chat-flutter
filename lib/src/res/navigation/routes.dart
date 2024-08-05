@@ -5,21 +5,19 @@ class IsmPageRoutes {
   static const String createChat = '/createChat';
   static const String publicView = '/publicView';
   static const String openView = '/openView';
-
   static const String forwardView = '/forwardView';
-  static const String broadcastView = '/broadcastView';
+  static const String createBroadcastView = '/createBroadcastView';
   static const String boradCastMessagePage = '/boradCastMessagePage';
   static const String openChatMessagePage = '/openChatMessagePage';
-
   static const String contact = '/contact';
   static const String contactInfoView = '/contactInfoView';
-
   static const String blockView = '/blockView';
+  static const String broadCastView = '/broadCastView';
+  static const String editBroadcastView = '/editBroadcastView';
+  static const String eligibleMemberstView = '/eligibleMemberstView';
   static const String observerView = '/observerView';
-
   static const String userView = '/userView';
   static const String converstaionInfoView = '/converstaionInfoView';
-
   static const String groupEligiableView = '/groupEligiableView';
   static const String mediaPreviewView = '/mediaPreviewView';
   static const String messageInfoView = '/messageInfoView';
@@ -33,7 +31,6 @@ class IsmPageRoutes {
   static const String cameraView = '/cameraView';
   static const String alleryAssetsView = '/galleryAssetsView';
   static const String videoView = '/videoView';
-
   static const String searchMessage = '/searchMessage';
   static const String conversationSearch = '/conversationSearch';
   static const String messageSearch = '/messageSearch';

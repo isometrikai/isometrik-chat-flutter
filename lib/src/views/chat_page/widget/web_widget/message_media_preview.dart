@@ -1,11 +1,11 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
-    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
 import 'package:photo_view/photo_view.dart';
 
 class IsmWebMessageMediaPreview extends StatefulWidget {

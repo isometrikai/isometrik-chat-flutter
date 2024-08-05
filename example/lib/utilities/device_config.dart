@@ -2,7 +2,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
-class IsmChatDeviceConfig {
+class DeviceConfig {
   void init() async {
     _info = DeviceInfoPlugin();
     if (kIsWeb) {

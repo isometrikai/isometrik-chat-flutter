@@ -1,6 +1,6 @@
+import 'package:isometrik_flutter_chat/src/controllers/controllers.dart';
+import 'package:isometrik_flutter_chat/src/views/views.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/src/controllers/controllers.dart';
-import 'package:isometrik_chat_flutter/src/views/views.dart';
 
 class IsmChatPages {
   static final pages = [
@@ -40,8 +40,8 @@ class IsmChatPages {
       binding: IsmChatConversationsBinding(),
     ),
     GetPage(
-      name: IsmChatBroadCastView.route,
-      page: IsmChatBroadCastView.new,
+      name: IsmChatCreateBroadCastView.route,
+      page: IsmChatCreateBroadCastView.new,
       binding: IsmChatConversationsBinding(),
     ),
     GetPage(
@@ -58,6 +58,21 @@ class IsmChatPages {
       name: IsmChatGlobalSearchView.route,
       page: IsmChatGlobalSearchView.new,
       binding: IsmChatConversationsBinding(),
+    ),
+    GetPage(
+      name: IsmChatBroadCastView.route,
+      page: IsmChatBroadCastView.new,
+      binding: IsmChatBroadcastBinding(),
+    ),
+    GetPage(
+      name: IsmChatEditBroadcastView.route,
+      page: IsmChatEditBroadcastView.new,
+      binding: IsmChatBroadcastBinding(),
+    ),
+    GetPage(
+      name: IsmChatEligibleMembersView.route,
+      page: IsmChatEligibleMembersView.new,
+      binding: IsmChatBroadcastBinding(),
     ),
     GetPage(
       name: IsmChatUserSearchView.route,

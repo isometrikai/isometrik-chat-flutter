@@ -1,5 +1,5 @@
 name: chat_component_example
-description: Demonstrates how to use the isometrik_chat_flutter plugin.
+description: Demonstrates how to use the isometrik_flutter_chat plugin.
 version: 1.0.1
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -15,12 +15,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  flutter:
-    sdk: flutter
+  app_settings: ^5.1.1
 
-  isometrik_chat_flutter:
+  isometrik_flutter_chat:
     # When depending on this package from a real application you should use:
-    #   isometrik_chat_flutter: ^x.y.z
+    #   isometrik_flutter_chat: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
@@ -28,42 +27,39 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-
-  cupertino_icons: ^1.0.2
+  device_info_plus: ^9.1.2
+  firebase_core: ^3.1.1
+  firebase_messaging: ^15.0.2
+  flutter:
+    sdk: flutter
+  flutter_screenutil: ^5.9.0
+  flutter_svg: ^2.0.7
   get: ^4.6.5
   hive: ^2.2.3
+  hive_flutter: ^1.1.0
   http: ^1.2.0
-  path_provider: ^2.0.13
-  file_picker: ^8.0.3
-  firebase_core: ^2.15.1
-  firebase_messaging: ^14.6.7
-  flutter_svg: ^2.0.7
   # flutter_localizations:
   #   sdk: flutter
   image_picker: ^1.0.4
   email_validator: ^2.1.17
   image_cropper: ^7.0.5
   notification_permissions: ^0.6.1
-  visibility_detector: ^0.4.0+2
-  hive_flutter: ^1.1.0
+  path_provider: ^2.0.13
   url_strategy: ^0.2.0
-  app_settings: ^5.1.1
-  flutter_screenutil: ^5.9.0
+  visibility_detector: ^0.4.0+2
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is
@@ -75,13 +71,10 @@ flutter:
   assets:
     - assets/images/
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

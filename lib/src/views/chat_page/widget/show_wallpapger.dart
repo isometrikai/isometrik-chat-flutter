@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class ImsChatShowWallpaper extends StatefulWidget {
   const ImsChatShowWallpaper({
@@ -76,7 +76,12 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                   ],
                   IconButton(
                     onPressed: Get.back,
-                    icon: const Icon(Icons.clear_rounded),
+                    icon: Icon(
+                      Icons.clear_rounded,
+                      color: IsmChatConfig
+                              .chatTheme.chatPageHeaderTheme?.iconColor ??
+                          IsmChatColors.blackColor,
+                    ),
                   )
                 ],
               ),
@@ -127,7 +132,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                     ImageSource.gallery,
                                   );
                                   if (file.isNotEmpty) {
-                                    if (Responsive.isWeb(Get.context!)) {
+                                    if (IsmChatResponsive.isWeb(Get.context!)) {
                                       await Get.dialog(IsmChatPageDailog(
                                           child: IsmChatWallpaperPreview(
                                         assetSrNo: 100,
@@ -172,7 +177,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                 .backgroundImage[index - 1];
                             return IsmChatTapHandler(
                               onTap: () async {
-                                if (Responsive.isWeb(Get.context!)) {
+                                if (IsmChatResponsive.isWeb(Get.context!)) {
                                   await Get.dialog(
                                     IsmChatPageDailog(
                                       child: IsmChatWallpaperPreview(
@@ -213,7 +218,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                 conversationController.backgroundColor[index];
                             return IsmChatTapHandler(
                               onTap: () async {
-                                if (Responsive.isWeb(context)) {
+                                if (IsmChatResponsive.isWeb(context)) {
                                   await Get.dialog(
                                     IsmChatPageDailog(
                                       child: IsmChatWallpaperPreview(

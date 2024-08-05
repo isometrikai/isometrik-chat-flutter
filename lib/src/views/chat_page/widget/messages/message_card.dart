@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 class MessageCard extends StatefulWidget {
@@ -112,7 +111,7 @@ class _MessageCardState extends State<MessageCard>
                       IsmChatCustomMessageType.image,
                       IsmChatCustomMessageType.video,
                       IsmChatCustomMessageType.file,
-                      if (!Responsive.isWeb(context))
+                      if (!IsmChatResponsive.isWeb(context))
                         IsmChatCustomMessageType.contact,
                     ].contains(
                       widget.message.metaData?.replyMessage
@@ -124,7 +123,7 @@ class _MessageCardState extends State<MessageCard>
                     IsmChatCustomMessageType.image,
                     IsmChatCustomMessageType.video,
                     IsmChatCustomMessageType.file,
-                    if (!Responsive.isWeb(context))
+                    if (!IsmChatResponsive.isWeb(context))
                       IsmChatCustomMessageType.contact,
                   ].contains(widget.message.customType)) {
                     controller.tapForMediaPreview(widget.message);

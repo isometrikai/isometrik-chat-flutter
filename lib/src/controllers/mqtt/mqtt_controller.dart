@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/controllers/mqtt/mixins/mqtt_event.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/controllers/mqtt/mixins/mqtt_event.dart';
 import 'package:mqtt_helper/mqtt_helper.dart';
 
 class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
@@ -11,29 +11,28 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   final mqttHelper = MqttHelper();
 
-  final _deviceConfig = Get.find<IsmChatDeviceConfig>();
-
   late String messageTopic;
 
   late String statusTopic;
 
-  late IsmChatProjectConfig projectConfig;
+  IsmChatProjectConfig? projectConfig;
 
-  late IsmChatUserConfig userConfig;
+  IsmChatUserConfig? userConfig;
 
   late IsmChatConnectionState connectionState;
 
   IsmChatMqttConfig? mqttConfig;
 
-  @override
-  void onInit() async {
-    super.onInit();
-    projectConfig = IsmChatConfig.communicationConfig.projectConfig;
-    mqttConfig = IsmChatConfig.communicationConfig.mqttConfig;
-    userConfig = IsmChatConfig.communicationConfig.userConfig;
-    if (!IsmChatConfig.isMqttInitializedFromOutSide) {
-      await setupIsmMqttConnection();
-    }
+  IsmChatCommunicationConfig? _config;
+
+  final chatDelegate = const IsmChatDelegate();
+
+  Future<void> setup({IsmChatCommunicationConfig? config}) async {
+    _config = config ?? IsmChat.i.config;
+    projectConfig = _config?.projectConfig;
+    mqttConfig = _config?.mqttConfig;
+    userConfig = _config?.userConfig;
+    await setupIsmMqttConnection();
     unawaited(getChatConversationsUnreadCount());
   }
 
@@ -43,32 +42,24 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
     var response = await viewModel.getChatConversationsUnreadCount(
       isLoading: isLoading,
     );
-    IsmChatApp.unReadConversationMessages = response;
+    chatDelegate.unReadConversationMessages = response;
   }
 
   Future<void> setupIsmMqttConnection() async {
     messageTopic =
-        '/${projectConfig.accountId}/${projectConfig.projectId}/Message/${userConfig.userId}';
+        '/${projectConfig?.accountId}/${projectConfig?.projectId}/Message/${userConfig?.userId}';
     statusTopic =
-        '/${projectConfig.accountId}/${projectConfig.projectId}/Status/${userConfig.userId}';
+        '/${projectConfig?.accountId}/${projectConfig?.projectId}/Status/${userConfig?.userId}';
     await mqttHelper.initialize(
       MqttConfig(
-        projectConfig: ProjectConfig(
-          accountId: projectConfig.accountId,
-          appSecret: projectConfig.appSecret,
-          userSecret: projectConfig.userSecret,
-          keySetId: projectConfig.keySetId,
-          licenseKey: projectConfig.licenseKey,
-          projectId: projectConfig.projectId,
-          deviceId: _deviceConfig.deviceId ?? '',
-        ),
+        projectConfig: ProjectConfig.fromMap(projectConfig?.toMap() ?? {}),
         serverConfig: ServerConfig(
           hostName: mqttConfig?.hostName ?? '',
           port: mqttConfig?.port ?? 0,
         ),
-        userId: userConfig.userId,
-        username: IsmChatConfig.communicationConfig.username,
-        password: IsmChatConfig.communicationConfig.password,
+        userId: userConfig?.userId ?? '',
+        username: _config?.username,
+        password: _config?.password,
         enableLogging: true,
         secure: false,
         webSocketConfig: WebSocketConfig(
@@ -88,26 +79,26 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       topics: [messageTopic, statusTopic],
     );
     mqttHelper.onConnectionChange((value) {
-      IsmChatApp.isMqttConnected = value;
+      chatDelegate.isMqttConnected = value;
     });
     mqttHelper.onEvent(
-      (data) async {
-        IsmChatLog.info('Mqtt event ${data.toMap()}');
-        await onMqttEvent(payload: data.payload);
+      (event) async {
+        IsmChatLog.info('Mqtt event ${event.toMap()}');
+        await onMqttEvent(event: event);
       },
     );
   }
 
   /// onConnected callback, it will be called when connection is established
   void _onConnected() {
-    IsmChatApp.isMqttConnected = true;
+    chatDelegate.isMqttConnected = true;
     connectionState = IsmChatConnectionState.connected;
     IsmChatLog.success('Mqtt event');
   }
 
   /// onDisconnected callback, it will be called when connection is breaked
   void _onDisconnected() {
-    IsmChatApp.isMqttConnected = false;
+    chatDelegate.isMqttConnected = false;
     connectionState = IsmChatConnectionState.disconnected;
     IsmChatLog.error('MQTT Disconnected');
   }

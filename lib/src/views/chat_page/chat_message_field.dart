@@ -5,10 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
-import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
-    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -40,19 +39,31 @@ class IsmChatMessageField extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IsmChatTapHandler(
-                          onTap: () async {
-                            controller.isEnableRecordingAudio = false;
-                            controller.showSendButton = false;
-                            // await controller.recordAudio.dispose();
-                            controller.forVideoRecordTimer?.cancel();
-                            controller.seconds = 0;
+                          onTap: () {
+                            controller.recordDelete();
                           },
                           child: Icon(
                             Icons.delete_outlined,
-                            size: IsmChatDimens.twentyFive,
+                            size: IsmChatDimens.thirty,
+                            color: IsmChatConfig.chatTheme.primaryColor ??
+                                IsmChatColors.blackColor,
                           ),
                         ),
-                        IsmChatDimens.boxWidth8,
+                        IsmChatDimens.boxWidth12,
+                        IsmChatTapHandler(
+                          onTap: () async {
+                            await controller.recordPlayPauseVoice();
+                          },
+                          child: Icon(
+                            controller.isRecordPlay
+                                ? Icons.pause_circle_outline_outlined
+                                : Icons.play_circle_outline_outlined,
+                            size: IsmChatDimens.thirty,
+                            color: IsmChatConfig.chatTheme.primaryColor ??
+                                IsmChatColors.blackColor,
+                          ),
+                        ),
+                        IsmChatDimens.boxWidth12,
                         const Icon(
                           Icons.radio_button_checked_outlined,
                           color: Colors.red,
@@ -67,7 +78,7 @@ class IsmChatMessageField extends StatelessWidget {
                   ),
                 ),
               ] else ...[
-                if (Responsive.isWeb(context)) ...[
+                if (IsmChatResponsive.isWeb(context)) ...[
                   IsmChatDimens.boxWidth8,
                   Container(
                     margin: IsmChatDimens.edgeInsetsBottom4,
@@ -123,7 +134,6 @@ class IsmChatMessageField extends StatelessWidget {
                                   userId: controller.conversation
                                           ?.opponentDetails?.userId ??
                                       '',
-                                  sentAt: DateTime.now().millisecondsSinceEpoch,
                                 );
                               }
                             }
@@ -199,16 +209,17 @@ class IsmChatMessageField extends StatelessWidget {
                                             IsmChatConfig
                                                 .chatTheme.backgroundColor,
                                         contentPadding:
-                                            Responsive.isWeb(context)
+                                            IsmChatResponsive.isWeb(context)
                                                 ? IsmChatDimens.edgeInsets12
                                                 : IsmChatDimens.edgeInsets8,
-                                        prefixIcon: Responsive.isWeb(context)
-                                            ? null
-                                            : _EmojiButton(IsmChatConfig
-                                                .chatTheme
-                                                .chatPageTheme
-                                                ?.textFiledThemData
-                                                ?.emojiColor),
+                                        prefixIcon:
+                                            IsmChatResponsive.isWeb(context)
+                                                ? null
+                                                : _EmojiButton(IsmChatConfig
+                                                    .chatTheme
+                                                    .chatPageTheme
+                                                    ?.textFiledThemData
+                                                    ?.emojiColor),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(
                                               IsmChatDimens.twenty),
@@ -226,9 +237,14 @@ class IsmChatMessageField extends StatelessWidget {
                                         ),
                                       ),
                                       onChanged: (_) {
-                                        if (controller.conversation
-                                                ?.conversationId?.isNotEmpty ??
-                                            false) {
+                                        if ((controller
+                                                    .conversation
+                                                    ?.conversationId
+                                                    ?.isNotEmpty ??
+                                                false) &&
+                                            controller
+                                                    .conversation?.customType !=
+                                                IsmChatStrings.broadcast) {
                                           controller.notifyTyping();
                                           controller.showMentionsUserList(_);
                                         }
@@ -237,7 +253,7 @@ class IsmChatMessageField extends StatelessWidget {
                                   ),
                                   if (IsmChatProperties.chatPageProperties
                                           .attachments.isNotEmpty &&
-                                      !Responsive.isWeb(context)) ...[
+                                      !IsmChatResponsive.isWeb(context)) ...[
                                     const _AttachmentIcon()
                                   ]
                                 ],
@@ -291,8 +307,8 @@ class _ReplyMessage extends StatelessWidget {
                   controller.replayMessage?.sentByMe ?? false
                       ? IsmChatStrings.you
                       : IsmChatProperties.chatPageProperties.header?.title
-                              ?.call(context, controller.conversation,
-                                  controller.conversation?.chatName ?? '') ??
+                              ?.call(context, controller.conversation!,
+                                  controller.conversation!.chatName) ??
                           controller.conversation?.chatName.capitalizeFirst ??
                           '',
                   style: IsmChatStyles.w600White14,
@@ -375,17 +391,12 @@ class _MicOrSendButton extends StatelessWidget {
               if (!(controller.conversation?.isChattingAllowed == true)) {
                 controller.showDialogCheckBlockUnBlock();
                 return;
-              } else if (!(await IsmChatProperties
-                      .chatPageProperties.isSendMediaAllowed
-                      ?.call(context, controller.conversation) ??
-                  true)) {
-                return;
               }
 
               if (controller.showSendButton) {
                 if (controller.isEnableRecordingAudio) {
-                  var audioPath = await controller.recordAudio.stop() ?? '';
-                  controller.forVideoRecordTimer?.cancel();
+                  var audioPath = await controller.recordVoice.stop() ?? '';
+                  controller.forRecordTimer?.cancel();
                   controller.showSendButton = false;
                   controller.isEnableRecordingAudio = false;
                   String? sizeMedia;
@@ -456,14 +467,12 @@ class _MicOrSendButton extends StatelessWidget {
                     if (controller.chatInputController.text.trim().isNotEmpty &&
                         controller.isMessageSent == false) {
                       controller.isMessageSent = true;
-
                       controller.sendTextMessage(
                         conversationId:
                             controller.conversation?.conversationId ?? '',
                         userId:
                             controller.conversation?.opponentDetails?.userId ??
                                 '',
-                        sentAt: DateTime.now().millisecondsSinceEpoch,
                       );
                     }
                   }
@@ -472,7 +481,12 @@ class _MicOrSendButton extends StatelessWidget {
                 if (controller.showEmojiBoard) {
                   controller.toggleEmojiBoard();
                 }
-
+                if (!(await IsmChatProperties
+                        .chatPageProperties.isSendMediaAllowed
+                        ?.call(context, controller.conversation!) ??
+                    true)) {
+                  return;
+                }
                 var allowPermission = false;
                 if (kIsWeb) {
                   final state = await IsmChatBlob.checkPermission('microphone');
@@ -483,7 +497,7 @@ class _MicOrSendButton extends StatelessWidget {
                         cancelLabel: IsmChatStrings.okay,
                       ),
                     ));
-                    await controller.recordAudio.hasPermission();
+                    await controller.recordVoice.hasPermission();
                     return;
                   } else if (state == 'denied') {
                     await Get.dialog(
@@ -496,7 +510,7 @@ class _MicOrSendButton extends StatelessWidget {
                     allowPermission = true;
                   }
                 } else {
-                  if (await controller.recordAudio.hasPermission()) {
+                  if (await controller.recordVoice.hasPermission()) {
                     allowPermission = true;
                   }
                 }
@@ -509,7 +523,7 @@ class _MicOrSendButton extends StatelessWidget {
                               .communicationConfig.userConfig.userId)) {
                     controller.isEnableRecordingAudio = true;
                     controller.showSendButton = true;
-                    controller.forVideoRecordTimer =
+                    controller.forRecordTimer =
                         Timer.periodic(const Duration(seconds: 1), (_) {
                       controller.seconds++;
                     });
@@ -531,16 +545,16 @@ class _MicOrSendButton extends StatelessWidget {
                         return;
                       }
                       final devs =
-                          await controller.recordAudio.listInputDevices();
+                          await controller.recordVoice.listInputDevices();
                       IsmChatLog.info(devs.toString());
                       const config =
                           RecordConfig(encoder: encoder, numChannels: 1);
-                      await controller.recordAudio.start(
+                      await controller.recordVoice.start(
                         config,
                         path: audioPath,
                       );
                     } else {
-                      await controller.recordAudio.start(
+                      await controller.recordVoice.start(
                         const RecordConfig(encoder: AudioEncoder.wav),
                         path: audioPath,
                       );
@@ -555,7 +569,7 @@ class _MicOrSendButton extends StatelessWidget {
                 scale: animation,
                 child: child,
               ),
-              child: controller.showSendButton && !controller.isMessageSent
+              child: controller.showSendButton
                   ? Icon(
                       Icons.send_rounded,
                       key: UniqueKey(),
@@ -780,19 +794,18 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
               null) ...[
             IsmChatProperties.chatPageProperties.messageFieldSuffix?.call(
                     context,
-                    controller.conversation,
-                    controller.conversation?.isChattingAllowed ?? false) ??
+                    controller.conversation!,
+                    controller.conversation?.isChattingAllowed == true) ??
                 IsmChatDimens.box0
           ],
           IconButton(
             onPressed: () async {
-              IsmChatUtility.hideKeyboard();
               if (!(controller.conversation?.isChattingAllowed == true)) {
                 controller.showDialogCheckBlockUnBlock();
               } else {
                 if (await IsmChatProperties
                         .chatPageProperties.isSendMediaAllowed
-                        ?.call(context, controller.conversation) ??
+                        ?.call(context, controller.conversation!) ??
                     true) {
                   await Get.bottomSheet(
                     const IsmChatAttachmentCard(),

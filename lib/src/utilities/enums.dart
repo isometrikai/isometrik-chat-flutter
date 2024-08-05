@@ -57,6 +57,8 @@ enum IsmChatCustomMessageType {
   memberJoin(23),
   observerJoin(24),
   observerLeave(25),
+  aboutText(26),
+  oneToOneCall(27),
   date(100);
 
   const IsmChatCustomMessageType(this.number);
@@ -108,6 +110,8 @@ enum IsmChatCustomMessageType {
       'observerJoin': IsmChatCustomMessageType.observerJoin,
       'observerLeave': IsmChatCustomMessageType.observerLeave,
       'date': IsmChatCustomMessageType.date,
+      'aboutText': IsmChatCustomMessageType.aboutText,
+      'oneToOneCall': IsmChatCustomMessageType.oneToOneCall
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -158,7 +162,6 @@ enum IsmChatCustomMessageType {
 
   static IsmChatCustomMessageType? fromAction(String value) {
     var action = IsmChatActionEvents.fromName(value);
-
     switch (action) {
       case IsmChatActionEvents.typingEvent:
         return null;
@@ -275,6 +278,10 @@ enum IsmChatCustomMessageType {
         return 'observerLeave';
       case IsmChatCustomMessageType.date:
         return 'date';
+      case IsmChatCustomMessageType.aboutText:
+        return 'aboutText';
+      case IsmChatCustomMessageType.oneToOneCall:
+        return 'oneToOneCall';
     }
   }
 }
@@ -395,7 +402,10 @@ enum IsmChatActionEvents {
   memberJoin,
   observerJoin,
   observerLeave,
-  userUpdate;
+  userUpdate,
+  meetingEndedByHost,
+  meetingCreated,
+  meetingEndedDueToRejectionByAll;
 
   factory IsmChatActionEvents.fromName(String name) {
     switch (name) {
@@ -453,7 +463,12 @@ enum IsmChatActionEvents {
         return IsmChatActionEvents.observerLeave;
       case 'userUpdate':
         return IsmChatActionEvents.userUpdate;
-
+      case 'meetingEndedByHost':
+        return IsmChatActionEvents.meetingEndedByHost;
+      case 'meetingCreated':
+        return IsmChatActionEvents.meetingCreated;
+      case 'meetingEndedDueToRejectionByAll':
+        return IsmChatActionEvents.meetingEndedDueToRejectionByAll;
       default:
         return IsmChatActionEvents.typingEvent;
     }
@@ -517,6 +532,12 @@ enum IsmChatActionEvents {
         return 'observerLeave';
       case IsmChatActionEvents.userUpdate:
         return 'userUpdate';
+      case IsmChatActionEvents.meetingEndedByHost:
+        return 'meetingEndedByHost';
+      case IsmChatActionEvents.meetingCreated:
+        return 'meetingCreated';
+      case IsmChatActionEvents.meetingEndedDueToRejectionByAll:
+        return 'meetingEndedDueToRejectionByAll';
     }
   }
 }
@@ -654,12 +675,15 @@ enum IsmChatDbBox { main, pending }
 enum IsRenderConversationScreen {
   none,
   blockView,
+  broadCastListView,
   groupUserView,
   createConverstaionView,
   userView,
   broadcastView,
   openConverationView,
   publicConverationView,
+  // editbroadCast,
+  // broadCastEligible,
 }
 
 enum IsRenderChatPageScreen {

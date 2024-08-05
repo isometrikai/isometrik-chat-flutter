@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatUserInfo extends StatefulWidget {
   IsmChatUserInfo({
@@ -77,7 +77,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
       builder: (controller) => Scaffold(
             backgroundColor: IsmChatColors.whiteColor,
             appBar: IsmChatAppBar(
-              onBack: Responsive.isWeb(context)
+              onBack: IsmChatResponsive.isWeb(context)
                   ? () {
                       conversationController.isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
@@ -117,7 +117,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                       IsmChatDimens.boxHeight16,
                       ListTile(
                         onTap: () {
-                          if (Responsive.isWeb(context)) {
+                          if (IsmChatResponsive.isWeb(context)) {
                             conversationController.mediaList = mediaList;
                             conversationController.mediaListDocs =
                                 mediaListDocs;

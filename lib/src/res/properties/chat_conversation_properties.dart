@@ -1,7 +1,14 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// A class that holds properties for the conversation UI.
+///
+/// Use this class to customize the conversation UI, such as setting callbacks,
+/// customizing the appearance of chat items, and more.
 class IsmChatConversationProperties {
+  /// Creates a new instance of [IsmChatConversationProperties].
+  ///
+  /// You can customize the conversation UI by passing various parameters to this constructor.
   IsmChatConversationProperties({
     this.onChatTap,
     this.onCreateTap,
@@ -40,61 +47,121 @@ class IsmChatConversationProperties {
         'allowedConversations must not be empty and must contain IsmChatConversationType.private');
   }
 
-  /// Required parameter
+  /// A callback that is called when a chat item is tapped.
   ///
-  /// Primarily designed for nagivating to Message screen
+  /// This callback takes two parameters: the [BuildContext] and the [IsmChatConversationModel] of the tapped chat item.
   ///
-  /// `onChatTap` takes a non-null callback function that takes 2 arguments in its parameter list
-  ///
+  /// Example:
   /// ```dart
-  /// void Function(BuildContext, IsmChatConversationModel) onChatTap;
+  /// onChatTap: (context, conversation) {},
   /// ```
-  ///
-  /// `IsmChatConversationModel` gives data of current chat, it could be used for local storage or state variables
   final ConversationVoidCallback? onChatTap;
 
-  /// A callback for `navigating` to the create chat screen
+  /// A callback that is called when the create chat button is tapped.
   ///
-  /// A non-null callback should be passed, if showCreateChatIcon is set to `true`
+  /// This callback should navigate to the create chat screen.
+  ///
+  /// Example:
+  /// ```dart
+  /// onCreateTap: () {},
+  /// ```
   final VoidCallback? onCreateTap;
 
-  /// `itemBuilder` will handle how child items are rendered on the screen.
+  /// A callback that is used to build each chat item.
   ///
-  /// You can pass `childBuilder` callback to change the UI for each child item.
+  /// This callback takes three parameters: the [BuildContext], the index of the chat item, and the [IsmChatConversationModel] of the chat item.
   ///
-  /// It takes 3 parameters
+  /// Example:
   /// ```dart
-  /// final BuildContext context;
-  /// final int index;
-  /// final ChatConversationModel conversation;
+  /// cardBuilder: (context, index, conversation) {
+  ///   return ListTile(
+  ///     title: Text(conversation.name),
+  ///     subtitle: Text(conversation.message),
+  ///   );
+  /// },
   /// ```
-  /// `conversation` of type [IsmChatConversationModel] will provide you with data of single chat item
-  ///
-  /// You can playaround with index parameter for your logics.
   final ConversationCardCallback? cardBuilder;
 
-  /// The `cardBuilder` callback can be provided if you want to change how the chat items are rendered on the screen.
+  /// A set of properties that can be used to customize the appearance of chat items.
   ///
-  /// Provide it like you are passing cardBuilder for `ListView` or any constructor of [ListView]
-  ///
+  /// Example:
+  /// ```dart
+  /// cardElementBuilders: IsmChatCardProperties(
+  ///   titleStyle: TextStyle(fontSize: 18),
+  ///   subtitleStyle: TextStyle(fontSize: 14),
+  /// ),
+  /// ```
   final IsmChatCardProperties? cardElementBuilders;
+
+  /// Whether to enable group chat.
+  ///
+  /// Defaults to `false`.
   final bool enableGroupChat;
 
-  /// This signifies whether or not to show [FloatingActionButton] that will navigate to the create chat screen
+  /// Whether to show the create chat button.
   ///
-  /// Defaults to `false`
-  ///
-  /// If set to `true`, then onCreateChatTap callback must be passed to `navigate` to the screen
+  /// Defaults to `false`.
   final bool showCreateChatIcon;
+
+  /// The icon to use for the create chat button.
   final Widget? createChatIcon;
+
+  /// Whether to allow deleting chat items.
+  ///
+  /// Defaults to `false`.
   final bool allowDelete;
+
+  /// A list of actions that can be performed on each chat item.
   final List<IsmChatConversationAction>? actions;
+
+// A list of actions that can be performed on each chat item, displayed at the end of the item.
   final List<IsmChatConversationAction>? endActions;
+
+  /// A placeholder widget to display when there are no chat items.
   final Widget? placeholder;
+
+  /// A callback that determines whether a chat item can be slid.
+  ///
+  /// This callback takes two parameters: the [BuildContext] and the [IsmChatConversationModel] of the chat item.
+  ///
+  /// Returns `true` if the chat item can be slid, `false` otherwise.
+  ///
+  /// Example:
+  /// ```dart
+  /// isSlidableEnable: (context, conversation) {
+  ///   return conversation.type == IsmChatConversationType.private;
+  /// },
+  /// ```
   final bool? Function(BuildContext, IsmChatConversationModel)?
       isSlidableEnable;
+
+  /// A callback that determines whether the start action of a chat item can be slid.
+  ///
+  /// This callback takes two parameters: the [BuildContext] and the [IsmChatConversationModel] of the chat item.
+  ///
+  /// Returns `true` if the start action can be slid, `false` otherwise.
+  ///
+  /// Example:
+  /// ```dart
+  /// startActionSlidableEnable: (context, conversation) {
+  ///   return conversation.type == IsmChatConversationType.private;
+  /// },
+  /// ```
   final bool? Function(BuildContext, IsmChatConversationModel)?
       startActionSlidableEnable;
+
+  /// A callback that determines whether the end action of a chat item can be slid.
+  ///
+  /// This callback takes two parameters: the [BuildContext] and the [IsmChatConversationModel] of the chat item.
+  ///
+  /// Returns `true` if the end action can be slid, `false` otherwise.
+  ///
+  /// Example:
+  /// ```dart
+  /// endActionSlidableEnable: (context, conversation) {
+  ///   return conversation.type == IsmChatConversationType.private;
+  /// },
+  /// ```
   final bool? Function(BuildContext, IsmChatConversationModel)?
       endActionSlidableEnable;
 
@@ -103,14 +170,18 @@ class IsmChatConversationProperties {
   /// If not provided, Screen height will be taken
   final double? height;
 
-  /// This widget will be visible above the conversation list inside the conversation view
+  /// The header to display above the conversation UI.
   final Widget? header;
 
+  /// The app bar to display above the conversation UI.
   final PreferredSizeWidget? appBar;
 
+  /// Whether the header is an app bar.
+  ///
+  /// Defaults to `false`.
   final bool isHeaderAppBar;
 
-  /// This height will be use for when you use header on AppBar of coversation list
+  /// The height of the header.
   final double? headerHeight;
 
   /// Provide this allowedConversations parameter, to allow different types of conversations.
@@ -123,9 +194,30 @@ class IsmChatConversationProperties {
   /// Provide this conversationPosition parameter to set postion of allowedConversations list in your app
   final IsmChatConversationPosition conversationPosition;
 
+  /// A widget to display in the third column of the conversation UI.
   final WidgetCallback? thirdColumnWidget;
 
+  /// A predicate that filters the conversations to display.
+  ///
+  /// This callback takes a [IsmChatConversationModel] and returns `true` if the conversation should be displayed, `false` otherwise.
+  ///
+  /// Example:
+  /// ```dart
+  /// conversationPredicate: (conversation) {
+  ///   return conversation.type == IsmChatConversationType.private;
+  /// },
+  /// ```
   final ConversationPredicate? conversationPredicate;
 
+  /// A callback that returns the subtitle to display for the opponent in a conversation.
+  ///
+  /// This callback takes a [IsmChatConversationModel] and returns a string.
+  ///
+  /// Example:
+  /// ```dart
+  /// opponentSubTitle: (conversation) {
+  ///   return conversation.opponent.name;
+  /// },
+  /// ```
   final UserDetailsStringCallback? opponentSubTitle;
 }

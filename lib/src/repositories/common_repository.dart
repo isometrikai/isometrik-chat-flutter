@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/services.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCommonRepository {
   final _apiWrapper = IsmChatApiWrapper();
@@ -111,6 +111,7 @@ class IsmChatCommonRepository {
     required String nameWithExtension,
     required int mediaType,
     required String mediaId,
+    required bool isLoading,
   }) async {
     try {
       final payload = {
@@ -127,6 +128,7 @@ class IsmChatCommonRepository {
         IsmChatAPI.presignedUrls,
         payload: payload,
         headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
       );
       if (response.hasError) {
         return null;

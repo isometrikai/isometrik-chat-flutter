@@ -1,5 +1,5 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConversationsViewModel {
   IsmChatConversationsViewModel(this._repository);
@@ -308,11 +308,11 @@ class IsmChatConversationsViewModel {
         IsmChatActionEvents.userBlockConversation.name,
         IsmChatActionEvents.observerJoin.name,
         IsmChatActionEvents.observerLeave.name,
-        // if (e.memberId !=
-        //     IsmChatConfig.communicationConfig.userConfig.userId) ...[
         IsmChatActionEvents.removeAdmin.name,
         IsmChatActionEvents.addAdmin.name,
-        // ]
+        IsmChatActionEvents.meetingCreated.name,
+        IsmChatActionEvents.meetingEndedByHost.name,
+        IsmChatActionEvents.meetingEndedDueToRejectionByAll.name,
       ].contains(e.action),
     );
     return messages;

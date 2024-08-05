@@ -1,7 +1,7 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/res/properties/chat_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
 
 class IsmChatAttachmentCard extends StatelessWidget {
   const IsmChatAttachmentCard({super.key});

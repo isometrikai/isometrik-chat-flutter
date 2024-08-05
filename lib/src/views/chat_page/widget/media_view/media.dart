@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 /// IsmMedia class is for showing the conversation media
 class IsmMedia extends StatefulWidget {
@@ -70,7 +70,7 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
             ),
             centerTitle: GetPlatform.isAndroid ? true : false,
             leading: IconButton(
-              onPressed: Responsive.isWeb(context)
+              onPressed: IsmChatResponsive.isWeb(context)
                   ? () {
                       Get.find<IsmChatConversationsController>()
                               .isRenderChatPageaScreen =
@@ -78,7 +78,7 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
                     }
                   : Get.back,
               icon: Icon(
-                Responsive.isWeb(context)
+                IsmChatResponsive.isWeb(context)
                     ? Icons.close_rounded
                     : Icons.arrow_back_rounded,
               ),

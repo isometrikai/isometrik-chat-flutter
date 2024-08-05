@@ -6,20 +6,23 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   Future<void> getMessagesFromDB(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
     _controller.closeOverlay();
+
     var messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
-    if (messages.isNullOrEmpty) {
+    if (messages?.isEmpty ?? false || messages == null) {
       _controller.messages.clear();
       return;
     }
 
     var pendingmessages = await IsmChatConfig.dbWrapper!
         .getMessage(conversationId, IsmChatDbBox.pending);
-    if (!(pendingmessages?.isNullOrEmpty ?? false)) {
+    if (pendingmessages?.isNotEmpty ?? false || pendingmessages != null) {
       messages?.addAll(pendingmessages ?? []);
     }
 
-    _controller.messages = _controller.commonController.sortMessages(messages!);
+    _controller.messages = _controller.commonController
+        .sortMessages(filterMessages(messages ?? []));
+
     if (_controller.messages.isEmpty) {
       return;
     }
@@ -27,11 +30,42 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     _controller._generateIndexedMessageList();
   }
 
+  List<IsmChatMessageModel> filterMessages(List<IsmChatMessageModel> messages) {
+    var filterMessage = IsmChatMessageModel(
+        body: '', sentAt: 0, customType: null, sentByMe: false);
+    var dummymessages = List<IsmChatMessageModel>.from(messages);
+    for (var x in dummymessages) {
+      if (x.customType != IsmChatCustomMessageType.oneToOneCall) {
+        continue;
+      }
+      if (x.meetingId != filterMessage.meetingId) {
+        filterMessage = x;
+        continue;
+      }
+      if (x.action == IsmChatActionEvents.meetingCreated.name) {
+        filterMessage = filterMessage.copyWith(meetingType: x.meetingType);
+      } else {
+        filterMessage = x.copyWith(
+          meetingType: filterMessage.meetingType,
+        );
+      }
+      messages.removeWhere((e) =>
+          e.action == IsmChatActionEvents.meetingCreated.name &&
+          e.meetingId == x.meetingId);
+
+      var fliterIndex = messages.indexWhere((e) => e.meetingId == x.meetingId);
+      if (fliterIndex != -1) {
+        messages[fliterIndex] = filterMessage;
+      }
+    }
+    return messages;
+  }
+
   Future<void> getMessagesFromAPI({
     String conversationId = '',
     bool forPagination = false,
     int? lastMessageTimestamp,
-    bool isTemporaryChat = false,
+    bool isBroadcast = false,
   }) async {
     if (Get.isRegistered<IsmChatPageController>()) {
       if (_controller.canCallCurrentApi) return;
@@ -55,17 +89,55 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         skip: forPagination ? messagesList.length.pagination() : 0,
         conversationId: conversationID,
         lastMessageTimestamp: timeStamp,
-        isTemporaryChat: isTemporaryChat,
+        isBroadcast: isBroadcast,
       );
 
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = false;
       }
-      if (data.isNotEmpty && !_controller.isTemporaryChat) {
+      if (data.isNotEmpty && !_controller.isBroadcast) {
         await getMessagesFromDB(conversationID);
       } else {
         _controller.messages.addAll(data);
       }
+      _controller.canCallCurrentApi = false;
+    }
+  }
+
+  Future<void> getBroadcastMessages({
+    String groupcastId = '',
+    int? lastMessageTimestamp,
+    bool isLoading = false,
+    String? searchText,
+    bool isBroadcast = false,
+    bool forPagination = false,
+  }) async {
+    if (Get.isRegistered<IsmChatPageController>()) {
+      if (_controller.canCallCurrentApi) return;
+      _controller.canCallCurrentApi = true;
+      if (_controller.messages.isEmpty) {
+        _controller.isMessagesLoading = true;
+      }
+      var timeStamp = lastMessageTimestamp ??
+          (_controller.messages.isEmpty
+              ? 0
+              : _controller.messages.last.sentAt + 7000);
+      var messagesList = List<IsmChatMessageModel>.from(_controller.messages);
+      messagesList.removeWhere(
+          (element) => element.customType == IsmChatCustomMessageType.date);
+      var groupcastID = groupcastId.isNotEmpty
+          ? groupcastId
+          : _controller.conversation?.conversationId ?? '';
+      var data = await _controller.viewModel.getBroadcastMessages(
+        skip: forPagination ? messagesList.length.pagination() : 0,
+        groupcastId: groupcastID,
+        lastMessageTimestamp: timeStamp,
+        isBroadcast: isBroadcast,
+      );
+      if (_controller.messages.isEmpty) {
+        _controller.isMessagesLoading = false;
+      }
+      _controller.messages.addAll(data);
       _controller.canCallCurrentApi = false;
     }
   }
@@ -159,7 +231,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           metaData: _controller.conversation?.metaData,
         );
         IsmChatProperties.chatPageProperties.onCoverstaionStatus
-            ?.call(Get.context!, _controller.conversation);
+            ?.call(Get.context!, _controller.conversation!);
 
         // controller.medialist is storing media i.e. Image, Video and Audio. //
         _controller.conversationController.mediaList = _controller.messages
@@ -272,13 +344,13 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         userProfileImageUrl:
             IsmChatProperties.chatPageProperties.header?.profileImageUrl?.call(
                     Get.context!,
-                    _controller.conversation,
+                    _controller.conversation!,
                     _controller.conversation?.profileUrl ?? '') ??
                 _controller.conversation?.profileUrl ??
                 '',
         userName: IsmChatProperties.chatPageProperties.header?.title?.call(
                 Get.context!,
-                _controller.conversation,
+                _controller.conversation!,
                 _controller.conversation?.chatName ?? '') ??
             _controller.conversation?.chatName ??
             '',

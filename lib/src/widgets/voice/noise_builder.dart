@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class NoiseBuilder extends StatelessWidget {
   const NoiseBuilder({
@@ -17,7 +17,7 @@ class NoiseBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: Responsive.isMobile(context)
+        width: IsmChatResponsive.isMobile(context)
             ? IsmChatDimens.hundred
             : IsmChatDimens.oneHundredTwenty,
         child: Stack(

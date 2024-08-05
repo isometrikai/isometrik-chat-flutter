@@ -1,4 +1,4 @@
-group 'isometrik_chat_flutter'
+group 'com.example.isometrik_flutter_chat'
 version '1.0-SNAPSHOT'
 
 buildscript {

@@ -1,4 +1,4 @@
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 /// ChatAPI class is a singleton class
 ///
@@ -17,6 +17,7 @@ class IsmChatAPI {
   static String authenticate = '$allUsers/authenticate';
 
   static String chatConversation = '$baseUrl/chat/conversation';
+
   static String chatConversationClear = '$chatConversation/clear';
   static String chatConversationDelete = '$chatConversation/local';
   static String getChatConversations = '$baseUrl/chat/conversations';
@@ -51,7 +52,7 @@ class IsmChatAPI {
   static String createProfilePic = '$_profilePic/create';
 
   static String sendMessage = '$baseUrl/chat/message';
-  static String sendBroadcastMessage = '$baseUrl/chat/message/broadcast';
+  // static String sendBroadcastMessage = '$baseUrl/chat/message/broadcast';
   static String sendForwardMessage = '$baseUrl/chat/message/forward';
 
   static String chatStatus = '$sendMessage/status';
@@ -66,7 +67,6 @@ class IsmChatAPI {
   static String deleteMessages = '$chatMessages/everyone';
   static String createPresignedurl = '$user/presignedurl/create';
   static String presignedUrls = '$chatMessages/presignedurls';
-  static String chatMedia = '$baseUrl/chat/messages/presignedurls';
 
   static String chatIndicator = '$baseUrl/chat/indicator';
   static String typingIndicator = '$chatIndicator/typing';
@@ -76,4 +76,14 @@ class IsmChatAPI {
   static String contactSyncPost =
       'https://admin-apis.isometrik.io/v1/contacts/sync';
   static String contactGet = 'https://admin-apis.isometrik.io/v1/contacts';
+
+  /// Broadcast url
+  static String chatGroupCasts = '$baseUrl/chat/groupcasts';
+  static String chatGroupCast = '$baseUrl/chat/groupcast';
+  static String chatGroupCastMember = '$chatGroupCast/members';
+  static String chatGroupCastEligibleMember = '$chatGroupCast/eligible/members';
+  static String chatGroupCastMessage = '$chatGroupCast/message';
+  static String chatGroupCastMessages = '$chatGroupCast/messages';
+  static String chatGroupCastDeleteEveryone = '$chatGroupCast/message/everyone';
+  static String chatGroupCastDeleteSelf = '$chatGroupCast/message/self';
 }

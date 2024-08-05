@@ -1,7 +1,7 @@
+import 'package:isometrik_flutter_chat/src/models/models.dart';
+import 'package:isometrik_flutter_chat/src/utilities/utilities.dart';
+import 'package:isometrik_flutter_chat/src/views/chat_page/widget/messages/messages.dart';
 import 'package:flutter/material.dart';
-import 'package:isometrik_chat_flutter/src/models/models.dart';
-import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
-import 'package:isometrik_chat_flutter/src/views/chat_page/widget/messages/messages.dart';
 
 class IsmChatMessageWrapper extends StatelessWidget {
   IsmChatMessageWrapper(
@@ -57,6 +57,9 @@ class IsmChatMessageWrapper extends StatelessWidget {
       case IsmChatCustomMessageType.date:
         return IsmChatDateMessage(message);
 
+      case IsmChatCustomMessageType.aboutText:
+        return IsmChatAboutTextMessage(message);
+
       case IsmChatCustomMessageType.conversationCreated:
         return IsmChatConversationCreatedMessage(message);
 
@@ -87,9 +90,10 @@ class IsmChatMessageWrapper extends StatelessWidget {
 
       case IsmChatCustomMessageType.observerJoin:
         return IsmChatObserverLeaveAndJoin(message);
-
       case IsmChatCustomMessageType.observerLeave:
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
+      case IsmChatCustomMessageType.oneToOneCall:
+        return IsmOneToOneCallMessage(message);
     }
   }
 }
@@ -150,6 +154,9 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
       case IsmChatCustomMessageType.date:
         return IsmChatDateMessage(message);
 
+      case IsmChatCustomMessageType.aboutText:
+        return IsmChatAboutTextMessage(message);
+
       case IsmChatCustomMessageType.conversationCreated:
         return IsmChatConversationCreatedMessage(message);
 
@@ -183,6 +190,9 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
 
       case IsmChatCustomMessageType.observerLeave:
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
+
+      case IsmChatCustomMessageType.oneToOneCall:
+        return IsmOneToOneCallMessage(message);
     }
   }
 }

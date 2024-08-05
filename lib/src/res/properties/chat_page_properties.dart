@@ -1,5 +1,5 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPageProperties {
   IsmChatPageProperties({
@@ -23,8 +23,6 @@ class IsmChatPageProperties {
     this.messageSenderProfileUrl,
     this.messageInfoAcknowldge,
     this.isSendMediaAllowed,
-    this.mentionUserName,
-    this.mentionUserProfileUrl,
   });
 
   final Widget? placeholder;
@@ -47,10 +45,6 @@ class IsmChatPageProperties {
   final MessageSenderInfoCallback? messageSenderName;
 
   final MessageSenderInfoCallback? messageSenderProfileUrl;
-
-  final UserDetailsStringCallback? mentionUserName;
-
-  final UserDetailsStringCallback? mentionUserProfileUrl;
 
   /// It is an optional parameter which take List of `IsmChatAttachmentType` which is an enum.
   /// Pass in the types of attachments that you want to allow.
@@ -116,6 +110,6 @@ class IsmChatPageProperties {
   ///
   final IsmChatPageMessageAcknowldgeProperties? messageInfoAcknowldge;
 
-  final Future<bool?>? Function(BuildContext, IsmChatConversationModel?)?
+  final Future<bool?>? Function(BuildContext, IsmChatConversationModel)?
       isSendMediaAllowed;
 }

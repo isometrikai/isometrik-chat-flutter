@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatMetaData {
   IsmChatMetaData({
@@ -14,61 +14,68 @@ class IsmChatMetaData {
     this.customType,
     this.assetList,
     this.duration,
-    this.captionMessage,
+    this.caption,
     this.replyMessage,
     this.senderInfo,
-    this.about,
     this.countryCode,
     this.phone,
     this.phoneIsoCode,
+    this.aboutText,
   });
 
   factory IsmChatMetaData.fromMap(Map<String, dynamic> map) => IsmChatMetaData(
-      captionMessage: map['captionMessage'] != null
-          ? IsmChatUtility.decodeString(map['captionMessage'] as String)
-          : '',
-      locationAddress: map['locationAddress'] as String? ?? '',
-      locationSubAddress: map['locationSubAddress'] as String? ?? '',
-      profilePic: map['profilePic'] as String? ?? '',
-      firstName: map['firstName'] as String? ?? '',
-      lastName: map['lastName'] as String? ?? '',
-      about: map['about'] as String? ?? '',
-      countryCode: map['countryCode'] as String? ?? '',
-      phone: map['phone'] as String? ?? '',
-      phoneIsoCode: map['phoneIsoCode'] as String? ?? '',
-      customType: map['customType'].runtimeType == String
-          ? {'${map['customType']}': map['customType']}
-          : map['customType'] as Map<String, dynamic>? ?? {},
-      assetList: map['assetList'] == null
-          ? []
-          : List<Map<String, IsmChatBackgroundModel>>.from(
-              map['assetList'].map(
-                (x) => Map.from(x).map(
-                  (k, v) => MapEntry<String, IsmChatBackgroundModel>(
-                    k,
-                    v.runtimeType == String
-                        ? IsmChatBackgroundModel.fromJson(v)
-                        : IsmChatBackgroundModel.fromMap(v),
+        caption: map['caption'] != null
+            ? IsmChatUtility.decodeString(map['caption'] as String)
+            : map['captionMessage'] != null
+                ? IsmChatUtility.decodeString(map['captionMessage'] as String)
+                : '',
+        locationAddress: map['locationAddress'] as String? ?? '',
+        locationSubAddress: map['locationSubAddress'] as String? ?? '',
+        profilePic: map['profilePic'] as String? ?? '',
+        firstName: map['firstName'] as String? ?? '',
+        lastName: map['lastName'] as String? ?? '',
+        countryCode: map['countryCode'] as String? ?? '',
+        phone: map['phone'] as String? ?? '',
+        phoneIsoCode: map['phoneIsoCode'] as String? ?? '',
+        customType: map['customType'].runtimeType == String
+            ? {'${map['customType']}': map['customType']}
+            : map['customType'] as Map<String, dynamic>? ?? {},
+        assetList: map['assetList'] == null
+            ? []
+            : List<Map<String, IsmChatBackgroundModel>>.from(
+                map['assetList'].map(
+                  (x) => Map.from(x).map(
+                    (k, v) => MapEntry<String, IsmChatBackgroundModel>(
+                      k,
+                      v.runtimeType == String
+                          ? IsmChatBackgroundModel.fromJson(v)
+                          : IsmChatBackgroundModel.fromMap(v),
+                    ),
                   ),
                 ),
-              ),
-            ).toList(),
-      duration: Duration(seconds: map['duration'] as int? ?? 0),
-      replyMessage: map['replyMessage'] != null
-          ? IsmChatReplyMessageModel.fromMap(
-              map['replyMessage'] as Map<String, dynamic>)
-          : null,
-      contacts: map['contacts'] != null
-          ? List<IsmChatContactMetaDatModel>.from(
-              (map['contacts'] as List).map<IsmChatContactMetaDatModel?>(
-                (x) => IsmChatContactMetaDatModel.fromMap(
-                    x as Map<String, dynamic>),
-              ),
-            )
-          : null,
-      senderInfo: map['senderInfo'] != null
-          ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
-          : null);
+              ).toList(),
+        duration: Duration(seconds: map['duration'] as int? ?? 0),
+        replyMessage: map['replyMessage'] != null
+            ? IsmChatReplyMessageModel.fromMap(
+                map['replyMessage'] as Map<String, dynamic>)
+            : null,
+        contacts: map['contacts'] != null
+            ? List<IsmChatContactMetaDatModel>.from(
+                (map['contacts'] as List).map<IsmChatContactMetaDatModel?>(
+                  (x) => IsmChatContactMetaDatModel.fromMap(
+                      x as Map<String, dynamic>),
+                ),
+              )
+            : null,
+        senderInfo: map['senderInfo'] != null
+            ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
+            : null,
+        aboutText: map['aboutText'] != null
+            ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
+            : map['about'] != null
+                ? AboutTextModel(title: map['about'] as String? ?? '')
+                : null,
+      );
 
   factory IsmChatMetaData.fromJson(String? source) {
     if (source?.isEmpty == true || source == null) {
@@ -86,13 +93,14 @@ class IsmChatMetaData {
   final Map<String, dynamic>? customType;
   final List<Map<String, IsmChatBackgroundModel>>? assetList;
   final Duration? duration;
-  final String? captionMessage;
+  final String? caption;
   final IsmChatReplyMessageModel? replyMessage;
   final UserDetails? senderInfo;
   final String? phoneIsoCode;
   final String? phone;
   final String? countryCode;
-  final String? about;
+  // final String? about;
+  final AboutTextModel? aboutText;
 
   IsmChatMetaData copyWith({
     String? parentMessageBody,
@@ -114,6 +122,7 @@ class IsmChatMetaData {
     String? phone,
     String? countryCode,
     String? about,
+    AboutTextModel? aboutText,
   }) =>
       IsmChatMetaData(
         locationAddress: locationAddress ?? this.locationAddress,
@@ -125,13 +134,13 @@ class IsmChatMetaData {
         customType: customType ?? this.customType,
         assetList: assetList ?? this.assetList,
         duration: duration ?? this.duration,
-        captionMessage: captionMessage ?? this.captionMessage,
+        caption: captionMessage ?? caption,
         replyMessage: replyMessage ?? this.replyMessage,
         senderInfo: senderInfo ?? this.senderInfo,
         phoneIsoCode: phoneIsoCode ?? this.phoneIsoCode,
         phone: phone ?? this.phone,
         countryCode: countryCode ?? this.countryCode,
-        about: about ?? this.about,
+        aboutText: aboutText ?? this.aboutText,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -144,20 +153,20 @@ class IsmChatMetaData {
         'customType': customType,
         'assetList': assetList,
         'duration': duration?.inSeconds,
-        'captionMessage': captionMessage,
+        'captionMessage': caption,
         'replyMessage': replyMessage?.toMap(),
         'senderInfo': senderInfo?.toMap(),
         'phoneIsoCode': phoneIsoCode,
         'phone': phone,
         'countryCode': countryCode,
-        'about': about,
-      };
+        'aboutText': aboutText?.toMap()
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $captionMessage,replyMessage: $replyMessage, senderInfo : $senderInfo  phoneIsoCode : $phoneIsoCode, phone : $phone, countryCode : $countryCode,about : $about)';
+      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo  phoneIsoCode : $phoneIsoCode, phone : $phone, countryCode : $countryCode,aboutText : $aboutText)';
 
   @override
   bool operator ==(covariant IsmChatMetaData other) {
@@ -172,13 +181,13 @@ class IsmChatMetaData {
         mapEquals(other.customType, customType) &&
         listEquals(other.assetList, assetList) &&
         other.duration == duration &&
-        other.captionMessage == captionMessage &&
+        other.caption == caption &&
         other.replyMessage == replyMessage &&
         other.senderInfo == senderInfo &&
-        other.about == about &&
         other.phoneIsoCode == phoneIsoCode &&
         other.phone == phone &&
-        other.countryCode == countryCode;
+        other.countryCode == countryCode &&
+        other.aboutText == aboutText;
   }
 
   @override
@@ -192,11 +201,11 @@ class IsmChatMetaData {
       customType.hashCode ^
       assetList.hashCode ^
       duration.hashCode ^
-      captionMessage.hashCode ^
+      caption.hashCode ^
       replyMessage.hashCode ^
       senderInfo.hashCode ^
-      about.hashCode ^
       phone.hashCode ^
       phoneIsoCode.hashCode ^
-      countryCode.hashCode;
+      countryCode.hashCode ^
+      aboutText.hashCode;
 }

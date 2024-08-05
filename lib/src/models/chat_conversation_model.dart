@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConversationModel {
   factory IsmChatConversationModel.fromJson(String source) =>
@@ -331,33 +331,41 @@ class OutSideMessage {
   final String? imageUrl;
   final String? messageFromOutSide;
   final String? caption;
+  final AboutTextModel? aboutText;
   OutSideMessage({
     this.imageUrl,
     this.messageFromOutSide,
     this.caption,
+    this.aboutText,
   });
 
   OutSideMessage copyWith({
-    String? imagePath,
+    String? imageUrl,
     String? messageFromOutSide,
     String? caption,
+    AboutTextModel? aboutText,
   }) =>
       OutSideMessage(
-        imageUrl: imagePath ?? imageUrl,
+        imageUrl: imageUrl ?? this.imageUrl,
         messageFromOutSide: messageFromOutSide ?? this.messageFromOutSide,
         caption: caption ?? this.caption,
+        aboutText: aboutText ?? this.aboutText,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'imagePath': imageUrl,
+        'imageUrl': imageUrl,
         'messageFromOutSide': messageFromOutSide,
         'caption': caption,
+        'aboutText': aboutText?.toMap(),
       };
 
   factory OutSideMessage.fromMap(Map<String, dynamic> map) => OutSideMessage(
-        imageUrl: map['imagePath'] as String? ?? '',
+        imageUrl: map['imageUrl'] as String? ?? '',
         messageFromOutSide: map['messageFromOutSide'] as String? ?? '',
-        caption: map['caption'] != null ? map['caption'] as String : null,
+        caption: map['caption'] as String? ?? '',
+        aboutText: map['aboutText'] != null
+            ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
+            : null,
       );
 
   String toJson() => json.encode(toMap());
@@ -367,7 +375,7 @@ class OutSideMessage {
 
   @override
   String toString() =>
-      'OutSideMessage(imagePath: $imageUrl, messageFromOutSide: $messageFromOutSide, caption: $caption)';
+      'OutSideMessage(imageUrl: $imageUrl, messageFromOutSide: $messageFromOutSide, caption: $caption, aboutText: $aboutText)';
 
   @override
   bool operator ==(covariant OutSideMessage other) {
@@ -375,10 +383,60 @@ class OutSideMessage {
 
     return other.imageUrl == imageUrl &&
         other.messageFromOutSide == messageFromOutSide &&
-        other.caption == caption;
+        other.caption == caption &&
+        other.aboutText == aboutText;
   }
 
   @override
   int get hashCode =>
-      imageUrl.hashCode ^ messageFromOutSide.hashCode ^ caption.hashCode;
+      imageUrl.hashCode ^
+      messageFromOutSide.hashCode ^
+      caption.hashCode ^
+      aboutText.hashCode;
+}
+
+class AboutTextModel {
+  final String? title;
+  final String? subTitle;
+  AboutTextModel({
+    this.title,
+    this.subTitle,
+  });
+
+  AboutTextModel copyWith({
+    String? title,
+    String? subTitle,
+  }) =>
+      AboutTextModel(
+        title: title ?? this.title,
+        subTitle: subTitle ?? this.subTitle,
+      );
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'title': title,
+        'subTitle': subTitle,
+      };
+
+  factory AboutTextModel.fromMap(Map<String, dynamic> map) => AboutTextModel(
+        title: map['title'] as String? ?? '',
+        subTitle: map['subTitle'] as String? ?? '',
+      );
+
+  String toJson() => json.encode(toMap());
+
+  factory AboutTextModel.fromJson(String source) =>
+      AboutTextModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() => 'AboutTextModel(title: $title, subTitle: $subTitle)';
+
+  @override
+  bool operator ==(covariant AboutTextModel other) {
+    if (identical(this, other)) return true;
+
+    return other.title == title && other.subTitle == subTitle;
+  }
+
+  @override
+  int get hashCode => title.hashCode ^ subTitle.hashCode;
 }

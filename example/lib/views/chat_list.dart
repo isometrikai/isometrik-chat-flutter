@@ -1,11 +1,10 @@
 import 'package:chat_component_example/controllers/controllers.dart';
 import 'package:chat_component_example/res/res.dart';
-import 'package:chat_component_example/utilities/utilities.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class ChatList extends StatelessWidget {
   const ChatList({super.key});
@@ -46,33 +45,6 @@ class ChatList extends StatelessWidget {
                 ),
               ),
             ),
-            isShowMqttConnectErrorDailog: true,
-            communicationConfig: IsmChatCommunicationConfig(
-              userConfig: IsmChatUserConfig(
-                // accessToken:
-                //     'Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfQUpybXA5cktvcDliZEl4NUNzaEJOUHNCWWNGMTlsWlMzWnBVa1UxUkRVIn0.eyJleHAiOjE3MTAxNjM1ODQsImlhdCI6MTcxMDE1OTk4NCwianRpIjoiNGI4ZTRlMzgtNGNiYi00M2FiLWE1NzgtMDZiMjI1MGRiYjNiIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay5pc29tZXRyaWsuaW8vcmVhbG1zL21hc3RlciIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5YWU4YzJjMi00YTFmLTQ4NDQtYTlmOC1iNDkzNzJlZjEyMjIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhc2h1dG9zaGFwcHNjcmlwX2FwaS1jbGllbnQiLCJzZXNzaW9uX3N0YXRlIjoiYjhhZjY5MmEtY2EyMy00YjY1LTgzNzktYzNlZjNiNzg1ZjgxIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwczovL2tleWNsb2FrLmlzb21ldHJpay5pbyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYXNodXRvc2hhcHBzY3JpcF9hcGktY2xpZW50Ijp7InJvbGVzIjpbIkNoYXQgQXBwLWFwcGxpY2F0aW9uLXJvbGUiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsInNpZCI6ImI4YWY2OTJhLWNhMjMtNGI2NS04Mzc5LWMzZWYzYjc4NWY4MSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiKzkxLTcyOTE5Njg1NzEifQ.gjzfJLkK_xiGzWVqvUNH4We7dJVpS8wOSAUMmu85qluOAJDB7R2w3B2bWJlKARcEwWnTSaWP89dlws6eDW04Dhgz9m8UBNRO11vhBwqd8zCaJbgtKvWZ0vD0PbN10DMAnH3ZOXTOKcb7DfCt6lI3c_ozQ-meJuyUJgATicVi2sHdd6yQKS7TQzJOLVWBDe3PjFKVJCO8TqAIQ-sEuUIUcnFKqVhGdtYAhr5fMTVhjAZV5FzQ2xIpUTPuzTLDSRJEFaKYpBr4p1wRkX81RbawN8xoajz2QfXLIH_h68_6cBRCdJcRQB8eyIveYQ533RbLomf65oKARxoYTG3i3hl5iw',
-                userToken: AppConfig.userDetail?.userToken ?? '',
-                userId: AppConfig.userDetail?.userId ?? '',
-                // userName: AppConfig.userDetail?.userName,
-                userEmail: AppConfig.userDetail?.email ?? '',
-                userProfile: '',
-              ),
-              mqttConfig: const IsmChatMqttConfig(
-                hostName:
-                    kIsWeb ? Constants.hostnameForWeb : Constants.hostname,
-                port: kIsWeb ? Constants.portForWeb : Constants.port,
-                useWebSocket: kIsWeb ? true : false,
-                websocketProtocols: kIsWeb ? <String>['mqtt'] : [],
-              ),
-              projectConfig: const IsmChatProjectConfig(
-                accountId: Constants.accountId,
-                appSecret: Constants.appSecret,
-                userSecret: Constants.userSecret,
-                keySetId: Constants.keysetId,
-                licenseKey: Constants.licenseKey,
-                projectId: Constants.projectId,
-              ),
-            ),
 
             chatPageProperties: IsmChatPageProperties(
               // isAllowedDeleteChatFromLocal: true,
@@ -83,6 +55,7 @@ class ChatList extends StatelessWidget {
               //   IsmChatLog.error(p2);
               //   return true;
               // },
+
               header: IsmChatPageHeaderProperties(
 
                   // height: (p0, p1) => 200,
@@ -153,14 +126,14 @@ class ChatList extends StatelessWidget {
               allowDelete: true,
               onCreateTap: () {},
               onChatTap: (_, conversation) {},
-              isHeaderAppBar: Responsive.isWeb(context) ? false : true,
+              isHeaderAppBar: IsmChatResponsive.isWeb(context) ? false : true,
               header: IsmChatListHeader(
                 onSignOut: () {
                   controller.onSignOut();
                 },
                 onSearchTap: (p0, p1, p2) {},
                 showSearch: false,
-                width: Responsive.isWeb(context)
+                width: IsmChatResponsive.isWeb(context)
                     ? IsmChatDimens.percentWidth(.3)
                     : null,
               ),
@@ -185,10 +158,11 @@ class ChatList extends StatelessWidget {
               // startActionSlidableEnable: (p0, p1) => true,
               // conversationPredicate: (e) =>
               //     e.chatName.toLowerCase().startsWith('t'),
+
               opponentSubTitle: (_, opponent) {
-                return opponent?.metaData?.about.isNullOrEmpty == true
+                return opponent.metaData?.aboutText?.title == null
                     ? 'Hey there! I am using IsoChat'
-                    : opponent?.metaData?.about;
+                    : opponent.metaData?.aboutText?.title ?? '';
               },
             ),
           ),

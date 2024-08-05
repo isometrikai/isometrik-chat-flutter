@@ -2,8 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 /// `ChatConversationList` can be used to show the list of all the conversations user has done.
@@ -189,7 +188,7 @@ class _ConversationList extends StatelessWidget {
                     () => IsmChatConversationCard(
                       onProfileTap: IsmChatProperties.conversationProperties
                           .cardElementBuilders?.onProfileTap,
-                      isShowBackgroundColor: Responsive.isWeb(context)
+                      isShowBackgroundColor: IsmChatResponsive.isWeb(context)
                           ? controller.currentConversationId ==
                               conversation.conversationId
                           : false,

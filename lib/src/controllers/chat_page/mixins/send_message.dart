@@ -9,8 +9,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   IsmChatCommonController get commonController =>
       Get.find<IsmChatCommonController>();
 
-  final _deviceConfig = Get.find<IsmChatDeviceConfig>();
-
   void sendMessage({
     required int messageType,
     required String deviceId,
@@ -24,10 +22,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     List<Map<String, dynamic>>? mentionedUsers,
     String? customType,
     List<Map<String, dynamic>>? attachments,
-    bool isTemporaryChat = false,
+    bool isBroadcast = false,
     bool sendPushNotification = true,
   }) async {
-    if (_controller.conversation?.customType != 'Broadcasting') {
+    if (_controller.conversation?.customType != IsmChatStrings.broadcast) {
       var isMessageSent = await _controller.commonController.sendMessage(
         showInConversation: true,
         encrypted: true,
@@ -47,51 +45,33 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         notificationTitle: notificationTitle,
         body: body,
         createdAt: createdAt,
-        isTemporaryChat: isTemporaryChat,
+        isBroadcast: isBroadcast,
       );
-
-      if (isMessageSent && !isTemporaryChat) {
+      if (isMessageSent && !isBroadcast) {
         _controller.didReactedLast = false;
         await _controller.getMessagesFromDB(conversationId);
-        if (kIsWeb && Responsive.isWeb(Get.context!)) {
+        if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
           await conversationController.getConversationsFromDB();
         }
       }
     } else {
-      if (_controller.conversation?.members?.isNotEmpty == true &&
-          (_controller.conversation?.members?.length ?? 0) >= 2) {
-        await sendBroadcastMessage(
-          userIds: (_controller.conversation?.members ?? [])
-              .map((e) => e.userId)
-              .toList(),
-          showInConversation: true,
-          encrypted: true,
-          events: {
-            'updateUnreadCount': true,
-            'sendPushNotification': sendPushNotification
-          },
-          messageType: messageType,
-          deviceId: deviceId,
-          body: body,
-          notificationBody: notificationBody,
-          notificationTitle: notificationTitle,
-          attachments: attachments,
-          customType: customType,
-          isLoading: false,
-          metaData: metaData,
-          searchableTags: [notificationBody],
-          createdAt: createdAt,
-        );
-      } else {
-        await Get.dialog(
-          const IsmChatAlertDialogBox(
-            title: IsmChatStrings.broadcastAlert,
-            cancelLabel: 'Okay',
-          ),
-        );
-      }
+      await sendBroadcastMessage(
+        groupcastId: conversationId,
+        messageType: messageType,
+        deviceId: deviceId,
+        body: body,
+        notificationBody: notificationBody,
+        notificationTitle: notificationTitle,
+        attachments: attachments,
+        customType: customType,
+        metaData: metaData,
+        searchableTags: [notificationBody],
+        createdAt: createdAt,
+        mentionedUsers: mentionedUsers,
+        parentMessageId: parentMessageId,
+        sendPushNotification: sendPushNotification,
+      );
     }
-    _controller.isMessageSent = false;
   }
 
   void sendMedia() async {
@@ -213,25 +193,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       required String userId,
       WebMediaModel? webMediaModel,
       Duration? duration}) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
-    if (chatConversationResponse == null && !_controller.isTemporaryChat) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-        conversation: _controller.conversation!,
-        userId: [userId],
-        metaData: _controller.conversation?.metaData,
-        searchableTags: [
-          IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
-              '',
-          _controller.conversation?.chatName ?? ''
-        ],
-      );
-      conversationId = _controller.conversation?.conversationId ?? '';
-      unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
-    }
+    conversationId = await createConversation(conversationId, userId: userId);
     IsmChatMessageModel? audioMessage;
     String? nameWithExtension;
     Uint8List? bytes;
@@ -279,7 +241,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       ],
       deliveredToAll: false,
       messageId: '',
-      deviceId: _controller._deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       messageType: _controller.isreplying
           ? IsmChatMessageType.reply
           : IsmChatMessageType.normal,
@@ -310,11 +272,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     _controller.messages.add(audioMessage);
 
-    if (!_controller.isTemporaryChat) {
+    if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(audioMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && Responsive.isWeb(Get.context!)) {
+      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(audioMessage);
       }
     }
@@ -333,7 +295,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       nameWithExtension: nameWithExtension ?? '',
       notificationBody: IsmChatStrings.sentAudio,
       notificationTitle: notificationTitle,
-      isTemporaryChat: _controller.isTemporaryChat,
     );
   }
 
@@ -358,24 +319,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     );
 
     if (result?.files.isNotEmpty ?? false) {
-      final chatConversationResponse = await IsmChatConfig.dbWrapper!
-          .getConversation(conversationId: conversationId);
-      if (chatConversationResponse == null && !_controller.isTemporaryChat) {
-        _controller.conversation =
-            await _controller.commonController.createConversation(
-                conversation: _controller.conversation!,
-                userId: [userId],
-                metaData: _controller.conversation?.metaData,
-                searchableTags: [
-                  IsmChatConfig.communicationConfig.userConfig.userName ??
-                      conversationController.userDetails?.userName ??
-                      '',
-                  _controller.conversation?.chatName ?? ''
-                ]);
-        conversationId = _controller.conversation?.conversationId ?? '';
-        unawaited(
-            _controller.getConverstaionDetails(conversationId: conversationId));
-      }
+      conversationId = await createConversation(conversationId, userId: userId);
       final resultFiles = result?.files ?? [];
 
       for (var x in resultFiles) {
@@ -423,7 +367,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             ],
             deliveredToAll: false,
             messageId: '',
-            deviceId: _controller._deviceConfig.deviceId ?? '',
+            deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
             messageType: _controller.isreplying
                 ? IsmChatMessageType.reply
                 : IsmChatMessageType.normal,
@@ -468,10 +412,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       _controller.messages.add(documentMessage);
       _controller.isreplying = false;
 
-      if (!_controller.isTemporaryChat) {
+      if (!_controller.isBroadcast) {
         await IsmChatConfig.dbWrapper!
             .saveMessage(documentMessage, IsmChatDbBox.pending);
-        if (kIsWeb && Responsive.isWeb(Get.context!)) {
+        if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
           _controller.updateLastMessagOnCurrentTime(documentMessage);
         }
       }
@@ -487,7 +431,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           true) {
         await ismPostMediaUrl(
           imageAndFile: false,
-          bytes: bytes,
+          bytes: bytes ?? Uint8List(0),
           createdAt: sentAt,
           ismChatChatMessageModel: documentMessage,
           mediaId: sentAt.toString(),
@@ -495,7 +439,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           nameWithExtension: nameWithExtension ?? '',
           notificationBody: IsmChatStrings.sentDoc,
           notificationTitle: notificationTitle,
-          isTemporaryChat: _controller.isTemporaryChat,
           thumbnailNameWithExtension: thumbnailNameWithExtension,
           thumbnailMediaId: thumbnailMediaId,
           thumbnailBytes: thumbnailBytes,
@@ -514,24 +457,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     WebMediaModel? webMediaModel,
     String? caption,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
-    if (chatConversationResponse == null && !_controller.isTemporaryChat) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-              conversation: _controller.conversation!,
-              userId: [userId],
-              metaData: _controller.conversation?.metaData,
-              searchableTags: [
-                IsmChatConfig.communicationConfig.userConfig.userName ??
-                    conversationController.userDetails?.userName ??
-                    '',
-                _controller.conversation?.chatName ?? ''
-              ]);
-      conversationId = _controller.conversation?.conversationId ?? '';
-      unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
-    }
+    conversationId = await createConversation(conversationId, userId: userId);
     IsmChatMessageModel? videoMessage;
     String? nameWithExtension;
     Uint8List? bytes;
@@ -601,7 +527,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         ],
         deliveredToAll: false,
         messageId: '',
-        deviceId: _controller._deviceConfig.deviceId ?? '',
+        deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
         messageType: _controller.isreplying
             ? IsmChatMessageType.reply
             : IsmChatMessageType.normal,
@@ -613,7 +539,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         sentByMe: true,
         isUploading: true,
         metaData: IsmChatMetaData(
-          captionMessage: caption,
+          caption: caption,
           replyMessage: _controller.isreplying
               ? IsmChatReplyMessageModel(
                   forMessageType: IsmChatCustomMessageType.video,
@@ -633,11 +559,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     _controller.messages.add(videoMessage);
     _controller.isreplying = false;
 
-    if (!_controller.isTemporaryChat) {
+    if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(videoMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && Responsive.isWeb(Get.context!)) {
+      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(videoMessage);
       }
     }
@@ -648,7 +574,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             '';
     await ismPostMediaUrl(
       imageAndFile: false,
-      bytes: bytes,
+      bytes: bytes ?? Uint8List(0),
       createdAt: sentAt,
       ismChatChatMessageModel: videoMessage,
       mediaId: mediaId ?? '',
@@ -660,7 +586,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       thumbnailBytes: thumbnailBytes,
       thumbanilMediaType: IsmChatMediaType.image.value,
       notificationTitle: notificationTitle,
-      isTemporaryChat: _controller.isTemporaryChat,
     );
   }
 
@@ -671,25 +596,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     WebMediaModel? webMediaModel,
     String? caption,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
-    if (chatConversationResponse == null && !_controller.isTemporaryChat) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-        conversation: _controller.conversation!,
-        userId: [userId],
-        metaData: _controller.conversation?.metaData,
-        searchableTags: [
-          IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
-              '',
-          _controller.conversation?.chatName ?? ''
-        ],
-      );
-      conversationId = _controller.conversation?.conversationId ?? '';
-      unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
-    }
+    conversationId = await createConversation(conversationId, userId: userId);
     IsmChatMessageModel? imageMessage;
     String? nameWithExtension;
     Uint8List? bytes;
@@ -728,7 +635,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
               kIsWeb ? webMediaModel?.platformFile.path : compressedFile?.path,
           size: kIsWeb ? webMediaModel?.platformFile.size : bytes!.length,
           name: nameWithExtension,
-          mimeType: 'image/jpeg',
+          mimeType: extension,
           mediaUrl:
               kIsWeb ? webMediaModel?.platformFile.path : compressedFile?.path,
           mediaId: mediaId,
@@ -737,7 +644,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       ],
       deliveredToAll: false,
       messageId: '',
-      deviceId: _controller._deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       messageType: _controller.isreplying
           ? IsmChatMessageType.reply
           : IsmChatMessageType.normal,
@@ -749,7 +656,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
-        captionMessage: caption,
+        caption: caption,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.image,
@@ -769,11 +676,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     _controller.messages.add(imageMessage);
     _controller.isreplying = false;
 
-    if (!_controller.isTemporaryChat) {
+    if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(imageMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && Responsive.isWeb(Get.context!)) {
+      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(imageMessage);
       }
     }
@@ -783,7 +690,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             conversationController.userDetails?.userName ??
             '';
     await ismPostMediaUrl(
-      bytes: bytes,
+      bytes: bytes ?? Uint8List(0),
       createdAt: sentAt,
       ismChatChatMessageModel: imageMessage,
       mediaId: mediaId,
@@ -792,7 +699,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       notificationBody: IsmChatStrings.sentImage,
       imageAndFile: true,
       notificationTitle: notificationTitle,
-      isTemporaryChat: _controller.isTemporaryChat,
     );
   }
 
@@ -805,7 +711,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   }) async {
     final chatConversationResponse = await IsmChatConfig.dbWrapper!
         .getConversation(conversationId: conversationId);
-    if (chatConversationResponse == null && !_controller.isTemporaryChat) {
+    if (chatConversationResponse == null && !_controller.isBroadcast) {
       _controller.conversation =
           await _controller.commonController.createConversation(
         conversation: _controller.conversation!,
@@ -847,7 +753,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       ],
       deliveredToAll: false,
       messageId: '',
-      deviceId: _deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       messageType: IsmChatMessageType.normal,
       messagingDisabled: false,
       parentMessageId: '',
@@ -856,17 +762,17 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
-        captionMessage: caption,
+        caption: caption,
       ),
     );
 
     _controller.messages.add(imageMessage);
     _controller.isreplying = false;
-    if (!_controller.isTemporaryChat) {
+    if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(imageMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && Responsive.isWeb(Get.context!)) {
+      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(imageMessage);
       }
     }
@@ -887,7 +793,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       attachments: imageMessage.attachments != null
           ? [imageMessage.attachments!.first.toMap().removeNullValues()]
           : null,
-      isTemporaryChat: _controller.isTemporaryChat,
+      isBroadcast: _controller.isBroadcast,
       parentMessageId: imageMessage.parentMessageId,
       sendPushNotification: sendPushNotification,
     );
@@ -902,24 +808,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String conversationId,
     required String userId,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
-    if (chatConversationResponse == null && !_controller.isTemporaryChat) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-              conversation: _controller.conversation!,
-              userId: [userId],
-              metaData: _controller.conversation?.metaData,
-              searchableTags: [
-                IsmChatConfig.communicationConfig.userConfig.userName ??
-                    conversationController.userDetails?.userName ??
-                    '',
-                _controller.conversation?.chatName ?? ''
-              ]);
-      conversationId = _controller.conversation?.conversationId ?? '';
-      unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
-    }
+    conversationId = await createConversation(conversationId, userId: userId);
     var sentAt = DateTime.now().millisecondsSinceEpoch;
     var locationMessage = IsmChatMessageModel(
       body: IsmChatStrings.location,
@@ -933,7 +822,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       messageType: _controller.isreplying
           ? IsmChatMessageType.reply
           : IsmChatMessageType.normal,
-      deviceId: _controller._deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       messagingDisabled: false,
       parentMessageId:
           _controller.isreplying ? _controller.replayMessage?.messageId : '',
@@ -973,11 +862,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     _controller.isreplying = false;
     _controller.chatInputController.clear();
 
-    if (!_controller.isTemporaryChat) {
+    if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(locationMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && Responsive.isWeb(Get.context!)) {
+      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(locationMessage);
       }
     }
@@ -999,7 +888,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       attachments: locationMessage.attachments != null
           ? [locationMessage.attachments!.first.toMap().removeNullValues()]
           : null,
-      isTemporaryChat: _controller.isTemporaryChat,
+      isBroadcast: _controller.isBroadcast,
       parentMessageId: locationMessage.parentMessageId,
     );
   }
@@ -1009,27 +898,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String userId,
     required List<Contact> contacts,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
-    if (chatConversationResponse == null && !_controller.isTemporaryChat) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-        conversation: _controller.conversation!,
-        userId: [userId],
-        metaData: _controller.conversation?.metaData,
-        searchableTags: [
-          IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
-              '',
-          _controller.conversation?.chatName ?? ''
-        ],
-      );
-
-      conversationId = _controller.conversation?.conversationId ?? '';
-      unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
-    }
-
+    conversationId = await createConversation(conversationId, userId: userId);
     var sentAt = DateTime.now().millisecondsSinceEpoch;
     var contactMessage = IsmChatMessageModel(
       body: IsmChatStrings.contact,
@@ -1049,7 +918,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       readByAll: false,
       sentAt: sentAt,
       sentByMe: true,
-      deviceId: _controller._deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       metaData: IsmChatMetaData(
         contacts: contacts
             .map(
@@ -1082,7 +951,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     _controller.messages.add(contactMessage);
     _controller.isreplying = false;
 
-    if (!_controller.isTemporaryChat) {
+    if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(contactMessage, IsmChatDbBox.pending);
     }
@@ -1101,7 +970,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       messageType: contactMessage.messageType?.value ?? 0,
       notificationBody: IsmChatStrings.sentContact,
       notificationTitle: notificationTitle,
-      isTemporaryChat: _controller.isTemporaryChat,
+      isBroadcast: _controller.isBroadcast,
       parentMessageId: contactMessage.parentMessageId,
     );
   }
@@ -1110,29 +979,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String conversationId,
     required String userId,
     bool pushNotifications = true,
-    required int sentAt,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
-    if (chatConversationResponse == null && !_controller.isTemporaryChat) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-        conversation: _controller.conversation!,
-        isGroup: _controller.conversation?.isCreateGroupFromOutSide ?? false,
-        userId: [userId],
-        metaData: _controller.conversation?.metaData,
-        searchableTags: [
-          IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
-              '',
-          _controller.conversation?.chatName ?? ''
-        ],
-      );
-      conversationId = _controller.conversation?.conversationId ?? '';
-      unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
-    }
-
+    conversationId = await createConversation(conversationId, userId: userId);
+    var sentAt = DateTime.now().millisecondsSinceEpoch;
     var textMessage = IsmChatMessageModel(
       body: _controller.chatInputController.text.trim(),
       conversationId: conversationId,
@@ -1141,7 +990,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           ? IsmChatCustomMessageType.reply
           : IsmChatCustomMessageType.text,
       deliveredToAll: false,
-      deviceId: _controller._deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       messageId: '',
       messageType: _controller.isreplying
           ? IsmChatMessageType.reply
@@ -1185,11 +1034,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     _controller.messages.add(textMessage);
     _controller.isreplying = false;
     _controller.chatInputController.clear();
-
-    if (!_controller.isTemporaryChat) {
+    _controller.isMessageSent = false;
+    if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(textMessage, IsmChatDbBox.pending);
-      if (kIsWeb && Responsive.isWeb(Get.context!)) {
+      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(textMessage);
       }
     }
@@ -1200,7 +1049,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             '';
 
     sendMessage(
-      isTemporaryChat: _controller.isTemporaryChat,
+      isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,
       deviceId: textMessage.deviceId ?? '',
       body: textMessage.body,
@@ -1224,24 +1073,25 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String nameWithExtension,
     required int createdAt,
     required int mediaType,
-    required Uint8List? bytes,
+    required Uint8List bytes,
     required bool? imageAndFile,
     required String mediaId,
     String? thumbnailNameWithExtension,
     String? thumbnailMediaId,
     int? thumbanilMediaType,
     Uint8List? thumbnailBytes,
-    bool isTemporaryChat = false,
+    bool isLoading = false,
   }) async {
     try {
       PresignedUrlModel? presignedUrlModel;
-      if (_controller.isTemporaryChat) {
+      if (_controller.isBroadcast) {
         presignedUrlModel = await _controller.commonController.getPresignedUrl(
-          isLoading: false,
+          isLoading: isLoading,
           mediaExtension:
               ismChatChatMessageModel.attachments?.first.extension ?? '',
           userIdentifier:
               IsmChatConfig.communicationConfig.userConfig.userEmail ?? '',
+          bytes: bytes,
         );
       } else {
         presignedUrlModel = await commonController.postMediaUrl(
@@ -1249,35 +1099,27 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           nameWithExtension: nameWithExtension,
           mediaType: mediaType,
           mediaId: mediaId,
+          bytes: bytes,
+          isLoading: isLoading,
         );
       }
-
       var mediaUrlPath = '';
       var thumbnailUrlPath = '';
       if (presignedUrlModel != null) {
-        var mediaUrl = await commonController.updatePresignedUrl(
-          presignedUrl: _controller.isTemporaryChat
-              ? presignedUrlModel.presignedUrl
-              : presignedUrlModel.mediaPresignedUrl,
-          bytes: bytes,
-          isLoading: false,
-        );
-        if (mediaUrl == 200) {
-          mediaUrlPath = presignedUrlModel.mediaUrl ?? '';
-          mediaId = _controller.isTemporaryChat
-              ? mediaId
-              : presignedUrlModel.mediaId ?? '';
-        }
+        mediaUrlPath = presignedUrlModel.mediaUrl ?? '';
+        mediaId =
+            _controller.isBroadcast ? mediaId : presignedUrlModel.mediaId ?? '';
       }
-      if (!imageAndFile!) {
+      if (!(imageAndFile ?? false)) {
         PresignedUrlModel? presignedUrlModel;
-        if (_controller.isTemporaryChat) {
+        if (_controller.isBroadcast) {
           presignedUrlModel =
               await _controller.commonController.getPresignedUrl(
-            isLoading: false,
+            isLoading: isLoading,
             mediaExtension: thumbnailNameWithExtension?.split('.').last ?? '',
             userIdentifier:
                 IsmChatConfig.communicationConfig.userConfig.userEmail ?? '',
+            bytes: bytes,
           );
         } else {
           presignedUrlModel = await commonController.postMediaUrl(
@@ -1285,28 +1127,22 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             nameWithExtension: thumbnailNameWithExtension ?? '',
             mediaType: thumbanilMediaType ?? 0,
             mediaId: thumbnailMediaId ?? '',
+            isLoading: isLoading,
+            bytes: bytes,
           );
         }
 
         if (presignedUrlModel != null) {
-          var mediaUrl = await commonController.updatePresignedUrl(
-            presignedUrl: _controller.isTemporaryChat
-                ? presignedUrlModel.presignedUrl
-                : presignedUrlModel.thumbnailPresignedUrl,
-            bytes: thumbnailBytes,
-            isLoading: false,
-          );
-          if (mediaUrl == 200) {
-            thumbnailUrlPath = _controller.isTemporaryChat
-                ? presignedUrlModel.mediaUrl ?? ''
-                : presignedUrlModel.thumbnailUrl ?? '';
-          }
+          thumbnailUrlPath = _controller.isBroadcast
+              ? presignedUrlModel.mediaUrl ?? ''
+              : presignedUrlModel.thumbnailUrl ?? '';
         }
       }
       if (mediaUrlPath.isNotEmpty) {
         var attachment = [
           AttachmentModel(
-            thumbnailUrl: !imageAndFile ? thumbnailUrlPath : mediaUrlPath,
+            thumbnailUrl:
+                !(imageAndFile ?? false) ? thumbnailUrlPath : mediaUrlPath,
             size: ismChatChatMessageModel.attachments?.first.size ?? 0,
             name: ismChatChatMessageModel.attachments?.first.name,
             mimeType: ismChatChatMessageModel.attachments?.first.mimeType,
@@ -1329,7 +1165,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           attachments: attachment,
           customType: ismChatChatMessageModel.customType?.value,
           metaData: ismChatChatMessageModel.metaData,
-          isTemporaryChat: isTemporaryChat,
+          isBroadcast: _controller.isBroadcast,
           parentMessageId: ismChatChatMessageModel.parentMessageId,
         );
       }
@@ -1348,37 +1184,49 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     }
   }
 
-  Future<void> sendBroadcastMessage(
-      {required List<String> userIds,
-      required bool showInConversation,
-      required int messageType,
-      required bool encrypted,
-      required String deviceId,
-      required String body,
-      required String notificationBody,
-      required String notificationTitle,
-      required int createdAt,
-      List<String>? searchableTags,
-      IsmChatMetaData? metaData,
-      Map<String, dynamic>? events,
-      String? customType,
-      List<Map<String, dynamic>>? attachments,
-      bool isLoading = false}) async {
+  Future<void> sendBroadcastMessage({
+    required int createdAt,
+    required String groupcastId,
+    required int messageType,
+    required String deviceId,
+    required String body,
+    required String notificationBody,
+    required String notificationTitle,
+    List<String>? searchableTags,
+    String? parentMessageId,
+    IsmChatMetaData? metaData,
+    String? customType,
+    List<Map<String, dynamic>>? attachments,
+    List<Map<String, dynamic>>? mentionedUsers,
+    bool isLoading = false,
+    bool sendPushNotification = true,
+  }) async {
+    metaData = metaData?.copyWith(customType: {'broadcastMessage': true});
     var response = await _controller.viewModel.sendBroadcastMessage(
-      attachments: attachments,
-      customType: customType,
-      events: events,
-      metaData: metaData,
-      searchableTags: searchableTags,
-      userIds: userIds,
       showInConversation: true,
-      messageType: 0,
+      notifyOnCompletion: false,
+      hideNewConversationsForSender: false,
+      sendPushForNewConversationCreated: false,
+      groupcastId: groupcastId,
+      messageType: messageType,
       encrypted: true,
       deviceId: deviceId,
       body: body,
       notificationBody: notificationBody,
       notificationTitle: notificationTitle,
+      attachments: attachments,
+      customType: customType,
+      events: {
+        'updateUnreadCount': true,
+        'sendPushNotification': sendPushNotification,
+        'sendOneSignalNotification': false,
+        'sendEmailNotification': false,
+      },
       isLoading: isLoading,
+      mentionedUsers: mentionedUsers,
+      metaData: metaData,
+      parentMessageId: parentMessageId,
+      searchableTags: searchableTags,
     );
     if (response?.hasError == false) {
       if (_controller.messages.length == 1) {
@@ -1398,5 +1246,171 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         _controller.messages[x] = messages;
       }
     }
+  }
+
+  void sendAboutTextMessage({
+    required String conversationId,
+    required String userId,
+    required OutSideMessage? outSideMessage,
+    bool pushNotifications = true,
+  }) async {
+    final chatConversationResponse = await IsmChatConfig.dbWrapper!
+        .getConversation(conversationId: conversationId);
+    if (chatConversationResponse == null && !_controller.isBroadcast) {
+      _controller.conversation =
+          await _controller.commonController.createConversation(
+        conversation: _controller.conversation!,
+        isGroup: _controller.conversation?.isCreateGroupFromOutSide ?? false,
+        userId: [userId],
+        metaData: _controller.conversation?.metaData,
+        searchableTags: [
+          IsmChatConfig.communicationConfig.userConfig.userName ??
+              conversationController.userDetails?.userName ??
+              '',
+          _controller.conversation?.chatName ?? ''
+        ],
+      );
+      conversationId = _controller.conversation?.conversationId ?? '';
+      unawaited(
+          _controller.getConverstaionDetails(conversationId: conversationId));
+    }
+    var sentAt = DateTime.now().millisecondsSinceEpoch;
+    var aboutTextMessage = IsmChatMessageModel(
+      body: outSideMessage?.messageFromOutSide ?? '',
+      conversationId: conversationId,
+      senderInfo: _controller.currentUser,
+      customType: _controller.isreplying
+          ? IsmChatCustomMessageType.reply
+          : IsmChatCustomMessageType.aboutText,
+      deliveredToAll: false,
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
+      messageId: '',
+      messageType: _controller.isreplying
+          ? IsmChatMessageType.reply
+          : IsmChatMessageType.normal,
+      messagingDisabled: false,
+      parentMessageId:
+          _controller.isreplying ? _controller.replayMessage?.messageId : '',
+      readByAll: false,
+      sentAt: sentAt,
+      sentByMe: true,
+      metaData: IsmChatMetaData(
+        aboutText: outSideMessage?.aboutText,
+        caption: outSideMessage?.caption,
+        replyMessage: _controller.isreplying
+            ? IsmChatReplyMessageModel(
+                forMessageType: IsmChatCustomMessageType.aboutText,
+                parentMessageMessageType: _controller.replayMessage?.customType,
+                parentMessageInitiator: _controller.replayMessage?.sentByMe,
+                parentMessageBody:
+                    _controller.getMessageBody(_controller.replayMessage),
+                parentMessageUserId:
+                    _controller.replayMessage?.senderInfo?.userId,
+                parentMessageUserName:
+                    _controller.replayMessage?.senderInfo?.userName ?? '',
+              )
+            : null,
+      ),
+    );
+    _controller.messages.add(aboutTextMessage);
+    _controller.isreplying = false;
+    if (!_controller.isBroadcast) {
+      await IsmChatConfig.dbWrapper!
+          .saveMessage(aboutTextMessage, IsmChatDbBox.pending);
+      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+        _controller.updateLastMessagOnCurrentTime(aboutTextMessage);
+      }
+    }
+    var notificationTitle =
+        IsmChatConfig.communicationConfig.userConfig.userName ??
+            conversationController.userDetails?.userName ??
+            '';
+    sendMessage(
+      isBroadcast: _controller.isBroadcast,
+      metaData: aboutTextMessage.metaData,
+      deviceId: aboutTextMessage.deviceId ?? '',
+      body: aboutTextMessage.body,
+      customType: aboutTextMessage.customType?.value,
+      createdAt: sentAt,
+      parentMessageId: aboutTextMessage.parentMessageId,
+      conversationId: aboutTextMessage.conversationId ?? '',
+      messageType: aboutTextMessage.messageType?.value ?? 0,
+      notificationBody: aboutTextMessage.body,
+      notificationTitle: notificationTitle,
+      sendPushNotification: pushNotifications,
+    );
+  }
+
+  Future<String?> createBroadcastConversation({
+    bool isLoading = false,
+    List<String>? searchableTags,
+    Map<String, dynamic>? metaData,
+    required String groupcastTitle,
+    required String groupcastImageUrl,
+    String? customType,
+    required List<String> membersId,
+  }) async =>
+      _controller.viewModel.createBroadcastConversation(
+        groupcastTitle: groupcastTitle,
+        groupcastImageUrl: groupcastImageUrl,
+        membersId: membersId,
+        customType: customType,
+        isLoading: isLoading,
+        metaData: metaData,
+        searchableTags: searchableTags,
+      );
+
+  Future<String> createConversation(String conversationId,
+      {String? userId}) async {
+    final chatConversationResponse = await IsmChatConfig.dbWrapper!
+        .getConversation(conversationId: conversationId);
+    if (chatConversationResponse == null && _controller.isBroadcast == false) {
+      _controller.conversation =
+          await _controller.commonController.createConversation(
+        conversation: _controller.conversation!,
+        isGroup: _controller.conversation?.isCreateGroupFromOutSide ?? false,
+        userId: [userId ?? ''],
+        metaData: _controller.conversation?.metaData,
+        searchableTags: [
+          IsmChatConfig.communicationConfig.userConfig.userName ??
+              conversationController.userDetails?.userName ??
+              '',
+          _controller.conversation?.chatName ?? ''
+        ],
+      );
+      conversationId = _controller.conversation?.conversationId ?? '';
+      unawaited(
+          _controller.getConverstaionDetails(conversationId: conversationId));
+    } else if (_controller.isBroadcast && _controller.messages.isEmpty) {
+      conversationId = await _controller.createBroadcastConversation(
+            groupcastImageUrl:
+                'https://png.pngtree.com/element_our/20190528/ourmid/pngtree-speaker-broadcast-icon-image_1144351.jpg',
+            groupcastTitle: IsmChatStrings.defaultString,
+            customType: 'broadcast',
+            membersId: _controller.conversation?.members
+                    ?.map((e) => e.userId)
+                    .toList() ??
+                [],
+            metaData: {
+              'membersDetail': _controller.conversation?.members
+                      ?.map((e) => {
+                            'memberName': e.userName,
+                            'memberId': e.userId,
+                          })
+                      .toList() ??
+                  []
+            },
+            searchableTags: [
+              IsmChatConfig.communicationConfig.userConfig.userName ??
+                  conversationController.userDetails?.userName ??
+                  '',
+              _controller.conversation?.chatName ?? ''
+            ],
+          ) ??
+          '';
+      _controller.conversation =
+          _controller.conversation?.copyWith(conversationId: conversationId);
+    }
+    return conversationId;
   }
 }

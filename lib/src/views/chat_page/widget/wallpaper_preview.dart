@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatWallpaperPreview extends StatelessWidget {
   IsmChatWallpaperPreview(
@@ -46,7 +46,7 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                     image: _imagePath.path.contains('blob')
                         ? NetworkImage(_imagePath.path)
                         : _imagePath.path.contains(
-                                'packages/isometrik_chat_flutter/assets')
+                                'packages/isometrik_flutter_chat/assets')
                             ? AssetImage(
                                 _imagePath.path,
                               ) as ImageProvider
@@ -86,7 +86,7 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                         alignment: Alignment.topLeft,
                         child: Container(
                             width: IsmChatDimens.percentWidth(
-                                Responsive.isWeb(context) ? .08 : .3),
+                                IsmChatResponsive.isWeb(context) ? .08 : .3),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(IsmChatDimens.ten),
@@ -130,7 +130,7 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                         alignment: Alignment.topRight,
                         child: Container(
                             width: IsmChatDimens.percentWidth(
-                                Responsive.isWeb(context) ? .07 : .3),
+                                IsmChatResponsive.isWeb(context) ? .07 : .3),
                             padding: IsmChatDimens.edgeInsets4,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.only(

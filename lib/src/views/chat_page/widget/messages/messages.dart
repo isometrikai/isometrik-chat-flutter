@@ -1,3 +1,4 @@
+export 'about_text_message.dart';
 export 'add_remove_member.dart';
 export 'add_revoke_admin.dart';
 export 'audio_message.dart';
@@ -20,3 +21,4 @@ export 'observer_join_leave.dart';
 export 'reply_message.dart';
 export 'text_message.dart';
 export 'video_message.dart';
+export 'ont_to_one_call_message.dart';

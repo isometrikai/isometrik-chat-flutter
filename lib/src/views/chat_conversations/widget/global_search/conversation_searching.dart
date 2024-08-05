@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class IsmChatConversationSearchView extends StatelessWidget {
@@ -11,11 +10,10 @@ class IsmChatConversationSearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
-        initState: (state) async {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            final controller = Get.find<IsmChatConversationsController>();
-
-            await controller.getChatSearchConversations();
+        initState: (state) {
+          IsmChatUtility.doLater(() async {
+            await Get.find<IsmChatConversationsController>()
+                .getChatSearchConversations();
           });
         },
         builder: (controller) => Scaffold(
@@ -47,10 +45,11 @@ class IsmChatConversationSearchView extends StatelessWidget {
                         return Column(
                           children: [
                             IsmChatConversationCard(
-                              isShowBackgroundColor: Responsive.isWeb(context)
-                                  ? controller.currentConversationId ==
-                                      conversation.conversationId
-                                  : false,
+                              isShowBackgroundColor:
+                                  IsmChatResponsive.isWeb(context)
+                                      ? controller.currentConversationId ==
+                                          conversation.conversationId
+                                      : false,
                               name: IsmChatProperties.conversationProperties
                                   .cardElementBuilders?.name,
                               nameBuilder: IsmChatProperties

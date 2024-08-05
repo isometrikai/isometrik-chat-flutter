@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatGroupAdminDialog extends StatelessWidget {
   const IsmChatGroupAdminDialog(
@@ -18,7 +18,7 @@ class IsmChatGroupAdminDialog extends StatelessWidget {
           child: GetBuilder<IsmChatPageController>(
             builder: (controller) => ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: Responsive.isWeb(context)
+                maxWidth: IsmChatResponsive.isWeb(context)
                     ? IsmChatDimens.percentWidth(.15)
                     : 0,
               ),

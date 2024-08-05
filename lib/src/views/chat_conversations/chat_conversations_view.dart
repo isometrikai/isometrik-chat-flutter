@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatConversations extends StatefulWidget {
   const IsmChatConversations({
@@ -70,14 +69,14 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      border: Responsive.isWeb(context)
+                      border: IsmChatResponsive.isWeb(context)
                           ? Border(
                               right: BorderSide(
                                   color: IsmChatConfig.chatTheme.dividerColor!),
                             )
                           : null,
                     ),
-                    width: Responsive.isWeb(context)
+                    width: IsmChatResponsive.isWeb(context)
                         ? IsmChatProperties.sideWidgetWidth ??
                             IsmChatDimens.percentWidth(.3)
                         : IsmChatDimens.percentWidth(1),
@@ -104,7 +103,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                       ],
                     ),
                   ),
-                  if (Responsive.isWeb(context)) ...[
+                  if (IsmChatResponsive.isWeb(context)) ...[
                     Expanded(
                       child: Stack(
                         children: [
@@ -126,7 +125,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                       ),
                                     ),
                           ),
-                          if (Responsive.isTablet(context)) ...[
+                          if (IsmChatResponsive.isTablet(context)) ...[
                             Obx(
                               () => controller.isRenderChatPageaScreen !=
                                       IsRenderChatPageScreen.none
@@ -137,7 +136,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                         ],
                       ),
                     ),
-                    if (Responsive.isWeb(context)) ...[
+                    if (IsmChatResponsive.isWeb(context)) ...[
                       Obx(
                         () => ![
                           IsRenderChatPageScreen.none,
@@ -165,7 +164,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
             ),
             floatingActionButton: IsmChatProperties
                         .conversationProperties.showCreateChatIcon &&
-                    !Responsive.isWeb(context)
+                    !IsmChatResponsive.isWeb(context)
                 ? IsmChatStartChatFAB(
                     icon:
                         IsmChatProperties.conversationProperties.createChatIcon,
@@ -187,7 +186,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                     },
                   )
                 : null,
-            drawer: Responsive.isWeb(context)
+            drawer: IsmChatResponsive.isWeb(context)
                 ? Obx(
                     () => SizedBox(
                       width: IsmChatDimens.percentWidth(.299),
@@ -408,7 +407,7 @@ class _CreateChatBottomSheet extends StatelessWidget {
           CupertinoActionSheetAction(
             onPressed: () {
               Get.back();
-              IsmChatRouteManagement.goToBroadcastView();
+              IsmChatRouteManagement.goToCreteBroadcastView();
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,

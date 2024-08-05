@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/res/properties/chat_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
 
 /// show the Video editing view page
 class IsmChatVideoView extends StatefulWidget {
@@ -109,7 +109,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
 
                     if (await IsmChatProperties.chatPageProperties
                             .messageAllowedConfig?.isMessgeAllowed
-                            ?.call(context, controller.conversation) ??
+                            ?.call(Get.context!, controller.conversation!) ??
                         true) {
                       await controller.sendVideo(
                         caption: textEditingController.text,

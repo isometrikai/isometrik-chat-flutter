@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatMessage extends StatefulWidget {
   IsmChatMessage(
@@ -86,7 +85,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
               : () async {
                   if (widget._message?.customType !=
                       IsmChatCustomMessageType.deletedForEveryone) {
-                    if (!Responsive.isWeb(context)) {
+                    if (!IsmChatResponsive.isWeb(context)) {
                       if (!(controller.conversation?.isChattingAllowed ??
                           false)) {
                         controller.showDialogCheckBlockUnBlock();
@@ -103,7 +102,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
           onTap: showMessageInCenter
               ? null
               : () {
-                  IsmChatUtility.hideKeyboard();
+                  IsmChatUtility.dismissKeyBoard();
                   controller.onMessageSelect(widget._message!);
                   if (controller.showEmojiBoard) {
                     controller.toggleEmojiBoard(false, false);
@@ -147,7 +146,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                 ?.call(
                               context,
                               widget._message!,
-                              controller.conversation,
+                              controller.conversation!,
                             ) ??
                             IsmChatTapHandler(
                               onTap: () async {
@@ -161,7 +160,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                         ?.call(
                                       context,
                                       widget._message!,
-                                      controller.conversation,
+                                      controller.conversation!,
                                     ) ??
                                     widget._message?.senderInfo?.profileUrl ??
                                     '',
@@ -185,7 +184,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                     .chatPageProperties.header?.profileImageUrl
                                     ?.call(
                                         context,
-                                        controller.conversation,
+                                        controller.conversation!,
                                         controller.conversation?.profileUrl ??
                                             '') ??
                                 controller.conversation?.profileUrl ??
@@ -194,7 +193,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                     .chatPageProperties.header?.title
                                     ?.call(
                                         context,
-                                        controller.conversation,
+                                        controller.conversation!,
                                         controller.conversation?.chatName ??
                                             '') ??
                                 controller.conversation?.chatName,

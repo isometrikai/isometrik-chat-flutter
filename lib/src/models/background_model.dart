@@ -1,19 +1,32 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
 class IsmChatBackgroundModel {
-  final bool isImage;
-  final String? color;
-  final String? imageUrl;
-  final int? srNoBackgroundAssset;
   IsmChatBackgroundModel({
     required this.isImage,
     this.color,
     this.imageUrl,
     this.srNoBackgroundAssset,
   });
+
+  factory IsmChatBackgroundModel.fromMap(Map<String, dynamic> map) =>
+      IsmChatBackgroundModel(
+        isImage: map['isImage'] as bool? ?? false,
+        color: map['color'] as String? ?? '',
+        imageUrl: map['imageUrl'] as String? ?? '',
+        srNoBackgroundAssset: map['srNoBackgroundAssset'] != null
+            ? map['srNoBackgroundAssset'] as int
+            : null,
+      );
+
+  factory IsmChatBackgroundModel.fromJson(String source) =>
+      IsmChatBackgroundModel.fromMap(
+          json.decode(source) as Map<String, dynamic>);
+  final bool isImage;
+  final String? color;
+  final String? imageUrl;
+  final int? srNoBackgroundAssset;
 
   IsmChatBackgroundModel copyWith({
     bool? isImage,
@@ -35,21 +48,7 @@ class IsmChatBackgroundModel {
         'srNoBackgroundAssset': srNoBackgroundAssset,
       };
 
-  factory IsmChatBackgroundModel.fromMap(Map<String, dynamic> map) =>
-      IsmChatBackgroundModel(
-        isImage: map['isImage'] as bool? ?? false,
-        color: map['color'] as String? ?? '',
-        imageUrl: map['imageUrl'] as String? ?? '',
-        srNoBackgroundAssset: map['srNoBackgroundAssset'] != null
-            ? map['srNoBackgroundAssset'] as int
-            : null,
-      );
-
   String toJson() => json.encode(toMap());
-
-  factory IsmChatBackgroundModel.fromJson(String source) =>
-      IsmChatBackgroundModel.fromMap(
-          json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>
@@ -74,12 +73,28 @@ class IsmChatBackgroundModel {
 }
 
 class AssetsModel {
-  final List<BackGroundAsset> images;
-  final List<BackGroundAsset> colors;
   AssetsModel({
     required this.images,
     required this.colors,
   });
+
+  factory AssetsModel.fromMap(Map<String, dynamic> map) => AssetsModel(
+        images: List<BackGroundAsset>.from(
+          (map['images'] as List).map<BackGroundAsset>(
+            (x) => BackGroundAsset.fromMap(x as Map<String, dynamic>),
+          ),
+        ),
+        colors: List<BackGroundAsset>.from(
+          (map['colors'] as List).map<BackGroundAsset>(
+            (x) => BackGroundAsset.fromMap(x as Map<String, dynamic>),
+          ),
+        ),
+      );
+
+  factory AssetsModel.fromJson(String source) =>
+      AssetsModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  final List<BackGroundAsset> images;
+  final List<BackGroundAsset> colors;
 
   AssetsModel copyWith({
     List<BackGroundAsset>? images,
@@ -95,23 +110,7 @@ class AssetsModel {
         'colors': colors.map((x) => x.toMap()).toList(),
       };
 
-  factory AssetsModel.fromMap(Map<String, dynamic> map) => AssetsModel(
-        images: List<BackGroundAsset>.from(
-          (map['images'] as List).map<BackGroundAsset>(
-            (x) => BackGroundAsset.fromMap(x as Map<String, dynamic>),
-          ),
-        ),
-        colors: List<BackGroundAsset>.from(
-          (map['colors'] as List).map<BackGroundAsset>(
-            (x) => BackGroundAsset.fromMap(x as Map<String, dynamic>),
-          ),
-        ),
-      );
-
   String toJson() => json.encode(toMap());
-
-  factory AssetsModel.fromJson(String source) =>
-      AssetsModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'AssetsModel(images: $images, colors: $colors)';
@@ -128,14 +127,23 @@ class AssetsModel {
 }
 
 class BackGroundAsset {
-  final String? color;
-  final int? srNo;
-  final String? path;
   BackGroundAsset({
     this.color,
     this.srNo,
     this.path,
   });
+
+  factory BackGroundAsset.fromMap(Map<String, dynamic> map) => BackGroundAsset(
+        color: map['color'] != null ? map['color'] as String : null,
+        srNo: map['srNo'] != null ? map['srNo'] as int : null,
+        path: map['path'] != null ? map['path'] as String : null,
+      );
+
+  factory BackGroundAsset.fromJson(String source) =>
+      BackGroundAsset.fromMap(json.decode(source) as Map<String, dynamic>);
+  final String? color;
+  final int? srNo;
+  final String? path;
 
   BackGroundAsset copyWith({
     String? color,
@@ -154,16 +162,7 @@ class BackGroundAsset {
         'path': path,
       };
 
-  factory BackGroundAsset.fromMap(Map<String, dynamic> map) => BackGroundAsset(
-        color: map['color'] != null ? map['color'] as String : null,
-        srNo: map['srNo'] != null ? map['srNo'] as int : null,
-        path: map['path'] != null ? map['path'] as String : null,
-      );
-
   String toJson() => json.encode(toMap());
-
-  factory BackGroundAsset.fromJson(String source) =>
-      BackGroundAsset.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>

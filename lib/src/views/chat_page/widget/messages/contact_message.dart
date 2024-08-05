@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatContactMessage extends StatelessWidget {
   const IsmChatContactMessage(
@@ -84,7 +84,7 @@ class IsmChatContactMessage extends StatelessWidget {
               const Divider(
                 thickness: 1,
               ),
-              if (!Responsive.isWeb(context))
+              if (!IsmChatResponsive.isWeb(context))
                 Center(
                   child: Text(
                     'View ${message.contacts.length != 1 ? 'All' : ''}',

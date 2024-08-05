@@ -1,6 +1,6 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCommonViewModel {
   IsmChatCommonViewModel(this._repository);
@@ -27,12 +27,53 @@ class IsmChatCommonViewModel {
     required bool isLoading,
     required String userIdentifier,
     required String mediaExtension,
-  }) async =>
-      await _repository.getPresignedUrl(
+    required Uint8List bytes,
+  }) async {
+    final responseGetPresig = await _repository.getPresignedUrl(
+      isLoading: isLoading,
+      userIdentifier: userIdentifier,
+      mediaExtension: mediaExtension,
+    );
+    if (responseGetPresig != null) {
+      final response = await updatePresignedUrl(
+        bytes: bytes,
         isLoading: isLoading,
-        userIdentifier: userIdentifier,
-        mediaExtension: mediaExtension,
+        presignedUrl: responseGetPresig.presignedUrl,
       );
+      if (response == 200) {
+        return responseGetPresig;
+      }
+    }
+    return null;
+  }
+
+  Future<PresignedUrlModel?> postMediaUrl({
+    required String conversationId,
+    required String nameWithExtension,
+    required int mediaType,
+    required String mediaId,
+    required bool isLoading,
+    required Uint8List bytes,
+  }) async {
+    final responseMedia = await _repository.postMediaUrl(
+      conversationId: conversationId,
+      nameWithExtension: nameWithExtension,
+      mediaType: mediaType,
+      mediaId: mediaId,
+      isLoading: isLoading,
+    );
+    if (responseMedia != null) {
+      final response = await updatePresignedUrl(
+        bytes: bytes,
+        isLoading: isLoading,
+        presignedUrl: responseMedia.mediaPresignedUrl,
+      );
+      if (response == 200) {
+        return responseMedia;
+      }
+    }
+    return null;
+  }
 
   Future<bool> sendMessage({
     required bool showInConversation,
@@ -51,7 +92,7 @@ class IsmChatCommonViewModel {
     String? customType,
     List<Map<String, dynamic>>? attachments,
     List<String>? searchableTags,
-    bool isTemporaryChat = false,
+    bool isBroadcast = false,
     bool isUpdateMesage = true,
   }) async {
     try {
@@ -73,7 +114,7 @@ class IsmChatCommonViewModel {
       );
       if (messageId == null || messageId.isEmpty) return false;
       if (!isUpdateMesage) return false;
-      if (isTemporaryChat) {
+      if (isBroadcast) {
         final chatPageController = Get.find<IsmChatPageController>();
         for (var x = 0; x < chatPageController.messages.length; x++) {
           var messages = chatPageController.messages[x];
@@ -97,33 +138,35 @@ class IsmChatCommonViewModel {
 
         for (var x = 0; x < (chatPendingMessages.messages?.length ?? 0); x++) {
           var pendingMessage = chatPendingMessages.messages![x];
-          if (pendingMessage.messageId?.isNullOrEmpty == true &&
-              pendingMessage.sentAt == createdAt) {
-            pendingMessage.messageId = messageId;
-            pendingMessage.deliveredToAll = false;
-            pendingMessage.readByAll = false;
-            pendingMessage.isUploading = false;
-            chatPendingMessages.messages?.removeAt(x);
-            await dbBox.saveConversation(
-                conversation: chatPendingMessages, dbBox: IsmChatDbBox.pending);
-            if (chatPendingMessages.messages?.isEmpty == true) {
-              await dbBox.pendingMessageBox
-                  .delete(chatPendingMessages.conversationId ?? '');
-            }
-            var conversationModel =
-                await dbBox.getConversation(conversationId: conversationId);
-            if (conversationModel != null) {
-              conversationModel.messages?.add(pendingMessage);
-              conversationModel = conversationModel.copyWith(
-                lastMessageDetails:
-                    conversationModel.lastMessageDetails?.copyWith(
-                  reactionType: '',
-                  messageId: pendingMessage.messageId,
-                ),
-              );
-            }
-            await dbBox.saveConversation(conversation: conversationModel!);
+          if (pendingMessage.messageId?.isNotEmpty == true ||
+              pendingMessage.sentAt != createdAt) {
+            continue;
           }
+          pendingMessage.messageId = messageId;
+          pendingMessage.deliveredToAll = false;
+          pendingMessage.readByAll = false;
+          pendingMessage.isUploading = false;
+          chatPendingMessages.messages?.removeAt(x);
+          await dbBox.saveConversation(
+              conversation: chatPendingMessages, dbBox: IsmChatDbBox.pending);
+          if (chatPendingMessages.messages?.isEmpty == true) {
+            await dbBox.pendingMessageBox
+                .delete(chatPendingMessages.conversationId ?? '');
+          }
+          var conversationModel =
+              await dbBox.getConversation(conversationId: conversationId);
+
+          if (conversationModel != null) {
+            conversationModel.messages?.add(pendingMessage);
+            conversationModel = conversationModel.copyWith(
+              lastMessageDetails:
+                  conversationModel.lastMessageDetails?.copyWith(
+                reactionType: '',
+                messageId: pendingMessage.messageId,
+              ),
+            );
+          }
+          await dbBox.saveConversation(conversation: conversationModel!);
         }
         return true;
       }
@@ -136,6 +179,7 @@ class IsmChatCommonViewModel {
 
   List<IsmChatMessageModel> sortMessages(List<IsmChatMessageModel> messages) {
     messages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
+
     return _parseMessagesWithDate(messages);
   }
 
@@ -145,10 +189,11 @@ class IsmChatCommonViewModel {
     var result = <List<IsmChatMessageModel>>[];
     var list1 = <IsmChatMessageModel>[];
     var allMessages = <IsmChatMessageModel>[];
-    var dummy = <int>[];
+    var dummyList = <int>[];
+
     for (var x = 0; x < messages.length; x++) {
-      if (!dummy.contains(messages[x].sentAt)) {
-        dummy.add(messages[x].sentAt);
+      if (!dummyList.contains(messages[x].sentAt)) {
+        dummyList.add(messages[x].sentAt);
         if (x == 0) {
           list1.add(messages[x]);
         } else if (DateTime.fromMillisecondsSinceEpoch(messages[x - 1].sentAt)
@@ -166,30 +211,16 @@ class IsmChatCommonViewModel {
       }
     }
 
-    for (var messages in result) {
+    for (var message in result) {
       allMessages.add(
         IsmChatMessageModel.fromDate(
-          messages.first.sentAt,
+          message.first.sentAt,
         ),
       );
-      allMessages.addAll(messages);
+      allMessages.addAll(message);
     }
-
     return allMessages;
   }
-
-  Future<PresignedUrlModel?> postMediaUrl({
-    required String conversationId,
-    required String nameWithExtension,
-    required int mediaType,
-    required String mediaId,
-  }) async =>
-      await _repository.postMediaUrl(
-        conversationId: conversationId,
-        nameWithExtension: nameWithExtension,
-        mediaType: mediaType,
-        mediaId: mediaId,
-      );
 
   Future<IsmChatResponseModel?> createConversation({
     required bool typingEvents,

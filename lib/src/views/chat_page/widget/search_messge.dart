@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatSearchMessgae extends StatelessWidget {
   const IsmChatSearchMessgae({super.key});
@@ -21,7 +21,7 @@ class IsmChatSearchMessgae extends StatelessWidget {
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
                   IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
-            onBack: !Responsive.isWeb(context)
+            onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {
                     Get.find<IsmChatConversationsController>()

@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
-    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
 
 class IsmChatCameraView extends StatefulWidget {
   const IsmChatCameraView({super.key});
@@ -21,7 +21,7 @@ class IsmChatCameraView extends StatefulWidget {
 class _CameraScreenViewState extends State<IsmChatCameraView> {
   @override
   void dispose() {
-    if (Responsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(Get.context!)) {
       Get.find<IsmChatPageController>().cameraController.dispose();
     }
     super.dispose();
@@ -83,7 +83,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                       padding: IsmChatDimens.edgeInsetsTop20.copyWith(top: 40),
                       child: IconButton(
                         onPressed: () {
-                          if (Responsive.isWeb(context)) {
+                          if (IsmChatResponsive.isWeb(context)) {
                             controller.isCameraView = false;
                           } else {
                             Get.back();
@@ -106,11 +106,11 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                     child: Column(
                       children: [
                         Row(
-                          mainAxisAlignment: Responsive.isWeb(context)
+                          mainAxisAlignment: IsmChatResponsive.isWeb(context)
                               ? MainAxisAlignment.center
                               : MainAxisAlignment.spaceBetween,
                           children: [
-                            if (!Responsive.isWeb(context))
+                            if (!IsmChatResponsive.isWeb(context))
                               IconButton(
                                 icon: Icon(
                                   controller.flashMode.icon,
@@ -135,7 +135,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                     .stopVideoRecording();
                                 setState(() {
                                   controller.isRecording = false;
-                                  controller.forVideoRecordTimer?.cancel();
+                                  controller.forRecordTimer?.cancel();
                                   controller.myDuration = const Duration();
                                   if (controller.flashMode != FlashMode.off) {
                                     controller.toggleFlash(FlashMode.off);
@@ -192,7 +192,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                 width: IsmChatDimens.sixty,
                               ),
                             ),
-                            if (!Responsive.isWeb(context))
+                            if (!IsmChatResponsive.isWeb(context))
                               IconButton(
                                 icon: const Icon(
                                   Icons.flip_camera_ios,

@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Widget used to check on which platform the app is running tablet, web or mobile
-class Responsive extends StatelessWidget {
-  const Responsive({
+class IsmChatResponsive extends StatelessWidget {
+  const IsmChatResponsive({
     super.key,
     required this.mobile,
     required this.tablet,

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatUserView extends StatelessWidget {
   IsmChatUserView({super.key, this.signOutTap});
@@ -42,7 +42,7 @@ class IsmChatUserView extends StatelessWidget {
               style: IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
                   IsmChatStyles.w600White18,
             ),
-            action: !Responsive.isWeb(context)
+            action: !IsmChatResponsive.isWeb(context)
                 ? [
                     TextButton(
                       onPressed: () {
@@ -77,7 +77,7 @@ class IsmChatUserView extends StatelessWidget {
                       right: IsmChatDimens.ten,
                       child: IsmChatTapHandler(
                         onTap: () {
-                          if (Responsive.isWeb(context)) {
+                          if (IsmChatResponsive.isWeb(context)) {
                             controller.ismUploadImage(ImageSource.gallery);
                           } else {
                             Get.bottomSheet<void>(
@@ -256,7 +256,7 @@ class IsmChatUserView extends StatelessWidget {
                           ),
                           trailing: ElevatedButton(
                             onPressed: () {
-                              if (!Responsive.isWeb(context)) {
+                              if (!IsmChatResponsive.isWeb(context)) {
                                 controller.unblockUser(
                                   opponentId: user.userId,
                                   isLoading: true,

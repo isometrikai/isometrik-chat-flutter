@@ -5,8 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatCreateConversationView extends StatelessWidget {
   IsmChatCreateConversationView(
@@ -25,35 +24,6 @@ class IsmChatCreateConversationView extends StatelessWidget {
   final converstaionController = Get.find<IsmChatConversationsController>();
 
   static const String route = IsmPageRoutes.createChat;
-
-  Widget _buildSusWidget(String susTag) => Container(
-        padding: IsmChatDimens.edgeInsets10_0,
-        height: IsmChatDimens.forty,
-        width: double.infinity,
-        alignment: Alignment.centerLeft,
-        child: susTag != '#'
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    susTag,
-                    textScaler: const TextScaler.linear(1.5),
-                    style: IsmChatStyles.w600Black14,
-                  ),
-                  if (!Responsive.isWeb(Get.context!))
-                    SizedBox(
-                        width: IsmChatDimens.percentWidth(.8),
-                        child: Divider(
-                          height: .0,
-                          indent: IsmChatDimens.ten,
-                        ))
-                ],
-              )
-            : Text(
-                '${IsmChatStrings.inviteToChat} ${IsmChatConfig.communicationConfig.projectConfig.appName}',
-                style: IsmChatStyles.w600Black14
-                    .copyWith(color: const Color(0xff9E9CAB))),
-      );
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
@@ -75,7 +45,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                       if (value.trim().isEmpty) {
                         controller.forwardedList =
                             controller.forwardedListDuplicat
-                                .map((e) => SelectedForwardUser(
+                                .map((e) => SelectedMembers(
                                       isUserSelected:
                                           controller.selectedUserList.any((d) =>
                                               d.userId == e.userDetails.userId),
@@ -116,7 +86,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                   if (!controller.showSearchField &&
                       controller.forwardedListDuplicat.isNotEmpty) {
                     controller.forwardedList = controller.forwardedListDuplicat
-                        .map((e) => SelectedForwardUser(
+                        .map((e) => SelectedMembers(
                             isUserSelected: controller.selectedUserList
                                 .any((d) => d.userId == e.userDetails.userId),
                             userDetails: e.userDetails,
@@ -134,7 +104,9 @@ class IsmChatCreateConversationView extends StatelessWidget {
                   controller.showSearchField
                       ? Icons.clear_rounded
                       : Icons.search_rounded,
-                  color: IsmChatColors.whiteColor,
+                  color:
+                      IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??
+                          IsmChatColors.whiteColor,
                 ),
               )
             ],
@@ -235,7 +207,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                   const ChatModes(),
                                 Offstage(
                                   offstage: user.isShowSuspension != true,
-                                  child: _buildSusWidget(susTag),
+                                  child: IsmChatUtility.buildSusWidget(susTag),
                                 ),
                                 ColoredBox(
                                   color: user.isUserSelected
@@ -586,7 +558,7 @@ class _GroupChatImageAndName extends StatelessWidget {
                   right: IsmChatDimens.four,
                   child: IsmChatTapHandler(
                     onTap: () {
-                      if (Responsive.isWeb(context)) {
+                      if (IsmChatResponsive.isWeb(context)) {
                         controller.ismUploadImage(ImageSource.gallery);
                       } else {
                         Get.bottomSheet<void>(
@@ -705,7 +677,7 @@ class ChatModes extends StatelessWidget {
             onTap: () async {
               Get.back();
               await Future.delayed(Durations.extralong1);
-              IsmChatRouteManagement.goToBroadcastView();
+              IsmChatRouteManagement.goToCreteBroadcastView();
             },
             contentPadding: IsmChatDimens.edgeInsets10,
             horizontalTitleGap: IsmChatDimens.ten,

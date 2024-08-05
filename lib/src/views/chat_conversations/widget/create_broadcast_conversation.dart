@@ -1,15 +1,14 @@
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
-class IsmChatBroadCastView extends StatelessWidget {
-  const IsmChatBroadCastView({
+class IsmChatCreateBroadCastView extends StatelessWidget {
+  const IsmChatCreateBroadCastView({
     super.key,
   });
 
-  static const String route = IsmPageRoutes.broadcastView;
+  static const String route = IsmPageRoutes.createBroadcastView;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
@@ -19,7 +18,6 @@ class IsmChatBroadCastView extends StatelessWidget {
           converstaionController.callApiOrNot = true;
           converstaionController.forwardedList.clear();
           converstaionController.selectedUserList.clear();
-
           converstaionController.showSearchField = false;
           converstaionController.isLoadResponse = false;
           converstaionController.getNonBlockUserList(
@@ -48,7 +46,7 @@ class IsmChatBroadCastView extends StatelessWidget {
                       if (value.trim().isEmpty) {
                         controller.forwardedList =
                             controller.forwardedListDuplicat
-                                .map((e) => SelectedForwardUser(
+                                .map((e) => SelectedMembers(
                                       isUserSelected:
                                           controller.selectedUserList.any((d) =>
                                               d.userId == e.userDetails.userId),
@@ -71,12 +69,11 @@ class IsmChatBroadCastView extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   controller.showSearchField = !controller.showSearchField;
-
                   if (!controller.showSearchField &&
                       controller.forwardedListDuplicat.isNotEmpty) {
                     controller.forwardedList = controller.forwardedListDuplicat
                         .map(
-                          (e) => SelectedForwardUser(
+                          (e) => SelectedMembers(
                               isUserSelected: controller.selectedUserList
                                   .any((d) => d.userId == e.userDetails.userId),
                               userDetails: e.userDetails,
@@ -94,7 +91,9 @@ class IsmChatBroadCastView extends StatelessWidget {
                   controller.showSearchField
                       ? Icons.clear_rounded
                       : Icons.search_rounded,
-                  color: IsmChatColors.whiteColor,
+                  color:
+                      IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??
+                          IsmChatColors.whiteColor,
                 ),
               )
             ],
@@ -248,36 +247,10 @@ class IsmChatBroadCastView extends StatelessWidget {
                                           fontSize: IsmChatDimens.thirty)),
                                 ),
                                 indexBarMargin: IsmChatDimens.edgeInsets10,
-                                indexBarData: SuspensionUtil.getTagIndexList(
-                                    controller.forwardedList)
-                                // [
-                                //     'A',
-                                //     'B',
-                                //     'C',
-                                //     'D',
-                                //     'E',
-                                //     'F',
-                                //     'G',
-                                //     'H',
-                                //     'I',
-                                //     'J',
-                                //     'K',
-                                //     'L',
-                                //     'M',
-                                //     'N',
-                                //     'O',
-                                //     'P',
-                                //     'Q',
-                                //     'R',
-                                //     'S',
-                                //     'T',
-                                //     'U',
-                                //     'V',
-                                //     'W',
-                                //     'X',
-                                //     'Y',
-                                //     'Z'
-                                //   ],
+                                indexBarData: const []
+                                // SuspensionUtil.getTagIndexList(
+                                //     controller.forwardedList)
+
                                 ,
                                 indexBarHeight: IsmChatDimens.percentHeight(5),
                                 indexBarWidth: IsmChatDimens.forty,
@@ -363,27 +336,8 @@ class IsmChatBroadCastView extends StatelessWidget {
             onTap: () async {
               if (controller.selectedUserList.isNotEmpty &&
                   controller.selectedUserList.length >= 2) {
-                var conversation = IsmChatConversationModel(
-                  members: controller.selectedUserList,
-                  conversationImageUrl: IsmChatAssets.noImage,
-                  customType: 'Broadcasting',
-                );
-                controller.navigateToMessages(conversation);
-                if (Responsive.isWeb(context)) {
-                  Get.back();
-                  if (!Get.isRegistered<IsmChatPageController>()) {
-                    IsmChatPageBinding().dependencies();
-                  }
-                  controller.isRenderChatPageaScreen =
-                      IsRenderChatPageScreen.boradcastChatMessagePage;
-                  final chatPagecontroller = Get.find<IsmChatPageController>();
-                  chatPagecontroller.startInit(isTemporaryChats: true);
-                  chatPagecontroller.closeOverlay();
-                } else {
-                  IsmChatRouteManagement.goToBroadcastMessagePage(
-                    isTemporaryChat: true,
-                  );
-                }
+                controller.goToBroadcastMessage(
+                    controller.selectedUserList, '');
               } else {
                 await Get.dialog(
                   const IsmChatAlertDialogBox(
@@ -426,7 +380,7 @@ class _GetSuspensionTag extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(
-                  Responsive.isWeb(Get.context!) ? .23 : .7,
+                  IsmChatResponsive.isWeb(Get.context!) ? .23 : .7,
                 ),
                 child: Divider(
                   height: .0,

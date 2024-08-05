@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPageRepository {
   final _apiWrapper = IsmChatApiWrapper();
@@ -35,6 +35,50 @@ class IsmChatPageRepository {
           .toList();
     } catch (e, st) {
       IsmChatLog.error('GetChatMessages $e, $st');
+      return null;
+    }
+  }
+
+  Future<List<IsmChatMessageModel>?> getBroadcastMessages({
+    required String groupcastId,
+    required bool hideNewConversationsForSender,
+    required bool sendPushForNewConversationCreated,
+    required bool notifyOnCompletion,
+    required bool executionFinished,
+    int lastMessageTimestamp = 0,
+    int limit = 20,
+    int skip = 0,
+    int sort = -1,
+    bool isLoading = false,
+    List<String>? ids,
+    String? searchText,
+    String? messageTypes,
+    String? customTypes,
+    String? attachmentTypes,
+    String? showInConversation,
+    String? parentMessageId,
+  }) async {
+    try {
+      String? url;
+      if (searchText != null || searchText?.isNotEmpty == true) {
+        url =
+            '${IsmChatAPI.chatGroupCastMessages}?groupcastId=$groupcastId&searchTag=$searchText&sort=$sort&limit=$limit&skip=$skip';
+      } else {
+        url =
+            '${IsmChatAPI.chatGroupCastMessages}?groupcastId=$groupcastId&sort=$sort&limit=$limit&skip=$skip&lastMessageTimestamp=$lastMessageTimestamp';
+      }
+      var response = await _apiWrapper.get(url,
+          headers: IsmChatUtility.tokenCommonHeader(), showLoader: isLoading);
+      if (response.hasError) {
+        return null;
+      }
+      var data = jsonDecode(response.data);
+
+      return (data['messages'] as List)
+          .map((e) => IsmChatMessageModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmChatLog.error('GetBroadcastChatMessages $e, $st');
       return null;
     }
   }
@@ -569,8 +613,11 @@ class IsmChatPageRepository {
   }
 
   Future<IsmChatResponseModel?> sendBroadcastMessage(
-      {required List<String> userIds,
-      required bool showInConversation,
+      {required bool showInConversation,
+      required bool sendPushForNewConversationCreated,
+      required bool notifyOnCompletion,
+      required bool hideNewConversationsForSender,
+      required String groupcastId,
       required int messageType,
       required bool encrypted,
       required String deviceId,
@@ -578,30 +625,37 @@ class IsmChatPageRepository {
       required String notificationBody,
       required String notificationTitle,
       List<String>? searchableTags,
+      String? parentMessageId,
       IsmChatMetaData? metaData,
       Map<String, dynamic>? events,
       String? customType,
       List<Map<String, dynamic>>? attachments,
+      List<Map<String, dynamic>>? mentionedUsers,
       bool isLoading = false}) async {
     try {
       final payload = {
-        'userIds': userIds,
         'showInConversation': showInConversation,
-        'messageType': messageType,
-        'encrypted': encrypted,
-        'deviceId': deviceId,
-        'body': body,
-        'metaData': metaData?.toMap(),
-        'events': events,
-        'customType': customType,
-        'attachments': attachments,
+        'sendPushForNewConversationCreated': sendPushForNewConversationCreated,
+        'searchableTags': searchableTags,
+        'parentMessageId': parentMessageId,
+        'notifyOnCompletion': notifyOnCompletion,
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
-        'searchableTags': searchableTags,
+        'messageType': messageType,
+        'metaData': metaData?.toMap(),
+        if (!mentionedUsers.isNullOrEmpty) 'mentionedUsers': mentionedUsers,
+        'hideNewConversationsForSender': hideNewConversationsForSender,
+        'groupcastId': groupcastId,
+        'events': events,
+        'encrypted': encrypted,
+        'deviceId': deviceId,
+        'customType': customType,
+        'body': body,
+        'attachments': attachments,
       };
 
       var response = await _apiWrapper.post(
-        IsmChatAPI.sendBroadcastMessage,
+        IsmChatAPI.chatGroupCastMessage,
         payload: payload,
         headers: IsmChatUtility.tokenCommonHeader(),
         showLoader: isLoading,
@@ -611,6 +665,55 @@ class IsmChatPageRepository {
       }
 
       return response;
+    } catch (e, st) {
+      IsmChatLog.error('Send broadcast Message $e', st);
+      return null;
+    }
+  }
+
+  Future<String?> createBroadcastConversation({
+    bool isLoading = false,
+    List<String>? searchableTags,
+    Map<String, dynamic>? metaData,
+    required String groupcastTitle,
+    required String groupcastImageUrl,
+    String? customType,
+    required List<String> membersId,
+  }) async {
+    try {
+      final members = membersId
+          .map(
+            (e) => {
+              'newConversationTypingEvents': true,
+              'newConversationReadEvents': true,
+              'newConversationPushNotificationsEvents': true,
+              'newConversationMetadata': {},
+              'newConversationCustomType': 'Broadcast',
+              'memberId': e,
+            },
+          )
+          .toList();
+      final payload = {
+        'searchableTags': searchableTags,
+        'metaData': metaData,
+        'members': members,
+        'groupcastTitle': groupcastTitle,
+        'groupcastImageUrl': groupcastImageUrl,
+        'customType': customType,
+      };
+      var response = await _apiWrapper.post(
+        IsmChatAPI.chatGroupCast,
+        payload: payload,
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+      if (response.hasError) {
+        return null;
+      }
+
+      final data = jsonDecode(response.data) as Map<String, dynamic>;
+
+      return data['groupcastId'] as String;
     } catch (e, st) {
       IsmChatLog.error('Send broadcast Message $e', st);
       return null;

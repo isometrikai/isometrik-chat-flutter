@@ -1,7 +1,7 @@
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatGroupEligibleUser extends StatelessWidget {
   const IsmChatGroupEligibleUser({super.key});
@@ -24,7 +24,7 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(
-                    Responsive.isWeb(Get.context!) ? .24 : .7),
+                    IsmChatResponsive.isWeb(Get.context!) ? .24 : .7),
                 child: Divider(
                   height: .0,
                   indent: IsmChatDimens.ten,
@@ -41,14 +41,13 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
           chatPageController.canCallCurrentApi = false;
           chatPageController.isMemberSearch = false;
           chatPageController.getEligibleMembers(
-              conversationId:
-                  chatPageController.conversation?.conversationId ?? '',
+              conversationId: chatPageController.conversation!.conversationId!,
               limit: 20);
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: IsmChatAppBar(
-            onBack: !Responsive.isWeb(context)
+            onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () => Get.find<IsmChatConversationsController>()
                         .isRenderChatPageaScreen =
@@ -109,8 +108,7 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
                                     0.7) {
                               controller.getEligibleMembers(
                                 conversationId:
-                                    controller.conversation?.conversationId ??
-                                        '',
+                                    controller.conversation!.conversationId!,
                                 limit: 20,
                               );
                             }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatConversationUpdate extends StatelessWidget {
   const IsmChatConversationUpdate(
@@ -20,7 +20,7 @@ class IsmChatConversationUpdate extends StatelessWidget {
         padding: IsmChatDimens.edgeInsets8_4,
         child: Text(
           '${message.initiator} changed the ${message.customType == IsmChatCustomMessageType.conversationTitleUpdated ? 'title' : 'profile picture'} of the group',
-          // textAlign: TextAlign.center,
+          textAlign: TextAlign.center,
           style: IsmChatConfig
                   .chatTheme.chatPageTheme?.centerMessageThemData?.textStyle ??
               IsmChatStyles.w500Black12.copyWith(

@@ -1,8 +1,7 @@
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatForwardView extends StatelessWidget {
   IsmChatForwardView({
@@ -39,7 +38,7 @@ class IsmChatForwardView extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(
-                  Responsive.isWeb(Get.context!) ? .23 : .7,
+                  IsmChatResponsive.isWeb(Get.context!) ? .23 : .7,
                 ),
                 child: Divider(
                   height: .0,
@@ -75,7 +74,7 @@ class IsmChatForwardView extends StatelessWidget {
                       if (value.trim().isEmpty) {
                         controller.forwardedList =
                             controller.forwardedListDuplicat
-                                .map((e) => SelectedForwardUser(
+                                .map((e) => SelectedMembers(
                                       isUserSelected:
                                           controller.selectedUserList.any((d) =>
                                               d.userId == e.userDetails.userId),
@@ -112,7 +111,7 @@ class IsmChatForwardView extends StatelessWidget {
                       controller.forwardedListDuplicat.isNotEmpty) {
                     controller.forwardedList = controller.forwardedListDuplicat
                         .map(
-                          (e) => SelectedForwardUser(
+                          (e) => SelectedMembers(
                               isUserSelected: controller.selectedUserList
                                   .any((d) => d.userId == e.userDetails.userId),
                               userDetails: e.userDetails,

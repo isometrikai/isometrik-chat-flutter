@@ -1,4 +1,4 @@
-# Isometrik Chat Flutter SDK
+# Isometrik Flutter Chat SDK
 
 ## Android
 

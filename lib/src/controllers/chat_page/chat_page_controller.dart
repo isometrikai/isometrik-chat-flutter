@@ -19,11 +19,10 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
-import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
-    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
-import 'package:isometrik_chat_flutter/src/views/chat_page/widget/profile_change.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
+import 'package:isometrik_flutter_chat/src/views/chat_page/widget/profile_change.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -103,6 +102,12 @@ class IsmChatPageController extends GetxController
   bool get isMessageSent => _isMessageSent.value;
   set isMessageSent(bool value) {
     _isMessageSent.value = value;
+  }
+
+  final RxBool _isRecordPlay = true.obs;
+  bool get isRecordPlay => _isRecordPlay.value;
+  set isRecordPlay(bool value) {
+    _isRecordPlay.value = value;
   }
 
   final RxBool _showEmojiBoard = false.obs;
@@ -242,8 +247,6 @@ class IsmChatPageController extends GetxController
   set isEnableRecordingAudio(bool value) =>
       _isEnableRecordingAudio.value = value;
 
-  final recordAudio = AudioRecorder();
-
   final RxInt _seconds = 0.obs;
   int get seconds => _seconds.value;
   set seconds(int value) => _seconds.value = value;
@@ -316,9 +319,9 @@ class IsmChatPageController extends GetxController
   bool get canCallCurrentApi => _canCallCurrentApi.value;
   set canCallCurrentApi(bool value) => _canCallCurrentApi.value = value;
 
-  final _groupEligibleUser = <SelectedForwardUser>[].obs;
-  List<SelectedForwardUser> get groupEligibleUser => _groupEligibleUser;
-  set groupEligibleUser(List<SelectedForwardUser> value) =>
+  final _groupEligibleUser = <SelectedMembers>[].obs;
+  List<SelectedMembers> get groupEligibleUser => _groupEligibleUser;
+  set groupEligibleUser(List<SelectedMembers> value) =>
       _groupEligibleUser.value = value;
 
   final _userReactionList = <UserDetails>[].obs;
@@ -381,15 +384,17 @@ class IsmChatPageController extends GetxController
   set searchMessages(List<IsmChatMessageModel> value) =>
       _searchMessages.value = value;
 
-  final RxBool _isTemporaryChat = false.obs;
-  bool get isTemporaryChat => _isTemporaryChat.value;
-  set isTemporaryChat(bool value) => _isTemporaryChat.value = value;
+  final RxBool _isBroadcast = false.obs;
+  bool get isBroadcast => _isBroadcast.value;
+  set isBroadcast(bool value) => _isBroadcast.value = value;
 
   final RxInt _mediaDownloadProgress = 0.obs;
   int get mediaDownloadProgress => _mediaDownloadProgress.value;
   set mediaDownloadProgress(int value) {
     _mediaDownloadProgress.value = value;
   }
+
+  late final AudioRecorder recordVoice;
 
   var _cameras = <CameraDescription>[];
 
@@ -401,9 +406,9 @@ class IsmChatPageController extends GetxController
 
   Timer? conversationDetailsApTimer;
 
-  Timer? forVideoRecordTimer;
+  Timer? forRecordTimer;
 
-  List<SelectedForwardUser> groupEligibleUserDuplicate = [];
+  List<SelectedMembers> groupEligibleUserDuplicate = [];
 
   List<MentionModel> userMentionedList = [];
 
@@ -486,8 +491,9 @@ class IsmChatPageController extends GetxController
   }
 
   void startInit({
-    bool isTemporaryChats = false,
+    bool isBroadcasts = false,
   }) async {
+    recordVoice = AudioRecorder();
     isActionAllowed = false;
     _generateReactionList();
     _startAnimated();
@@ -496,83 +502,15 @@ class IsmChatPageController extends GetxController
     if (conversationController.currentConversation != null) {
       _currentUser();
       conversation = conversationController.currentConversation;
-      final newMeessageFromOutside =
-          conversation?.outSideMessage?.messageFromOutSide ?? '';
-
       await Future.delayed(Duration.zero);
-      isTemporaryChat =
-          arguments['isTemporaryChat'] as bool? ?? isTemporaryChats;
-      if (conversation?.conversationId?.isNotEmpty ?? false) {
-        _getBackGroundAsset();
-        if (!isTemporaryChat) {
-          await getMessagesFromDB(conversation?.conversationId ?? '');
-          await Future.wait([
-            getMessagesFromAPI(),
-            getConverstaionDetails(
-              conversationId: conversation?.conversationId ?? '',
-              includeMembers: conversation?.isGroup == true ? true : false,
-            ),
-          ]);
-          await readAllMessages(
-            conversationId: conversation?.conversationId ?? '',
-            timestamp: messages.isNotEmpty
-                ? DateTime.now().millisecondsSinceEpoch
-                : conversation?.lastMessageSentAt ?? 0,
-          );
-          checkUserStatus();
-        } else {
-          await getMessagesFromAPI(isTemporaryChat: isTemporaryChat);
-          isMessagesLoading = false;
-        }
+      isBroadcast = arguments['isBroadcast'] as bool? ?? isBroadcasts;
+      if (conversation?.conversationId?.isNotEmpty == true) {
+        await callFunctionsWithConversationId(
+            conversation?.conversationId ?? '');
       } else {
-        if (Responsive.isWeb(Get.context!)) {
-          messages.clear();
-        }
-        if (conversation?.isGroup ?? false) {
-          conversation = await commonController.createConversation(
-            conversation: conversation!,
-            conversationType: conversation?.conversationType ??
-                IsmChatConversationType.private,
-            userId: [],
-            isGroup: true,
-            searchableTags: [
-              IsmChatConfig.communicationConfig.userConfig.userName ??
-                  conversationController.userDetails?.userName ??
-                  '',
-              conversation?.chatName ?? ''
-            ],
-          );
-          await getMessagesFromAPI(
-            conversationId: conversation?.conversationId ?? '',
-          );
-          await getConverstaionDetails(
-            conversationId: conversation?.conversationId ?? '',
-            includeMembers: conversation?.isGroup == true ? true : false,
-          );
-          checkUserStatus();
-        }
-        isMessagesLoading = false;
+        await callFunctions();
       }
-
-      if (newMeessageFromOutside.isNotEmpty == true) {
-        await Future.delayed(const Duration(milliseconds: 100));
-        chatInputController.text = newMeessageFromOutside;
-        if (chatInputController.text.isNotEmpty) {
-          sendTextMessage(
-            conversationId: conversation?.conversationId ?? '',
-            userId: conversation?.opponentDetails?.userId ?? '',
-            pushNotifications: conversation?.pushNotifications ?? true,
-            sentAt: DateTime.now().millisecondsSinceEpoch,
-          );
-        }
-      } else if (conversation?.outSideMessage?.imageUrl != null) {
-        await sendMessageWithImageUrl(
-          conversationId: conversation?.conversationId ?? '',
-          userId: conversation?.opponentDetails?.userId ?? '',
-          caption: conversation?.outSideMessage?.caption,
-          imageUrl: conversation?.outSideMessage?.imageUrl ?? '',
-        );
-      }
+      await sendWithOutSideMessage();
       unawaited(updateUnreadMessgaeCount());
     }
   }
@@ -591,8 +529,11 @@ class IsmChatPageController extends GetxController
 
   void _dispose() {
     if (areCamerasInitialized) {
-      _frontCameraController.dispose();
-      _backCameraController.dispose();
+      try {
+        _frontCameraController.dispose();
+        _backCameraController.dispose();
+        cameraController.dispose();
+      } catch (_) {}
     }
     conversationDetailsApTimer?.cancel();
     messagesScrollController.dispose();
@@ -660,6 +601,94 @@ class IsmChatPageController extends GetxController
     SuspensionUtil.setShowSuspensionStatus(contactList);
   }
 
+  Future<void> callFunctionsWithConversationId(String conversationId) async {
+    _getBackGroundAsset();
+    if (!isBroadcast) {
+      await getMessagesFromDB(conversationId);
+      await Future.wait([
+        getMessagesFromAPI(),
+        getConverstaionDetails(
+          conversationId: conversationId,
+          includeMembers: conversation?.isGroup == true ? true : false,
+        ),
+      ]);
+      await readAllMessages(
+        conversationId: conversationId,
+        timestamp: messages.isNotEmpty
+            ? DateTime.now().millisecondsSinceEpoch
+            : conversation?.lastMessageSentAt ?? 0,
+      );
+      checkUserStatus();
+    } else {
+      await getBroadcastMessages(isBroadcast: isBroadcast);
+      isMessagesLoading = false;
+    }
+  }
+
+  Future<void> callFunctions() async {
+    if (IsmChatResponsive.isWeb(Get.context!)) {
+      messages.clear();
+    }
+    if (conversation?.isGroup ?? false) {
+      conversation = await commonController.createConversation(
+        conversation: conversation!,
+        conversationType:
+            conversation?.conversationType ?? IsmChatConversationType.private,
+        userId: [],
+        isGroup: true,
+        searchableTags: [
+          IsmChatConfig.communicationConfig.userConfig.userName ??
+              conversationController.userDetails?.userName ??
+              '',
+          conversation?.chatName ?? ''
+        ],
+      );
+      await getMessagesFromAPI(
+        conversationId: conversation?.conversationId ?? '',
+      );
+      await getConverstaionDetails(
+        conversationId: conversation?.conversationId ?? '',
+        includeMembers: conversation?.isGroup == true ? true : false,
+      );
+      checkUserStatus();
+    }
+    isMessagesLoading = false;
+  }
+
+  Future<void> sendWithOutSideMessage() async {
+    if (conversation?.outSideMessage != null) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (conversation?.outSideMessage?.aboutText != null) {
+        sendAboutTextMessage(
+          conversationId: conversation?.conversationId ?? '',
+          userId: conversation?.opponentDetails?.userId ?? '',
+          outSideMessage: conversation?.outSideMessage,
+          pushNotifications: conversation?.pushNotifications ?? true,
+        );
+      } else if (!(conversation?.outSideMessage?.imageUrl.isNullOrEmpty ==
+          true)) {
+        await sendMessageWithImageUrl(
+          conversationId: conversation?.conversationId ?? '',
+          userId: conversation?.opponentDetails?.userId ?? '',
+          caption: conversation?.outSideMessage?.caption,
+          imageUrl: conversation?.outSideMessage?.imageUrl ?? '',
+        );
+      } else if (!(conversation
+              ?.outSideMessage?.messageFromOutSide.isNullOrEmpty ==
+          true)) {
+        chatInputController.text =
+            conversation?.outSideMessage?.messageFromOutSide ?? '';
+        if (chatInputController.text.isNotEmpty) {
+          sendTextMessage(
+            conversationId: conversation?.conversationId ?? '',
+            userId: conversation?.opponentDetails?.userId ?? '',
+            pushNotifications: conversation?.pushNotifications ?? true,
+          );
+        }
+      }
+    }
+  }
+
   void onContactSearch(String query) {
     if (query.trim().isEmpty) {
       contactList = searchContactList;
@@ -712,7 +741,7 @@ class IsmChatPageController extends GetxController
       required String reactionType,
       required int index}) async {
     userReactionList.clear();
-    if (Responsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(Get.context!)) {
       await Get.dialog(
         IsmChatPageDailog(
           child: ImsChatShowUserReaction(
@@ -738,7 +767,7 @@ class IsmChatPageController extends GetxController
   }
 
   void addWallpaper() async {
-    if (Responsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(Get.context!)) {
       await Get.dialog(
         const IsmChatPageDailog(
           child: ImsChatShowWallpaper(),
@@ -791,7 +820,7 @@ class IsmChatPageController extends GetxController
         messageFieldFocusNode.requestFocus();
       }
     } else {
-      IsmChatUtility.hideKeyboard();
+      IsmChatUtility.dismissKeyBoard();
     }
     showEmojiBoard = showEmoji ?? !showEmojiBoard;
   }
@@ -838,10 +867,12 @@ class IsmChatPageController extends GetxController
     Get.back<void>();
     switch (attachmentType) {
       case IsmChatAttachmentType.camera:
-        await initializeCamera();
-        Responsive.isWeb(Get.context!)
-            ? isCameraView = true
-            : IsmChatRouteManagement.goToCameraView();
+        final initialize = await initializeCamera();
+        if (initialize) {
+          IsmChatResponsive.isWeb(Get.context!)
+              ? isCameraView = true
+              : IsmChatRouteManagement.goToCameraView();
+        }
 
         break;
       case IsmChatAttachmentType.gallery:
@@ -946,7 +977,7 @@ class IsmChatPageController extends GetxController
         }
       }
       IsmChatUtility.closeLoader();
-      if (Responsive.isMobile(Get.context!)) {
+      if (IsmChatResponsive.isMobile(Get.context!)) {
         IsmChatRouteManagement.goToWebMediaPreview();
       }
     }
@@ -1027,7 +1058,7 @@ class IsmChatPageController extends GetxController
       case IsmChatFocusMenuType.forward:
         conversationController.forwardedList.clear();
 
-        if (Responsive.isWeb(Get.context!)) {
+        if (IsmChatResponsive.isWeb(Get.context!)) {
           await Get.dialog(
             IsmChatPageDailog(
               child: IsmChatForwardView(
@@ -1280,20 +1311,33 @@ class IsmChatPageController extends GetxController
   }
 
   void startTimer() {
-    forVideoRecordTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    forRecordTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       var seconds = myDuration.inSeconds + 1;
       myDuration = Duration(seconds: seconds);
     });
   }
 
-  Future<void> initializeCamera() async {
+  Future<bool> initializeCamera() async {
     if (areCamerasInitialized && !kIsWeb) {
-      return;
+      return true;
     }
-    _cameras = await availableCameras();
+    try {
+      _cameras = await availableCameras();
+    } on CameraException catch (e) {
+      if (e.code == 'CameraAccessDenied') {
+        await Get.dialog(
+          const IsmChatAlertDialogBox(
+            title: IsmChatStrings.cameraPermissionBlock,
+            cancelLabel: IsmChatStrings.okay,
+          ),
+        );
+      }
+      return false;
+    }
     if (_cameras.isNotEmpty) {
-      await toggleCamera();
+      return toggleCamera();
     }
+    return true;
   }
 
   Future<void> leaveGroup({
@@ -1344,7 +1388,7 @@ class IsmChatPageController extends GetxController
               ].contains(item.customType))
           .toList();
       var selectedMediaIndex = mediaList.indexOf(message);
-      if (Responsive.isWeb(Get.context!)) {
+      if (IsmChatResponsive.isWeb(Get.context!)) {
         {
           await Get.dialog(IsmWebMessageMediaPreview(
             mediaIndex: selectedMediaIndex,
@@ -1416,7 +1460,7 @@ class IsmChatPageController extends GetxController
           .toList();
       var selectedMediaIndex = mediaList.indexOf(message);
 
-      if (Responsive.isWeb(Get.context!)) {
+      if (IsmChatResponsive.isWeb(Get.context!)) {
         {
           await Get.dialog(IsmWebMessageMediaPreview(
             mediaIndex: selectedMediaIndex,
@@ -1479,9 +1523,9 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  Future<void> toggleCamera() async {
+  Future<bool> toggleCamera() async {
     areCamerasInitialized = false;
-    if (Responsive.isMobile(Get.context!) && !kIsWeb) {
+    if (IsmChatResponsive.isMobile(Get.context!) && !kIsWeb) {
       isFrontCameraSelected = !isFrontCameraSelected;
     }
     if (isFrontCameraSelected) {
@@ -1497,26 +1541,46 @@ class IsmChatPageController extends GetxController
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
     }
-    await cameraController
-        .initialize()
-        .then((e) {})
-        .catchError((Object e) async {
-      if (e is CameraException) {
+    try {
+      await cameraController.initialize();
+    } on CameraException catch (e) {
+      if (kIsWeb) {
+        final state = await IsmChatBlob.checkPermission('microphone');
+        if (state == 'denied') {
+          unawaited(Get.dialog(
+            const IsmChatAlertDialogBox(
+              title: IsmChatStrings.micePermissionBlock,
+              cancelLabel: IsmChatStrings.okay,
+            ),
+          ));
+          return false;
+        }
+      } else {
         IsmChatLog.error(
-            'camera permission error ${e.code} == ${e.description}');
+            'Camera permission error ${e.code} == ${e.description}');
         await AppSettings.openAppSettings();
         await checkCameraPermission();
       }
-    });
+    }
     await checkCameraPermission();
+    return true;
   }
 
   Future<void> checkCameraPermission() async {
-    if (await Permission.camera.isGranted &&
-        await Permission.microphone.isGranted) {
-      areCamerasInitialized = true;
+    if (kIsWeb) {
+      final state = await IsmChatBlob.checkPermission('camera');
+      if (state == 'granted') {
+        areCamerasInitialized = true;
+      } else {
+        areCamerasInitialized = false;
+      }
     } else {
-      areCamerasInitialized = false;
+      if (await Permission.camera.isGranted &&
+          await Permission.microphone.isGranted) {
+        areCamerasInitialized = true;
+      } else {
+        areCamerasInitialized = false;
+      }
     }
   }
 
@@ -1546,6 +1610,10 @@ class IsmChatPageController extends GetxController
             messages.last.customType != IsmChatCustomMessageType.removeMember) {
           chatConversation = chatConversation.copyWith(
             lastMessageDetails: chatConversation.lastMessageDetails?.copyWith(
+              audioOnly: messages.last.audioOnly,
+              meetingId: messages.last.meetingId,
+              meetingType: messages.last.meetingType,
+              callDurations: messages.last.callDurations,
               sentByMe: messages.last.sentByMe,
               showInConversation: true,
               senderId: messages.last.senderInfo?.userId ?? '',
@@ -1570,6 +1638,7 @@ class IsmChatPageController extends GetxController
               messageId: messages.last.messageId ?? '',
               conversationId: messages.last.conversationId ?? '',
               body: messages.last.body,
+              action: messages.last.action,
               customType: messages.last.customType,
               readCount: messages.last.messageId?.isNotEmpty == true
                   ? chatConversation.isGroup ?? false
@@ -1684,7 +1753,7 @@ class IsmChatPageController extends GetxController
           thumbnailBytes: Uint8List(0),
         ),
       );
-      if (Responsive.isMobile(Get.context!)) {
+      if (IsmChatResponsive.isMobile(Get.context!)) {
         IsmChatRouteManagement.goToWebMediaPreview();
       }
     } else {
@@ -1747,7 +1816,7 @@ class IsmChatPageController extends GetxController
         getMessageDeliverTime(message),
       ],
     ));
-    if (Responsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(Get.context!)) {
       conversationController.message = message;
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.messgaeInfoView;
@@ -1969,7 +2038,7 @@ class IsmChatPageController extends GetxController
     }
     conversationController.contactDetails = user;
     conversationController.userConversationId = conversationId;
-    if (Responsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(Get.context!)) {
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.userInfoView;
     } else {
@@ -2054,13 +2123,19 @@ class IsmChatPageController extends GetxController
       return IsmChatStrings.location;
     } else if (replayMessage?.customType == IsmChatCustomMessageType.contact) {
       return IsmChatStrings.contact;
+    } else if (replayMessage?.customType ==
+        IsmChatCustomMessageType.oneToOneCall) {
+      return (replayMessage?.callDurations?.length != 1 ||
+              replayMessage?.action == IsmChatActionEvents.meetingCreated.name)
+          ? '${replayMessage?.meetingType == 0 ? 'Voice' : 'Video'} call'
+          : 'Missed ${replayMessage?.meetingType == 0 ? 'voice' : 'video'} call';
     } else {
       return replayMessage?.body ?? '';
     }
   }
 
   Future<bool> isEncoderSupported(AudioEncoder encoder) async {
-    final isSupported = await recordAudio.isEncoderSupported(
+    final isSupported = await recordVoice.isEncoderSupported(
       encoder,
     );
 
@@ -2068,11 +2143,32 @@ class IsmChatPageController extends GetxController
       IsmChatLog.success('${encoder.name} is not supported on this platform.');
       IsmChatLog.success('Supported encoders are:');
       for (final e in AudioEncoder.values) {
-        if (await recordAudio.isEncoderSupported(e)) {
+        if (await recordVoice.isEncoderSupported(e)) {
           debugPrint('- ${encoder.name}');
         }
       }
     }
     return isSupported;
+  }
+
+  void recordDelete() {
+    isEnableRecordingAudio = false;
+    showSendButton = false;
+    forRecordTimer?.cancel();
+    seconds = 0;
+  }
+
+  Future<void> recordPlayPauseVoice() async {
+    if (await recordVoice.isPaused()) {
+      await recordVoice.resume();
+      isRecordPlay = true;
+      forRecordTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        seconds++;
+      });
+    } else {
+      await recordVoice.pause();
+      isRecordPlay = false;
+      forRecordTimer?.cancel();
+    }
   }
 }

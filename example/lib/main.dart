@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'data/data.dart';
@@ -22,7 +22,6 @@ DBWrapper? dbWrapper;
 
 void main() async {
   await initialize();
-
   runApp(const MyApp());
 }
 
@@ -34,10 +33,10 @@ Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgorundHandler);
   }
   dbWrapper = await DBWrapper.create();
+  Get.put(DeviceConfig()).init();
   await AppConfig.getUserData();
   await Future.wait(
     [
-      IsometrikChat.initialize(),
       LocalNoticeService().setup(),
     ],
   );
@@ -72,9 +71,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       useInheritedMediaQuery: true,
-      designSize: Responsive.isWeb(context)
+      designSize: IsmChatResponsive.isWeb(context)
           ? const Size(1450, 745)
-          : Responsive.isTablet(context)
+          : IsmChatResponsive.isTablet(context)
               ? const Size(1100, 745)
               : const Size(375, 745),
       minTextAdapt: true,
@@ -93,8 +92,7 @@ class _MyAppState extends State<MyApp> {
           Locale('en', 'US'),
         ],
         theme: ThemeData.light(useMaterial3: true).copyWith(
-          primaryColor: AppColors.primaryColorLight,
-        ),
+            primaryColor: AppColors.primaryColorLight, extensions: []),
         // darkTheme: ThemeData.dark(useMaterial3: true)
         //     .copyWith(primaryColor: AppColors.primaryColorDark),
         // darkTheme: ThemeData.dark(useMaterial3: true)

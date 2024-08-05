@@ -6,8 +6,6 @@ class IsmChatUserConfig {
     this.userEmail,
     this.userProfile,
     this.accessToken,
-
-    // this.imageBaseUrl,
   });
   final String userToken;
   final String userId;
@@ -15,6 +13,4 @@ class IsmChatUserConfig {
   final String? userEmail;
   final String? userProfile;
   final String? accessToken;
-
-  // final String? imageBaseUrl;
 }

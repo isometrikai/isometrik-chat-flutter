@@ -5,15 +5,15 @@
 import 'dart:html' as html show window;
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter_platform_interface.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat_platform_interface.dart';
 
 /// A web implementation of the ChatComponentPlatform of the ChatComponent plugin.
-class ChatComponentWeb extends ChatComponentPlatform {
+class IsometrikFlutterChatWeb extends IsometrikFlutterChatPlatform {
   /// Constructs a ChatComponentWeb
-  ChatComponentWeb();
+  IsometrikFlutterChatWeb();
 
   static void registerWith(Registrar registrar) {
-    ChatComponentPlatform.instance = ChatComponentWeb();
+    IsometrikFlutterChatPlatform.instance = IsometrikFlutterChatWeb();
   }
 
   /// Returns a [String] containing the version of the platform.

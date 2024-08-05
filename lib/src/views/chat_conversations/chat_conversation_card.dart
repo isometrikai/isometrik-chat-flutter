@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatConversationCard extends StatefulWidget {
   const IsmChatConversationCard(
@@ -47,7 +47,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
     return IsmChatTapHandler(
       onTap: widget.onTap,
       child: Container(
-        color: kIsWeb && Responsive.isWeb(context)
+        color: kIsWeb && IsmChatResponsive.isWeb(context)
             ? Get.find<IsmChatConversationsController>()
                         .currentConversationId ==
                     widget.conversation.conversationId
@@ -185,11 +185,13 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                           if (widget.conversation.lastMessageDetails
                                   ?.reactionType?.isEmpty ==
                               true) ...[
-                            if (!(widget.conversation.isGroup ?? false))
+                            if (!(widget.conversation.isGroup ?? false)) ...[
                               widget.conversation.readCheck,
+                            ],
                             widget.conversation.sender,
-                            if (widget.conversation.isGroup ?? false)
+                            if (widget.conversation.isGroup ?? false) ...[
                               widget.conversation.readCheck,
+                            ],
                             widget.conversation.lastMessageDetails!.icon,
                             IsmChatDimens.boxWidth4,
                           ],

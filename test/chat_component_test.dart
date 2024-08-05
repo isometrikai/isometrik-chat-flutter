@@ -1,28 +1,28 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter_method_channel.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter_platform_interface.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat_method_channel.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockChatComponentPlatform
     with MockPlatformInterfaceMixin
-    implements ChatComponentPlatform {
+    implements IsometrikFlutterChatPlatform {
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 }
 
 void main() {
-  final initialPlatform = ChatComponentPlatform.instance;
+  final initialPlatform = IsometrikFlutterChatPlatform.instance;
 
-  test('$MethodChannelChatComponent is the default instance', () {
-    expect(initialPlatform, isInstanceOf<MethodChannelChatComponent>());
+  test('$MethodChannelIsometrikFlutterChat is the default instance', () {
+    expect(initialPlatform, isInstanceOf<MethodChannelIsometrikFlutterChat>());
   });
 
   test('getPlatformVersion', () async {
-    var isometrikChatPlugin = IsometrikChat();
+    var IsometrikFlutterChatPlugin = IsmChat();
     var fakePlatform = MockChatComponentPlatform();
-    ChatComponentPlatform.instance = fakePlatform;
+    IsometrikFlutterChatPlatform.instance = fakePlatform;
 
-    expect(await isometrikChatPlugin.getPlatformVersion(), '42');
+    expect(await IsometrikFlutterChatPlugin.getPlatformVersion(), '42');
   });
 }

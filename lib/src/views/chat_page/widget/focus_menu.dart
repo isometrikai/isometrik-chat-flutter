@@ -2,8 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatFocusMenu extends StatelessWidget {
   IsmChatFocusMenu(
@@ -24,7 +23,7 @@ class IsmChatFocusMenu extends StatelessWidget {
   final controller = Get.find<IsmChatPageController>();
 
   @override
-  Widget build(BuildContext context) => Responsive.isWeb(context)
+  Widget build(BuildContext context) => IsmChatResponsive.isWeb(context)
       ? IsmChatTapHandler(
           onTap: controller.closeOverlay,
           child: Padding(
@@ -36,7 +35,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                if (canReact && !controller.isTemporaryChat)
+                if (canReact && !controller.isBroadcast)
                   _FocusAnimationBuilder(
                     animation: animation,
                     child: ReactionGrid(message),
@@ -110,7 +109,7 @@ class IsmChatFocusMenu extends StatelessWidget {
         )
       : IsmChatTapHandler(
           onTap: () {
-            if (Responsive.isWeb(context)) {
+            if (IsmChatResponsive.isWeb(context)) {
               var controller = Get.find<IsmChatPageController>();
               controller.closeOverlay();
             } else {
@@ -146,7 +145,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                             ? CrossAxisAlignment.end
                             : CrossAxisAlignment.start,
                         children: [
-                          if (canReact && !controller.isTemporaryChat)
+                          if (canReact && !controller.isBroadcast)
                             _FocusAnimationBuilder(
                               animation: animation,
                               child: ReactionGrid(message),

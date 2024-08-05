@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatOpenConversationView extends StatefulWidget {
   const IsmChatOpenConversationView({super.key});
@@ -20,7 +19,7 @@ class _IsmChatOpenConversationViewState
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    IsmChatUtility.doLater(() {
       converstaionController
           .intiPublicAndOpenConversation(IsmChatConversationType.open);
       scrollController.addListener(() {
@@ -114,7 +113,7 @@ class _IsmChatOpenConversationViewState
                                     .onChatTap!(Get.context!, data);
                                 controller.navigateToMessages(data);
 
-                                if (Responsive.isWeb(Get.context!)) {
+                                if (IsmChatResponsive.isWeb(Get.context!)) {
                                   Get.back();
 
                                   if (!Get.isRegistered<
@@ -128,7 +127,7 @@ class _IsmChatOpenConversationViewState
                                       Get.find<IsmChatPageController>();
                                   chatPagecontroller.messages.clear();
                                   chatPagecontroller.startInit(
-                                    isTemporaryChats: true,
+                                    isBroadcasts: true,
                                   );
 
                                   chatPagecontroller.closeOverlay();
@@ -156,7 +155,7 @@ class _IsmChatOpenConversationViewState
                                 } else {
                                   IsmChatRouteManagement
                                       .goToOpenChatMessagePage(
-                                    isTemporaryChat: true,
+                                    isBroadcast: true,
                                   );
                                 }
                               }

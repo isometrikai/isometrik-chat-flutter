@@ -1,7 +1,7 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// IsmMedia class is for showing the conversation media
 class IsmDocsView extends StatefulWidget {
@@ -22,11 +22,14 @@ class _IsmDocsViewState extends State<IsmDocsView>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      var storeSortDocs = chatPageController.sortMessages(widget.mediaListDocs);
-      storeWidgetDocsList =
-          chatPageController.sortMediaList(storeSortDocs).reversed.toList();
-    });
+    IsmChatUtility.doLater(
+      () {
+        var storeSortDocs =
+            chatPageController.sortMessages(widget.mediaListDocs);
+        storeWidgetDocsList =
+            chatPageController.sortMediaList(storeSortDocs).reversed.toList();
+      },
+    );
   }
 
   @override

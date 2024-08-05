@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCommonController extends GetxController {
   IsmChatCommonController(this.viewModel);
@@ -24,11 +24,30 @@ class IsmChatCommonController extends GetxController {
     required bool isLoading,
     required String userIdentifier,
     required String mediaExtension,
+    required Uint8List bytes,
   }) async =>
       await viewModel.getPresignedUrl(
         isLoading: isLoading,
         userIdentifier: userIdentifier,
         mediaExtension: mediaExtension,
+        bytes: bytes,
+      );
+
+  Future<PresignedUrlModel?> postMediaUrl({
+    required String conversationId,
+    required String nameWithExtension,
+    required int mediaType,
+    required String mediaId,
+    required Uint8List bytes,
+    required bool isLoading,
+  }) async =>
+      await viewModel.postMediaUrl(
+        conversationId: conversationId,
+        nameWithExtension: nameWithExtension,
+        mediaType: mediaType,
+        mediaId: mediaId,
+        isLoading: isLoading,
+        bytes: bytes,
       );
 
   List<IsmChatMessageModel> sortMessages(List<IsmChatMessageModel> messages) =>
@@ -51,7 +70,7 @@ class IsmChatCommonController extends GetxController {
     String? customType,
     List<Map<String, dynamic>>? attachments,
     List<String>? searchableTags,
-    bool isTemporaryChat = false,
+    bool isBroadcast = false,
     bool isUpdateMesage = true,
   }) async =>
       await viewModel.sendMessage(
@@ -67,25 +86,12 @@ class IsmChatCommonController extends GetxController {
           attachments: attachments,
           customType: customType,
           events: events,
-          isTemporaryChat: isTemporaryChat,
+          isBroadcast: isBroadcast,
           mentionedUsers: mentionedUsers,
           metaData: metaData,
           parentMessageId: parentMessageId,
           searchableTags: searchableTags,
           isUpdateMesage: isUpdateMesage);
-
-  Future<PresignedUrlModel?> postMediaUrl({
-    required String conversationId,
-    required String nameWithExtension,
-    required int mediaType,
-    required String mediaId,
-  }) async =>
-      await viewModel.postMediaUrl(
-        conversationId: conversationId,
-        nameWithExtension: nameWithExtension,
-        mediaType: mediaType,
-        mediaId: mediaId,
-      );
 
   Future<IsmChatConversationModel?> createConversation({
     required List<String> userId,
@@ -129,7 +135,16 @@ class IsmChatCommonController extends GetxController {
           messagingDisabled: conversation.messagingDisabled,
           membersCount: conversation.membersCount,
           unreadMessagesCount: conversation.unreadMessagesCount,
-          messages: [],
+          messages: [
+            IsmChatMessageModel(
+              body: '',
+              customType: IsmChatCustomMessageType.conversationCreated,
+              sentAt: DateTime.now().millisecondsSinceEpoch,
+              sentByMe: false,
+              conversationId: conversationId,
+              action: 'conversationCreated',
+            )
+          ],
           opponentDetails: conversation.opponentDetails,
           lastMessageDetails:
               conversation.lastMessageDetails?.copyWith(deliverCount: 0),

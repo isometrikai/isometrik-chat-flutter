@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatMqttActionModel {
   factory IsmChatMqttActionModel.fromJson(String source) =>
@@ -49,7 +49,9 @@ class IsmChatMqttActionModel {
             : null,
         sentAt: map['sentAt'] as int? ?? 0,
         lastMessageSentAt: map['lastMessageSentAt'] as int? ?? 0,
-        initiatorId: map['initiatorId'] as String? ?? '',
+        initiatorId: map['createdBy'] != null
+            ? map['createdBy'] as String? ?? ''
+            : map['initiatorId'] as String? ?? '',
         initiatorName: map['initiatorName'] as String? ?? '',
         memberId: map['memberId'] as String? ?? '',
         memberName: map['memberName'] as String? ?? '',
@@ -108,6 +110,7 @@ class IsmChatMqttActionModel {
   final String? body;
   final List<AttachmentModel>? attachments;
   final IsmChatMetaData? metaData;
+
   IsmChatMqttActionModel({
     this.conversationId,
     this.userDetails,

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:just_audio/just_audio.dart' as jsaudio;
 
 class VoiceMessage extends StatefulWidget {
@@ -125,10 +125,10 @@ class VoiceMessageState extends State<VoiceMessage>
                       ? widget.meFgColor
                       : widget.contactPlayIconBgColor,
                 ),
-                width: Responsive.isMobile(context)
+                width: IsmChatResponsive.isMobile(context)
                     ? IsmChatDimens.forty
                     : IsmChatDimens.fifty,
-                height: Responsive.isMobile(context)
+                height: IsmChatResponsive.isMobile(context)
                     ? IsmChatDimens.forty
                     : IsmChatDimens.fifty,
                 child: Obx(

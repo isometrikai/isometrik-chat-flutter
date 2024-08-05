@@ -11,8 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -39,8 +38,8 @@ class IsmChatConversationsController extends GetxController {
   IsmChatCommonController get _commonController =>
       Get.find<IsmChatCommonController>();
 
-  /// This variable use for get all method and varibles from IsmChatDeviceConfig
-  final _deviceConfig = Get.find<IsmChatDeviceConfig>();
+  // /// This variable use for get all method and varibles from IsmChatDeviceConfig
+  // final _deviceConfig = Get.find<IsmChatDeviceConfig>();
 
   /// This variable use for store conversation details
   final _conversations = <IsmChatConversationModel>[].obs;
@@ -121,9 +120,9 @@ class IsmChatConversationsController extends GetxController {
   /// This variabel user for store user list data
   ///
   /// This list use for show new user and forward user
-  final _forwardedList = <SelectedForwardUser>[].obs;
-  List<SelectedForwardUser> get forwardedList => _forwardedList;
-  set forwardedList(List<SelectedForwardUser> value) {
+  final _forwardedList = <SelectedMembers>[].obs;
+  List<SelectedMembers> get forwardedList => _forwardedList;
+  set forwardedList(List<SelectedMembers> value) {
     _forwardedList.value = value;
   }
 
@@ -139,9 +138,9 @@ class IsmChatConversationsController extends GetxController {
   /// This variabel use for store user list data with duplicate
   ///
   /// This list use for only searching time any user
-  final _forwardedListDuplicat = <SelectedForwardUser>[].obs;
-  List<SelectedForwardUser> get forwardedListDuplicat => _forwardedListDuplicat;
-  set forwardedListDuplicat(List<SelectedForwardUser> value) {
+  final _forwardedListDuplicat = <SelectedMembers>[].obs;
+  List<SelectedMembers> get forwardedListDuplicat => _forwardedListDuplicat;
+  set forwardedListDuplicat(List<SelectedMembers> value) {
     _forwardedListDuplicat.value = value;
   }
 
@@ -325,9 +324,9 @@ class IsmChatConversationsController extends GetxController {
   bool get isUserEmailType => _isUserEmailType.value;
   set isUserEmailType(bool value) => _isUserEmailType.value = value;
 
-  final _forwardedListSkip = <SelectedForwardUser>[].obs;
-  List<SelectedForwardUser> get forwardedListSkip => _forwardedListSkip;
-  set forwardedListSkip(List<SelectedForwardUser> value) {
+  final _forwardedListSkip = <SelectedMembers>[].obs;
+  List<SelectedMembers> get forwardedListSkip => _forwardedListSkip;
+  set forwardedListSkip(List<SelectedMembers> value) {
     _forwardedList.value = value;
   }
 
@@ -435,6 +434,9 @@ class IsmChatConversationsController extends GetxController {
         return const SizedBox.shrink();
       case IsRenderConversationScreen.blockView:
         return const IsmChatBlockedUsersView();
+      case IsRenderConversationScreen.broadCastListView:
+        IsmChatBroadcastBinding().dependencies();
+        return const IsmChatBroadCastView();
       case IsRenderConversationScreen.groupUserView:
         return IsmChatCreateConversationView(
           isGroupConversation: true,
@@ -444,11 +446,13 @@ class IsmChatConversationsController extends GetxController {
       case IsRenderConversationScreen.userView:
         return IsmChatUserView();
       case IsRenderConversationScreen.broadcastView:
-        return const IsmChatBroadCastView();
+        return const IsmChatCreateBroadCastView();
       case IsRenderConversationScreen.openConverationView:
         return const IsmChatOpenConversationView();
       case IsRenderConversationScreen.publicConverationView:
         return const IsmChatPublicConversationView();
+      // case IsRenderConversationScreen.editbroadCast:
+      //   return IsmChatEditBroadcastView();
     }
   }
 
@@ -500,7 +504,7 @@ class IsmChatConversationsController extends GetxController {
 
   Future<AssetsModel?> getAssetFilesList() async {
     var jsonString = await rootBundle.loadString(
-        'packages/isometrik_chat_flutter/assets/assets_backgroundAssets.json');
+        'packages/isometrik_flutter_chat/assets/assets_backgroundAssets.json');
     var filesList = jsonDecode(jsonString);
     if (filesList != null) {
       return AssetsModel.fromMap(filesList);
@@ -620,10 +624,10 @@ class IsmChatConversationsController extends GetxController {
     bool isLoading = false,
   ]) async {
     var response = await _commonController.getPresignedUrl(
-      isLoading: true,
-      userIdentifier: userDetails?.userIdentifier ?? '',
-      mediaExtension: mediaExtension,
-    );
+        isLoading: true,
+        userIdentifier: userDetails?.userIdentifier ?? '',
+        mediaExtension: mediaExtension,
+        bytes: bytes);
 
     if (response == null) {
       return '';
@@ -642,7 +646,7 @@ class IsmChatConversationsController extends GetxController {
   /// This will be used to fetch all the users associated with the current user
   ///
   /// Will be used for Create chat and/or Forward message
-  Future<List<SelectedForwardUser>?> getNonBlockUserList({
+  Future<List<SelectedMembers>?> getNonBlockUserList({
     int sort = 1,
     int skip = 0,
     int limit = 20,
@@ -681,7 +685,7 @@ class IsmChatConversationsController extends GetxController {
     }
     if (searchTag.isEmpty) {
       forwardedList.addAll(List.from(users)
-          .map((e) => SelectedForwardUser(
+          .map((e) => SelectedMembers(
                 isUserSelected: selectedUserList.isEmpty
                     ? false
                     : selectedUserList
@@ -690,11 +694,11 @@ class IsmChatConversationsController extends GetxController {
                 isBlocked: false,
               ))
           .toList());
-      forwardedListDuplicat = List<SelectedForwardUser>.from(forwardedList);
+      forwardedListDuplicat = List<SelectedMembers>.from(forwardedList);
     } else {
       forwardedList = List.from(users)
           .map(
-            (e) => SelectedForwardUser(
+            (e) => SelectedMembers(
               isUserSelected: selectedUserList.isEmpty
                   ? false
                   : selectedUserList
@@ -709,15 +713,17 @@ class IsmChatConversationsController extends GetxController {
     if (response != null) {
       handleList(forwardedList);
     }
-    callApiOrNot = true;
+
     if (response == null && searchTag.isEmpty && isGroupConversation == false) {
       unawaited(getContacts(isLoading: isLoading, searchTag: searchTag));
+      callApiOrNot = true;
       return forwardedList;
     }
+    callApiOrNot = true;
     return forwardedList;
   }
 
-  void handleList(List<SelectedForwardUser> list) {
+  void handleList(List<SelectedMembers> list) {
     if (list.isEmpty) return;
     for (var i = 0, length = list.length; i < length; i++) {
       var tag = list[i].userDetails.userName[0].toUpperCase();
@@ -997,7 +1003,7 @@ class IsmChatConversationsController extends GetxController {
       showInConversation: true,
       messageType: IsmChatMessageType.forward.value,
       encrypted: true,
-      deviceId: _deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       body: body,
       notificationBody: body,
       notificationTitle:
@@ -1080,7 +1086,7 @@ class IsmChatConversationsController extends GetxController {
   }
 
   Future<void> goToChatPage() async {
-    if (Responsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(Get.context!)) {
       if (!Get.isRegistered<IsmChatPageController>()) {
         IsmChatPageBinding().dependencies();
         return;
@@ -1141,17 +1147,19 @@ class IsmChatConversationsController extends GetxController {
         IsmChatCustomMessageType.file
       ].contains(x.customType)) {
         var attachment = x.attachments?.first;
+        var bytes = File(attachment?.mediaUrl ?? '').readAsBytesSync();
         PresignedUrlModel? presignedUrlModel;
         presignedUrlModel = await _commonController.postMediaUrl(
           conversationId: x.conversationId ?? '',
           nameWithExtension: attachment?.name ?? '',
           mediaType: attachment?.attachmentType?.value ?? 0,
           mediaId: attachment?.mediaId ?? '',
+          isLoading: false,
+          bytes: bytes,
         );
 
         var mediaUrlPath = '';
         if (presignedUrlModel != null) {
-          var bytes = File(attachment?.mediaUrl ?? '').readAsBytesSync();
           var response = await _commonController.updatePresignedUrl(
             presignedUrl: presignedUrlModel.mediaPresignedUrl,
             bytes: bytes,
@@ -1165,14 +1173,16 @@ class IsmChatConversationsController extends GetxController {
         if (IsmChatCustomMessageType.video == x.customType) {
           PresignedUrlModel? presignedUrlModel;
           var nameWithExtension = attachment?.thumbnailUrl?.split('/').last;
+          var bytes = File(attachment?.thumbnailUrl ?? '').readAsBytesSync();
           presignedUrlModel = await _commonController.postMediaUrl(
             conversationId: x.conversationId ?? '',
             nameWithExtension: nameWithExtension ?? '',
             mediaType: 0,
             mediaId: DateTime.now().millisecondsSinceEpoch.toString(),
+            isLoading: false,
+            bytes: bytes,
           );
           if (presignedUrlModel != null) {
-            var bytes = File(attachment?.thumbnailUrl ?? '').readAsBytesSync();
             var response = await _commonController.updatePresignedUrl(
               presignedUrl: presignedUrlModel.thumbnailPresignedUrl,
               bytes: bytes,
@@ -1216,13 +1226,13 @@ class IsmChatConversationsController extends GetxController {
         notificationTitle: notificationTitle,
         body: x.body,
         createdAt: x.sentAt,
-        isTemporaryChat: Get.isRegistered<IsmChatPageController>()
-            ? Get.find<IsmChatPageController>().isTemporaryChat
+        isBroadcast: Get.isRegistered<IsmChatPageController>()
+            ? Get.find<IsmChatPageController>().isBroadcast
             : false,
       );
       if (isMessageSent && Get.isRegistered<IsmChatPageController>()) {
         final controller = Get.find<IsmChatPageController>();
-        if (!controller.isTemporaryChat) {
+        if (!controller.isBroadcast) {
           controller.didReactedLast = false;
           await controller.getMessagesFromDB(conversationId);
         }
@@ -1389,7 +1399,7 @@ class IsmChatConversationsController extends GetxController {
 
   /// to get the contacts..
   Future<void> getContacts({
-    bool isLoading = true,
+    bool isLoading = false,
     bool isRegisteredUser = false,
     int skip = 400,
     int limit = 20,
@@ -1409,11 +1419,11 @@ class IsmChatConversationsController extends GetxController {
       if (res != null && (res.data ?? []).isNotEmpty) {
         getContactSyncUser.addAll(res.data ?? []);
         await removeDBUser();
-        var forwardedListLocalList = <SelectedForwardUser>[];
+        var forwardedListLocalList = <SelectedMembers>[];
         for (var e in getContactSyncUser) {
           if (hashMapSendContactSync[e.contactNo ?? ''] != null) {
             forwardedListLocalList.add(
-              SelectedForwardUser(
+              SelectedMembers(
                 localContacts: true,
                 isUserSelected: false,
                 userDetails: UserDetails(
@@ -1449,7 +1459,7 @@ class IsmChatConversationsController extends GetxController {
     forwardedList.addAll(
       List.from(
         filterContacts.map(
-          (e) => SelectedForwardUser(
+          (e) => SelectedMembers(
             localContacts: true,
             isUserSelected: false,
             userDetails: UserDetails(
@@ -1527,15 +1537,14 @@ class IsmChatConversationsController extends GetxController {
       body: IsmChatStrings.image,
       conversationId: conversationId,
       senderInfo: UserDetails(
-        userProfileImageUrl:
-            IsmChatConfig.communicationConfig.userConfig.userProfile ?? '',
-        userName: IsmChatConfig.communicationConfig.userConfig.userName ?? '',
-        userIdentifier:
-            IsmChatConfig.communicationConfig.userConfig.userEmail ?? '',
-        userId: IsmChatConfig.communicationConfig.userConfig.userId,
-        online: false,
-        lastSeen: 0,
-      ),
+          userProfileImageUrl:
+              IsmChatConfig.communicationConfig.userConfig.userProfile ?? '',
+          userName: IsmChatConfig.communicationConfig.userConfig.userName ?? '',
+          userIdentifier:
+              IsmChatConfig.communicationConfig.userConfig.userEmail ?? '',
+          userId: IsmChatConfig.communicationConfig.userConfig.userId,
+          online: false,
+          lastSeen: 0),
       customType: IsmChatCustomMessageType.image,
       attachments: [
         AttachmentModel(
@@ -1551,7 +1560,7 @@ class IsmChatConversationsController extends GetxController {
       ],
       deliveredToAll: false,
       messageId: '',
-      deviceId: _deviceConfig.deviceId ?? '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       messageType: IsmChatMessageType.normal,
       messagingDisabled: false,
       parentMessageId: '',
@@ -1560,7 +1569,7 @@ class IsmChatConversationsController extends GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
-        captionMessage: caption,
+        caption: caption,
       ),
     );
 
@@ -1587,5 +1596,30 @@ class IsmChatConversationsController extends GetxController {
       parentMessageId: imageMessage.parentMessageId,
       isUpdateMesage: false,
     );
+  }
+
+  void goToBroadcastMessage(List<UserDetails> members, String conversationId) {
+    var conversation = IsmChatConversationModel(
+      members: members,
+      conversationImageUrl: IsmChatAssets.noImage,
+      customType: IsmChatStrings.broadcast,
+      conversationId: conversationId,
+    );
+
+    navigateToMessages(conversation);
+    if (IsmChatResponsive.isWeb(Get.context!)) {
+      Get.back();
+      if (!Get.isRegistered<IsmChatPageController>()) {
+        IsmChatPageBinding().dependencies();
+      }
+      isRenderChatPageaScreen = IsRenderChatPageScreen.boradcastChatMessagePage;
+      final chatPagecontroller = Get.find<IsmChatPageController>();
+      chatPagecontroller.startInit(isBroadcasts: true);
+      chatPagecontroller.closeOverlay();
+    } else {
+      IsmChatRouteManagement.goToBroadcastMessagePage(
+        isBroadcast: true,
+      );
+    }
   }
 }

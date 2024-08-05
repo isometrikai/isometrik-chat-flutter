@@ -1,5 +1,5 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/widgets.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPopupMenuItem {
   IsmChatPopupMenuItem({
@@ -12,7 +12,7 @@ class IsmChatPopupMenuItem {
   final String label;
   final IconData icon;
   final Color? color;
-  final void Function(IsmChatConversationModel?) onTap;
+  final void Function(IsmChatConversationModel) onTap;
 
   @override
   String toString() =>

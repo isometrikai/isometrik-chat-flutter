@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/properties/chat_properties.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 class IsmChatConverstaionInfoView extends StatelessWidget {
   IsmChatConverstaionInfoView({super.key});
@@ -28,7 +27,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.blueGreyColor,
           appBar: IsmChatAppBar(
-            onBack: !Responsive.isWeb(context)
+            onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {
                     Get.find<IsmChatConversationsController>()
@@ -137,7 +136,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                         onTap: controller.conversation?.isGroup ?? false
                             ? () {
                                 controller.groupTitleController.text =
-                                    controller.conversation?.chatName ?? '';
+                                    controller.conversation!.chatName;
                                 controller.showDialogForChangeGroupTitle();
                               }
                             : null,
@@ -198,8 +197,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                           .opponentSubTitle
                                           ?.call(
                                               context,
-                                              controller.conversation
-                                                  ?.opponentDetails) ??
+                                              controller.conversation!
+                                                  .opponentDetails!) ??
                                       '',
                                 ),
                               ],
@@ -216,7 +215,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           ),
                           child: IsmChatTapHandler(
                             onTap: () {
-                              if (Responsive.isWeb(context)) {
+                              if (IsmChatResponsive.isWeb(context)) {
                                 Get.find<IsmChatConversationsController>()
                                         .isRenderChatPageaScreen =
                                     IsRenderChatPageScreen.coversationMediaView;
@@ -262,7 +261,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (controller.conversation?.isGroup ?? false) ...[
+                    if (controller.conversation!.isGroup ?? false) ...[
                       IsmChatDimens.boxHeight10,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,13 +274,13 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                             ),
                           ),
                           if (controller
-                                  .conversation?.usersOwnDetails?.isAdmin ??
+                                  .conversation!.usersOwnDetails?.isAdmin ??
                               false)
                             IconButton(
                               onPressed: () {
                                 controller.participnatsEditingController
                                     .clear();
-                                if (Responsive.isWeb(context)) {
+                                if (IsmChatResponsive.isWeb(context)) {
                                   Get.find<IsmChatConversationsController>()
                                           .isRenderChatPageaScreen =
                                       IsRenderChatPageScreen.groupEligibleView;
@@ -336,11 +335,11 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                             var member = controller.groupMembers[index];
                             return ListTile(
                               onTap: member.isAdmin
-                                  ? (controller.conversation?.usersOwnDetails
+                                  ? (controller.conversation!.usersOwnDetails
                                                   ?.isAdmin ??
                                               false) &&
-                                          controller.conversation
-                                                  ?.usersOwnDetails?.memberId !=
+                                          controller.conversation!
+                                                  .usersOwnDetails?.memberId !=
                                               member.userId
                                       ? () {
                                           Get.dialog(
@@ -363,7 +362,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                                 fromMessagePage: false,
                                               );
                                             }
-                                  : controller.conversation?.usersOwnDetails
+                                  : controller.conversation!.usersOwnDetails
                                               ?.isAdmin ??
                                           false
                                       ? () {
@@ -393,7 +392,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                           color: IsmChatConfig
                                               .chatTheme.primaryColor),
                                     )
-                                  : controller.conversation?.usersOwnDetails
+                                  : controller.conversation!.usersOwnDetails
                                               ?.isAdmin ??
                                           false
                                       ? const Icon(
@@ -409,7 +408,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               subtitle: Text(IsmChatProperties
                                       .conversationProperties.opponentSubTitle
                                       ?.call(context, member) ??
-                                  member.metaData?.about ??
+                                  member.metaData?.aboutText?.title ??
                                   ''),
                               leading: IsmChatImage.profile(member.profileUrl),
                             );

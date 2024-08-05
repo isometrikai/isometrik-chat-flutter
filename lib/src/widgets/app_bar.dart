@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 @protected
 class IsmChatAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -71,7 +71,7 @@ class IsmChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
               onPressed: onBack ?? Get.back,
               icon: Icon(
-                Responsive.isWeb(context)
+                IsmChatResponsive.isWeb(context)
                     ? Icons.close_rounded
                     : backIcon ?? Icons.arrow_back_rounded,
                 color: IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??

@@ -1,7 +1,7 @@
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ImsChatShowUserReaction extends StatefulWidget {
   ImsChatShowUserReaction(
@@ -100,17 +100,15 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                             emojiSize: IsmChatDimens.thirty,
                             onEmojiSelected: (_, emoji) {},
                             config: Config(
-                                categoryViewConfig: CategoryViewConfig(
-                                    indicatorColor:
-                                        IsmChatConfig.chatTheme.primaryColor ??
-                                            IsmChatColors.primaryColorLight),
-                                emojiViewConfig: EmojiViewConfig(
-                                  emojiSizeMax: IsmChatDimens.twentyFour,
-                                  backgroundColor: IsmChatConfig
-                                          .chatTheme.backgroundColor ??
-                                      IsmChatConfig.chatTheme.primaryColor ??
-                                      IsmChatColors.primaryColorLight,
-                                )),
+                              categoryViewConfig: CategoryViewConfig(
+                                  indicatorColor:
+                                      IsmChatConfig.chatTheme.primaryColor!),
+                              emojiViewConfig: EmojiViewConfig(
+                                emojiSizeMax: IsmChatDimens.twentyFour,
+                                backgroundColor:
+                                    IsmChatConfig.chatTheme.backgroundColor!,
+                              ),
+                            ),
                           ),
                         ),
                         IsmChatDimens.boxWidth8,
@@ -139,7 +137,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                       showOwnUser = true;
                     }
 
-                    if (widget._controller.conversation?.isGroup ?? false) {
+                    if (widget._controller.conversation!.isGroup!) {
                       reactionUser = widget._controller.conversation?.members
                           ?.firstWhere((e) => e.userId == userId);
                     }
@@ -165,7 +163,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                       child: ListTile(
                         title: Text(showOwnUser
                             ? IsmChatStrings.you
-                            : widget._controller.conversation?.isGroup ?? false
+                            : widget._controller.conversation!.isGroup!
                                 ? reactionUser?.userName ?? ''
                                 : widget._controller.conversation?.chatName ??
                                     ''),
@@ -180,21 +178,18 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                             config: Config(
                               categoryViewConfig: CategoryViewConfig(
                                   indicatorColor:
-                                      IsmChatConfig.chatTheme.primaryColor ??
-                                          IsmChatColors.primaryColorLight),
+                                      IsmChatConfig.chatTheme.primaryColor!),
                               emojiViewConfig: EmojiViewConfig(
                                 emojiSizeMax: IsmChatDimens.twentyFour,
                                 backgroundColor:
-                                    IsmChatConfig.chatTheme.backgroundColor ??
-                                        IsmChatConfig.chatTheme.primaryColor ??
-                                        IsmChatColors.primaryColorLight,
+                                    IsmChatConfig.chatTheme.backgroundColor!,
                               ),
                             ),
                           ),
                         ),
                         subtitle: showOwnUser
                             ? const Text(IsmChatStrings.removeReaction)
-                            : widget._controller.conversation?.isGroup ?? false
+                            : widget._controller.conversation!.isGroup!
                                 ? Text(reactionUser?.userIdentifier ?? '')
                                 : Text(widget._controller.conversation
                                         ?.opponentDetails?.userIdentifier ??
@@ -209,7 +204,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                         .userDetails
                                         ?.userProfileImageUrl ??
                                     ''
-                            : widget._controller.conversation?.isGroup ?? false
+                            : widget._controller.conversation!.isGroup!
                                 ? reactionUser?.profileUrl ?? ''
                                 : widget._controller.conversation?.profileUrl ??
                                     ''),
@@ -226,7 +221,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                         UserDetails? reactionUser;
                         var userId = widget
                             .message.reactions?[index].userIds[indexUserId];
-                        if (widget._controller.conversation?.isGroup ?? false) {
+                        if (widget._controller.conversation!.isGroup!) {
                           reactionUser = widget
                               ._controller.conversation?.members
                               ?.firstWhere((e) => e.userId == userId);
@@ -254,16 +249,14 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                           child: ListTile(
                             title: Text(showOwnUser
                                 ? IsmChatStrings.you
-                                : widget._controller.conversation?.isGroup ??
-                                        false
+                                : widget._controller.conversation!.isGroup!
                                     ? reactionUser?.userName ?? ''
                                     : widget._controller.conversation
                                             ?.chatName ??
                                         ''),
                             subtitle: showOwnUser
                                 ? const Text(IsmChatStrings.removeReaction)
-                                : widget._controller.conversation?.isGroup ??
-                                        false
+                                : widget._controller.conversation!.isGroup!
                                     ? Text(reactionUser?.userIdentifier ?? '')
                                     : Text(widget._controller.conversation
                                             ?.opponentDetails?.userIdentifier ??
@@ -278,8 +271,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                             .userDetails
                                             ?.userProfileImageUrl ??
                                         ''
-                                : widget._controller.conversation?.isGroup ??
-                                        false
+                                : widget._controller.conversation!.isGroup!
                                     ? reactionUser?.profileUrl ?? ''
                                     : widget._controller.conversation
                                             ?.profileUrl ??

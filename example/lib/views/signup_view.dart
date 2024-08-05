@@ -3,7 +3,7 @@ import 'package:chat_component_example/res/res.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 
 import '../res/dimens.dart';
 import '../widgets/widgets.dart';
@@ -45,7 +45,7 @@ class SignupView extends StatelessWidget {
                           Center(
                             child: GestureDetector(
                               onTap: () {
-                                if (Responsive.isWeb(context)) {
+                                if (IsmChatResponsive.isWeb(context)) {
                                   controller.ismUploadImage(
                                     ImageSource.gallery,
                                   );

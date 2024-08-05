@@ -44,8 +44,7 @@ mixin IsmChatShowDialogMixin on GetxController {
 
   /// function to show dialog for changing the group title
   void showDialogForChangeGroupTitle() async {
-    _controller.groupTitleController.text =
-        _controller.conversation?.chatName ?? '';
+    _controller.groupTitleController.text = _controller.conversation!.chatName;
     await Get.dialog(IsmChatAlertDialogBox(
       title: IsmChatStrings.enterNewGroupTitle,
       content: TextFormField(
