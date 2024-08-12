@@ -1,11 +1,11 @@
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
-import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
-    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
 import 'package:photo_view/photo_view.dart';
 
 class IsmWebMessageMediaPreview extends StatefulWidget {
@@ -53,7 +53,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   /// Page controller for handing the PageView pages
   PageController pageController = PageController();
   final chatPageController = Get.find<IsmChatPageController>();
-  late CarouselController carouselController;
+  final CarouselSliderController carouselController = CarouselSliderController();
 
   String mediaTime = '';
   String mediaSize = '';
@@ -67,7 +67,6 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   }
 
   startInit() {
-    carouselController = CarouselController();
     initiated = widget._initiated ?? false;
     chatPageController.assetsIndex = widget._mediaIndex ?? 0;
     final timeStamp =

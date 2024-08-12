@@ -56,7 +56,7 @@ class IsmChatPageController extends GetxController
 
   var searchMessageScrollController = ScrollController();
 
-  var carouselController = CarouselController();
+  var carouselController = CarouselSliderController();
 
   final textEditingController = TextEditingController();
 
