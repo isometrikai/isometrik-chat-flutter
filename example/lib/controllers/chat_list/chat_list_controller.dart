@@ -1,4 +1,3 @@
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:chat_component_example/main.dart';
 import 'package:chat_component_example/models/models.dart';
 import 'package:chat_component_example/res/res.dart';
@@ -6,6 +5,7 @@ import 'package:chat_component_example/utilities/device_config.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 import '../../utilities/config.dart';
 

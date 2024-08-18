@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_setters_without_getters
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:chat_component_example/main.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 import '../models/models.dart';
 

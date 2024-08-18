@@ -1,6 +1,6 @@
 # chat_component_example
 
-Demonstrates how to use the isometrik_flutter_chat plugin.
+Demonstrates how to use the isometrik_chat_flutter plugin.
 
 ## Getting Started
 

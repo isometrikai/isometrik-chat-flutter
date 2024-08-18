@@ -2,9 +2,9 @@ import 'package:chat_component_example/controllers/controllers.dart';
 import 'package:chat_component_example/res/res.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ChatList extends StatelessWidget {
   const ChatList({super.key});
@@ -79,6 +79,7 @@ class ChatList extends StatelessWidget {
                 ),
                 text: 'No Messages',
               ),
+              onMessageTap: (p0, p1, p2) {},
 
               attachments: const [
                 IsmChatAttachmentType.camera,
@@ -125,7 +126,7 @@ class ChatList extends StatelessWidget {
               enableGroupChat: true,
               allowDelete: true,
               onCreateTap: () {},
-              onChatTap: (_, conversation) {},
+
               isHeaderAppBar: IsmChatResponsive.isWeb(context) ? false : true,
               header: IsmChatListHeader(
                 onSignOut: () {

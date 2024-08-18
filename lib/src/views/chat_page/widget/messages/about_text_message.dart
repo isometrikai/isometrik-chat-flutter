@@ -1,5 +1,5 @@
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatAboutTextMessage extends StatelessWidget {
   const IsmChatAboutTextMessage(this.message, {super.key});

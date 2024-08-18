@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/src/models/user_details_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:isometrik_chat_flutter/src/models/user_details_model.dart';
 
 class IsmChatUserListModel {
   factory IsmChatUserListModel.fromJson(String source) =>

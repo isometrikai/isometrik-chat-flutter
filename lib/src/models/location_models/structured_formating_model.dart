@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/foundation.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatStructuredFormatting {
   String? mainText;

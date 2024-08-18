@@ -1,9 +1,9 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint isometrik_flutter_chat.podspec` to validate before publishing.
+# Run `pod lib lint isometrik_chat_flutter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'isometrik_flutter_chat'
+  s.name             = 'isometrik_chat_flutter'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = 'DESC'                    

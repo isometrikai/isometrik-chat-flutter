@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/src/models/attachment_model.dart';
+import 'package:isometrik_chat_flutter/src/models/attachment_model.dart';
 
 class AttachmentCaptionModel {
   AttachmentCaptionModel({

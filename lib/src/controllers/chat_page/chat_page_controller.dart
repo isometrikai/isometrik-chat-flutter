@@ -6,7 +6,6 @@ import 'dart:math';
 import 'package:app_settings/app_settings.dart';
 import 'package:azlistview/azlistview.dart';
 import 'package:camera/camera.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,15 +13,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
-import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
-    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
-import 'package:isometrik_flutter_chat/src/views/chat_page/widget/profile_change.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
+import 'package:isometrik_chat_flutter/src/views/chat_page/widget/profile_change.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -56,13 +55,13 @@ class IsmChatPageController extends GetxController
 
   var searchMessageScrollController = ScrollController();
 
-  var carouselController = CarouselSliderController();
-
   final textEditingController = TextEditingController();
 
   final participnatsEditingController = TextEditingController();
 
   SnackbarController? snackBarController;
+
+  var pageController = PageController();
 
   var noises = <int, Widget>{};
   var memoryImage = <int, MemoryImage>{};

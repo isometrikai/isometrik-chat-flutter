@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:photo_view/photo_view.dart';
 
 /// show the All media Preview view page
@@ -50,8 +49,6 @@ class IsmMediaPreview extends StatefulWidget {
 }
 
 class _MediaPreviewState extends State<IsmMediaPreview> {
-  /// Page controller for handing the PageView pages
-  PageController pageController = PageController();
   final chatPageController = Get.find<IsmChatPageController>();
 
   String mediaTime = '';
@@ -174,8 +171,8 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
         body: SizedBox(
           height: IsmChatDimens.percentHeight(1),
           width: IsmChatDimens.percentWidth(1),
-          child: CarouselSlider.builder(
-            itemBuilder: (BuildContext context, int index, int realIndex) {
+          child: PageView.builder(
+            itemBuilder: (BuildContext context, int index) {
               var url =
                   widget._messageData?[index].attachments?.first.mediaUrl ?? '';
               var customType = (widget._messageData?[index].messageType ==
@@ -194,25 +191,18 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
                     )
                   : VideoViewPage(path: url);
             },
-            options: CarouselOptions(
-              height: IsmChatDimens.percentHeight(1),
-              viewportFraction: 1,
-              enlargeCenterPage: true,
-              initialPage: widget._mediaIndex ?? 0,
-              enableInfiniteScroll: false,
-              onPageChanged: (index, _) {
-                final timeStamp = DateTime.fromMillisecondsSinceEpoch(
-                    widget._messageData![index].sentAt);
-                final time = DateFormat.jm().format(timeStamp);
-                final monthDay = DateFormat.MMMd().format(timeStamp);
-                setState(
-                  () {
-                    initiated = widget._messageData![index].sentByMe;
-                    mediaTime = '$monthDay, $time';
-                  },
-                );
-              },
-            ),
+            onPageChanged: (index) {
+              final timeStamp = DateTime.fromMillisecondsSinceEpoch(
+                  widget._messageData![index].sentAt);
+              final time = DateFormat.jm().format(timeStamp);
+              final monthDay = DateFormat.MMMd().format(timeStamp);
+              setState(
+                () {
+                  initiated = widget._messageData![index].sentByMe;
+                  mediaTime = '$monthDay, $time';
+                },
+              );
+            },
             itemCount: widget._messageData?.length ?? 0,
           ),
         ),

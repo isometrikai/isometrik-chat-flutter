@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
-import 'package:isometrik_flutter_chat/src/utilities/blob_io.dart'
-    if (dart.library.html) 'package:isometrik_flutter_chat/src/utilities/blob_html.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';

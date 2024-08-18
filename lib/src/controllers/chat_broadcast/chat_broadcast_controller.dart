@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class IsmChatBroadcastController extends GetxController {

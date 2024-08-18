@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatTextMessage extends StatelessWidget {
   const IsmChatTextMessage(this.message, {super.key});

@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCreateConversationView extends StatelessWidget {
   IsmChatCreateConversationView(
@@ -265,8 +265,8 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                         );
                                         Get.back<void>();
                                         IsmChatProperties
-                                            .conversationProperties.onChatTap!
-                                            .call(_, ismChatConversation);
+                                            .conversationProperties.onChatTap
+                                            ?.call(_, ismChatConversation);
                                         controller.navigateToMessages(
                                             ismChatConversation);
                                         await controller.goToChatPage();

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatMqttRepository {
   final _apiWrapper = IsmChatApiWrapper();

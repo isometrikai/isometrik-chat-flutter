@@ -1,4 +1,4 @@
-# Isometrik Flutter Chat SDK
+# Isometrik Chat Flutter SDK
 
 ## iOS
 
@@ -47,7 +47,7 @@ Path: `ios` > `Runner` > `info.plist`
   <array>
    <string>sms</string>
    <string>tel</string>
-  </array>  
+  </array>
 <key>NSAppTransportSecurity</key>
 <dict>
     <key>NSAllowsArbitraryLoads</key>
@@ -114,7 +114,7 @@ installer.pods_project.targets.each do |target|
             # 'PERMISSION_CRITICAL_ALERTS=1'
       ]
     end
-    
+
   end
 ```
 
@@ -122,7 +122,7 @@ iOS Setup is done
 
 Setup other platforms
 
-* [Android](./README_android.md)
-* [Web](./README_web.md)
+- [Android](./README_android.md)
+- [Web](./README_web.md)
 
 [Go back to main](./README.md)

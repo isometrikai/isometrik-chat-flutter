@@ -1,5 +1,5 @@
-import 'package:isometrik_flutter_chat/src/res/res.dart';
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter/src/res/res.dart';
 
 class IsmChatListThemeData {
   const IsmChatListThemeData({

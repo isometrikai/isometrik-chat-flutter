@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/src/controllers/controllers.dart';
-import 'package:isometrik_flutter_chat/src/res/res.dart';
-import 'package:isometrik_flutter_chat/src/utilities/utilities.dart';
-import 'package:isometrik_flutter_chat/src/views/views.dart';
-import 'package:isometrik_flutter_chat/src/widgets/widgets.dart';
+import 'package:isometrik_chat_flutter/src/controllers/controllers.dart';
+import 'package:isometrik_chat_flutter/src/res/res.dart';
+import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
+import 'package:isometrik_chat_flutter/src/views/views.dart';
+import 'package:isometrik_chat_flutter/src/widgets/widgets.dart';
 
 class IsmChatBoradcastMessagePage extends StatelessWidget {
   const IsmChatBoradcastMessagePage({super.key});

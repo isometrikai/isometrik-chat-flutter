@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_painter/image_painter.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 class IsmChatImagePainterWidget extends StatefulWidget {

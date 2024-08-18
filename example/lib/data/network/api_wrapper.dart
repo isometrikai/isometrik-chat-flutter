@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:chat_component_example/utilities/utilities.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ApiWrapper {
   const ApiWrapper._();

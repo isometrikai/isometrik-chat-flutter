@@ -1,4 +1,4 @@
-import 'package:isometrik_flutter_chat/src/res/config/config.dart';
+import 'package:isometrik_chat_flutter/src/res/config/config.dart';
 
 ///[IsmChatCommunicationConfig] class will be used to store all the configurations required to setup the communication connection
 class IsmChatCommunicationConfig {

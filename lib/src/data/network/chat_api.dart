@@ -1,4 +1,4 @@
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// ChatAPI class is a singleton class
 ///

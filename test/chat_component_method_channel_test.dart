@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat_method_channel.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter_method_channel.dart';
 
 void main() {
-  var platform = MethodChannelIsometrikFlutterChat();
-  // const channel = MethodChannel('isometrik_flutter_chat');
+  var platform = MethodChannelIsometrikChatFlutter();
+  // const channel = MethodChannel('isometrik_chat_flutter');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

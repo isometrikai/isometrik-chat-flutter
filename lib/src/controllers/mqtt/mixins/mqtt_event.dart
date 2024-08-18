@@ -4,8 +4,7 @@ import 'package:elegant_notification/elegant_notification.dart';
 import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
-import 'package:mqtt_helper/mqtt_helper.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 mixin IsmChatMqttEventMixin {
   IsmChatMqttController get _controller => Get.find<IsmChatMqttController>();

@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'data/data.dart';
@@ -29,24 +29,21 @@ Future<void> initialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
   if (!kIsWeb) {
-    await Firebase.initializeApp();
+    try {
+      await Firebase.initializeApp();
+    } catch (_) {}
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgorundHandler);
   }
   dbWrapper = await DBWrapper.create();
   Get.put(DeviceConfig()).init();
   await AppConfig.getUserData();
-  await Future.wait(
-    [
-      LocalNoticeService().setup(),
-    ],
-  );
+  await LocalNoticeService().setup();
 }
 
 /// Call this funcation for get notifcaiton when app killed
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgorundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-}
+Future<void> _firebaseMessagingBackgorundHandler(RemoteMessage message) async =>
+    await Firebase.initializeApp();
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:isometrik_flutter_chat/src/res/strings.dart';
 import 'package:flutter/foundation.dart';
+import 'package:isometrik_chat_flutter/src/res/strings.dart';
 
 class IsmChatLog {
   ///This Constructor of `ChatLog` take 2 parameters

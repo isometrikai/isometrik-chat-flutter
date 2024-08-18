@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_setters_without_getters
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConfig {
   const IsmChatConfig._();

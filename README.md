@@ -1,6 +1,6 @@
-# Isometrik Flutter Chat SDK
+# Isometrik Chat Flutter SDK
 
-`Isometrik Flutter Chat SDK` is a package to support chat functionality for flutter projects
+`Isometrik Chat Flutter SDK` is a package to support chat functionality for flutter projects
 
 ## Setup
 
@@ -14,7 +14,7 @@ For detailed setup instructions, please refer to the platform-specific guides an
 
 ## Initialization
 
-Before using the Isometrik Flutter Chat SDK, you need to ensure the necessary initializations are done.
+Before using the Isometrik Chat Flutter SDK, you need to ensure the necessary initializations are done.
 
 ```dart
 void main() async {
@@ -31,7 +31,7 @@ Sets up the local notification service. This ensures that the app can handle in-
 
 ## Usage
 
-The Isometrik Flutter Chat SDK supports various use cases to enhance your chat functionality:
+The Isometrik Chat Flutter SDK supports various use cases to enhance your chat functionality:
 
 1. Configuration : Set the configuration for account ID, project ID, keyset ID, license key, app secret, user secret, MQTT host, and port.
 2. Attachments and Features: Specify the types of attachments and features you need in the chat.(e.g., image, video, location, contat, voice)
@@ -79,7 +79,7 @@ IsmChatApp(
 - `conversationParser`: A callback to parse conversation data from the API.
 - `conversationModifier`: A callback to modify conversation data.
 
-9. Initialize Chat and MQTT: The initialize method sets up the necessary configurations for using the `Isometrik Flutter Chat SDK` in your Flutter project. This method must be called before using any other features of the Isometrik Flutter Chat SDK.And Manually initializes the MQTT (Message Queuing Telemetry Transport) protocol for real-time messaging. .
+9. Initialize Chat and MQTT: The initialize method sets up the necessary configurations for using the `Isometrik Chat Flutter SDK` in your Flutter project. This method must be called before using any other features of the Isometrik Chat Flutter SDK.And Manually initializes the MQTT (Message Queuing Telemetry Transport) protocol for real-time messaging. .
 
 ```dart
     IsmChat.i.initialize(

@@ -1,5 +1,5 @@
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 typedef ConversationCardCallback = Widget Function(
   BuildContext,
@@ -98,4 +98,10 @@ typedef NotificaitonCallback = void Function(
   String,
   String,
   String,
+);
+
+typedef MessageCallback = void Function(
+  BuildContext,
+  IsmChatMessageModel,
+  IsmChatConversationModel,
 );

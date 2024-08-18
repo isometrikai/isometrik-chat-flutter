@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPageView extends StatefulWidget {
   const IsmChatPageView({
@@ -111,7 +111,7 @@ class _IsmChatPageView extends StatelessWidget {
                     image: controller.backgroundImage.isValidUrl
                         ? NetworkImage(controller.backgroundImage)
                         : controller.backgroundImage.contains(
-                                'packages/isometrik_flutter_chat/assets')
+                                'packages/isometrik_chat_flutter/assets')
                             ? AssetImage(controller.backgroundImage)
                                 as ImageProvider
                             : FileImage(

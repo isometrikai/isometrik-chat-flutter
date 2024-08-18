@@ -12,11 +12,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gal/gal.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -196,7 +198,6 @@ class IsmChatUtility {
   /// this is for change encoded string to decode string
   static String decodeString(String value) {
     try {
-      // return utf8.fuse(base64).decode(value);
       return utf8.decode(value.runes.toList());
     } catch (e) {
       return value;
@@ -314,11 +315,12 @@ class IsmChatUtility {
     }
   }
 
-  static Future<File> makeDirectoryWithUrl(
-      {required String urlPath, required String fileName}) async {
+  static Future<File> makeDirectoryWithUrl({
+    required String urlPath,
+    required String fileName,
+  }) async {
     File? file;
     String? path;
-
     if (urlPath.isValidUrl) {
       final url = Uri.parse(urlPath);
       final response = await http.get(url);
@@ -593,4 +595,21 @@ class IsmChatUtility {
                 style: IsmChatStyles.w600Black14
                     .copyWith(color: const Color(0xff9E9CAB))),
       );
+
+  static Future<File> convertToJpeg(File file) async {
+    final decodedWebP = await img.decodeImageFile(file.path);
+    if (decodedWebP == null) {
+      throw Exception('Unable to Decode File');
+    }
+    final encodeJpeg = img.encodeJpg(decodedWebP);
+    final savedFile = File(
+        await getSavePath('${DateTime.now().millisecondsSinceEpoch}.jpeg'));
+    await savedFile.writeAsBytes(encodeJpeg);
+    return savedFile;
+  }
+
+  static Future<String> getSavePath(String filename) async {
+    final directory = await getApplicationDocumentsDirectory();
+    return '${directory.path}/$filename';
+  }
 }

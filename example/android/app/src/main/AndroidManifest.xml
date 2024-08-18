@@ -55,6 +55,7 @@
         android:label="Flutter Chat"
         android:name="${applicationName}"
         android:requestLegacyExternalStorage="true"
+        android:extractNativeLibs="true"
         android:usesCleartextTraffic="true" 
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round">

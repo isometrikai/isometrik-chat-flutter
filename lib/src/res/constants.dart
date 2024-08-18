@@ -1,7 +1,7 @@
 class IsmChatAssets {
   const IsmChatAssets._();
 
-  static const String _base = 'packages/isometrik_flutter_chat/assets';
+  static const String _base = 'packages/isometrik_chat_flutter/assets';
 
   static const String _svgBase = '$_base/svg';
   static const String _imageBase = '$_base/images';

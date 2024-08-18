@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:isometrik_flutter_chat/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter/src/widgets/widgets.dart';
 
 class IsmChatActionWidget extends StatelessWidget {
   const IsmChatActionWidget({

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/src/controllers/chat_page/chat_page_controller.dart';
-import 'package:isometrik_flutter_chat/src/res/res.dart';
-import 'package:isometrik_flutter_chat/src/utilities/utilities.dart';
-import 'package:isometrik_flutter_chat/src/widgets/widgets.dart';
+import 'package:isometrik_chat_flutter/src/controllers/chat_page/chat_page_controller.dart';
+import 'package:isometrik_chat_flutter/src/res/res.dart';
+import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
+import 'package:isometrik_chat_flutter/src/widgets/widgets.dart';
 
 class MentionUserList extends StatelessWidget {
   const MentionUserList({super.key});
@@ -45,13 +45,25 @@ class MentionUserList extends StatelessWidget {
                         dense: true,
                         horizontalTitleGap: IsmChatDimens.ten,
                         title: Text(
-                          member.userName.capitalizeFirst ?? '',
+                          IsmChatProperties.chatPageProperties.mentionUserName
+                                  ?.call(
+                                context,
+                                member,
+                              ) ??
+                              member.userName.capitalizeFirst ??
+                              '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: IsmChatStyles.w600Black13,
                         ),
                         leading: IsmChatImage.profile(
-                          member.profileUrl,
+                          IsmChatProperties
+                                  .chatPageProperties.mentionUserProfileUrl
+                                  ?.call(
+                                context,
+                                member,
+                              ) ??
+                              member.profileUrl,
                           dimensions: IsmChatDimens.thirtyTwo,
                         ),
                       ),

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:chat_component_example/data/network/network.dart';
 import 'package:chat_component_example/main.dart';
 import 'package:chat_component_example/models/models.dart';
 import 'package:chat_component_example/utilities/utilities.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class AuthViewModel extends GetxController {
   Future<ModelWrapperExample> login(

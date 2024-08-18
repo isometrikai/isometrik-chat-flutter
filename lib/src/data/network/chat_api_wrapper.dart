@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:http/http.dart' as http;
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatApiWrapper {
   // Future<IsmChatResponseModel> _handleNoInternet(bool showDailog) async {

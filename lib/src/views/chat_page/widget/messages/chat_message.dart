@@ -1,7 +1,7 @@
-import 'package:isometrik_flutter_chat/src/models/models.dart';
-import 'package:isometrik_flutter_chat/src/utilities/utilities.dart';
-import 'package:isometrik_flutter_chat/src/views/chat_page/widget/messages/messages.dart';
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter/src/models/models.dart';
+import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
+import 'package:isometrik_chat_flutter/src/views/chat_page/widget/messages/messages.dart';
 
 class IsmChatMessageWrapper extends StatelessWidget {
   IsmChatMessageWrapper(

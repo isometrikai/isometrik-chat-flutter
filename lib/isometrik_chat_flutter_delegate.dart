@@ -1,4 +1,4 @@
-part of 'isometrik_flutter_chat.dart';
+part of 'isometrik_chat_flutter.dart';
 
 class IsmChatDelegate {
   const IsmChatDelegate();

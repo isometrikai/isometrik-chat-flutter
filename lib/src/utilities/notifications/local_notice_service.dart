@@ -41,10 +41,10 @@ library;
 
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/foundation.dart';
 // #1
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 // #2
 import 'package:timezone/timezone.dart' as tz;
@@ -102,35 +102,37 @@ class LocalNoticeService {
     });
   }
 
-  void showFlutterNotification(String title, String body,
-      {required String conversataionId}) {
-    _localNotificationsPlugin.show(
-      0,
-      title,
-      body,
-      NotificationDetails(
-        iOS: const DarwinNotificationDetails(
-          presentBadge: true,
-          presentAlert: true,
-          presentSound: true,
+  void showFlutterNotification(
+    String title,
+    String body, {
+    required String conversataionId,
+  }) =>
+      _localNotificationsPlugin.show(
+        0,
+        title,
+        body,
+        NotificationDetails(
+          iOS: const DarwinNotificationDetails(
+            presentBadge: true,
+            presentAlert: true,
+            presentSound: true,
+          ),
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channelDescription: channel.description ?? '',
+            importance: Importance.high,
+            priority: Priority.high,
+            ticker: 'ticker',
+            playSound: true,
+            icon: IsmChatConfig.notificationIconPath ?? '@mipmap/ic_launcher',
+            color: IsmChatConfig.chatTheme.notificationColor,
+          ),
         ),
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channelDescription: channel.description ?? '',
-          importance: Importance.high,
-          priority: Priority.high,
-          ticker: 'ticker',
-          playSound: true,
-          icon: IsmChatConfig.notificationIconPath ?? '@mipmap/ic_launcher',
-          color: IsmChatConfig.chatTheme.notificationColor,
-        ),
-      ),
-      payload: jsonEncode({
-        'conversationId': conversataionId,
-      }),
-    );
-  }
+        payload: jsonEncode({
+          'conversationId': conversataionId,
+        }),
+      );
 
   void addNotification(
     String title,

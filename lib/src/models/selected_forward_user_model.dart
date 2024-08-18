@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:isometrik_flutter_chat/src/models/user_details_model.dart';
 import 'package:azlistview/azlistview.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter/src/models/user_details_model.dart';
 
 class SelectedMembers extends ISuspensionBean {
   factory SelectedMembers.fromJson(String source) =>

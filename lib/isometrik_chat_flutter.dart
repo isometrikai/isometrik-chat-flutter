@@ -1,13 +1,14 @@
-library isometrik_flutter_chat;
+library isometrik_chat_flutter;
 
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat_platform_interface.dart';
-import 'package:mqtt_helper/mqtt_helper.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter_platform_interface.dart';
+
+export 'package:mqtt_helper/mqtt_helper.dart';
 
 export 'src/app/app.dart';
 export 'src/controllers/controllers.dart';
@@ -21,7 +22,7 @@ export 'src/view_models/view_models.dart';
 export 'src/views/views.dart';
 export 'src/widgets/widgets.dart';
 
-part 'isometrik_flutter_chat_delegate.dart';
+part 'isometrik_chat_flutter_delegate.dart';
 
 /// The main class for interacting with the Isometrik Flutter Chat SDK.
 class IsmChat {
@@ -64,7 +65,7 @@ class IsmChat {
   bool get isMqttConnected => _delegate.isMqttConnected;
 
   Future<String?> getPlatformVersion() =>
-      IsometrikFlutterChatPlatform.instance.getPlatformVersion();
+      IsometrikChatFlutterPlatform.instance.getPlatformVersion();
 
   /// Initializes the MQTT controller.
   ///
@@ -95,12 +96,12 @@ class IsmChat {
 
   /// Listens for MQTT events.
   ///
-  /// [data] is the data to listen for.
+  /// data is the data to listen for.
   /// [showNotification] is the callback for showing notifications.
   ///
   /// Throws an [AssertionError] if the MQTT controller has not been initialized.
-  Future<void> listenMqttEvent({
-    required EventModel event,
+  Future<void> listenMqttEvent(
+    EventModel event, {
     NotificaitonCallback? showNotification,
   }) async {
     assert(_initialized,

@@ -1,6 +1,6 @@
-import 'package:isometrik_flutter_chat/src/controllers/controllers.dart';
-import 'package:isometrik_flutter_chat/src/views/views.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter/src/controllers/controllers.dart';
+import 'package:isometrik_chat_flutter/src/views/views.dart';
 
 class IsmChatPages {
   static final pages = [

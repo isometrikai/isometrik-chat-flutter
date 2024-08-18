@@ -1,5 +1,5 @@
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// ConversationMediaWidget is a widget to show the media item
 class ConversationMediaWidget extends StatelessWidget {

@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmMaterialChatPage extends StatefulWidget {
-  IsmMaterialChatPage({
+class IsmChatPage extends StatefulWidget {
+  IsmChatPage({
     super.key,
-    this.communicationConfig,
     this.chatPageProperties,
     this.chatTheme,
     this.chatDarkTheme,
@@ -21,7 +20,7 @@ class IsmMaterialChatPage extends StatefulWidget {
   }) {
     // assert(IsmChatConfig.isInitialized,
     //     'ChatHiveBox is not initialized\nYou are getting this error because the Database class is not initialized, to initialize ChatHiveBox class call IsmChat.i.initialize() before your runApp()');
-    assert(IsmChatConfig.configInitilized || communicationConfig != null,
+    assert(IsmChatConfig.configInitilized,
         '''communicationConfig of type IsmChatCommunicationConfig must be initialized
     1. Either initialize using IsmChatApp.initializeMqtt() by passing  communicationConfig.
     2. Or Pass  communicationConfig in IsmChatApp
@@ -38,21 +37,10 @@ class IsmMaterialChatPage extends StatefulWidget {
     IsmChatConfig.chatDarkTheme =
         chatDarkTheme ?? chatTheme ?? IsmChatThemeData.dark();
 
-    if (communicationConfig != null) {
-      IsmChatConfig.communicationConfig = communicationConfig!;
-      IsmChatConfig.configInitilized = true;
-    }
     if (chatPageProperties != null) {
       IsmChatProperties.chatPageProperties = chatPageProperties!;
     }
   }
-
-  /// Required field
-  ///
-  /// This class takes sevaral parameters which are necessary to establish connection between `host` & `application`
-  ///
-  /// For details see:- [IsmChatCommunicationConfig]
-  final IsmChatCommunicationConfig? communicationConfig;
 
   final IsmChatThemeData? chatTheme;
 
@@ -75,17 +63,17 @@ class IsmMaterialChatPage extends StatefulWidget {
 
   /// databaseName is to be provided if you want to specify some name for the local database file.
   ///
-  /// If not provided `isometrik_flutter_chat` will be used by default
+  /// If not provided `isometrik_chat_flutter` will be used by default
   final String? databaseName;
 
   /// This callback is to be used if you want to make certain changes while conversation data is being parsed from the API
   final ConversationParser? conversationParser;
 
   @override
-  State<IsmMaterialChatPage> createState() => _IsmMaterialChatPageState();
+  State<IsmChatPage> createState() => _IsmChatPageState();
 }
 
-class _IsmMaterialChatPageState extends State<IsmMaterialChatPage> {
+class _IsmChatPageState extends State<IsmChatPage> {
   @override
   void initState() {
     startInit();

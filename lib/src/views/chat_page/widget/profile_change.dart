@@ -1,9 +1,9 @@
-import 'package:isometrik_flutter_chat/src/controllers/controllers.dart';
-import 'package:isometrik_flutter_chat/src/res/res.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:isometrik_chat_flutter/src/controllers/controllers.dart';
+import 'package:isometrik_chat_flutter/src/res/res.dart';
 
 class ProfileChange extends StatelessWidget {
   const ProfileChange({super.key});

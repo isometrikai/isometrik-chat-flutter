@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -504,7 +504,7 @@ class IsmChatConversationsController extends GetxController {
 
   Future<AssetsModel?> getAssetFilesList() async {
     var jsonString = await rootBundle.loadString(
-        'packages/isometrik_flutter_chat/assets/assets_backgroundAssets.json');
+        'packages/isometrik_chat_flutter/assets/assets_backgroundAssets.json');
     var filesList = jsonDecode(jsonString);
     if (filesList != null) {
       return AssetsModel.fromMap(filesList);

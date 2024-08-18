@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:isometrik_flutter_chat/isometrik_flutter_chat.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatWallpaperPreview extends StatelessWidget {
   IsmChatWallpaperPreview(
@@ -46,7 +46,7 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                     image: _imagePath.path.contains('blob')
                         ? NetworkImage(_imagePath.path)
                         : _imagePath.path.contains(
-                                'packages/isometrik_flutter_chat/assets')
+                                'packages/isometrik_chat_flutter/assets')
                             ? AssetImage(
                                 _imagePath.path,
                               ) as ImageProvider
