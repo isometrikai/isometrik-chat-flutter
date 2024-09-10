@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class PresignedUrlModel {
   factory PresignedUrlModel.fromJson(String source) =>
       PresignedUrlModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -73,7 +75,7 @@ class PresignedUrlModel {
         'mediaId': mediaId,
         'presignedUrl': presignedUrl,
         'msg': msg,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

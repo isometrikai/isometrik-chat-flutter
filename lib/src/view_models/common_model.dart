@@ -54,6 +54,7 @@ class IsmChatCommonViewModel {
     required String mediaId,
     required bool isLoading,
     required Uint8List bytes,
+    bool isUpdateThumbnail = false,
   }) async {
     final responseMedia = await _repository.postMediaUrl(
       conversationId: conversationId,
@@ -66,7 +67,9 @@ class IsmChatCommonViewModel {
       final response = await updatePresignedUrl(
         bytes: bytes,
         isLoading: isLoading,
-        presignedUrl: responseMedia.mediaPresignedUrl,
+        presignedUrl: isUpdateThumbnail
+            ? responseMedia.thumbnailPresignedUrl
+            : responseMedia.mediaPresignedUrl,
       );
       if (response == 200) {
         return responseMedia;
@@ -115,7 +118,8 @@ class IsmChatCommonViewModel {
       if (messageId == null || messageId.isEmpty) return false;
       if (!isUpdateMesage) return false;
       if (isBroadcast) {
-        final chatPageController = Get.find<IsmChatPageController>();
+        final chatPageController =
+            Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
         for (var x = 0; x < chatPageController.messages.length; x++) {
           var messages = chatPageController.messages[x];
           if (messages.messageId?.isNotEmpty == true ||
@@ -157,13 +161,15 @@ class IsmChatCommonViewModel {
               await dbBox.getConversation(conversationId: conversationId);
 
           if (conversationModel != null) {
-            conversationModel.messages?.add(pendingMessage);
+            final messages = conversationModel.messages ?? [];
+            messages.add(pendingMessage);
             conversationModel = conversationModel.copyWith(
               lastMessageDetails:
                   conversationModel.lastMessageDetails?.copyWith(
                 reactionType: '',
                 messageId: pendingMessage.messageId,
               ),
+              messages: messages,
             );
           }
           await dbBox.saveConversation(conversation: conversationModel!);

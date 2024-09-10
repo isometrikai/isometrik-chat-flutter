@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class PresignedUrl {
   int? ttl;
   String? presignedUrl;
@@ -32,7 +34,7 @@ class PresignedUrl {
       'presignedUrl': presignedUrl,
       'msg': msg,
       'mediaUrl': mediaUrl,
-    };
+    }.removeNullValues();
   }
 
   factory PresignedUrl.fromMap(Map<String, dynamic> map) {

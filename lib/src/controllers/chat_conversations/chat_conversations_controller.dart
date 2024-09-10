@@ -571,9 +571,10 @@ class IsmChatConversationsController extends GetxController {
   }
 
   void unblockUserForWeb(String opponentId) {
-    if (Get.isRegistered<IsmChatPageController>()) {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       var conversationId = getConversationId(opponentId);
-      final chatPageController = Get.find<IsmChatPageController>();
+      final chatPageController =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (conversationId == chatPageController.conversation?.conversationId) {
         chatPageController.unblockUser(
           opponentId: opponentId,
@@ -752,7 +753,7 @@ class IsmChatConversationsController extends GetxController {
     return _viewModel.clearAllMessages(conversationId, fromServer: fromServer);
   }
 
-  void navigateToMessages(IsmChatConversationModel conversation) {
+  void updateLocalConversation(IsmChatConversationModel conversation) {
     currentConversation = conversation;
     currentConversationId = conversation.conversationId ?? '';
   }
@@ -778,7 +779,8 @@ class IsmChatConversationsController extends GetxController {
   }
 
   Future<void> getConversationsFromDB() async {
-    var dbConversations = await IsmChatConfig.dbWrapper!.getAllConversations();
+    var dbConversations =
+        await IsmChatConfig.dbWrapper?.getAllConversations() ?? [];
 
     if (dbConversations.isEmpty == true) {
       conversations.clear();
@@ -802,7 +804,18 @@ class IsmChatConversationsController extends GetxController {
     if (conversation.conversationId == null) {
       return '';
     }
-    return conversation.conversationId!;
+    return conversation.conversationId ?? '';
+  }
+
+  IsmChatConversationModel? getConversation(String conversationId) {
+    var conversation = conversations.firstWhere(
+        (element) => element.conversationId == conversationId,
+        orElse: IsmChatConversationModel.new);
+
+    if (conversation.conversationId == null) {
+      return null;
+    }
+    return conversation;
   }
 
   Future<void> getChatConversations(
@@ -825,7 +838,7 @@ class IsmChatConversationsController extends GetxController {
       await Future.wait(
         chats.map(
           (e) async =>
-              await IsmChatConfig.dbWrapper!.createAndUpdateConversation(e),
+              await IsmChatConfig.dbWrapper?.createAndUpdateConversation(e),
         ),
       );
     }
@@ -897,8 +910,13 @@ class IsmChatConversationsController extends GetxController {
           final indexOfAsset = assetList
               .indexWhere((e) => e.values.first.srNoBackgroundAssset == 100);
           if (indexOfAsset != -1) {
-            final pathName =
-                assetList[indexOfAsset].values.first.imageUrl!.split('/').last;
+            final pathName = assetList[indexOfAsset]
+                    .values
+                    .first
+                    .imageUrl
+                    ?.split('/')
+                    .last ??
+                '';
             var filePath = await IsmChatUtility.makeDirectoryWithUrl(
                 urlPath: assetList[indexOfAsset].values.first.imageUrl ?? '',
                 fileName: pathName);
@@ -918,7 +936,7 @@ class IsmChatConversationsController extends GetxController {
       }
 
       await IsmChatConfig.dbWrapper?.userDetailsBox
-          .put(IsmChatStrings.userData, userDetails!.toJson());
+          .put(IsmChatStrings.userData, userDetails?.toJson() ?? '');
     }
   }
 
@@ -1087,12 +1105,13 @@ class IsmChatConversationsController extends GetxController {
 
   Future<void> goToChatPage() async {
     if (IsmChatResponsive.isWeb(Get.context!)) {
-      if (!Get.isRegistered<IsmChatPageController>()) {
+      if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         IsmChatPageBinding().dependencies();
         return;
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.none;
-      final chatPagecontroller = Get.find<IsmChatPageController>();
+      final chatPagecontroller =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       chatPagecontroller.startInit();
       chatPagecontroller.closeOverlay();
     } else {
@@ -1226,12 +1245,13 @@ class IsmChatConversationsController extends GetxController {
         notificationTitle: notificationTitle,
         body: x.body,
         createdAt: x.sentAt,
-        isBroadcast: Get.isRegistered<IsmChatPageController>()
-            ? Get.find<IsmChatPageController>().isBroadcast
+        isBroadcast: Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)
+            ? Get.find<IsmChatPageController>(tag: IsmChat.i.tag).isBroadcast
             : false,
       );
-      if (isMessageSent && Get.isRegistered<IsmChatPageController>()) {
-        final controller = Get.find<IsmChatPageController>();
+      if (isMessageSent &&
+          Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+        final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
         if (!controller.isBroadcast) {
           controller.didReactedLast = false;
           await controller.getMessagesFromDB(conversationId);
@@ -1606,14 +1626,15 @@ class IsmChatConversationsController extends GetxController {
       conversationId: conversationId,
     );
 
-    navigateToMessages(conversation);
+    updateLocalConversation(conversation);
     if (IsmChatResponsive.isWeb(Get.context!)) {
       Get.back();
-      if (!Get.isRegistered<IsmChatPageController>()) {
+      if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         IsmChatPageBinding().dependencies();
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.boradcastChatMessagePage;
-      final chatPagecontroller = Get.find<IsmChatPageController>();
+      final chatPagecontroller =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       chatPagecontroller.startInit(isBroadcasts: true);
       chatPagecontroller.closeOverlay();
     } else {

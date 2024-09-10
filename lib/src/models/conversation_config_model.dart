@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class ConversationConfigModel {
   factory ConversationConfigModel.fromJson(String source) =>
       ConversationConfigModel.fromMap(
@@ -38,7 +40,7 @@ class ConversationConfigModel {
         'typingEvents': typingEvents,
         'readEvents': readEvents,
         'pushNotifications': pushNotifications,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

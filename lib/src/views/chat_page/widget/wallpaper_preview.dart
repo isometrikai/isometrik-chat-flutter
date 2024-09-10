@@ -195,7 +195,8 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                 ),
                 child: IsmChatTapHandler(
                   onTap: () async {
-                    final pageController = Get.find<IsmChatPageController>();
+                    final pageController =
+                        Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
                     final conversationController =
                         Get.find<IsmChatConversationsController>();
                     if (_imagePath?.path.isNotEmpty == true) {

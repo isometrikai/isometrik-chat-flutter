@@ -643,7 +643,7 @@ class IsmChatPageRepository {
         'notificationTitle': notificationTitle,
         'messageType': messageType,
         'metaData': metaData?.toMap(),
-        if (!mentionedUsers.isNullOrEmpty) 'mentionedUsers': mentionedUsers,
+        'mentionedUsers': mentionedUsers,
         'hideNewConversationsForSender': hideNewConversationsForSender,
         'groupcastId': groupcastId,
         'events': events,

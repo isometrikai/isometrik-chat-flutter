@@ -79,15 +79,15 @@ class IsmChatCommonRepository {
         'conversationId': conversationId,
         'body': body,
         'parentMessageId': parentMessageId,
-        'metaData': metaData?.toMap().removeNullValues(),
+        'metaData': metaData?.toMap(),
         'events': events,
         'customType': customType,
         'attachments': attachments,
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
         'searchableTags': [body],
-        if (mentionedUsers?.isNotEmpty == true) 'mentionedUsers': mentionedUsers
-      };
+        'mentionedUsers': mentionedUsers
+      }.removeNullValues();
 
       var response = await _apiWrapper.post(
         IsmChatAPI.sendMessage,

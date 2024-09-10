@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class MessageReactionModel {
   final String emojiKey;
@@ -23,7 +24,7 @@ class MessageReactionModel {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'emojiKey': emojiKey,
         'userIds': userIds,
-      };
+      }.removeNullValues();
 
   factory MessageReactionModel.fromMap(Map<String, dynamic> map) =>
       MessageReactionModel(

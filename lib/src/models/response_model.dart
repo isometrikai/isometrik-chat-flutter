@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatResponseModel {
   factory IsmChatResponseModel.fromJson(String source) =>
       IsmChatResponseModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -47,7 +49,7 @@ class IsmChatResponseModel {
         'data': data,
         'hasError': hasError,
         'errorCode': errorCode,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

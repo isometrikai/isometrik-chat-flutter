@@ -20,7 +20,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
   File? videoFile;
   String dataSize = '';
 
-  final controller = Get.find<IsmChatPageController>();
+  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   @override
   void initState() {

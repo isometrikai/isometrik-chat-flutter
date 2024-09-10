@@ -1,13 +1,12 @@
 import 'package:chat_component_example/main.dart';
 import 'package:chat_component_example/models/models.dart';
 import 'package:chat_component_example/res/res.dart';
+import 'package:chat_component_example/utilities/config.dart';
 import 'package:chat_component_example/utilities/device_config.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-
-import '../../utilities/config.dart';
 
 class ChatListController extends GetxController {
   UserDetailsModel userDetails = UserDetailsModel();
@@ -55,19 +54,22 @@ class ChatListController extends GetxController {
   }
 
   subscribeToTopic() async {
-    //  await FirebaseMessaging.instance
-    //     .subscribeToTopic('/topics/chat-${userDetails.userId}');
-
     await FirebaseMessaging.instance
         .subscribeToTopic('chat-${userDetails.userId}');
   }
 
+  unSubscribeToTopic() async {
+    if (!kIsWeb) {
+      await FirebaseMessaging.instance
+          .unsubscribeFromTopic('chat-${userDetails.userId}');
+    }
+  }
+
   void onSignOut() async {
+    unSubscribeToTopic();
     dbWrapper?.deleteChatLocalDb();
     IsmChat.i.logout();
     Get.offAllNamed(AppRoutes.login);
-    await FirebaseMessaging.instance
-        .unsubscribeFromTopic('chat-${userDetails.userId}');
   }
 
   // void callFuncation() async {

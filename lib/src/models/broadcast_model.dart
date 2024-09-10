@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class BroadcastModel {
   BroadcastModel({
@@ -99,7 +100,7 @@ class BroadcastModel {
         'createdBy': createdBy,
         'createdAt': createdAt,
         'metaData': metaData?.toMap(),
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
@@ -170,7 +171,7 @@ class MembersDetail {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'memberName': memberName,
         'memberId': memberId,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
@@ -204,7 +205,7 @@ class BroadcastMetadata {
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'membersDetail': membersDetail?.map((x) => x.toMap()).toList(),
-      };
+      }.removeNullValues();
 
   factory BroadcastMetadata.fromMap(Map<String, dynamic> map) =>
       BroadcastMetadata(

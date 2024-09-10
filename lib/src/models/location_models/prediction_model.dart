@@ -88,7 +88,7 @@ class IsmChatPrediction {
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'description': description,
-        'matchedSubstrings': matchedSubstrings!.map((x) => x.toMap()).toList(),
+        'matchedSubstrings': matchedSubstrings?.map((x) => x.toMap()).toList(),
         'placeId': placeId,
         'reference': reference,
         'structuredFormatting': structuredFormatting?.toMap(),
@@ -105,7 +105,7 @@ class IsmChatPrediction {
         'scope': scope,
         'userRatingsTotal': userRatingsTotal,
         'vicinity': vicinity,
-      };
+      }.removeNullValues();
 
   factory IsmChatPrediction.fromMap(Map<String, dynamic> map,
       {LatLng? latlng}) {

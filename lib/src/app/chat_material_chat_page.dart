@@ -92,7 +92,7 @@ class _IsmChatPageState extends State<IsmChatPage> {
       await Future.delayed(const Duration(milliseconds: 500));
     }
     final conversationController = Get.find<IsmChatConversationsController>();
-    conversationController.navigateToMessages(widget.conversation);
+    conversationController.updateLocalConversation(widget.conversation);
   }
 
   @override

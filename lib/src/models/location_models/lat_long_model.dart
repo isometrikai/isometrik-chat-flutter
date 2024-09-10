@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatLatLongModel {
   final double lat;
@@ -23,7 +24,7 @@ class IsmChatLatLongModel {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'lat': lat,
         'lng': lng,
-      };
+      }.removeNullValues();
 
   factory IsmChatLatLongModel.fromMap(Map<String, dynamic> map) =>
       IsmChatLatLongModel(

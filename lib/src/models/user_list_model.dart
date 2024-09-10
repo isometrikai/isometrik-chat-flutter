@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/src/models/user_details_model.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatUserListModel {
   factory IsmChatUserListModel.fromJson(String source) =>
@@ -36,7 +36,7 @@ class IsmChatUserListModel {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'users': users.map((x) => x.toMap()).toList(),
         'pageToken': pageToken,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

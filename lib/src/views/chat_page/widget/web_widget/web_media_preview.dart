@@ -8,8 +8,9 @@ class WebMediaPreview extends StatelessWidget {
   static const String route = IsmPageRoutes.webMediaPreivew;
 
   @override
-  Widget build(BuildContext context) =>
-      GetX<IsmChatPageController>(builder: (controller) {
+  Widget build(BuildContext context) => GetX<IsmChatPageController>(
+      tag: IsmChat.i.tag,
+      builder: (controller) {
         if (controller.webMedia.isNotEmpty) {
           return Scaffold(
             appBar: PreferredSize(

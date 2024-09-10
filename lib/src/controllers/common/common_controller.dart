@@ -40,6 +40,7 @@ class IsmChatCommonController extends GetxController {
     required String mediaId,
     required Uint8List bytes,
     required bool isLoading,
+    bool isUpdateThumbnail = false,
   }) async =>
       await viewModel.postMediaUrl(
         conversationId: conversationId,
@@ -48,6 +49,7 @@ class IsmChatCommonController extends GetxController {
         mediaId: mediaId,
         isLoading: isLoading,
         bytes: bytes,
+        isUpdateThumbnail: isUpdateThumbnail,
       );
 
   List<IsmChatMessageModel> sortMessages(List<IsmChatMessageModel> messages) =>

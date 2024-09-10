@@ -9,7 +9,7 @@ class IsmChatAudioMessage extends StatelessWidget {
     this.decoration,
   })  : url = message.attachments?.first.mediaUrl ?? '',
         duration = message.metaData?.duration,
-        noise = Get.find<IsmChatPageController>()
+        noise = Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
             .getNoise(message.sentAt, message.sentByMe);
 
   final IsmChatMessageModel message;

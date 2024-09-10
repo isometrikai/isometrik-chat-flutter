@@ -9,13 +9,13 @@ class IsmChatMessage extends StatefulWidget {
     bool isIgnorTap = false,
     bool isFromSearchMessage = false,
     super.key,
-  })  : _message = Get.isRegistered<IsmChatPageController>()
+  })  : _message = Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)
             ? isFromSearchMessage
-                ? Get.find<IsmChatPageController>()
+                ? Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                     .searchMessages
                     .reversed
                     .toList()[index]
-                : Get.find<IsmChatPageController>()
+                : Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                     .messages
                     .reversed
                     .toList()[index]
@@ -77,6 +77,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
     super.build(context);
     var theme = IsmChatConfig.chatTheme.chatPageTheme;
     return GetBuilder<IsmChatPageController>(
+      tag: IsmChat.i.tag,
       builder: (controller) => IgnorePointer(
         ignoring: showMessageInCenter || widget._isIgnorTap!,
         child: IsmChatTapHandler(
@@ -210,7 +211,8 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                       ] else ...[
                         IsmChatDimens.boxWidth4,
                       ],
-                      if (Get.isRegistered<IsmChatPageController>()) ...[
+                      if (Get.isRegistered<IsmChatPageController>(
+                          tag: IsmChat.i.tag)) ...[
                         MessageCard(
                           message: widget._message!,
                           showMessageInCenter: showMessageInCenter,

@@ -79,7 +79,8 @@ class IsmChatConversationSearchView extends StatelessWidget {
                               onTap: () async {
                                 IsmChatProperties.conversationProperties
                                     .onChatTap!(context, conversation);
-                                controller.navigateToMessages(conversation);
+                                controller
+                                    .updateLocalConversation(conversation);
                                 await controller.goToChatPage();
                               },
                             ),

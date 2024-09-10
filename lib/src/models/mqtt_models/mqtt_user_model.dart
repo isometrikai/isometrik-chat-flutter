@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatMqttUserModel {
   factory IsmChatMqttUserModel.fromJson(String source) =>
       IsmChatMqttUserModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -45,7 +47,7 @@ class IsmChatMqttUserModel {
         'userName': userName,
         'profileImageUrl': profileImageUrl,
         'userIdentifier': userIdentifier,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

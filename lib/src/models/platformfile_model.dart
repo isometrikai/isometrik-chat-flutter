@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:flutter/services.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmchPlatformFile {
   IsmchPlatformFile({
@@ -40,7 +42,7 @@ class IsmchPlatformFile {
         'bytes': bytes,
         'size': size,
         'extension': extension,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

@@ -8,7 +8,10 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatPageView extends StatefulWidget {
   const IsmChatPageView({
     super.key,
+    this.viewTag,
   });
+
+  final String? viewTag;
 
   static const String route = IsmPageRoutes.chatPage;
 
@@ -22,13 +25,15 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    if (!Get.isRegistered<IsmChatPageController>()) {
+    IsmChat.i.tag = widget.viewTag;
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       IsmChatPageBinding().dependencies();
     }
   }
 
   @override
   void dispose() {
+    IsmChat.i.tag = null;
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -56,7 +61,8 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     }
   }
 
-  IsmChatPageController get controller => Get.find<IsmChatPageController>();
+  IsmChatPageController get controller =>
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   Future<bool> navigateBack() async {
     if (controller.isMessageSeleted) {
@@ -81,15 +87,17 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
           if (!GetPlatform.isAndroid) {
             return false;
           }
-          return await navigateBack();
+          return IsmChat.i.tag == null ? await navigateBack() : false;
         },
         child: GetPlatform.isIOS
             ? GestureDetector(
-                onHorizontalDragEnd: (details) {
-                  if (details.velocity.pixelsPerSecond.dx > 50) {
-                    navigateBack();
-                  }
-                },
+                onHorizontalDragEnd: IsmChat.i.tag == null
+                    ? (details) {
+                        if (details.velocity.pixelsPerSecond.dx > 50) {
+                          navigateBack();
+                        }
+                      }
+                    : null,
                 child: const _IsmChatPageView(),
               )
             : const _IsmChatPageView(),
@@ -101,6 +109,7 @@ class _IsmChatPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => DecoratedBox(
           decoration: BoxDecoration(
             color: controller.backgroundColor.isNotEmpty

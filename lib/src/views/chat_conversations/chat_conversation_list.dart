@@ -90,9 +90,9 @@ class _ConversationList extends StatelessWidget {
           var conversation = controller.userConversations[index];
           return IsmChatTapHandler(
             onTap: () async {
-              IsmChatProperties.conversationProperties.onChatTap!(
-                  _, conversation);
-              controller.navigateToMessages(conversation);
+              IsmChatProperties.conversationProperties.onChatTap
+                  ?.call(_, conversation);
+              controller.updateLocalConversation(conversation);
               await controller.goToChatPage();
             },
             child: IsmChatProperties.conversationProperties.cardBuilder
@@ -221,7 +221,7 @@ class _ConversationList extends StatelessWidget {
                           IsmChatProperties.conversationProperties.onChatTap!(
                               _, conversation);
                         }
-                        controller.navigateToMessages(conversation);
+                        controller.updateLocalConversation(conversation);
                         await controller.goToChatPage();
                       },
                     ),

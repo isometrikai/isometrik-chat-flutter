@@ -16,7 +16,8 @@ class _IsmMediaViewState extends State<IsmMediaView>
     with TickerProviderStateMixin {
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetMediaList = [];
 
-  final chatPageController = Get.find<IsmChatPageController>();
+  final chatPageController =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   @override
   void initState() {
@@ -86,7 +87,8 @@ class _IsmMediaViewState extends State<IsmMediaView>
                               : Icons.description_rounded;
 
                           return IsmChatTapHandler(
-                            onTap: () => Get.find<IsmChatPageController>()
+                            onTap: () => Get.find<IsmChatPageController>(
+                                    tag: IsmChat.i.tag)
                                 .tapForMediaPreview(value[valueIndex]),
                             child: Stack(
                               alignment: Alignment.center,

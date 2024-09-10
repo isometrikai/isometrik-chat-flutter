@@ -27,9 +27,9 @@ class IsmChatStructuredFormatting {
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'mainText': mainText,
-        'matchedString': matchedString!.map((x) => x.toMap()).toList(),
+        'matchedString': matchedString?.map((x) => x.toMap()).toList(),
         'secondaryText': secondaryText,
-      };
+      }.removeNullValues();
 
   factory IsmChatStructuredFormatting.fromMap(Map<String, dynamic> map) =>
       IsmChatStructuredFormatting(

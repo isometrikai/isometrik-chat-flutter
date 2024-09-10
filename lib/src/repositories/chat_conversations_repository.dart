@@ -358,7 +358,7 @@ class IsmChatConversationsRepository {
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
         'searchableTags': searchableTags,
-      };
+      }.removeNullValues();
 
       var response = await _apiWrapper.post(
         IsmChatAPI.sendForwardMessage,

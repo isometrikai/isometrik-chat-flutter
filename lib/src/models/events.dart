@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatEvents {
   IsmChatEvents({
     this.typingEvents,
@@ -41,13 +43,12 @@ class IsmChatEvents {
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        if (typingEvents != null) 'typingEvents': typingEvents,
-        if (readEvents != null) 'readEvents': readEvents,
-        if (pushNotifications != null) 'pushNotifications': pushNotifications,
-        if (updateUnreadCount != null) 'updateUnreadCount': updateUnreadCount,
-        if (sendPushNotification != null)
-          'sendPushNotification': sendPushNotification,
-      };
+        'typingEvents': typingEvents,
+        'readEvents': readEvents,
+        'pushNotifications': pushNotifications,
+        'updateUnreadCount': updateUnreadCount,
+        'sendPushNotification': sendPushNotification,
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

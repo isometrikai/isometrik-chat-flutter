@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatProjectConfig {
   factory IsmChatProjectConfig.fromMap(Map<String, dynamic> map) =>
       IsmChatProjectConfig(
@@ -54,7 +56,7 @@ class IsmChatProjectConfig {
         'chatApisBaseUrl': chatApisBaseUrl,
         'googleApiKey': googleApiKey,
         'appName': appName,
-      };
+      }.removeNullValues();
 
   @override
   String toString() =>

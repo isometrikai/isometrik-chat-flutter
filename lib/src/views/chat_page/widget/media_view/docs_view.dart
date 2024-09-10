@@ -17,7 +17,8 @@ class _IsmDocsViewState extends State<IsmDocsView>
     with TickerProviderStateMixin {
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetDocsList = [];
 
-  final chatPageController = Get.find<IsmChatPageController>();
+  final chatPageController =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   @override
   void initState() {

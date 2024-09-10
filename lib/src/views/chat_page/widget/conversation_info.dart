@@ -12,11 +12,12 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         initState: (_) async {
           conversationController.mediaList.clear();
           conversationController.mediaListLinks.clear();
           conversationController.mediaListDocs.clear();
-          var controller = Get.find<IsmChatPageController>();
+          var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
           await controller.getConverstaionDetails(
             conversationId: controller.conversation?.conversationId ?? '',
             includeMembers:

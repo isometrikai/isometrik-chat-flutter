@@ -436,7 +436,7 @@ class IsmChatMessageModel {
         'meetingId': meetingId,
         'meetingType': meetingType,
         'audioOnly': audioOnly,
-      };
+      }.removeNullValues();
 
   String body;
   String? action;
@@ -755,7 +755,7 @@ class MessageStatus {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'userId': userId,
         'timestamp': timestamp,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
@@ -802,7 +802,7 @@ class CallDuration {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'memberId': memberId,
         'durationInMilliseconds': durationInMilliseconds,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

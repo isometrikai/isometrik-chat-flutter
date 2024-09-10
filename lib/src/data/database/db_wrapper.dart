@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -90,8 +90,8 @@ class IsmChatDBWrapper {
   Future<void> deleteChatLocalDb() async {
     if (!IsmChatConfig.shouldSetupMqtt) {
       final mqttController = Get.find<IsmChatMqttController>();
-      mqttController.mqttHelper.unsubscribeTopics(
-          [mqttController.messageTopic, mqttController.statusTopic]);
+      mqttController.mqttHelper
+          .unsubscribeTopics(mqttController.subscribedTopics);
       mqttController.mqttHelper.disconnect();
     }
     await clearChatLocalDb();
@@ -112,8 +112,9 @@ class IsmChatDBWrapper {
       conversation = conversation.copyWith(messages: []);
       await saveConversation(conversation: conversation);
     }
-    if (Get.isRegistered<IsmChatPageController>()) {
-      await Get.find<IsmChatPageController>().getMessagesFromDB(conversationId);
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+          .getMessagesFromDB(conversationId);
     }
   }
 
@@ -126,7 +127,7 @@ class IsmChatDBWrapper {
     }
 
     return conversations
-        .map((e) => IsmChatConversationModel.fromJson(e!))
+        .map((e) => IsmChatConversationModel.fromJson(e ?? ''))
         .toList();
   }
 
@@ -149,12 +150,9 @@ class IsmChatDBWrapper {
     if (conversationId == null || conversationId.trim().isEmpty) {
       return null;
     }
-
     IsmChatConversationModel? conversations;
-
     String? map;
     List<String>? listMap;
-
     switch (dbBox) {
       case IsmChatDbBox.main:
         map = await chatConversationBox.get(conversationId);
@@ -168,13 +166,11 @@ class IsmChatDBWrapper {
       if (map == null) {
         return null;
       }
-
       return IsmChatConversationModel.fromJson(map);
     }
     if (listMap == null || listMap.isEmpty) {
       return null;
     }
-
     conversations = IsmChatConversationModel(
       conversationId: conversationId,
       messages: listMap.map(IsmChatMessageModel.fromJson).toList(),
@@ -225,14 +221,16 @@ class IsmChatDBWrapper {
         var mainConversation =
             await getConversation(conversationId: conversationId, dbBox: dbBox);
         if (mainConversation != null) {
-          messgges = mainConversation.messages;
+          messgges =
+              List<IsmChatMessageModel>.from(mainConversation.messages ?? []);
         }
         break;
       case IsmChatDbBox.pending:
         var pendingConversation =
             await getConversation(conversationId: conversationId, dbBox: dbBox);
         if (pendingConversation != null) {
-          messgges = pendingConversation.messages;
+          messgges = List<IsmChatMessageModel>.from(
+              pendingConversation.messages ?? []);
         }
         break;
     }
@@ -244,33 +242,39 @@ class IsmChatDBWrapper {
     IsmChatDbBox dbBox = IsmChatDbBox.main,
   ]) async {
     if ((message.messageId == null && message.conversationId == null) ||
-        (message.messageId!.trim().isEmpty &&
-            message.conversationId!.trim().isEmpty)) {
+        (message.messageId?.trim().isEmpty == true &&
+            message.conversationId?.trim().isEmpty == true)) {
       return;
     }
 
     switch (dbBox) {
       case IsmChatDbBox.main:
-        var conversation = await getConversation(
+        var conversationMain = await getConversation(
             conversationId: message.conversationId, dbBox: dbBox);
-
-        conversation?.messages?.add(message);
-        await saveConversation(conversation: conversation!, dbBox: dbBox);
+        if (conversationMain == null) return;
+        final mesasges = conversationMain.messages ?? [];
+        mesasges.add(message);
+        conversationMain = conversationMain.copyWith(
+          messages: mesasges,
+        );
+        await saveConversation(conversation: conversationMain, dbBox: dbBox);
         break;
       case IsmChatDbBox.pending:
-        var conversation = await getConversation(
+        var conversationPending = await getConversation(
             conversationId: message.conversationId, dbBox: dbBox);
-
-        if (conversation == null) {
+        if (conversationPending == null) {
           var pendingConversation = IsmChatConversationModel(
               conversationId: message.conversationId, messages: [message]);
           await saveConversation(
               conversation: pendingConversation, dbBox: dbBox);
           return;
         }
-        conversation.messages?.add(message);
-
-        await saveConversation(conversation: conversation, dbBox: dbBox);
+        final mesasges = conversationPending.messages ?? [];
+        mesasges.add(message);
+        conversationPending = conversationPending.copyWith(
+          messages: mesasges,
+        );
+        await saveConversation(conversation: conversationPending, dbBox: dbBox);
         break;
     }
   }
@@ -284,7 +288,7 @@ class IsmChatDBWrapper {
 
       if (resposne.isEmpty) {
         await chatConversationBox.put(
-          conversationModel.conversationId!,
+          conversationModel.conversationId ?? '',
           conversationModel.toJson(),
         );
       } else {

@@ -28,7 +28,7 @@ class Reaction {
         'reactionType': reactionType.value,
         'messageId': messageId,
         'conversationId': conversationId,
-      };
+      }.removeNullValues();
 
   factory Reaction.fromMap(Map<String, dynamic> map) => Reaction(
         reactionType: IsmChatEmoji.fromMap(map['reactionType'] as String),

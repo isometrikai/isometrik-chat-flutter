@@ -1,7 +1,8 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatPageSendMessageMixin on GetxController {
-  IsmChatPageController get _controller => Get.find<IsmChatPageController>();
+  IsmChatPageController get _controller =>
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   IsmChatConversationsController get conversationController =>
       Get.find<IsmChatConversationsController>();
@@ -93,8 +94,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       Get.back<void>();
       if (await IsmChatProperties
               .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-              ?.call(Get.context!,
-                  Get.find<IsmChatPageController>().conversation!) ??
+              ?.call(
+                  Get.context!,
+                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                      .conversation!) ??
           true) {
         sendPhotoAndVideo();
       }
@@ -426,8 +429,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
               '';
       if (await IsmChatProperties
               .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-              ?.call(Get.context!,
-                  Get.find<IsmChatPageController>().conversation!) ??
+              ?.call(
+                  Get.context!,
+                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                      .conversation!) ??
           true) {
         await ismPostMediaUrl(
           imageAndFile: false,
@@ -465,7 +470,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     String? thumbnailNameWithExtension;
     String? thumbnailMediaId;
     String? mediaId;
-
     String? extension;
     File? thumbnailFile;
     MediaInfo? videoCopress;
@@ -483,7 +487,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
               );
       if (videoCopress != null) {
         IsmChatUtility.closeLoader();
-        bytes = videoCopress.file!.readAsBytesSync();
+        bytes = videoCopress.file?.readAsBytesSync();
         thumbnailBytes = thumbnailFile.readAsBytesSync();
         thumbnailNameWithExtension = thumbnailFile.path.split('/').last;
         thumbnailMediaId =
@@ -798,7 +802,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       notificationBody: IsmChatStrings.sentImage,
       notificationTitle: notificationTitle,
       attachments: imageMessage.attachments != null
-          ? [imageMessage.attachments!.first.toMap().removeNullValues()]
+          ? [imageMessage.attachments!.first.toMap()]
           : null,
       isBroadcast: _controller.isBroadcast,
       parentMessageId: imageMessage.parentMessageId,
@@ -893,7 +897,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       notificationBody: IsmChatStrings.sentLocation,
       notificationTitle: notificationTitle,
       attachments: locationMessage.attachments != null
-          ? [locationMessage.attachments!.first.toMap().removeNullValues()]
+          ? [locationMessage.attachments!.first.toMap()]
           : null,
       isBroadcast: _controller.isBroadcast,
       parentMessageId: locationMessage.parentMessageId,
@@ -1135,10 +1139,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             mediaType: thumbanilMediaType ?? 0,
             mediaId: thumbnailMediaId ?? '',
             isLoading: isLoading,
-            bytes: bytes,
+            bytes: thumbnailBytes ?? Uint8List(0),
+            isUpdateThumbnail: true,
           );
         }
-
         if (presignedUrlModel != null) {
           thumbnailUrlPath = _controller.isBroadcast
               ? presignedUrlModel.mediaUrl ?? ''
@@ -1158,7 +1162,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             extension: ismChatChatMessageModel.attachments?.first.extension,
             attachmentType:
                 ismChatChatMessageModel.attachments?.first.attachmentType,
-          ).toMap().removeNullValues()
+          ).toMap()
         ];
 
         sendMessage(

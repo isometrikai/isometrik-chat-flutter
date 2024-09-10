@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:isometrik_chat_flutter/src/models/models.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatViewportModel {
   final IsmChatLatLongModel northeast;
@@ -23,7 +23,7 @@ class IsmChatViewportModel {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'northeast': northeast.toMap(),
         'southwest': southwest.toMap(),
-      };
+      }.removeNullValues();
 
   factory IsmChatViewportModel.fromMap(Map<String, dynamic> map) =>
       IsmChatViewportModel(

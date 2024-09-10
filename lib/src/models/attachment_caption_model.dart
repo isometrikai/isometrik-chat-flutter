@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:isometrik_chat_flutter/src/models/attachment_model.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class AttachmentCaptionModel {
   AttachmentCaptionModel({
@@ -33,7 +33,7 @@ class AttachmentCaptionModel {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'attachmentModel': attachmentModel.toMap(),
         'caption': caption,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatTerm {
   final int? offset;
   final String? value;
@@ -21,7 +23,7 @@ class IsmChatTerm {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'offset': offset,
         'value': value,
-      };
+      }.removeNullValues();
 
   factory IsmChatTerm.fromMap(Map<String, dynamic> map) => IsmChatTerm(
         offset: map['offset'] != null ? map['offset'] as int : null,

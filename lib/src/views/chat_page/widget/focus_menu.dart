@@ -20,7 +20,7 @@ class IsmChatFocusMenu extends StatelessWidget {
   final Animation<double> animation;
   final bool canReact;
 
-  final controller = Get.find<IsmChatPageController>();
+  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   @override
   Widget build(BuildContext context) => IsmChatResponsive.isWeb(context)
@@ -51,6 +51,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: GetBuilder<IsmChatPageController>(
+                        tag: IsmChat.i.tag,
                         builder: (controller) => ListView.builder(
                               itemCount: message.focusMenuList.length,
                               shrinkWrap: true,
@@ -110,7 +111,8 @@ class IsmChatFocusMenu extends StatelessWidget {
       : IsmChatTapHandler(
           onTap: () {
             if (IsmChatResponsive.isWeb(context)) {
-              var controller = Get.find<IsmChatPageController>();
+              var controller =
+                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
               controller.closeOverlay();
             } else {
               Navigator.pop(context);
@@ -174,6 +176,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                               ),
                               clipBehavior: Clip.antiAlias,
                               child: GetBuilder<IsmChatPageController>(
+                                  tag: IsmChat.i.tag,
                                   builder: (controller) => ListView.builder(
                                         itemCount: message.focusMenuList.length,
                                         shrinkWrap: true,

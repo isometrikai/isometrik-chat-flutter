@@ -12,6 +12,7 @@ class IsmChatImageEditView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         initState: (state) {
           state.controller?.textEditingController.clear();
         },
@@ -99,7 +100,8 @@ class IsmChatImageEditView extends StatelessWidget {
                               .messageAllowedConfig?.isMessgeAllowed
                               ?.call(
                                   context,
-                                  Get.find<IsmChatPageController>()
+                                  Get.find<IsmChatPageController>(
+                                          tag: IsmChat.i.tag)
                                       .conversation!) ??
                           true) {
                         await controller.sendImage(

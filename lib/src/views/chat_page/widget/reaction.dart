@@ -5,7 +5,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ImsChatReaction extends StatefulWidget {
   ImsChatReaction({super.key, required this.message})
-      : _controller = Get.find<IsmChatPageController>();
+      : _controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   final IsmChatMessageModel message;
   final IsmChatPageController _controller;

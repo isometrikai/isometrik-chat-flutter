@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatLastReadAt {
   factory IsmChatLastReadAt.fromJson(String source) =>
       IsmChatLastReadAt.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -29,7 +31,7 @@ class IsmChatLastReadAt {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'userId': userId,
         'readAt': readAt,
-      };
+      }.removeNullValues();
 
   static List<IsmChatLastReadAt> fromNetworkMap(Map<String, dynamic> map) {
     var data = <IsmChatLastReadAt>[];

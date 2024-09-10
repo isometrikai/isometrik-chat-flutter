@@ -9,7 +9,7 @@ class ImsChatShowUserReaction extends StatefulWidget {
       required this.reactionType,
       required this.message,
       required this.index})
-      : _controller = Get.find<IsmChatPageController>();
+      : _controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   final IsmChatMessageModel message;
   final String reactionType;

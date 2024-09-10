@@ -49,7 +49,8 @@ class IsmMediaPreview extends StatefulWidget {
 }
 
 class _MediaPreviewState extends State<IsmMediaPreview> {
-  final chatPageController = Get.find<IsmChatPageController>();
+  final chatPageController =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   String mediaTime = '';
 
@@ -216,6 +217,7 @@ class AudioPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
+      tag: IsmChat.i.tag,
       builder: (controller) => Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

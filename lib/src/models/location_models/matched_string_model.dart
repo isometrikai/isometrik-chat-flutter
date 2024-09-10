@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatMatchedSubstring {
   final int? length;
   final int? offset;
@@ -21,7 +23,7 @@ class IsmChatMatchedSubstring {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'length': length,
         'offset': offset,
-      };
+      }.removeNullValues();
 
   factory IsmChatMatchedSubstring.fromMap(Map<String, dynamic> map) =>
       IsmChatMatchedSubstring(

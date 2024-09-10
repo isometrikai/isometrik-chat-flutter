@@ -23,6 +23,7 @@ class IsmChatMessageField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) {
           var messageBody = controller.getMessageBody(controller.replayMessage);
           return Row(
@@ -277,7 +278,7 @@ class IsmChatMessageField extends StatelessWidget {
 class _ReplyMessage extends StatelessWidget {
   _ReplyMessage({
     required this.messageBody,
-  }) : controller = Get.find<IsmChatPageController>();
+  }) : controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   final String messageBody;
   final IsmChatPageController controller;
@@ -345,6 +346,7 @@ class _EmojiButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => IconButton(
           color: color ?? IsmChatConfig.chatTheme.primaryColor,
           icon: AnimatedSwitcher(
@@ -379,6 +381,7 @@ class _MicOrSendButton extends StatelessWidget {
   const _MicOrSendButton();
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -405,7 +408,8 @@ class _MicOrSendButton extends StatelessWidget {
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
                               Get.context!,
-                              Get.find<IsmChatPageController>()
+                              Get.find<IsmChatPageController>(
+                                      tag: IsmChat.i.tag)
                                   .conversation!) ??
                       true) {
                     if (kIsWeb) {
@@ -459,7 +463,8 @@ class _MicOrSendButton extends StatelessWidget {
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
                               Get.context!,
-                              Get.find<IsmChatPageController>()
+                              Get.find<IsmChatPageController>(
+                                      tag: IsmChat.i.tag)
                                   .conversation!) ??
                       true) {
                     await controller.getMentionedUserList(
@@ -597,7 +602,7 @@ class _AttachmentIconForWeb extends StatefulWidget {
 
 class _AttachmentIconForWebState extends State<_AttachmentIconForWeb>
     with TickerProviderStateMixin {
-  final controller = Get.find<IsmChatPageController>();
+  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
   final layerLink = LayerLink();
 
   late Animation<double> curve;
@@ -750,6 +755,7 @@ class _AttachmentIconForWebState extends State<_AttachmentIconForWeb>
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => CompositedTransformTarget(
           link: layerLink,
           child: IconButton(

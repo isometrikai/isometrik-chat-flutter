@@ -10,9 +10,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   final mqttHelper = MqttHelper();
 
-  late String messageTopic;
-
-  late String statusTopic;
+  final List<String> subscribedTopics = [];
 
   IsmChatProjectConfig? projectConfig;
 
@@ -26,12 +24,19 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   final chatDelegate = const IsmChatDelegate();
 
-  Future<void> setup({IsmChatCommunicationConfig? config}) async {
+  Future<void> setup({
+    IsmChatCommunicationConfig? config,
+    List<String>? topics,
+    List<String>? topicChannels,
+  }) async {
     _config = config ?? IsmChat.i.config;
     projectConfig = _config?.projectConfig;
     mqttConfig = _config?.mqttConfig;
     userConfig = _config?.userConfig;
-    await setupIsmMqttConnection();
+    await setupIsmMqttConnection(
+      topics: topics,
+      topicChannels: topicChannels,
+    );
     unawaited(getChatConversationsUnreadCount());
   }
 
@@ -44,21 +49,40 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
     chatDelegate.unReadConversationMessages = response;
   }
 
-  Future<void> setupIsmMqttConnection() async {
-    messageTopic =
-        '/${projectConfig?.accountId}/${projectConfig?.projectId}/Message/${userConfig?.userId}';
-    statusTopic =
-        '/${projectConfig?.accountId}/${projectConfig?.projectId}/Status/${userConfig?.userId}';
+  Future<void> setupIsmMqttConnection({
+    List<String>? topics,
+    List<String>? topicChannels,
+  }) async {
+    final topicPrefix =
+        '/${projectConfig?.accountId ?? ''}/${projectConfig?.projectId ?? ''}';
+    final userTopic = '$topicPrefix/User/${userConfig?.userId ?? ''}';
+    final messageTopic = '$topicPrefix/Message/${userConfig?.userId ?? ''}';
+    final statusTopic = '$topicPrefix/Status/${userConfig?.userId ?? ''}';
+
+    var channelTopics = topicChannels
+        ?.map((e) => '$topicPrefix/$e/${userConfig?.userId ?? ''}')
+        .toList();
+
+    subscribedTopics.addAll([
+      ...?topics,
+      ...?channelTopics,
+      userTopic,
+      messageTopic,
+      statusTopic,
+    ]);
+
     await mqttHelper.initialize(
       MqttConfig(
-        projectConfig: ProjectConfig.fromMap(projectConfig?.toMap() ?? {}),
+        projectConfig: ProjectConfig(
+          deviceId: projectConfig?.deviceId ?? '',
+          userIdentifier: userConfig?.userId ?? '',
+          username: _config?.username ?? '',
+          password: _config?.password ?? '',
+        ),
         serverConfig: ServerConfig(
           hostName: mqttConfig?.hostName ?? '',
           port: mqttConfig?.port ?? 0,
         ),
-        userId: userConfig?.userId ?? '',
-        username: _config?.username,
-        password: _config?.password,
         enableLogging: true,
         secure: false,
         webSocketConfig: WebSocketConfig(
@@ -75,7 +99,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         pongCallback: _pong,
       ),
       autoSubscribe: true,
-      topics: [messageTopic, statusTopic],
+      topics: subscribedTopics,
     );
     mqttHelper.onConnectionChange((value) {
       chatDelegate.isMqttConnected = value;
@@ -122,5 +146,17 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   void _pong() {
     IsmChatLog.info('MQTT pong');
+  }
+
+  void subscribeTopics(List<String> topic) {
+    if (chatDelegate.isMqttConnected) {
+      mqttHelper.subscribeTopics(topic);
+    }
+  }
+
+  void unSubscribeTopics(List<String> topic) {
+    if (chatDelegate.isMqttConnected) {
+      mqttHelper.unsubscribeTopics(topic);
+    }
   }
 }

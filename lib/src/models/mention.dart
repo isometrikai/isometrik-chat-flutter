@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class MentionModel {
   factory MentionModel.fromJson(String source) =>
       MentionModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -34,7 +36,7 @@ class MentionModel {
         'userId': userId,
         'wordCount': wordCount,
         'order': order,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

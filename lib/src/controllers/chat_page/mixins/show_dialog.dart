@@ -1,7 +1,8 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatShowDialogMixin on GetxController {
-  IsmChatPageController get _controller => Get.find<IsmChatPageController>();
+  IsmChatPageController get _controller =>
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   void showDialogForClearChatAndDeleteGroup({isGroupDelete = false}) async {
     if (!isGroupDelete) {

@@ -19,7 +19,8 @@ class IsmChatLocationWidget extends StatefulWidget {
 
 class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
   final Completer<GoogleMapController> mapController = Completer();
-  final ismChatPageController = Get.find<IsmChatPageController>();
+  final ismChatPageController =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(30.7046, 76.7179),
@@ -65,6 +66,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: AppBar(
@@ -264,7 +266,8 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
                                               Get.context!,
-                                              Get.find<IsmChatPageController>()
+                                              Get.find<IsmChatPageController>(
+                                                      tag: IsmChat.i.tag)
                                                   .conversation!) ??
                                       true) {}
                                 },
@@ -315,7 +318,8 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
                                               Get.context!,
-                                              Get.find<IsmChatPageController>()
+                                              Get.find<IsmChatPageController>(
+                                                      tag: IsmChat.i.tag)
                                                   .conversation!) ??
                                       true) {
                                     controller.sendLocation(

@@ -22,7 +22,8 @@ class VideoViewPage extends StatefulWidget {
 class VideoViewPageState extends State<VideoViewPage> with RouteAware {
   late VideoPlayerController _controller;
 
-  final chatPageController = Get.find<IsmChatPageController>();
+  final chatPageController =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   String _videoDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');

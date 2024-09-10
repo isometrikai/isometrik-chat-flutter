@@ -248,7 +248,7 @@ class LastMessageDetails {
         'meetingId': meetingId,
         'meetingType': meetingType,
         'audioOnly': audioOnly
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

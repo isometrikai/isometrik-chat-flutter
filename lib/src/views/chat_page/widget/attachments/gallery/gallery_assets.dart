@@ -17,6 +17,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         initState: (state) {
           state.controller?.listOfAssetsPath.clear();
           state.controller?.selectAssets(argument);

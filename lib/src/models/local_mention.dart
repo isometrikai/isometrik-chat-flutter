@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class LocalMentionAndPhoneNumber {
   factory LocalMentionAndPhoneNumber.fromMap(Map<String, dynamic> map) =>
       LocalMentionAndPhoneNumber(
@@ -39,7 +41,7 @@ class LocalMentionAndPhoneNumber {
         'text': text,
         'isMentioned': isMentioned,
         'isPhoneNumber': isPhoneNumber,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 }

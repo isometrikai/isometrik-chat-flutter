@@ -35,6 +35,7 @@ class IsmChatContactView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
@@ -78,8 +79,10 @@ class IsmChatContactView extends StatelessWidget {
               Get.back();
               if (await IsmChatProperties
                       .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-                      ?.call(Get.context!,
-                          Get.find<IsmChatPageController>().conversation!) ??
+                      ?.call(
+                          Get.context!,
+                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                              .conversation!) ??
                   true) {
                 controller.sendContact(
                   conversationId: controller.conversation?.conversationId ?? '',

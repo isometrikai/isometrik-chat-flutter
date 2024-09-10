@@ -72,7 +72,7 @@ class IsmChatReplyMessageModel {
         'parentMessageMessageType': parentMessageMessageType?.value,
         'forMessageType': forMessageType?.value,
         'parentMessageAttachmentUrl': parentMessageAttachmentUrl,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

@@ -122,7 +122,7 @@ class UserDetails {
         'order': order,
         'wordCount': wordCount,
         'memberId': memberId
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

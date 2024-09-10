@@ -2,11 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/src/controllers/controllers.dart';
-import 'package:isometrik_chat_flutter/src/res/res.dart';
-import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
-import 'package:isometrik_chat_flutter/src/views/views.dart';
-import 'package:isometrik_chat_flutter/src/widgets/widgets.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatBoradcastMessagePage extends StatelessWidget {
   const IsmChatBoradcastMessagePage({super.key});
@@ -16,17 +12,17 @@ class IsmChatBoradcastMessagePage extends StatelessWidget {
   Future<bool> _back(
     BuildContext context,
   ) async {
-    var controller = Get.find<IsmChatPageController>();
+    var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     var conversationController = Get.find<IsmChatConversationsController>();
 
     if (IsmChatResponsive.isWeb(context)) {
-      var controller = Get.find<IsmChatPageController>();
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       controller.isBroadcast = false;
       conversationController.currentConversation = null;
       conversationController.currentConversationId = '';
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.none;
-      await Get.delete<IsmChatPageController>(force: true);
+      await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
     } else {
       if (controller.messages.isNotEmpty) {
         Get.back();
@@ -73,6 +69,7 @@ class _BroadCastMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => Scaffold(
           backgroundColor:
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??

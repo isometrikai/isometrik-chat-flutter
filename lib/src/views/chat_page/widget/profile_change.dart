@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:isometrik_chat_flutter/src/controllers/controllers.dart';
-import 'package:isometrik_chat_flutter/src/res/res.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ProfileChange extends StatelessWidget {
   const ProfileChange({super.key});
@@ -17,7 +16,7 @@ class ProfileChange extends StatelessWidget {
                     onPressed: () async {
                       Get.back();
                       final chatpageController =
-                          Get.find<IsmChatPageController>();
+                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
                       await controller.ismChangeImage(ImageSource.camera);
                       await chatpageController.changeGroupProfile(
                         conversationImageUrl: controller.profileImage,
@@ -56,7 +55,7 @@ class ProfileChange extends StatelessWidget {
                     onPressed: () async {
                       Get.back();
                       final chatpageController =
-                          Get.find<IsmChatPageController>();
+                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
                       await controller.ismChangeImage(ImageSource.gallery);
                       await chatpageController.changeGroupProfile(
                         conversationImageUrl: controller.profileImage,

@@ -6,6 +6,9 @@ class IsmChatStrings {
   static const String userData = 'userData';
   static const String user = 'user';
 
+  static const String controllerTag = 'ism-chat-page';
+
+
   static const String chats = 'Chats';
 
   static const String you = 'You';

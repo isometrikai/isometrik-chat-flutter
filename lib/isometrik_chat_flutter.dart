@@ -30,13 +30,13 @@ class IsmChat {
   factory IsmChat() => instance;
 
   /// Private constructor for creating a new instance of [IsmChat].
-  const IsmChat._(this._delegate);
+  IsmChat._(this._delegate);
 
   /// The delegate used by this instance of [IsmChat].
   final IsmChatDelegate _delegate;
 
   /// The static instance of [IsmChat].
-  static IsmChat i = const IsmChat._(IsmChatDelegate());
+  static IsmChat i = IsmChat._(const IsmChatDelegate());
 
   /// The static instance of [IsmChat].
   static IsmChat instance = i;
@@ -82,6 +82,8 @@ class IsmChat {
     NotificaitonCallback? showNotification,
     BuildContext? context,
     bool shouldSetupMqtt = false,
+    List<String>? topics,
+    List<String>? topicChannels,
   }) async {
     await _delegate.initialize(
       communicationConfig,
@@ -90,6 +92,8 @@ class IsmChat {
       context: context,
       databaseName: databaseName,
       shouldSetupMqtt: shouldSetupMqtt,
+      topics: topics,
+      topicChannels: topicChannels,
     );
     _initialized = true;
   }
@@ -121,7 +125,7 @@ class IsmChat {
   ///
   /// Example:
   /// ```dart
-  /// StreamSubscription<EventModel> subscription = addEventListener((event) {
+  /// StreamSubscription<EventModel> subscription = IsmChat.i.addEventListener((event) {
   ///   print('Received MQTT event: ${event.type}');
   /// });
   ///
@@ -146,10 +150,10 @@ class IsmChat {
   /// }
   ///
   /// // Add the listener
-  /// StreamSubscription<EventModel> subscription = addEventListener(myListener);
+  /// StreamSubscription<EventModel> subscription = IsmChat.i.addEventListener(myListener);
   ///
   /// // Remove the listener
-  /// await removeEventListener(myListener);
+  /// await IsmChat.i.removeEventListener(myListener);
   ///
   Future<void> removeEventListener(Function(EventModel) listener) async {
     assert(_initialized,
@@ -165,7 +169,7 @@ class IsmChat {
   ///
   /// Example:
   /// ```dart
-  /// showThirdColumn();
+  ///  IsmChat.i.showThirdColumn();
   /// ```
   void showThirdColumn() => _delegate.showThirdColumn();
 
@@ -176,7 +180,7 @@ class IsmChat {
   ///
   /// Example:
   /// ```dart
-  /// clostThirdColumn();
+  ///  IsmChat.i.clostThirdColumn();
   /// ```
   void clostThirdColumn() => _delegate.clostThirdColumn();
 
@@ -184,7 +188,7 @@ class IsmChat {
   ///
   /// Example:
   /// ```dart
-  /// showBlockUnBlockDialog();
+  ///  IsmChat.i.showBlockUnBlockDialog();
   /// ```
   void showBlockUnBlockDialog() => _delegate.showBlockUnBlockDialog();
 
@@ -195,7 +199,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Reset the current conversation
-  /// changeCurrentConversation();
+  ///  IsmChat.i.changeCurrentConversation();
   /// ```
   void changeCurrentConversation() => _delegate.changeCurrentConversation();
 
@@ -206,7 +210,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Update the chat page controller after deleting a conversation
-  /// updateChatPageController();
+  /// IsmChat.i.updateChatPageController();
   /// ```
   void updateChatPageController() => _delegate.updateChatPageController();
 
@@ -217,7 +221,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Get all conversations from the local database
-  /// List<IsmChatConversationModel>? conversations = await getAllConversationFromDB();
+  /// List<IsmChatConversationModel>? conversations = await IsmChat.i.getAllConversationFromDB();
   /// ```
   Future<List<IsmChatConversationModel>?> getAllConversationFromDB() async =>
       await _delegate.getAllConversationFromDB();
@@ -229,7 +233,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Get the list of non-blocked users
-  /// List<SelectedMembers>? nonBlockedUsers = await getNonBlockUserList();
+  /// List<SelectedMembers>? nonBlockedUsers = await IsmChat.i.getNonBlockUserList();
   /// ```
   Future<List<SelectedMembers>?> getNonBlockUserList() async =>
       await _delegate.getNonBlockUserList();
@@ -241,7 +245,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Get all conversations of the current user
-  /// List<IsmChatConversationModel> conversations = await userConversations;
+  /// List<IsmChatConversationModel> conversations = await IsmChat.i.userConversations;
   /// ```
   Future<List<IsmChatConversationModel>> get userConversations async =>
       await _delegate.userConversations;
@@ -253,7 +257,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Get the total count of unread conversations
-  /// int count = await unreadCount;
+  /// int count = await IsmChat.i.unreadCount;
   /// print('Total unread conversations: $count');
   /// ```
   Future<int> get unreadCount async => await _delegate.unreadCount;
@@ -265,7 +269,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Log out the current user
-  /// await logout();
+  /// await IsmChat.i.logout();
   /// ```
   Future<void> logout() async => await _delegate.logout();
 
@@ -276,7 +280,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Clear all local chat data
-  /// await clearChatLocalDb();
+  /// await IsmChat.i.clearChatLocalDb();
   /// ```
   Future<void> clearChatLocalDb() async => _delegate.clearChatLocalDb();
 
@@ -287,7 +291,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Retrieve all conversations from the local database
-  /// await getChatConversation();
+  /// await IsmChat.i.getChatConversation();
   /// ```
   Future<void> getChatConversation() async =>
       await _delegate.getChatConversation();
@@ -303,7 +307,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Update a conversation with new metadata
-  /// await updateConversation(
+  /// await IsmChat.i.updateConversation(
   ///   conversationId: 'conversation_id',
   ///   metaData: IsmChatMetaData(title: 'New Title'),
   /// );
@@ -326,7 +330,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Update the settings of a conversation
-  /// await updateConversationSetting(
+  /// await IsmChat.i.updateConversationSetting(
   ///   conversationId: 'conversation_id',
   ///   events: IsmChatEvents(read: true, unread: false),
   /// );
@@ -352,7 +356,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Get the total count of conversations
-  /// int conversationCount = await getChatConversationsCount();
+  /// int conversationCount = await IsmChat.i.getChatConversationsCount();
   /// print('Total conversations: $conversationCount');
   /// ```
   Future<int> getChatConversationsCount({
@@ -377,7 +381,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Get the total count of messages in a conversation
-  /// int messageCount = await getChatConversationsMessageCount(
+  /// int messageCount = await IsmChat.i.getChatConversationsMessageCount(
   ///   converationId: 'conversation_id',
   ///   senderIds: ['sender_id_1', 'sender_id_2'],
   /// );
@@ -413,7 +417,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Get the details of a conversation
-  /// IsmChatConversationModel? conversationDetails = await getConverstaionDetails(
+  /// IsmChatConversationModel? conversationDetails = await IsmChat.i.getConverstaionDetails(
   ///   conversationId: 'conversation_id',
   ///   includeMembers: true,
   /// );
@@ -446,7 +450,7 @@ class IsmChat {
   /// Example:
   /// ```dart
   /// // Unblock a user
-  /// await unblockUser(
+  /// await IsmChat.i.unblockUser(
   ///   opponentId: 'user_id',
   ///   includeMembers: true,
   /// );
@@ -479,7 +483,7 @@ class IsmChat {
   /// /// Example:
   /// ```dart
   /// // Block a user
-  /// await blockUser(
+  /// await IsmChat.i.blockUser(
   ///   opponentId: 'user123',
   ///   includeMembers: true,
   ///   isLoading: false,
@@ -520,7 +524,7 @@ class IsmChat {
   ///
   /// Example:
   /// ```dart
-  /// final messages = await getMessagesFromApi(
+  /// final messages = await IsmChat.i.getMessagesFromApi(
   ///   conversationId: 'conversation123',
   ///   lastMessageTimestamp: 1643723400,
   ///   limit: 30,
@@ -557,7 +561,7 @@ class IsmChat {
   /// Example:
   ///
   /// ```dart
-  /// await deleteChat('conversation123', deleteFromServer: true);
+  /// await IsmChat.i.deleteChat('conversation123', deleteFromServer: true);
   /// ```
   Future<void> deleteChat(
     String conversationId, {
@@ -584,7 +588,7 @@ class IsmChat {
   /// Example:
   ///
   /// ```dart
-  /// bool isDeleted = await deleteChatFormDB('isometrickChat123', conversationId: 'conversation123');
+  /// bool isDeleted = await IsmChat.i.deleteChatFormDB('isometrickChat123', conversationId: 'conversation123');
   /// ```
   Future<bool> deleteChatFormDB(String isometrickChatId,
       {String conversationId = ''}) async {
@@ -609,7 +613,7 @@ class IsmChat {
   /// Example:
   ///
   /// ```dart
-  /// await exitGroup(adminCount: 2, isUserAdmin: true);
+  /// await IsmChat.i.exitGroup(adminCount: 2, isUserAdmin: true);
   /// ```
   Future<void> exitGroup(
       {required int adminCount, required bool isUserAdmin}) async {
@@ -628,7 +632,7 @@ class IsmChat {
   /// Example:
   ///
   /// ```dart
-  /// await clearAllMessages('conversation123', fromServer: true);
+  /// await IsmChat.i.clearAllMessages('conversation123', fromServer: true);
   /// ```
   Future<void> clearAllMessages(
     String conversationId, {
@@ -663,7 +667,7 @@ class IsmChat {
   ///
   /// Example:
   /// ```dart
-  /// await chatFromOutside(
+  /// await IsmChat.i.chatFromOutside(
   ///   name: 'John Doe',
   ///   userIdentifier: 'john.doe@example.com',
   ///   userId: '12345',
@@ -735,7 +739,7 @@ class IsmChat {
   ///   description: 'This is a test message.',
   /// );
   ///
-  /// await chatFromOutsideWithConversation(
+  /// await IsmChat.i.chatFromOutsideWithConversation(
   ///   ismChatConversation: conversation,
   ///   onNavigateToChat: (context, conversation) {
   ///     Navigator.push(
@@ -780,7 +784,7 @@ class IsmChat {
   /// Example:
   ///
   /// ```dart
-  /// await createGroupFromOutside(
+  /// await IsmChat.i.createGroupFromOutside(
   ///   conversationImageUrl: 'https://example.com/conversation_image.jpg',
   ///   conversationTitle: 'Group Chat',
   ///   userIds: ['12345', '67890'],
@@ -797,7 +801,6 @@ class IsmChat {
   /// );
   /// ```
   ///
-
   Future<void> createGroupFromOutside({
     required String conversationImageUrl,
     required String conversationTitle,
@@ -839,10 +842,68 @@ class IsmChat {
   ///
   /// Example:
   /// ```dart
-  /// await getMessageOnChatPage(isBroadcast: true);
+  /// await IsmChat.i.getMessageOnChatPage(isBroadcast: true);
   /// ```
   Future<void> getMessageOnChatPage({
     bool isBroadcast = false,
   }) async =>
       await _delegate.getMessageOnChatPage(isBroadcast: isBroadcast);
+
+  /// Retrieves a conversation by its ID.
+  ///
+  /// @param conversationId The ID of the conversation to retrieve.
+  /// @return A future that resolves to the conversation model, or null if not found.
+  ///
+  /// Example:
+  /// ```dart
+  /// final conversation = await IsmChat.i.getConversation(conversationId: 'conversation-123');
+  /// ```
+  Future<IsmChatConversationModel?> getConversation({
+    required String conversationId,
+  }) async =>
+      _delegate.getConversation(conversationId: conversationId);
+
+  /// Gets or sets the tag associated with this object.
+  ///
+  /// @return The current tag value, or null if not set.
+  ///
+  /// Example:
+  /// ```dart
+  /// print(tag); // prints the current tag value
+  /// tag = 'new-tag'; // sets a new tag value
+  /// ```
+  String? get tag => _delegate.tag;
+  set tag(String? value) => _delegate.tag = value;
+
+  /// Subscribes to the given list of topics in an MQTT broker.
+  /// which is responsible for communicating with the MQTT broker.
+  ///
+  /// Example:
+  /// ```dart
+  /// var topics = ['sports', 'politics', 'technology'];
+  /// IsmChat.i.subscribeTopics(topics);
+  /// ```
+  ///
+  /// @param topics The list of topics to subscribe to. In MQTT, topics are used to
+  ///   filter incoming messages from the broker. Each topic is a string that may
+  ///   contain wildcards (+ or #) to match multiple topics.
+  void subscribeTopics(List<String> topic) {
+    _delegate.subscribeTopics(topic);
+  }
+
+  /// Unsubscribes from the given list of topics in an MQTT broker.
+  /// which is responsible for communicating with the MQTT broker.
+  ///
+  /// Example:
+  /// ```dart
+  /// var topics = ['sports', 'politics', 'technology'];
+  /// IsmChat.i.unsubscribeTopics(topics);
+  /// ```
+  ///
+  /// @param topics The list of topics to unsubscribe from. Unsubscribing from a
+  ///   topic stops the client from receiving messages from the broker for that
+  ///   topic.
+  void unSubscribeTopics(List<String> topic) {
+    _delegate.unSubscribeTopics(topic);
+  }
 }

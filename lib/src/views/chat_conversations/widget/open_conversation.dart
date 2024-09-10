@@ -111,20 +111,21 @@ class _IsmChatOpenConversationViewState
                               if (response != null) {
                                 IsmChatProperties.conversationProperties
                                     .onChatTap!(Get.context!, data);
-                                controller.navigateToMessages(data);
+                                controller.updateLocalConversation(data);
 
                                 if (IsmChatResponsive.isWeb(Get.context!)) {
                                   Get.back();
 
-                                  if (!Get.isRegistered<
-                                      IsmChatPageController>()) {
+                                  if (!Get.isRegistered<IsmChatPageController>(
+                                      tag: IsmChat.i.tag)) {
                                     IsmChatPageBinding().dependencies();
                                   }
                                   controller.isRenderChatPageaScreen =
                                       IsRenderChatPageScreen
                                           .openChatMessagePage;
                                   final chatPagecontroller =
-                                      Get.find<IsmChatPageController>();
+                                      Get.find<IsmChatPageController>(
+                                          tag: IsmChat.i.tag);
                                   chatPagecontroller.messages.clear();
                                   chatPagecontroller.startInit(
                                     isBroadcasts: true,

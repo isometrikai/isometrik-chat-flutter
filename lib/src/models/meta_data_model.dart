@@ -99,7 +99,6 @@ class IsmChatMetaData {
   final String? phoneIsoCode;
   final String? phone;
   final String? countryCode;
-  // final String? about;
   final AboutTextModel? aboutText;
 
   IsmChatMetaData copyWith({

@@ -52,7 +52,8 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   /// Page controller for handing the PageView pages
   PageController pageController = PageController();
 
-  final chatPageController = Get.find<IsmChatPageController>();
+  final chatPageController =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   String mediaTime = '';
   String mediaSize = '';

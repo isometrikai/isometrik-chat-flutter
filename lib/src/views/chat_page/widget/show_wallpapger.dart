@@ -17,7 +17,8 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
   late TabController _tabController;
 
   final conversationController = Get.find<IsmChatConversationsController>();
-  final chatPageController = Get.find<IsmChatPageController>();
+  final chatPageController =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   @override
   void initState() {

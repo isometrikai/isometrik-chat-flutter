@@ -10,6 +10,7 @@ class IsmChatPageBinding extends Bindings {
           IsmChatPageRepository(),
         ),
       ),
+      tag: IsmChat.i.tag,
     );
   }
 }

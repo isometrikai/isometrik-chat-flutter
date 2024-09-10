@@ -36,7 +36,7 @@ class IsmChatGeometry {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'location': location?.toMap(),
         'viewport': viewport?.toMap(),
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

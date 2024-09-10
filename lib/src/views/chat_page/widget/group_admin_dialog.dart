@@ -16,6 +16,7 @@ class IsmChatGroupAdminDialog extends StatelessWidget {
         child: Padding(
           padding: IsmChatDimens.edgeInsets0_10,
           child: GetBuilder<IsmChatPageController>(
+            tag: IsmChat.i.tag,
             builder: (controller) => ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: IsmChatResponsive.isWeb(context)

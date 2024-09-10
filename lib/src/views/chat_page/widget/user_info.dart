@@ -74,6 +74,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
+      tag: IsmChat.i.tag,
       builder: (controller) => Scaffold(
             backgroundColor: IsmChatColors.whiteColor,
             appBar: IsmChatAppBar(
@@ -182,7 +183,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           }
 
                           conversationController
-                              .navigateToMessages(conversationModel);
+                              .updateLocalConversation(conversationModel);
                           controller.messages.clear();
                           if (widget._fromMessagePage) {
                             Get.back();

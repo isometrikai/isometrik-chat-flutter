@@ -216,7 +216,7 @@ class IsmChatMqttActionModel {
         'body': body,
         'attachments': attachments?.map((x) => x.toMap()).toList(),
         'metaData': metaData?.toMap(),
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
@@ -328,7 +328,7 @@ class Members {
         'memberName': memberName,
         'memberIdentifier': memberIdentifier,
         'memberId': memberId,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

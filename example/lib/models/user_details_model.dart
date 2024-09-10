@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class UserDetailsModel {
   String? userId;
 
@@ -36,7 +38,7 @@ class UserDetailsModel {
       'userToken': userToken,
       'email': email,
       'userName': userName,
-    };
+    }.removeNullValues();
   }
 
   factory UserDetailsModel.fromMap(Map<String, dynamic> map) {

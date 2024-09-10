@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/src/controllers/chat_page/chat_page_controller.dart';
-import 'package:isometrik_chat_flutter/src/res/res.dart';
-import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
-import 'package:isometrik_chat_flutter/src/widgets/widgets.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class MentionUserList extends StatelessWidget {
   const MentionUserList({super.key});
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => AnimatedContainer(
           curve: Curves.easeInOut,
           duration: IsmChatConfig.animationDuration,

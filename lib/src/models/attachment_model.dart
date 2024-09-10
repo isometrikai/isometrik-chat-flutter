@@ -96,7 +96,7 @@ class AttachmentModel {
         'title': title,
         'address': address,
         'attachmentType': attachmentType?.value,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

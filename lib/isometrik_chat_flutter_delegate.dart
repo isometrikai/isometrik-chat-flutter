@@ -20,6 +20,10 @@ class IsmChatDelegate {
   bool get isMqttConnected => _isMqttConnected.value;
   set isMqttConnected(bool value) => _isMqttConnected.value = value;
 
+  static final Rx<String?> _tag = Rx<String?>(null);
+  String? get tag => _tag.value;
+  set tag(String? value) => _tag.value = value;
+
   Future<void> initialize(
     IsmChatCommunicationConfig config, {
     bool useDatabase = true,
@@ -27,6 +31,8 @@ class IsmChatDelegate {
     BuildContext? context,
     String databaseName = IsmChatStrings.dbname,
     bool shouldSetupMqtt = false,
+    List<String>? topics,
+    List<String>? topicChannels,
   }) async {
     _config = config;
     IsmChatConfig.context = context;
@@ -37,18 +43,29 @@ class IsmChatDelegate {
     IsmChatConfig.configInitilized = true;
     IsmChatConfig.showNotification = showNotification;
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
-    await _initializeMqtt(config: _config, shouldSetupMqtt: shouldSetupMqtt);
+    await _initializeMqtt(
+      config: _config,
+      shouldSetupMqtt: shouldSetupMqtt,
+      topics: topics,
+      topicChannels: topicChannels,
+    );
   }
 
   Future<void> _initializeMqtt({
     IsmChatCommunicationConfig? config,
     required bool shouldSetupMqtt,
+    List<String>? topics,
+    List<String>? topicChannels,
   }) async {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatMqttBinding().dependencies();
     }
     if (!shouldSetupMqtt) {
-      await Get.find<IsmChatMqttController>().setup(config: config);
+      await Get.find<IsmChatMqttController>().setup(
+        config: config,
+        topics: topics,
+        topicChannels: topicChannels,
+      );
     }
   }
 
@@ -98,8 +115,8 @@ class IsmChatDelegate {
   }
 
   void showBlockUnBlockDialog() {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      final controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (!(controller.conversation?.isChattingAllowed == true)) {
         controller.showDialogCheckBlockUnBlock();
       }
@@ -114,8 +131,8 @@ class IsmChatDelegate {
   }
 
   void updateChatPageController() {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      final controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       var conversationModel = controller.conversation!;
       controller.conversation = null;
       controller.conversation = conversationModel;
@@ -206,11 +223,12 @@ class IsmChatDelegate {
     bool? includeMembers,
     required bool isLoading,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      return await Get.find<IsmChatPageController>().getConverstaionDetails(
-          conversationId: conversationId,
-          includeMembers: includeMembers,
-          isLoading: isLoading);
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      return await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+          .getConverstaionDetails(
+              conversationId: conversationId,
+              includeMembers: includeMembers,
+              isLoading: isLoading);
     }
     return null;
   }
@@ -221,8 +239,8 @@ class IsmChatDelegate {
     required bool isLoading,
     required bool fromUser,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      await Get.find<IsmChatPageController>().unblockUser(
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      await Get.find<IsmChatPageController>(tag: IsmChat.i.tag).unblockUser(
         opponentId: opponentId,
         includeMembers: includeMembers,
         isLoading: isLoading,
@@ -238,8 +256,8 @@ class IsmChatDelegate {
     required bool isLoading,
     required bool fromUser,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      await Get.find<IsmChatPageController>().blockUser(
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      await Get.find<IsmChatPageController>(tag: IsmChat.i.tag).blockUser(
         opponentId: opponentId,
         includeMembers: includeMembers,
         isLoading: isLoading,
@@ -273,8 +291,8 @@ class IsmChatDelegate {
   Future<void> getMessageOnChatPage({
     bool isBroadcast = false,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      final controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       await controller.getMessagesFromAPI(
         isBroadcast: isBroadcast,
         conversationId: controller.conversation?.conversationId ?? '',
@@ -315,8 +333,8 @@ class IsmChatDelegate {
 
   Future<void> exitGroup(
       {required int adminCount, required bool isUserAdmin}) async {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      await Get.find<IsmChatPageController>().leaveGroup(
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      await Get.find<IsmChatPageController>(tag: IsmChat.i.tag).leaveGroup(
         adminCount: adminCount,
         isUserAdmin: isUserAdmin,
       );
@@ -327,8 +345,9 @@ class IsmChatDelegate {
     String conversationId, {
     bool fromServer = true,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      await Get.find<IsmChatPageController>().clearAllMessages(
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+          .clearAllMessages(
         conversationId,
         fromServer: fromServer,
       );
@@ -411,7 +430,7 @@ class IsmChatDelegate {
 
     (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
         ?.call(Get.context!, conversation);
-    controller.navigateToMessages(conversation);
+    controller.updateLocalConversation(conversation);
     if (storyMediaUrl == null) {
       await controller.goToChatPage();
     } else {
@@ -448,7 +467,7 @@ class IsmChatDelegate {
 
     (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
         ?.call(Get.context!, ismChatConversation);
-    controller.navigateToMessages(ismChatConversation);
+    controller.updateLocalConversation(ismChatConversation);
     await controller.goToChatPage();
   }
 
@@ -510,7 +529,35 @@ class IsmChatDelegate {
 
     (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
         ?.call(Get.context!, conversation);
-    controller.navigateToMessages(conversation);
+    controller.updateLocalConversation(conversation);
     await controller.goToChatPage();
+  }
+
+  Future<IsmChatConversationModel?> getConversation({
+    required String conversationId,
+  }) async {
+    if (!Get.isRegistered<IsmChatConversationsController>()) {
+      IsmChatCommonBinding().dependencies();
+      IsmChatConversationsBinding().dependencies();
+      await Future.delayed(const Duration(seconds: 2));
+    }
+    var controller = Get.find<IsmChatConversationsController>();
+    final conversation = controller.getConversation(conversationId);
+    if (conversation != null) {
+      controller.updateLocalConversation(conversation);
+    }
+    return conversation;
+  }
+
+  void subscribeTopics(List<String> topic) {
+    if (Get.isRegistered<IsmChatMqttController>()) {
+      Get.find<IsmChatMqttController>().subscribeTopics(topic);
+    }
+  }
+
+  void unSubscribeTopics(List<String> topic) {
+    if (Get.isRegistered<IsmChatMqttController>()) {
+      Get.find<IsmChatMqttController>().unSubscribeTopics(topic);
+    }
   }
 }

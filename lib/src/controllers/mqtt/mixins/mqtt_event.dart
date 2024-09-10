@@ -147,8 +147,9 @@ mixin IsmChatMqttEventMixin {
       conversation.messages?.add(message);
       await IsmChatConfig.dbWrapper!
           .saveConversation(conversation: conversation);
-      if (Get.isRegistered<IsmChatPageController>()) {
-        var chatController = Get.find<IsmChatPageController>();
+      if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+        var chatController =
+            Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
         if (chatController.conversation?.conversationId ==
             message.conversationId) {
           await chatController.getMessagesFromDB(actionModel.conversationId!);
@@ -177,8 +178,8 @@ mixin IsmChatMqttEventMixin {
     // To handle and show last message & unread count in conversation list
     conversation = conversation.copyWith(
       unreadMessagesCount: IsmChatResponsive.isWeb(Get.context!) &&
-              (Get.isRegistered<IsmChatPageController>() &&
-                  Get.find<IsmChatPageController>()
+              (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag) &&
+                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                           .conversation
                           ?.conversationId ==
                       actionModel.conversationId)
@@ -229,10 +230,10 @@ mixin IsmChatMqttEventMixin {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
 
     // To handle messages in chatList
-    if (!Get.isRegistered<IsmChatPageController>()) {
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       return;
     }
-    var chatController = Get.find<IsmChatPageController>();
+    var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     if (chatController.conversation?.conversationId != message.conversationId) {
       return;
     }
@@ -256,8 +257,9 @@ mixin IsmChatMqttEventMixin {
     var conversation = await IsmChatConfig.dbWrapper!
         .getConversation(conversationId: message.conversationId);
     await Future.delayed(const Duration(milliseconds: 50));
-    if (conversation == null && Get.isRegistered<IsmChatPageController>()) {
-      final controller = Get.find<IsmChatPageController>();
+    if (conversation == null &&
+        Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
       if (message.conversationId == controller.conversation?.conversationId) {
         if (controller.messages.isEmpty) {
@@ -278,8 +280,8 @@ mixin IsmChatMqttEventMixin {
     // To handle and show last message & unread count in conversation list
     conversation = conversation.copyWith(
       unreadMessagesCount: IsmChatResponsive.isWeb(Get.context!) &&
-              (Get.isRegistered<IsmChatPageController>() &&
-                  Get.find<IsmChatPageController>()
+              (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag) &&
+                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                           .conversation
                           ?.conversationId ==
                       message.conversationId)
@@ -304,8 +306,8 @@ mixin IsmChatMqttEventMixin {
         reactionType: '',
       ),
     );
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var chatController = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (chatController.conversation?.conversationId ==
           message.conversationId) {
         conversation.messages?.add(message);
@@ -319,8 +321,8 @@ mixin IsmChatMqttEventMixin {
       messageId: message.messageId ?? '',
     );
 
-    if (!Get.isRegistered<IsmChatPageController>()) return;
-    var chatController = Get.find<IsmChatPageController>();
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) return;
+    var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     if (chatController.conversation?.conversationId != message.conversationId) {
       return;
     }
@@ -395,8 +397,9 @@ mixin IsmChatMqttEventMixin {
         messageId = message.messageId ?? '';
         return;
       }
-      if (Get.isRegistered<IsmChatPageController>()) {
-        var chatController = Get.find<IsmChatPageController>();
+      if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+        var chatController =
+            Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
         if (chatController.conversation?.conversationId !=
             message.conversationId) {
           showPushNotification(
@@ -419,8 +422,9 @@ mixin IsmChatMqttEventMixin {
       }
     } else {
       if (Get.isRegistered<IsmChatConversationsController>()) {
-        if (Get.isRegistered<IsmChatPageController>()) {
-          var chatController = Get.find<IsmChatPageController>();
+        if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+          var chatController =
+              Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
           if (chatController.conversation?.conversationId ==
               message.conversationId) {
             return;
@@ -539,8 +543,8 @@ mixin IsmChatMqttEventMixin {
 
           await IsmChatConfig.dbWrapper!
               .saveConversation(conversation: conversation);
-          if (Get.isRegistered<IsmChatPageController>()) {
-            await Get.find<IsmChatPageController>()
+          if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+            await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                 .getMessagesFromDB(actionModel.conversationId!);
           }
           if (Get.isRegistered<IsmChatConversationsController>()) {
@@ -591,8 +595,8 @@ mixin IsmChatMqttEventMixin {
           );
           await IsmChatConfig.dbWrapper!
               .saveConversation(conversation: conversation);
-          if (Get.isRegistered<IsmChatPageController>()) {
-            await Get.find<IsmChatPageController>()
+          if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+            await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                 .getMessagesFromDB(actionModel.conversationId!);
           }
           if (Get.isRegistered<IsmChatConversationsController>()) {
@@ -680,8 +684,8 @@ mixin IsmChatMqttEventMixin {
     );
 
     await IsmChatConfig.dbWrapper!.saveConversation(conversation: conversation);
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation!.conversationId ==
           actionModel.conversationId) {
         await controller.getMessagesFromDB(actionModel.conversationId!);
@@ -720,8 +724,8 @@ mixin IsmChatMqttEventMixin {
           .saveConversation(conversation: conversation);
     }
 
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation!.conversationId ==
           actionModel.conversationId) {
         await controller.getMessagesFromDB(actionModel.conversationId!);
@@ -739,8 +743,8 @@ mixin IsmChatMqttEventMixin {
       return;
     }
 
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation!.conversationId ==
           actionModel.conversationId) {
         await controller.getConverstaionDetails(
@@ -768,8 +772,8 @@ mixin IsmChatMqttEventMixin {
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
     unawaited(
         Get.find<IsmChatConversationsController>().getChatConversations());
-    if (!Get.isRegistered<IsmChatPageController>()) return;
-    var controller = Get.find<IsmChatPageController>();
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) return;
+    var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     if (controller.conversation?.conversationId == actionModel.conversationId) {
       await controller.getMessagesFromAPI(
           conversationId: actionModel.conversationId ?? '',
@@ -820,8 +824,9 @@ mixin IsmChatMqttEventMixin {
     );
 
     messageId = actionModel.sentAt.toString();
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var chatPageController = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var chatPageController =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (actionModel.conversationId ==
           chatPageController.conversation?.conversationId) {
         chatPageController.conversation =
@@ -884,8 +889,8 @@ mixin IsmChatMqttEventMixin {
     if (messageId == actionModel.sentAt.toString()) {
       return;
     }
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation?.conversationId ==
               actionModel.conversationId &&
           controller.conversation?.lastMessageSentAt != actionModel.sentAt) {
@@ -909,8 +914,8 @@ mixin IsmChatMqttEventMixin {
       return;
     }
 
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation?.conversationId ==
               actionModel.conversationId &&
           actionModel.memberId ==
@@ -997,11 +1002,11 @@ mixin IsmChatMqttEventMixin {
 
         await IsmChatConfig.dbWrapper!
             .saveConversation(conversation: conversation);
-        if (Get.isRegistered<IsmChatPageController>()) {
-          var controller = Get.find<IsmChatPageController>();
+        if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+          var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
           if (controller.conversation?.conversationId ==
               actionModel.conversationId) {
-            await Get.find<IsmChatPageController>()
+            await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                 .getMessagesFromDB(actionModel.conversationId ?? '');
           }
         }
@@ -1035,8 +1040,8 @@ mixin IsmChatMqttEventMixin {
       return;
     }
 
-    if (Get.isRegistered<IsmChatPageController>()) {
-      var controller = Get.find<IsmChatPageController>();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation?.conversationId ==
           actionModel.conversationId) {
         await controller.getConverstaionDetails(

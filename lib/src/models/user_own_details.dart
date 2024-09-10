@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+
 class IsmChatUserOwnDetails {
   IsmChatUserOwnDetails({
     required this.memberId,
@@ -36,7 +38,7 @@ class IsmChatUserOwnDetails {
         'memberId': memberId,
         'isAdmin': isAdmin,
         'isDeleted': isDeleted,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

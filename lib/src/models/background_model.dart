@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatBackgroundModel {
   IsmChatBackgroundModel({
@@ -46,7 +47,7 @@ class IsmChatBackgroundModel {
         'color': color,
         'imageUrl': imageUrl,
         'srNoBackgroundAssset': srNoBackgroundAssset,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
@@ -160,7 +161,7 @@ class BackGroundAsset {
         'color': color,
         'srNo': srNo,
         'path': path,
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 

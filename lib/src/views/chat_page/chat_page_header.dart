@@ -13,10 +13,12 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize {
-    if (Get.isRegistered<IsmChatPageController>()) {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       return Size.fromHeight(IsmChatProperties.chatPageProperties.header?.height
-              ?.call(Get.context!,
-                  Get.find<IsmChatPageController>().conversation!) ??
+              ?.call(
+                  Get.context!,
+                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                      .conversation!) ??
           IsmChatDimens.appBarHeight);
     }
 
@@ -28,6 +30,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
+        tag: IsmChat.i.tag,
         builder: (controller) => PreferredSize(
           preferredSize: preferredSize,
           child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -60,11 +63,13 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                           if (!IsmChatResponsive.isWeb(context)) ...[
                             IconButton(
                               onPressed: () async {
-                                Get.back<void>();
-
+                                var updateLastMessage = false;
                                 controller.closeOverlay();
-                                final updateLastMessage =
-                                    await controller.updateLastMessage();
+                                if (IsmChat.i.tag == null) {
+                                  Get.back<void>();
+                                  updateLastMessage =
+                                      await controller.updateLastMessage();
+                                }
                                 if (IsmChatProperties
                                         .chatPageProperties.header?.onBackTap !=
                                     null) {
@@ -74,7 +79,9 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                 }
                               },
                               icon: Icon(
-                                Icons.arrow_back_rounded,
+                                IsmChat.i.tag == null
+                                    ? Icons.arrow_back_rounded
+                                    : Icons.close_rounded,
                                 color: IsmChatConfig.chatTheme
                                         .chatPageHeaderTheme?.iconColor ??
                                     IsmChatColors.whiteColor,

@@ -36,7 +36,7 @@ class BroadcastMemberModel {
   Map<String, dynamic> toMap() => <String, dynamic>{
         'membersCount': membersCount,
         'members': members.map((x) => x.toMap()).toList(),
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
@@ -134,7 +134,7 @@ class BroadcastMember {
         'newConversationCustomType': newConversationCustomType,
         'memberId': memberId,
         'memberInfo': memberInfo?.toMap(),
-      };
+      }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
