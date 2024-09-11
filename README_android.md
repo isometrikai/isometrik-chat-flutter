@@ -165,7 +165,8 @@ Path: `android` > `build.gradle`
 
 ### Make these changes in `gradle.properties`
 
-```subprojects {
+```
+subprojects {
     project.configurations.all {
         resolutionStrategy.eachDependency { details ->
             if (details.requested.group == 'com.android.support'
