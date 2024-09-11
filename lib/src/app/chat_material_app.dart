@@ -18,8 +18,7 @@ class IsmChatApp extends StatelessWidget {
   }) {
     assert(IsmChatConfig.configInitilized,
         '''communicationConfig of type IsmChatCommunicationConfig must be initialized
-    1. Either initialize using IsmChatApp.initializeMqtt() by passing  communicationConfig.
-    2. Or Pass  communicationConfig in IsmChatApp
+    Either initialize using IsmChat.i.initialize() by passing  communicationConfig.
     ''');
 
     IsmChatConfig.fontFamily = fontFamily;
