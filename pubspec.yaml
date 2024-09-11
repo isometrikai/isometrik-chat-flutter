@@ -17,10 +17,10 @@ dependencies:
   camera: ^0.11.0+2
   collection: ^1.18.0
   connectivity_plus: ^6.0.4
-  device_info_plus: ^9.0.3
+  device_info_plus: ^10.1.2
   dio: ^5.5.0+1
   elegant_notification: ^2.2.2
-  emoji_picker_flutter: ^2.2.0
+  emoji_picker_flutter: ^3.0.0
   file_picker: ^8.0.7
   flutter:
     sdk: flutter
@@ -35,7 +35,7 @@ dependencies:
   fluttertoast: ^8.2.6
   gal: ^2.3.0
   geocoding: ^3.0.0
-  geolocator: ^12.0.0
+  geolocator: ^13.0.1
   get: ^4.6.6
   google_maps_flutter: ^2.9.0
   hive: ^2.2.3
@@ -53,7 +53,7 @@ dependencies:
   path_provider: ^2.1.4
   pdfx: ^2.6.0
   permission_handler: ^11.3.1
-  photo_view: ^0.14.0
+  photo_view: ^0.15.0
   plugin_platform_interface: ^2.1.8
   pull_to_refresh: ^2.0.0
   record: ^5.1.2
