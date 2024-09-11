@@ -95,7 +95,9 @@ IsmChatApp(
 10. The IsmChatPages class provides additional `pages` for the Isometrik chat package. The `pages` list contains additional routes provided by the Isometrik chat package. So you must add your project routing pages
 
 ```dart
+    [
     ...IsmChat.i.IsmChatPages.pages
+    ]
 ```
 
 11. Add listener for MQTT events: Adds a listener to handle MQTT events. This is useful for responding to real-time message updates and other events.
