@@ -92,7 +92,13 @@ IsmChatApp(
     })
 ```
 
-10. Add listener for MQTT events: Adds a listener to handle MQTT events. This is useful for responding to real-time message updates and other events.
+10. The IsmChatPages class provides additional `pages` for the Isometrik chat package. The `pages` list contains additional routes provided by the Isometrik chat package. So you must add your project routing pages
+
+```dart
+    ...IsmChat.i.IsmChatPages.pages
+```
+
+11. Add listener for MQTT events: Adds a listener to handle MQTT events. This is useful for responding to real-time message updates and other events.
 
 ```dart
 IsmChat.i.addEventListener( (listener){
@@ -100,7 +106,7 @@ IsmChat.i.addEventListener( (listener){
 })
 ```
 
-11. Remove MQTT listener events: Remove listener which you added addMqttListenerto handle MQTT events.
+12. Remove MQTT listener events: Remove listener which you added addMqttListenerto handle MQTT events.
 
 ```dart
 IsmChat.i.removeEventListener((event) {
@@ -108,7 +114,7 @@ IsmChat.i.removeEventListener((event) {
 })
 ```
 
-12. This method is use to listen for MQTT events, which are typically messages or notifications received in real-time through the MQTT protocol.Call this method when assuming that the MQTT connection is already established.
+13. This method is use to listen for MQTT events, which are typically messages or notifications received in real-time through the MQTT protocol.Call this method when assuming that the MQTT connection is already established.
 
 ```dart
     final eventModel = EventModel();
@@ -120,7 +126,7 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-13. `Only For Web`: This method is use when you need to ensure that the third column is visible or not in web flow. Their visibility based on user actions or web flow state.
+14. `Only For Web`: This method is use when you need to ensure that the third column is visible or not in web flow. Their visibility based on user actions or web flow state.
 
 ```dart
     // Show the third column if needed
@@ -130,61 +136,61 @@ IsmChat.i.removeEventListener((event) {
      IsmChat.i.clostThirdColumn();
 ```
 
-14. `Only For Web`: This method use to assign null on the current conversation.
+15. `Only For Web`: This method use to assign null on the current conversation.
 
 ```dart
     IsmChat.i.changeCurrentConversation();
 ```
 
-15. `Only For Web`: This method use to update the chat page controller.
+16. `Only For Web`: This method use to update the chat page controller.
 
 ```dart
     IsmChat.i.updateChatPageController();
 ```
 
-16. This method use for showing Block un Block Dialog
+17. This method use for showing Block un Block Dialog
 
 ```dart
     IsmChat.i.showBlockUnblockDialog();
 ```
 
-17. This method use for retrieves all conversations from the local database and returns a list of `IsmChatConversationModel` objects.
+18. This method use for retrieves all conversations from the local database and returns a list of `IsmChatConversationModel` objects.
 
 ```dart
     final conversations = await IsmChat.i.getAllConversationFromDB();
 ```
 
-18. This methid use for retrieves the list of users who are not blocked and returns a list of `SelectedMembers` objects.
+19. This methid use for retrieves the list of users who are not blocked and returns a list of `SelectedMembers` objects.
 
 ```dart
     final selectedMembers = await IsmChat.i.getNonBlockUserList();
 ```
 
-19. This property retrieves all conversations of the current user and returns a list of `IsmChatConversationModel` objects.
+20. This property retrieves all conversations of the current user and returns a list of `IsmChatConversationModel` objects.
 
 ```dart
     final conversations = await IsmChat.i.userConversations;
 ```
 
-20. This property retrieves the total count of unread conversations and returns an integer value.
+21. This property retrieves the total count of unread conversations and returns an integer value.
 
 ```dart
      final unreadCount = await IsmChat.i.unreadCount;
 ```
 
-21. This method use for clears all local chat data stored in the database, removing all conversations, messages, and other related data.
+22. This method use for clears all local chat data stored in the database, removing all conversations, messages, and other related data.
 
 ```dart
     await IsmChat.i.clearChatLocalDb();
 ```
 
-22. This method use for retrieves all conversations from the local database and updates the conversation list.
+23. This method use for retrieves all conversations from the local database and updates the conversation list.
 
 ```dart
     await IsmChat.i.getChatConversation();
 ```
 
-23. Update conversation with metadata:
+24. Update conversation with metadata:
     Updates a specific conversation with additional metadata. This can be used to store custom information related to the conversation.
 
 ```dart
@@ -195,7 +201,7 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-24. This method use for updates the settings of a conversation. It requires the conversation ID and the new events.
+25. This method use for updates the settings of a conversation. It requires the conversation ID and the new events.
 
 ```dart
     await IsmChat.i.updateConversationSetting(
@@ -204,13 +210,13 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-25. This method use for retrieves the total count of conversations. It returns a future that resolves to an integer representing the count.
+26. This method use for retrieves the total count of conversations. It returns a future that resolves to an integer representing the count.
 
 ```dart
     int conversationCount = await IsmChat.i.getChatConversationsCount();
 ```
 
-26. This method use for retrieves the total count of messages in a conversation. It returns a future that resolves to an integer representing the count.
+27. This method use for retrieves the total count of messages in a conversation. It returns a future that resolves to an integer representing the count.
 
 ```dart
     int messageCount = await IsmChat.i.getChatConversationsMessageCount(
@@ -219,7 +225,7 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-27. This method use for retrieves the details of a conversation. It returns a future that resolves to an `IsmChatConversationModel` object.
+28. This method use for retrieves the details of a conversation. It returns a future that resolves to an `IsmChatConversationModel` object.
 
 ```dart
     IsmChatConversationModel? conversationDetails = await IsmChat.i.getConverstaionDetails(
@@ -228,7 +234,7 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-28. Block/Unblock : Allows users to manage their chat interactions by blocking unwanted user and unblocking them when necessary
+29. Block/Unblock : Allows users to manage their chat interactions by blocking unwanted user and unblocking them when necessary
 
 ```dart
 await IsmChat.i.unblockUser({
@@ -240,7 +246,7 @@ await IsmChat.i.blockUser({
 })
 ```
 
-29. This method use for fetch a list of chat messages from the API for a given `conversationId` and `lastMessageTimestamp`. It also allows specifying the `limit` and `skip` parameters for pagination, as well as an optional `searchText` for filtering messages.
+30. This method use for fetch a list of chat messages from the API for a given `conversationId` and `lastMessageTimestamp`. It also allows specifying the `limit` and `skip` parameters for pagination, as well as an optional `searchText` for filtering messages.
 
 ```dart
 final messages = await IsmChat.i.getMessagesFromApi(
@@ -252,31 +258,31 @@ final messages = await IsmChat.i.getMessagesFromApi(
 );
 ```
 
-30. Delete chat : Deletes a specific chat conversation. This is useful for allowing users to remove unwanted conversations.
+31. Delete chat : Deletes a specific chat conversation. This is useful for allowing users to remove unwanted conversations.
 
 ```dart
 await IsmChat.i.deleteChat(conversationId);
 ```
 
-31. This method use for deletes a chat from the database with the specified Isometrick chat ID.
+32. This method use for deletes a chat from the database with the specified Isometrick chat ID.
 
 ```dart
    bool isDeleted = await IsmChat.i.deleteChatFormDB('isometrickChat123', conversationId: 'conversation123');
 ```
 
-32. This method use for all messages in a conversation with the specified ID.
+33. This method use for all messages in a conversation with the specified ID.
 
 ```dart
    await IsmChat.i.clearAllMessages('conversation123', fromServer: true);
 ```
 
-33. Exits a group with the specified admin count and user admin status.
+34. Exits a group with the specified admin count and user admin status.
 
 ```dart
   await IsmChat.i.exitGroup(adminCount: 2, isUserAdmin: true);
 ```
 
-34. This function allows you to start a chat with a user from anywhere in your app. It requires the user's name, user identifier, and user ID. You can also pass additional metadata, a callback to navigate to the chat screen, and more.
+35. This function allows you to start a chat with a user from anywhere in your app. It requires the user's name, user identifier, and user ID. You can also pass additional metadata, a callback to navigate to the chat screen, and more.
 
 ```dart
     await IsmChat.i.chatFromOutside(
@@ -291,7 +297,7 @@ await IsmChat.i.deleteChat(conversationId);
     );
 ```
 
-35. This function allows you to start a conversation with a user from anywhere in your app, using an existing conversation model. It requires the conversation model, and optionally a callback to navigate to the chat conversation, a duration for the animation, and a flag to show a loader.
+36. This function allows you to start a conversation with a user from anywhere in your app, using an existing conversation model. It requires the conversation model, and optionally a callback to navigate to the chat conversation, a duration for the animation, and a flag to show a loader.
 
 ```dart
     IsmChatConversationModel conversation = IsmChatConversationModel(
@@ -306,7 +312,7 @@ await IsmChat.i.deleteChat(conversationId);
     );
 ```
 
-36. This function allows you to create a group chat with multiple users from anywhere in your app. It requires the conversation image URL, conversation title, and a list of user IDs. You can also optionally provide the conversation type, additional metadata, a callback to navigate to the chat conversation, and more.
+37. This function allows you to create a group chat with multiple users from anywhere in your app. It requires the conversation image URL, conversation title, and a list of user IDs. You can also optionally provide the conversation type, additional metadata, a callback to navigate to the chat conversation, and more.
 
 ```dart
      await IsmChat.i.createGroupFromOutside(
@@ -321,13 +327,13 @@ await IsmChat.i.deleteChat(conversationId);
     );
 ```
 
-37. This method is used to fetch a message on the chat page. It can be used to retrieve a message from a broadcast or a regular chat.
+38. This method is used to fetch a message on the chat page. It can be used to retrieve a message from a broadcast or a regular chat.
 
 ```dart
     await IsmChat.i.getMessageOnChatPage(isBroadcast: true);
 ```
 
-38. Logout : This method use logs out the current user and clears all local data stored in the app. This is important for ensuring the user's chat session is properly terminated.
+39. Logout : This method use logs out the current user and clears all local data stored in the app. This is important for ensuring the user's chat session is properly terminated.
 
 ```dart
     await IsmChat.i.logout();
