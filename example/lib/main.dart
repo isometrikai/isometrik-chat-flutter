@@ -7,7 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -17,8 +16,6 @@ import 'data/data.dart';
 import 'views/views.dart';
 
 DBWrapper? dbWrapper;
-
-// final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   await initialize();
@@ -56,8 +53,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     if (!kIsWeb) {
-      final PushNotificationService notificationService =
-          PushNotificationService();
+      final notificationService = PushNotificationService();
       notificationService.requestNotificationService();
       notificationService.initialize();
     }
@@ -85,9 +81,7 @@ class _MyAppState extends State<MyApp> {
         //   ...GlobalMaterialLocalizations.delegates,
         //   GlobalWidgetsLocalizations.delegate,
         // ],
-        supportedLocales: const [
-          Locale('en', 'US'),
-        ],
+        supportedLocales: const [Locale('en', 'US')],
         theme: ThemeData.light(useMaterial3: true).copyWith(
             primaryColor: AppColors.primaryColorLight, extensions: []),
         // darkTheme: ThemeData.dark(useMaterial3: true)
@@ -108,7 +102,7 @@ class PushNotificationService {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   void requestNotificationService() async {
-    NotificationSettings settings = await messaging.requestPermission(
+    final settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -117,7 +111,6 @@ class PushNotificationService {
       provisional: false,
       sound: true,
     );
-
     if (![AuthorizationStatus.authorized, AuthorizationStatus.provisional]
         .contains(settings.authorizationStatus)) {
       AppSettings.openAppSettings();

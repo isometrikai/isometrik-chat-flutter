@@ -58,12 +58,29 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
 
   int mediaIndex = -1;
 
+  final pageController = PageController();
+
   @override
   void initState() {
     super.initState();
     initiated = widget._initiated ?? false;
     mediaIndex = widget._mediaIndex ?? 0;
     mediaTime = (widget._mediaTime ?? 0).getTime;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      try {
+        pageController.animateToPage(
+          widget._mediaIndex ?? 0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeIn,
+        );
+      } catch (_) {}
+    });
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -173,6 +190,7 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
           height: IsmChatDimens.percentHeight(1),
           width: IsmChatDimens.percentWidth(1),
           child: PageView.builder(
+            controller: pageController,
             itemBuilder: (BuildContext context, int index) {
               var url =
                   widget._messageData?[index].attachments?.first.mediaUrl ?? '';
