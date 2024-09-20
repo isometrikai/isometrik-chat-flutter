@@ -423,8 +423,6 @@ class IsmChatPageController extends GetxController
 
   Animation<double>? holdAnimation;
 
-  var arguments = Get.arguments as Map<String, dynamic>? ?? {};
-
   UserDetails? currentUser;
 
   bool get controllerIsRegister =>
@@ -503,7 +501,11 @@ class IsmChatPageController extends GetxController
       _currentUser();
       conversation = conversationController.currentConversation;
       await Future.delayed(Duration.zero);
-      isBroadcast = arguments['isBroadcast'] as bool? ?? isBroadcasts;
+      try {
+        var arguments = Get.arguments as Map<String, dynamic>? ?? {};
+        isBroadcast = arguments['isBroadcast'] as bool? ?? isBroadcasts;
+      } catch (e) {}
+
       if (conversation?.conversationId?.isNotEmpty == true) {
         await callFunctionsWithConversationId(
             conversation?.conversationId ?? '');
