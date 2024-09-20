@@ -83,7 +83,7 @@ mixin IsmChatMqttEventMixin {
         _handleUnreadMessages(actionModel.userDetails?.userId ?? '');
         break;
       case IsmChatActionEvents.addMember:
-      case IsmChatActionEvents.removeMember:
+      case IsmChatActionEvents.membersRemove:
         _handleGroupRemoveAndAddUser(actionModel);
         _handleUnreadMessages(actionModel.userDetails?.userId ?? '');
         break;
@@ -853,7 +853,7 @@ mixin IsmChatMqttEventMixin {
             .getMessagesFromDB(actionModel.conversationId ?? '');
       }
     }
-    if (actionModel.action == IsmChatActionEvents.removeMember) {
+    if (actionModel.action == IsmChatActionEvents.membersRemove) {
       var conversation = await IsmChatConfig.dbWrapper
           ?.getConversation(conversationId: actionModel.conversationId ?? '');
       if (conversation != null) {

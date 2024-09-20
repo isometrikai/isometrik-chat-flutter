@@ -301,7 +301,7 @@ class IsmChatConversationsViewModel {
         IsmChatActionEvents.userUpdate.name,
         IsmChatActionEvents.memberLeave.name,
         IsmChatActionEvents.memberJoin.name,
-        IsmChatActionEvents.removeMember.name,
+        IsmChatActionEvents.membersRemove.name,
         IsmChatActionEvents.userUnblock.name,
         IsmChatActionEvents.userUnblockConversation.name,
         IsmChatActionEvents.userBlock.name,

@@ -195,7 +195,7 @@ enum IsmChatCustomMessageType {
         return IsmChatCustomMessageType.unblock;
       case IsmChatActionEvents.userUnblockConversation:
         return IsmChatCustomMessageType.unblock;
-      case IsmChatActionEvents.removeMember:
+      case IsmChatActionEvents.membersRemove:
         return IsmChatCustomMessageType.removeMember;
       case IsmChatActionEvents.addMember:
         return IsmChatCustomMessageType.addMember;
@@ -205,7 +205,6 @@ enum IsmChatCustomMessageType {
         return IsmChatCustomMessageType.conversationTitleUpdated;
       case IsmChatActionEvents.conversationImageUpdated:
         return IsmChatCustomMessageType.conversationImageUpdated;
-
       case IsmChatActionEvents.memberJoin:
         return IsmChatCustomMessageType.memberJoin;
       case IsmChatActionEvents.observerJoin:
@@ -387,7 +386,7 @@ enum IsmChatActionEvents {
   userUnblock,
   userUnblockConversation,
   clearConversation,
-  removeMember,
+  membersRemove,
   addMember,
   removeAdmin,
   addAdmin,
@@ -400,7 +399,6 @@ enum IsmChatActionEvents {
   conversationImageUpdated,
   broadcast,
   memberJoin,
-
   observerJoin,
   observerLeave,
   userUpdate,
@@ -435,7 +433,7 @@ enum IsmChatActionEvents {
       case 'deleteConversationLocally':
         return IsmChatActionEvents.deleteConversationLocally;
       case 'membersRemove':
-        return IsmChatActionEvents.removeMember;
+        return IsmChatActionEvents.membersRemove;
       case 'membersAdd':
         return IsmChatActionEvents.addMember;
       case 'removeAdmin':
@@ -502,7 +500,7 @@ enum IsmChatActionEvents {
         return 'clearConversation';
       case IsmChatActionEvents.deleteConversationLocally:
         return 'deleteConversationLocally';
-      case IsmChatActionEvents.removeMember:
+      case IsmChatActionEvents.membersRemove:
         return 'membersRemove';
       case IsmChatActionEvents.addMember:
         return 'membersAdd';
