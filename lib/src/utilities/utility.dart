@@ -597,19 +597,31 @@ class IsmChatUtility {
       );
 
   static Future<File> convertToJpeg(File file) async {
-    final decodedWebP = await img.decodeImageFile(file.path);
-    if (decodedWebP == null) {
-      throw Exception('Unable to Decode File');
-    }
-    final encodeJpeg = img.encodeJpg(decodedWebP);
+    var imageBytes = await file.readAsBytes();
+    var image = img.decodeImage(imageBytes);
+    if (image == null) return file;
+    List<int> jpegBytes = img.encodeJpg(image);
     final savedFile = File(
         await getSavePath('${DateTime.now().millisecondsSinceEpoch}.jpeg'));
-    await savedFile.writeAsBytes(encodeJpeg);
+    await savedFile.writeAsBytes(jpegBytes);
     return savedFile;
+    // try {
+    //   final decodedWebP = await img.decodeImageFile(file.absolute.path);
+    //   if (decodedWebP == null) {
+    //     throw Exception('Unable to Decode File');
+    //   }
+    //   final encodeJpeg = img.encodeJpg(decodedWebP);
+    //   final savedFile = File(
+    //       await getSavePath('${DateTime.now().millisecondsSinceEpoch}.jpeg'));
+    //   await savedFile.writeAsBytes(encodeJpeg);
+    //   return savedFile;
+    // } catch (e) {
+    //   return file;
+    // }
   }
 
   static Future<String> getSavePath(String filename) async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getTemporaryDirectory();
     return '${directory.path}/$filename';
   }
 }

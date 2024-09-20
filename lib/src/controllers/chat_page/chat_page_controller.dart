@@ -994,11 +994,7 @@ class IsmChatPageController extends GetxController
     if (result.isEmpty) {
       return;
     }
-
     IsmChatRouteManagement.goToGalleryAssetsView(result);
-    // await Get.to<void>(IsmChatGalleryAssetsView(
-    //   assetList: result,
-    // ));
   }
 
   Future<void> selectAssets(List<XFile?> assetList) async {
