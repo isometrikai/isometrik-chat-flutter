@@ -400,6 +400,7 @@ enum IsmChatActionEvents {
   conversationImageUpdated,
   broadcast,
   memberJoin,
+
   observerJoin,
   observerLeave,
   userUpdate,
