@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -18,6 +19,10 @@ class IsmChatApiWrapper {
   //   );
   // }
 
+  final _chuckerHttpClient = IsmChatConfig.chucker == null
+      ? ChuckerHttpClient(http.Client())
+      : http.Client();
+
   Future<IsmChatResponseModel> get(
     String api, {
     bool showLoader = false,
@@ -33,7 +38,7 @@ class IsmChatApiWrapper {
       IsmChatUtility.showLoader();
     }
     try {
-      final response = await http
+      final response = await _chuckerHttpClient
           .get(
             uri,
             headers: headers,
@@ -73,7 +78,7 @@ class IsmChatApiWrapper {
       IsmChatUtility.showLoader();
     }
     try {
-      final response = await http
+      final response = await _chuckerHttpClient
           .post(
             uri,
             body: jsonEncode(payload),
@@ -115,7 +120,7 @@ class IsmChatApiWrapper {
       IsmChatUtility.showLoader();
     }
     try {
-      final response = await http
+      final response = await _chuckerHttpClient
           .put(
             uri,
             body: forAwsUpload ? payload : jsonEncode(payload),
@@ -158,7 +163,7 @@ class IsmChatApiWrapper {
       IsmChatUtility.showLoader();
     }
     try {
-      final response = await http
+      final response = await _chuckerHttpClient
           .patch(
             uri,
             body: jsonEncode(payload),
@@ -199,7 +204,7 @@ class IsmChatApiWrapper {
       IsmChatUtility.showLoader();
     }
     try {
-      final response = await http
+      final response = await _chuckerHttpClient
           .delete(
             uri,
             body: jsonEncode(payload),

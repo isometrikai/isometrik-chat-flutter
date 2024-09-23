@@ -33,6 +33,7 @@ class IsmChatDelegate {
     bool shouldSetupMqtt = false,
     List<String>? topics,
     List<String>? topicChannels,
+    ChuckerFlutter? chucker,
   }) async {
     _config = config;
     IsmChatConfig.context = context;
@@ -42,6 +43,7 @@ class IsmChatDelegate {
     IsmChatConfig.shouldSetupMqtt = shouldSetupMqtt;
     IsmChatConfig.configInitilized = true;
     IsmChatConfig.showNotification = showNotification;
+    IsmChatConfig.chucker = chucker;
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
     await _initializeMqtt(
       config: _config,

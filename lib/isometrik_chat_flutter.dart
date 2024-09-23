@@ -2,6 +2,7 @@ library isometrik_chat_flutter;
 
 import 'dart:async';
 
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -84,6 +85,7 @@ class IsmChat {
     bool shouldSetupMqtt = false,
     List<String>? topics,
     List<String>? topicChannels,
+    ChuckerFlutter? chucker,
   }) async {
     await _delegate.initialize(
       communicationConfig,
@@ -94,6 +96,7 @@ class IsmChat {
       shouldSetupMqtt: shouldSetupMqtt,
       topics: topics,
       topicChannels: topicChannels,
+      chucker: chucker,
     );
     _initialized = true;
   }
