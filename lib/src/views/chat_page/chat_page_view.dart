@@ -378,11 +378,20 @@ class _IsmChatPageView extends StatelessWidget {
                                                         .messageAllowedConfig
                                                         ?.isShowTextfiledConfig
                                                         ?.shwoMessage
-                                                        .call(
+                                                        ?.call(
                                                             context,
                                                             controller
                                                                 .conversation!) ??
                                                     '',
+                                                messageWidget: IsmChatProperties
+                                                    .chatPageProperties
+                                                    .messageAllowedConfig
+                                                    ?.isShowTextfiledConfig
+                                                    ?.messageWidget
+                                                    ?.call(
+                                                        context,
+                                                        controller
+                                                            .conversation!),
                                               )
                                             : Container(
                                                 padding: IsmChatConfig
@@ -447,26 +456,29 @@ class _IsmChatPageView extends StatelessWidget {
 }
 
 class _MessgeNotAllowdWidget extends StatelessWidget {
-  const _MessgeNotAllowdWidget({required this.showMessage});
+  const _MessgeNotAllowdWidget({required this.showMessage, this.messageWidget});
 
   final String showMessage;
 
+  final Widget? messageWidget;
+
   @override
   Widget build(BuildContext context) => Container(
-        color: IsmChatConfig.chatTheme.backgroundColor!,
+        color: IsmChatConfig.chatTheme.backgroundColor,
         height: IsmChatDimens.sixty,
         width: double.maxFinite,
         child: SafeArea(
           child: Center(
             child: SizedBox(
               width: IsmChatDimens.percentWidth(.9),
-              child: Text(
-                showMessage,
-                style: IsmChatStyles.w600Black12,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-              ),
+              child: messageWidget ??
+                  Text(
+                    showMessage,
+                    style: IsmChatStyles.w600Black12,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                  ),
             ),
           ),
         ),

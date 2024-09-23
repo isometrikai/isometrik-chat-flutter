@@ -1306,7 +1306,6 @@ class IsmChatConversationsController extends GetxController {
         var isSender =
             message.deliveredTo?.any((e) => e.userId == senderIds?.first);
         if (isSender == false) {
-          IsmChatLog.error('fdfdsfsd ${message.action}');
           await Future.delayed(
             const Duration(milliseconds: 100),
           );
