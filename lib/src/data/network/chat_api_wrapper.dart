@@ -19,7 +19,7 @@ class IsmChatApiWrapper {
   //   );
   // }
 
-  final _chuckerHttpClient = IsmChatConfig.chucker == null
+  final _chuckerHttpClient = IsmChatConfig.chucker != null
       ? ChuckerHttpClient(http.Client())
       : http.Client();
 
