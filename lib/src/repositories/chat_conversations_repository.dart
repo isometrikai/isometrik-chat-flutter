@@ -112,10 +112,12 @@ class IsmChatConversationsRepository {
         (a, b) => a.lastMessageDetails!.sentAt
             .compareTo(b.lastMessageDetails!.sentAt),
       );
-      listData.removeWhere((e) =>
-          e.opponentDetails?.userId.isEmpty == true &&
-          e.opponentDetails?.userName.isEmpty == true &&
-          e.isGroup == false);
+      listData.removeWhere(
+        (e) =>
+            e.opponentDetails?.userId.isEmpty == true &&
+            e.opponentDetails?.userName.isEmpty == true &&
+            e.isGroup == false,
+      );
       return listData;
     } catch (e, st) {
       IsmChatLog.error('GetChatConversations error $e', st);

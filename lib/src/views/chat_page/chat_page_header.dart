@@ -194,8 +194,9 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                                         ?.isSomeoneTyping ==
                                                     true
                                                 ? Text(
-                                                    controller.conversation!
-                                                        .typingUsers,
+                                                    controller.conversation
+                                                            ?.typingUsers ??
+                                                        '',
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -288,8 +289,8 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                                                   ? controller
                                                                           .conversation
                                                                           ?.opponentDetails
-                                                                          ?.lastSeen!
-                                                                          .toCurrentTimeStirng() ??
+                                                                          ?.lastSeen
+                                                                          ?.toCurrentTimeStirng() ??
                                                                       ''
                                                                   : IsmChatStrings
                                                                       .tapInfo,

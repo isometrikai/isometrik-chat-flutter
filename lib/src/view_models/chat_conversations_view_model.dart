@@ -22,7 +22,7 @@ class IsmChatConversationsViewModel {
     }
     if (searchTag == null) {
       var dbConversations =
-          await IsmChatConfig.dbWrapper!.getAllConversations();
+          await IsmChatConfig.dbWrapper?.getAllConversations() ?? [];
 
       for (var conversation in conversations) {
         IsmChatConversationModel? dbConversation;
@@ -38,6 +38,10 @@ class IsmChatConversationsViewModel {
           lastMessageDetails: conversation.lastMessageDetails,
           config: conversation.config,
           metaData: conversation.metaData,
+          customType: conversation.customType,
+          conversationImageUrl: conversation.conversationImageUrl,
+          conversationTitle: conversation.conversationTitle,
+          conversationType: conversation.conversationType,
         );
 
         await IsmChatConfig.dbWrapper!
