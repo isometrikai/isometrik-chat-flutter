@@ -26,11 +26,11 @@ class Constants {
   static const String keysetId = '40063abb-5af1-4fd4-a7f0-adc4767810b1';
   static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
 
-  static const String hostname = 'connections.isometrik.io';
+  static const String hostname = 'connections.isometrik.ai';
   static const int port = 2052;
 
   static const String hostnameForWeb =
-      'wss://connections.isometrik.io:2053/mqtt';
+      'wss://connections.isometrik.ai:2053/mqtt';
   static const int portForWeb = 2053;
 }
 

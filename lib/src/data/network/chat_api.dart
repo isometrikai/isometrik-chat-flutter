@@ -8,7 +8,7 @@ class IsmChatAPI {
 
   static String get baseUrl =>
       IsmChatConfig.communicationConfig.projectConfig.chatApisBaseUrl ??
-      'https://apis.isometrik.io';
+      'https://apis.isometrik.ai';
 
   static String user = '$baseUrl/chat/user';
   static String userDetails = '$baseUrl/chat/user/details';
