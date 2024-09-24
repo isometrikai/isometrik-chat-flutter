@@ -261,6 +261,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           _controller.groupMembers = data.data.members!;
           _controller.groupMembers.sort((a, b) =>
               a.userName.toLowerCase().compareTo(b.userName.toLowerCase()));
+          _controller.groupMembers.removeWhere((e) => e.userId.isEmpty);
         }
 
         IsmChatLog.success('Updated conversation');

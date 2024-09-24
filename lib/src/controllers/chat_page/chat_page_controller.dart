@@ -795,22 +795,28 @@ class IsmChatPageController extends GetxController
   Future<void> getMentionedUserList(String data) async {
     userMentionedList.clear();
     var mentionedList = data.split('@').toList();
-    mentionedList.asMap().forEach(
-      (key, value) {
-        var isMember = groupMembers.where(
-          (e) => value.toLowerCase().contains(
-                e.userName.toLowerCase(),
-              ),
+
+    mentionedList.removeWhere((e) => e.trim().isEmpty);
+
+    for (var x = 0; x < groupMembers.length; x++) {
+      final checkerLength =
+          groupMembers[x].userName.trim().split(' ').first.length;
+
+      var isMember = mentionedList.where(
+        (e) => groupMembers[x].userName.trim().toLowerCase().contains(
+              e.trim().substring(0, checkerLength).toLowerCase(),
+            ),
+      );
+      if (isMember.isNotEmpty) {
+        userMentionedList.add(
+          MentionModel(
+            wordCount: groupMembers[x].userName.split(' ').length,
+            userId: groupMembers[x].userId,
+            order: x,
+          ),
         );
-        if (isMember.isNotEmpty) {
-          userMentionedList.add(MentionModel(
-            wordCount: isMember.first.userName.split(' ').length,
-            userId: isMember.first.userId,
-            order: key,
-          ));
-        }
-      },
-    );
+      }
+    }
   }
 
   toggleEmojiBoard([

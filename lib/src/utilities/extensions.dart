@@ -40,16 +40,16 @@ extension MatchString on String {
 
   bool get isAlphabet => RegExp(r'^[A-Za-z]+$').hasMatch(this);
 
-  List<String> get phoneNumerList {
-    var exp =
-        RegExp(r'[+]?[(]?[0-9]{2,3}[)]?[\-\s\.]?[0-9]{2,5}[\-\s\.]?[0-9]{4,5}');
-    var matches = exp.allMatches(this);
-    var phoneNumerList = <String>[];
-    for (var match in matches) {
-      phoneNumerList.add(substring(match.start, match.end));
-    }
-    return phoneNumerList;
-  }
+  // List<String> get phoneNumerList {
+  //   var exp =
+  //       RegExp(r'[+]?[(]?[0-9]{2,3}[)]?[\-\s\.]?[0-9]{2,5}[\-\s\.]?[0-9]{4,5}');
+  //   var matches = exp.allMatches(this);
+  //   var phoneNumerList = <String>[];
+  //   for (var match in matches) {
+  //     phoneNumerList.add(substring(match.start, match.end));
+  //   }
+  //   return phoneNumerList;
+  // }
 }
 
 extension MessagePagination on int {
@@ -764,92 +764,40 @@ extension ReactionLastMessgae on String {
 }
 
 extension MentionMessage on IsmChatMessageModel {
-  List<LocalMentionAndPhoneNumber> get mentionList {
+  List<LocalMentionAndLinkData> get mentionList {
     try {
-      var messageList = <LocalMentionAndPhoneNumber>[];
-      var phoneNumerList = body.phoneNumerList;
-
-      if (body.contains('@')) {
-        var splitMessages = body.split('@');
-        messageList.add(
-          LocalMentionAndPhoneNumber(
-            text: splitMessages.first,
-            isMentioned: false,
-            isPhoneNumber: false,
-          ),
-        );
-        var length = mentionedUsers!.length;
-
-        var splitLength = splitMessages.length;
-
-        for (var i = 0; i < length; i++) {
-          var mention = mentionedUsers![i];
+      final linkRegExp = RegExp(
+        r'(\bhttps?:\/\/\S+\b|\bwww\.\S+\b|\b\d{9,13}\b|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|@[A-Za-z0-9_]+)',
+        caseSensitive: false,
+      );
+      final matches = linkRegExp.allMatches(body);
+      var lastMatchEnd = 0;
+      var messageList = <LocalMentionAndLinkData>[];
+      for (var match in matches) {
+        if (match.start > lastMatchEnd) {
           messageList.add(
-            LocalMentionAndPhoneNumber(
-              text: '@${mention.userName.capitalizeFirst}',
-              isMentioned: true,
-              isPhoneNumber: false,
+            LocalMentionAndLinkData(
+              text: body.substring(lastMatchEnd, match.start),
+              isLink: false,
             ),
           );
-
-          if (splitLength < length || i < length) {
-            messageList.add(
-              LocalMentionAndPhoneNumber(
-                text: splitMessages[i + 1]
-                    .split(mention.userName.capitalizeFirst!)
-                    .last,
-                isMentioned: false,
-                isPhoneNumber: false,
-              ),
-            );
-          }
         }
-      } else {
-        var splitMessages = body.split(' ');
+
+        final linkText = match.group(0)!;
         messageList.add(
-          LocalMentionAndPhoneNumber(
-            text: splitMessages.first,
-            isMentioned: false,
-            isPhoneNumber: false,
+          LocalMentionAndLinkData(
+            text: linkText,
+            isLink: true,
           ),
         );
 
-        var length = phoneNumerList.length;
-
-        var splitLength = splitMessages.length;
-
-        for (var i = 0; i < length; i++) {
-          var number = phoneNumerList[i];
-          if (splitLength != 1) {
-            messageList.add(
-              LocalMentionAndPhoneNumber(
-                text: '  $number',
-                isMentioned: false,
-                isPhoneNumber: true,
-              ),
-            );
-
-            if (splitLength < length || i < length) {
-              messageList.add(
-                LocalMentionAndPhoneNumber(
-                  text: splitMessages[i + 1].split(number).last,
-                  isMentioned: false,
-                  isPhoneNumber: false,
-                ),
-              );
-            }
-          }
-        }
+        lastMatchEnd = match.end;
       }
-
-      if (phoneNumerList.isNotEmpty) {
-        var messageWithPhone = <LocalMentionAndPhoneNumber>[];
-        for (var x in messageList) {
-          var isPhone = phoneNumerList.any((e) => x.text.trim() == e.trim());
-          x = x.copyWith(isPhoneNumber: isPhone);
-          messageWithPhone.add(x);
-        }
-        messageList = messageWithPhone;
+      if (lastMatchEnd < body.length) {
+        messageList.add(LocalMentionAndLinkData(
+          text: body.substring(lastMatchEnd),
+          isLink: false,
+        ));
       }
 
       return messageList;
