@@ -310,6 +310,7 @@ class IsmChatDBWrapper {
           lastMessageSentAt: conversationModel.lastMessageSentAt,
           config: conversationModel.config,
           metaData: conversationModel.metaData,
+          customType: conversationModel.customType,
         );
 
         await saveConversation(conversation: conversation);
