@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_setters_without_getters
 
-import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -37,6 +36,4 @@ class IsmChatConfig {
   static String? fontFamily;
   static String? notificationIconPath;
   static BuildContext? context;
-
-  static ChuckerFlutter? chucker;
 }

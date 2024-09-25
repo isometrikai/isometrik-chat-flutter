@@ -15,7 +15,6 @@ dependencies:
   azlistview: ^2.0.0
   cached_network_image: ^3.4.0
   camera: ^0.11.0+2
-  chucker_flutter: ^1.8.1
   collection: ^1.18.0
   connectivity_plus: ^6.0.4
   device_info_plus: ^10.1.2
