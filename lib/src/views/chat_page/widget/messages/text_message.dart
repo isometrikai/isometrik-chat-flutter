@@ -64,13 +64,21 @@ class IsmChatTextMessage extends StatelessWidget {
                                   !e.text.startsWith('@')) {
                                 final emailUri =
                                     Uri(scheme: 'mailto', path: e.text);
+
                                 if (await canLaunchUrl(emailUri)) {
                                   await launchUrl(emailUri);
                                 }
                               } else if (e.text.startsWith('http') ||
                                   e.text.startsWith('www')) {
-                                if (await canLaunchUrl(Uri.parse(e.text))) {
-                                  await launchUrl(Uri.parse(e.text));
+                                String? url;
+                                if (e.text.startsWith('www')) {
+                                  url = 'https://${e.text}';
+                                } else {
+                                  url = e.text;
+                                }
+
+                                if (await canLaunchUrl(Uri.parse(url))) {
+                                  await launchUrl(Uri.parse(url));
                                 }
                               } else if (e.text.startsWith('@')) {
                                 var user = message.mentionedUsers

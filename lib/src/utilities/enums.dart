@@ -1,4 +1,3 @@
-import 'package:any_link_preview/any_link_preview.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
 enum IsmChatMessageType {
@@ -153,10 +152,10 @@ enum IsmChatCustomMessageType {
     //     .any((e) => body.split('.').last.toLowerCase() == e.toLowerCase())) {
     //   return IsmChatCustomMessageType.file;
     // }
-    if (AnyLinkPreview.isValidLink(body) ||
-        body.toLowerCase().contains('.com')) {
-      return IsmChatCustomMessageType.link;
-    }
+    // if (AnyLinkPreview.isValidLink(body) ||
+    //     body.toLowerCase().contains('.com')) {
+    //   return IsmChatCustomMessageType.link;
+    // }
     return IsmChatCustomMessageType.text;
   }
 
