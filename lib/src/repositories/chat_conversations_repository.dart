@@ -79,7 +79,7 @@ class IsmChatConversationsRepository {
             '${IsmChatAPI.getChatConversations}?searchTag=$searchTag&skip=$skip&limit=$limit';
       } else {
         url =
-            '${IsmChatAPI.getChatConversations}?includeConversationStatusMessagesInUnreadMessagesCount=$includeConversationStatusMessagesInUnreadMessagesCount&skip=$skip&limit=$limit';
+            '${IsmChatAPI.getChatConversations}?includeMembers=true&includeConversationStatusMessagesInUnreadMessagesCount=$includeConversationStatusMessagesInUnreadMessagesCount&skip=$skip&limit=$limit';
       }
       var response = await _apiWrapper.get(
         url,
