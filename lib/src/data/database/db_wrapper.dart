@@ -311,6 +311,7 @@ class IsmChatDBWrapper {
           config: conversationModel.config,
           metaData: conversationModel.metaData,
           customType: conversationModel.customType,
+          members: conversationModel.members,
         );
 
         await saveConversation(conversation: conversation);

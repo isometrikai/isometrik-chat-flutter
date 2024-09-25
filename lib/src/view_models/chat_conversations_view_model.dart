@@ -42,6 +42,8 @@ class IsmChatConversationsViewModel {
           conversationImageUrl: conversation.conversationImageUrl,
           conversationTitle: conversation.conversationTitle,
           conversationType: conversation.conversationType,
+          members: conversation.members,
+          membersCount: conversation.membersCount,
         );
 
         await IsmChatConfig.dbWrapper!
