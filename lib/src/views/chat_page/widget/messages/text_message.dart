@@ -30,9 +30,10 @@ class IsmChatTextMessage extends StatelessWidget {
                       return TextSpan(
                         text: e.text,
                         style: message.style.copyWith(
-                            color: message.sentByMe
-                                ? IsmChatConfig.chatTheme.mentionColor
-                                : IsmChatConfig.chatTheme.primaryColor),
+                          fontWeight: FontWeight.bold,
+                          fontSize: IsmChatDimens.fifteen,
+                          color: IsmChatConfig.chatTheme.mentionColor,
+                        ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
                             if (e.isLink) {

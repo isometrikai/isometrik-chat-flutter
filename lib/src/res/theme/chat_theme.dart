@@ -35,7 +35,7 @@ class IsmChatThemeData with Diagnosticable {
         chatListTheme: const IsmChatListThemeData.light(),
         primaryColor: IsmChatColors.primaryColorLight,
         backgroundColor: IsmChatColors.backgroundColorLight,
-        mentionColor: IsmChatColors.yellowColor,
+        mentionColor: IsmChatColors.primaryColorLight,
         notificationColor: IsmChatColors.whiteColor,
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: IsmChatColors.primaryColorLight,
@@ -51,7 +51,7 @@ class IsmChatThemeData with Diagnosticable {
         chatPageHeaderTheme: IsmChatHeaderThemeData(),
         chatListTheme: const IsmChatListThemeData.dark(),
         primaryColor: IsmChatColors.primaryColorDark,
-        mentionColor: IsmChatColors.yellowColor,
+        mentionColor: IsmChatColors.primaryColorDark,
         notificationColor: IsmChatColors.whiteColor,
         backgroundColor: IsmChatColors.backgroundColorDark,
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
