@@ -801,20 +801,23 @@ class IsmChatPageController extends GetxController
     for (var x = 0; x < groupMembers.length; x++) {
       final checkerLength =
           groupMembers[x].userName.trim().split(' ').first.length;
-
-      var isMember = mentionedList.where(
-        (e) => groupMembers[x].userName.trim().toLowerCase().contains(
-              e.trim().substring(0, checkerLength).toLowerCase(),
-            ),
-      );
-      if (isMember.isNotEmpty) {
-        userMentionedList.add(
-          MentionModel(
-            wordCount: groupMembers[x].userName.split(' ').length,
-            userId: groupMembers[x].userId,
-            order: x,
-          ),
+      if (mentionedList.isNotEmpty) {
+        var isMember = mentionedList.where(
+          (e) =>
+              checkerLength == e.trim().length &&
+              groupMembers[x].userName.trim().toLowerCase().contains(
+                    e.trim().substring(0, checkerLength).toLowerCase(),
+                  ),
         );
+        if (isMember.isNotEmpty) {
+          userMentionedList.add(
+            MentionModel(
+              wordCount: groupMembers[x].userName.split(' ').length,
+              userId: groupMembers[x].userId,
+              order: x,
+            ),
+          );
+        }
       }
     }
   }

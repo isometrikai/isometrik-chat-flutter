@@ -43,7 +43,11 @@ class IsmChatHeaderThemeData {
         popupshadowColor = IsmChatColors.whiteColor;
   final Color? backgroundColor;
   final Color? iconColor;
+
   final Color? popupBackgroundColor;
+
+  // final Color? dialogBackgroundColor;
+  // final Color? dialogTextColor;
 
   final double? elevation;
   final Color? shadowColor;

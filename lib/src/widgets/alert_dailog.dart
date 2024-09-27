@@ -39,7 +39,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                 actionsPadding: IsmChatDimens.edgeInsets16,
                 title: Text(title),
                 backgroundColor: IsmChatConfig
-                        .chatTheme.chatPageHeaderTheme?.popupBackgroundColor ??
+                        .chatTheme.chatPageHeaderTheme?.backgroundColor ??
                     IsmChatColors.whiteColor,
                 titleTextStyle: IsmChatStyles.w600Black14,
                 contentPadding: contentPadding,
