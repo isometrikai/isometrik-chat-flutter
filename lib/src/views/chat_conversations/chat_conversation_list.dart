@@ -150,7 +150,10 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                     children: [
                       ...IsmChatProperties.conversationProperties.actions?.map(
                             (e) => IsmChatActionWidget(
-                              onTap: () => e.onTap(widget.conversation),
+                              onTap: () {
+                                slidableController?.close();
+                                e.onTap.call(widget.conversation);
+                              },
                               decoration: e.decoration,
                               icon: e.icon,
                               label: e.label,
