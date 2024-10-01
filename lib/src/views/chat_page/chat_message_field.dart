@@ -172,7 +172,8 @@ class IsmChatMessageField extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: TextFormField(
-                                      enableSuggestions: false,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                       style: IsmChatConfig
                                           .chatTheme
                                           .chatPageTheme
