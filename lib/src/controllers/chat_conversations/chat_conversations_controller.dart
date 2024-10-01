@@ -15,7 +15,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class IsmChatConversationsController extends GetxController {
+class IsmChatConversationsController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   IsmChatConversationsController(this._viewModel);
   final IsmChatConversationsViewModel _viewModel;
 
@@ -336,10 +337,14 @@ class IsmChatConversationsController extends GetxController {
     _intilizedContrller.value = value;
   }
 
+  // SlidableController? slidableController;
+
   @override
   onInit() async {
     super.onInit();
     intilizedContrller = false;
+    // slidableController = SlidableController(this);
+
     _isInterNetConnect();
     await _generateReactionList();
     var users = await IsmChatConfig.dbWrapper?.userDetailsBox
@@ -383,6 +388,7 @@ class IsmChatConversationsController extends GetxController {
     conversationScrollController.dispose();
     searchConversationScrollController.dispose();
     connectivitySubscription?.cancel();
+    // slidableController?.dispose();
   }
 
   void _isInterNetConnect() {
