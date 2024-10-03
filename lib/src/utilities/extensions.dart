@@ -432,7 +432,7 @@ extension BlockStatus on IsmChatConversationModel {
     }
     var controller = Get.find<IsmChatConversationsController>();
     var blockedList = controller.blockUsers.map((e) => e.userId);
-    return blockedList.contains(opponentDetails!.userId);
+    return blockedList.contains(opponentDetails?.userId);
   }
 }
 

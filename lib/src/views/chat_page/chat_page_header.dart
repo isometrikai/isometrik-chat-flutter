@@ -401,7 +401,9 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                       ),
                                       IsmChatDimens.boxWidth8,
                                       Text(
-                                        controller.conversation!.isBlockedByMe
+                                        controller.conversation
+                                                    ?.isBlockedByMe ==
+                                                true
                                             ? IsmChatStrings.unBlockUser
                                             : IsmChatStrings.blockUser,
                                         style: IsmChatConfig

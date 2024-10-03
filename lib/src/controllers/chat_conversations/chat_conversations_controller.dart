@@ -364,6 +364,7 @@ class IsmChatConversationsController extends GetxController {
             : userDetails?.userId ?? ''
       ],
     );
+    unawaited(getBlockUser());
     intilizedContrller = true;
     scrollListener();
     sendPendingMessgae();
