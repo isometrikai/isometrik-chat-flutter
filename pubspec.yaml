@@ -41,7 +41,7 @@ dependencies:
   hive: ^2.2.3
   http: ^1.2.2
   image: ^4.2.0
-  image_cropper: ^8.0.1
+  image_cropper: ^8.0.0
   image_painter: ^0.7.1
   image_picker: ^1.1.2
   intl: ^0.18.1
