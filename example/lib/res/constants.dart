@@ -27,11 +27,25 @@ class Constants {
   static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
 
   static const String hostname = 'connections.isometrik.ai';
-  static const int port = 2052;
+  static const int port = 2086;
+
+  // static const String hostname = 'connections.isometrik.ai';
+  // static const int port = 2052;
+
+  // static const String hostname = 'connections.isometrik.io';
+  // static const int port = 2052;
 
   static const String hostnameForWeb =
-      'wss://connections.isometrik.ai:2053/mqtt';
-  static const int portForWeb = 2053;
+      'wss://connections.isometrik.ai:2096/mqtt';
+  static const int portForWeb = 2096;
+
+  // static const String hostnameForWeb =
+  //     'wss://connections.isometrik.ai:2053/mqtt';
+  // static const int portForWeb = 2053;
+
+  // static const String hostnameForWeb =
+  //     'wss://connections.isometrik.io:2053/mqtt';
+  // static const int portForWeb = 2053;
 }
 
 // Kanika Ma'am Chat app
