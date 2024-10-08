@@ -8,7 +8,6 @@ class IsmChatStrings {
 
   static const String controllerTag = 'ism-chat-page';
 
-
   static const String chats = 'Chats';
 
   static const String you = 'You';
@@ -39,7 +38,7 @@ class IsmChatStrings {
   static const String on = 'on';
   static const String okay = 'Okay';
   static const String change = 'Change';
-  static const String blockUser = 'Block Users';
+  static const String blockUser = 'Block User';
   static const String unBlockUser = 'Unblock User';
   static const String blockedUsers = 'Blocked Users';
   static const String broadcastList = 'Broadcast List';
