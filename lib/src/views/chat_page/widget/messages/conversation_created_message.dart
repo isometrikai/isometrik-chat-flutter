@@ -38,7 +38,7 @@ class IsmChatConversationCreatedMessage extends StatelessWidget {
         child: Text(
           message.isGroup == true
               ? '${name.trim().isNotEmpty ? name : message.userName} created a group'
-              : 'Messages are end to end encrypted. No one outside of this chat can read to them.',
+              : 'Messages are end to end encrypted. No one outside of this chat can read your messages.',
           style: IsmChatConfig
                   .chatTheme.chatPageTheme?.centerMessageThemData?.textStyle ??
               IsmChatStyles.w500Black12.copyWith(
