@@ -58,28 +58,22 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
 
   int mediaIndex = -1;
 
-  final pageController = PageController();
+  PageController? pageController;
 
   @override
   void initState() {
-    super.initState();
     initiated = widget._initiated ?? false;
     mediaIndex = widget._mediaIndex ?? 0;
     mediaTime = (widget._mediaTime ?? 0).getTime;
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      try {
-        pageController.animateToPage(
-          widget._mediaIndex ?? 0,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeIn,
-        );
-      } catch (_) {}
-    });
+    pageController = PageController(
+      initialPage: mediaIndex,
+    );
+    super.initState();
   }
 
   @override
   void dispose() {
-    pageController.dispose();
+    pageController?.dispose();
     super.dispose();
   }
 
