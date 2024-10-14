@@ -93,11 +93,13 @@ class IsmChatDelegate {
   }
 
   Future<void> removeEventListener(Function(EventModel) listener) async {
-    var mqttController = Get.find<IsmChatMqttController>();
-    mqttController.eventListeners.remove(listener);
-    await mqttController.eventStreamController.stream.drain();
-    for (var listener in mqttController.eventListeners) {
-      mqttController.eventStreamController.stream.listen(listener);
+    if (Get.isRegistered<IsmChatMqttController>()) {
+      var mqttController = Get.find<IsmChatMqttController>();
+      mqttController.eventListeners.remove(listener);
+      await mqttController.eventStreamController.stream.drain();
+      for (var listener in mqttController.eventListeners) {
+        mqttController.eventStreamController.stream.listen(listener);
+      }
     }
   }
 
