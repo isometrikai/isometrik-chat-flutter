@@ -3,7 +3,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class MessageAllowedConfig {
   MessageAllowedConfig({this.isShowTextfiledConfig, this.isMessgeAllowed});
-  Future<bool?>? Function(BuildContext, IsmChatConversationModel)?
+  Future<bool?>? Function(
+          BuildContext, IsmChatConversationModel, IsmChatCustomMessageType)?
       isMessgeAllowed;
   IsShowTextfiledConfig? isShowTextfiledConfig;
 }

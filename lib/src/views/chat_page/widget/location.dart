@@ -268,7 +268,9 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                               Get.context!,
                                               Get.find<IsmChatPageController>(
                                                       tag: IsmChat.i.tag)
-                                                  .conversation!) ??
+                                                  .conversation!,
+                                              IsmChatCustomMessageType
+                                                  .location) ??
                                       true) {}
                                 },
                                 child: Column(
@@ -320,7 +322,8 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                               Get.context!,
                                               Get.find<IsmChatPageController>(
                                                       tag: IsmChat.i.tag)
-                                                  .conversation!) ??
+                                                  .conversation!,
+                                              IsmChatCustomMessageType.location) ??
                                       true) {
                                     controller.sendLocation(
                                         conversationId: controller

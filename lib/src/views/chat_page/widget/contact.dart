@@ -82,7 +82,8 @@ class IsmChatContactView extends StatelessWidget {
                       ?.call(
                           Get.context!,
                           Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                              .conversation!) ??
+                              .conversation!,
+                          IsmChatCustomMessageType.contact) ??
                   true) {
                 controller.sendContact(
                   conversationId: controller.conversation?.conversationId ?? '',

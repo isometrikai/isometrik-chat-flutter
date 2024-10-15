@@ -411,7 +411,8 @@ class _MicOrSendButton extends StatelessWidget {
                               Get.context!,
                               Get.find<IsmChatPageController>(
                                       tag: IsmChat.i.tag)
-                                  .conversation!) ??
+                                  .conversation!,
+                              IsmChatCustomMessageType.audio) ??
                       true) {
                     if (kIsWeb) {
                       var bytes =
@@ -466,7 +467,8 @@ class _MicOrSendButton extends StatelessWidget {
                               Get.context!,
                               Get.find<IsmChatPageController>(
                                       tag: IsmChat.i.tag)
-                                  .conversation!) ??
+                                  .conversation!,
+                              IsmChatCustomMessageType.text) ??
                       true) {
                     await controller.getMentionedUserList(
                         controller.chatInputController.text.trim());

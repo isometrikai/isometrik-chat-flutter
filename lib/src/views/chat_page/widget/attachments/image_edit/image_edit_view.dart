@@ -102,7 +102,8 @@ class IsmChatImageEditView extends StatelessWidget {
                                   context,
                                   Get.find<IsmChatPageController>(
                                           tag: IsmChat.i.tag)
-                                      .conversation!) ??
+                                      .conversation!,
+                                  IsmChatCustomMessageType.image) ??
                           true) {
                         await controller.sendImage(
                           caption: controller.textEditingController.text,

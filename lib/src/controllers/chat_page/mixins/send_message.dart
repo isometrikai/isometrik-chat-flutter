@@ -92,15 +92,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     if (isMaxSize == false) {
       Get.back<void>();
-      if (await IsmChatProperties
-              .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-              ?.call(
-                  Get.context!,
-                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                      .conversation!) ??
-          true) {
-        sendPhotoAndVideo();
-      }
+      sendPhotoAndVideo();
     } else {
       await Get.dialog(
         const IsmChatAlertDialogBox(
@@ -166,24 +158,36 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   void sendPhotoAndVideo() async {
     if (_controller.listOfAssetsPath.isNotEmpty) {
       for (var media in _controller.listOfAssetsPath) {
-        if (media.attachmentModel.attachmentType == IsmChatMediaType.image) {
-          await sendImage(
-            conversationId: _controller.conversation?.conversationId ?? '',
-            userId: _controller.conversation?.opponentDetails?.userId ?? '',
-            imagePath: File(
-              media.attachmentModel.mediaUrl ?? '',
-            ),
-            caption: media.caption,
-          );
-        } else {
-          await sendVideo(
-            caption: media.caption,
-            file: File(media.attachmentModel.mediaUrl ?? ''),
-            isThumbnail: true,
-            thumbnailFiles: File(media.attachmentModel.thumbnailUrl ?? ''),
-            conversationId: _controller.conversation?.conversationId ?? '',
-            userId: _controller.conversation?.opponentDetails?.userId ?? '',
-          );
+        if (await IsmChatProperties
+                .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
+                ?.call(
+                    Get.context!,
+                    Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                        .conversation!,
+                    media.attachmentModel.attachmentType ==
+                            IsmChatMediaType.image
+                        ? IsmChatCustomMessageType.image
+                        : IsmChatCustomMessageType.video) ??
+            true) {
+          if (media.attachmentModel.attachmentType == IsmChatMediaType.image) {
+            await sendImage(
+              conversationId: _controller.conversation?.conversationId ?? '',
+              userId: _controller.conversation?.opponentDetails?.userId ?? '',
+              imagePath: File(
+                media.attachmentModel.mediaUrl ?? '',
+              ),
+              caption: media.caption,
+            );
+          } else {
+            await sendVideo(
+              caption: media.caption,
+              file: File(media.attachmentModel.mediaUrl ?? ''),
+              isThumbnail: true,
+              thumbnailFiles: File(media.attachmentModel.thumbnailUrl ?? ''),
+              conversationId: _controller.conversation?.conversationId ?? '',
+              userId: _controller.conversation?.opponentDetails?.userId ?? '',
+            );
+          }
         }
       }
       _controller.listOfAssetsPath.clear();
@@ -432,7 +436,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
               ?.call(
                   Get.context!,
                   Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                      .conversation!) ??
+                      .conversation!,
+                  IsmChatCustomMessageType.file) ??
           true) {
         await ismPostMediaUrl(
           imageAndFile: false,

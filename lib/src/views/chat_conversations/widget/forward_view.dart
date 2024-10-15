@@ -361,7 +361,8 @@ class IsmChatForwardView extends StatelessWidget {
                                             Get.context!,
                                             Get.find<IsmChatPageController>(
                                                     tag: IsmChat.i.tag)
-                                                .conversation!) ??
+                                                .conversation!,
+                                            IsmChatCustomMessageType.forward) ??
                                     true) {
                                   await controller.sendForwardMessage(
                                     customType:
