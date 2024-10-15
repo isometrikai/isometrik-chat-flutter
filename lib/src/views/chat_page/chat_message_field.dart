@@ -121,21 +121,34 @@ class IsmChatMessageField extends StatelessWidget {
                                 true)) {
                               controller.showDialogCheckBlockUnBlock();
                             } else {
-                              await controller.getMentionedUserList(
-                                  controller.chatInputController.text.trim());
-                              if (controller.chatInputController.text
-                                      .trim()
-                                      .isNotEmpty &&
-                                  controller.isMessageSent == false) {
-                                controller.isMessageSent = true;
-                                controller.sendTextMessage(
-                                  conversationId:
-                                      controller.conversation?.conversationId ??
-                                          '',
-                                  userId: controller.conversation
-                                          ?.opponentDetails?.userId ??
-                                      '',
-                                );
+                              if (await IsmChatProperties.chatPageProperties
+                                      .messageAllowedConfig?.isMessgeAllowed
+                                      ?.call(
+                                          Get.context!,
+                                          Get.find<IsmChatPageController>(
+                                                  tag: IsmChat.i.tag)
+                                              .conversation!,
+                                          controller.isreplying
+                                              ? IsmChatCustomMessageType.reply
+                                              : IsmChatCustomMessageType
+                                                  .text) ??
+                                  true) {
+                                await controller.getMentionedUserList(
+                                    controller.chatInputController.text.trim());
+                                if (controller.chatInputController.text
+                                        .trim()
+                                        .isNotEmpty &&
+                                    controller.isMessageSent == false) {
+                                  controller.isMessageSent = true;
+                                  controller.sendTextMessage(
+                                    conversationId: controller
+                                            .conversation?.conversationId ??
+                                        '',
+                                    userId: controller.conversation
+                                            ?.opponentDetails?.userId ??
+                                        '',
+                                  );
+                                }
                               }
                             }
                           }
@@ -468,7 +481,9 @@ class _MicOrSendButton extends StatelessWidget {
                               Get.find<IsmChatPageController>(
                                       tag: IsmChat.i.tag)
                                   .conversation!,
-                              IsmChatCustomMessageType.text) ??
+                              controller.isreplying
+                                  ? IsmChatCustomMessageType.reply
+                                  : IsmChatCustomMessageType.text) ??
                       true) {
                     await controller.getMentionedUserList(
                         controller.chatInputController.text.trim());
