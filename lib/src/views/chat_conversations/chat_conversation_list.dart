@@ -215,6 +215,8 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                   ),
         child: Obx(
           () => IsmChatConversationCard(
+            canShowStack: IsmChatProperties
+                .conversationProperties.cardElementBuilders?.canShowStack,
             onProfileTap: IsmChatProperties
                 .conversationProperties.cardElementBuilders?.onProfileTap,
             isShowBackgroundColor: IsmChatResponsive.isWeb(context)
