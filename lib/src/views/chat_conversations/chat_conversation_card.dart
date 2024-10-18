@@ -145,7 +145,8 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                     ),
                   ],
                   if (widget.conversation.conversationType ==
-                      IsmChatConversationType.public) ...[
+                          IsmChatConversationType.public &&
+                      widget.profileImageUrl != null) ...[
                     Positioned(
                         bottom: IsmChatDimens.zero,
                         right: IsmChatDimens.zero,
