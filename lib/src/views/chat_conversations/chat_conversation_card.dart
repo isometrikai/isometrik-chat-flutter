@@ -16,6 +16,7 @@ class IsmChatConversationCard extends StatefulWidget {
     this.subtitle,
     this.isShowBackgroundColor,
     this.onProfileTap,
+    this.canShowStack,
     super.key,
   });
 
@@ -29,6 +30,7 @@ class IsmChatConversationCard extends StatefulWidget {
   final ConversationStringCallback? subtitle;
   final bool? isShowBackgroundColor;
   final ConversationVoidCallback? onProfileTap;
+  final bool? canShowStack;
 
   @override
   State<IsmChatConversationCard> createState() =>
@@ -108,7 +110,8 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                     ),
                   ],
                   if (widget.conversation.conversationType ==
-                      IsmChatConversationType.open) ...[
+                          IsmChatConversationType.open &&
+                      (widget.canShowStack ?? true)) ...[
                     Positioned(
                       left: IsmChatDimens.seven,
                       child: Container(
@@ -146,7 +149,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                   ],
                   if (widget.conversation.conversationType ==
                           IsmChatConversationType.public &&
-                      widget.profileImageUrl != null) ...[
+                      (widget.canShowStack ?? true)) ...[
                     Positioned(
                         bottom: IsmChatDimens.zero,
                         right: IsmChatDimens.zero,

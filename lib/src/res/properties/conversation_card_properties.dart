@@ -11,6 +11,7 @@ class IsmChatCardProperties {
     this.trailingBuilder,
     this.trailing,
     this.onProfileTap,
+    this.canShowStack,
   });
 
   final ConversationWidgetCallback? profileImageBuilder;
@@ -22,4 +23,5 @@ class IsmChatCardProperties {
   final ConversationWidgetCallback? trailingBuilder;
   final ConversationStringCallback? trailing;
   final ConversationVoidCallback? onProfileTap;
+  final bool? canShowStack;
 }
