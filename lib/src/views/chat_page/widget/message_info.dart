@@ -22,7 +22,9 @@ class IsmChatMessageInfo extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
         tag: IsmChat.i.tag,
         builder: (chatController) => Scaffold(
-          backgroundColor: IsmChatColors.whiteColor,
+          backgroundColor:
+              IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
+                  IsmChatColors.whiteColor,
           appBar: AppBar(
             systemOverlayStyle: IsmChatConfig
                     .chatTheme.chatPageHeaderTheme?.systemUiOverlayStyle ??
@@ -69,7 +71,9 @@ class IsmChatMessageInfo extends StatelessWidget {
                   Center(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: IsmChatConfig.chatTheme.backgroundColor,
+                        color: IsmChatConfig.chatTheme.chatPageTheme
+                                ?.centerMessageThemData?.backgroundColor ??
+                            IsmChatConfig.chatTheme.primaryColor,
                         borderRadius:
                             BorderRadius.circular(IsmChatDimens.eight),
                       ),
@@ -77,7 +81,8 @@ class IsmChatMessageInfo extends StatelessWidget {
                       child: Text(
                         _message?.sentAt.toMessageDateString() ?? '',
                         style: IsmChatStyles.w500Black12.copyWith(
-                          color: IsmChatConfig.chatTheme.primaryColor,
+                          color: IsmChatConfig.chatTheme.chatPageTheme
+                              ?.centerMessageThemData?.textColor,
                         ),
                       ),
                     ),
@@ -236,6 +241,7 @@ class _MessageReadDelivered extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
+        color: IsmChatConfig.chatTheme.cardBackgroundColor,
         elevation: 1,
         child: Container(
           width: IsmChatDimens.percentWidth(.9),
@@ -245,12 +251,18 @@ class _MessageReadDelivered extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: IsmChatStyles.w600Black16,
+                style: IsmChatStyles.w600Black16.copyWith(
+                  color: IsmChatConfig.chatTheme.chatPageTheme
+                      ?.centerMessageThemData?.textColor,
+                ),
               ),
               IsmChatDimens.boxHeight5,
               Text(
                 '...',
-                style: IsmChatStyles.w600Black16,
+                style: IsmChatStyles.w600Black16.copyWith(
+                  color: IsmChatConfig.chatTheme.chatPageTheme
+                      ?.centerMessageThemData?.textColor,
+                ),
               )
             ],
           ),
@@ -268,6 +280,7 @@ class _UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
+        color: IsmChatConfig.chatTheme.cardBackgroundColor,
         elevation: 1,
         child: Padding(
           padding: IsmChatDimens.edgeInsets10,
@@ -280,7 +293,10 @@ class _UserInfo extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: IsmChatStyles.w600Black16,
+                    style: IsmChatStyles.w600Black16.copyWith(
+                      color: IsmChatConfig.chatTheme.chatPageTheme
+                          ?.centerMessageThemData?.textColor,
+                    ),
                   ),
                   Icon(
                     Icons.done_all_rounded,

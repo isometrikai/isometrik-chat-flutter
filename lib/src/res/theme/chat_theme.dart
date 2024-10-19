@@ -15,6 +15,7 @@ class IsmChatThemeData with Diagnosticable {
     this.chatPageHeaderTheme,
     this.chatPageTheme,
     this.chatListCardThemData,
+    this.cardBackgroundColor,
   })  : primaryColor = primaryColor ?? IsmChatThemeData.light().primaryColor,
         backgroundColor =
             backgroundColor ?? IsmChatThemeData.light().backgroundColor,
@@ -72,6 +73,8 @@ class IsmChatThemeData with Diagnosticable {
   final Color? mentionColor;
 
   final Color? notificationColor;
+
+  final Color? cardBackgroundColor;
 
   final IsmChatListThemeData? chatListTheme;
 

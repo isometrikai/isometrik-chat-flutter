@@ -170,6 +170,8 @@ class IsmChatFocusMenu extends StatelessWidget {
                             child: Container(
                               width: IsmChatDimens.oneHundredSeventy,
                               decoration: BoxDecoration(
+                                color: IsmChatConfig.chatTheme
+                                    .chatPageHeaderTheme?.popupBackgroundColor,
                                 borderRadius: BorderRadius.circular(
                                   IsmChatDimens.sixteen,
                                 ),

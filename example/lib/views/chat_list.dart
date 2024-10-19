@@ -23,12 +23,17 @@ class ChatList extends StatelessWidget {
             //   return true;
             // },
             chatTheme: IsmChatThemeData(
+              cardBackgroundColor: const Color(0xFF292030),
+              // backgroundColor: const Color(0xFF292030),
               chatPageHeaderTheme: IsmChatHeaderThemeData(),
               primaryColor: AppColors.primaryColorLight,
               // chatPageHeaderTheme: IsmChatHeaderThemeData(
               //   iconColor: Colors.red,
               // ),
               chatPageTheme: IsmChatPageThemeData(
+                centerMessageThemData:
+                    const IsmChatCenterMessageThemData(textColor: Colors.white),
+                // backgroundColor: const Color(0xFF292030),
                 selfMessageTheme: IsmChatMessageThemeData(
                   borderColor: Colors.grey,
                   // showProfile: ShowProfile(
