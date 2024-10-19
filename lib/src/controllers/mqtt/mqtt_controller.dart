@@ -28,15 +28,19 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
     IsmChatCommunicationConfig? config,
     List<String>? topics,
     List<String>? topicChannels,
+    required bool shouldSetupMqtt,
   }) async {
     _config = config ?? IsmChat.i.config;
     projectConfig = _config?.projectConfig;
     mqttConfig = _config?.mqttConfig;
     userConfig = _config?.userConfig;
-    await setupIsmMqttConnection(
-      topics: topics,
-      topicChannels: topicChannels,
-    );
+    if (!shouldSetupMqtt) {
+      await setupIsmMqttConnection(
+        topics: topics,
+        topicChannels: topicChannels,
+      );
+    }
+
     unawaited(getChatConversationsUnreadCount());
   }
 

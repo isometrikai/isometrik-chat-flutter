@@ -1,10 +1,36 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatMqttActionModel {
+  IsmChatMqttActionModel({
+    this.conversationId,
+    this.userDetails,
+    this.opponentDetails,
+    this.initiatorDetails,
+    this.conversationDetails,
+    required this.sentAt,
+    this.lastMessageSentAt,
+    this.messageId,
+    this.messageIds,
+    required this.action,
+    this.memberId,
+    this.memberName,
+    this.initiatorName,
+    this.initiatorId,
+    this.reactionType,
+    this.reactionsCount,
+    this.members,
+    this.senderId,
+    this.senderName,
+    this.messageType,
+    this.customType,
+    this.body,
+    this.attachments,
+    this.metaData,
+    this.isGroup,
+  });
   factory IsmChatMqttActionModel.fromJson(String source) =>
       IsmChatMqttActionModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
@@ -84,6 +110,7 @@ class IsmChatMqttActionModel {
                 ),
               )
             : [],
+        isGroup: map['isGroup'] as bool? ?? false,
       );
 
   final String? conversationId;
@@ -110,33 +137,7 @@ class IsmChatMqttActionModel {
   final String? body;
   final List<AttachmentModel>? attachments;
   final IsmChatMetaData? metaData;
-
-  IsmChatMqttActionModel({
-    this.conversationId,
-    this.userDetails,
-    this.opponentDetails,
-    this.initiatorDetails,
-    this.conversationDetails,
-    required this.sentAt,
-    this.lastMessageSentAt,
-    this.messageId,
-    this.messageIds,
-    required this.action,
-    this.memberId,
-    this.memberName,
-    this.initiatorName,
-    this.initiatorId,
-    this.reactionType,
-    this.reactionsCount,
-    this.members,
-    this.senderId,
-    this.senderName,
-    this.messageType,
-    this.customType,
-    this.body,
-    this.attachments,
-    this.metaData,
-  });
+  final bool? isGroup;
 
   IsmChatMqttActionModel copyWith({
     String? conversationId,
@@ -163,6 +164,7 @@ class IsmChatMqttActionModel {
     String? body,
     List<AttachmentModel>? attachments,
     IsmChatMetaData? metaData,
+    bool? isGroup,
   }) =>
       IsmChatMqttActionModel(
         conversationId: conversationId ?? this.conversationId,
@@ -189,6 +191,7 @@ class IsmChatMqttActionModel {
         body: body ?? this.body,
         attachments: attachments ?? this.attachments,
         metaData: metaData ?? this.metaData,
+        isGroup: isGroup ?? this.isGroup,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -216,13 +219,14 @@ class IsmChatMqttActionModel {
         'body': body,
         'attachments': attachments?.map((x) => x.toMap()).toList(),
         'metaData': metaData?.toMap(),
+        'isGroup': isGroup,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatMqttActionModel(conversationId: $conversationId, userDetails: $userDetails, opponentDetails: $opponentDetails, initiatorDetails: $initiatorDetails, conversationDetails: $conversationDetails, sentAt: $sentAt, lastMessageSentAt: $lastMessageSentAt, messageId: $messageId, messageIds: $messageIds, action: $action, memberId: $memberId, memberName: $memberName, initiatorName: $initiatorName, initiatorId: $initiatorId, reactionType: $reactionType, reactionsCount: $reactionsCount, members: $members, senderId: $senderId, senderName: $senderName, messageType: $messageType, customType: $customType, body: $body, attachments: $attachments, metaData: $metaData)';
+      'IsmChatMqttActionModel(conversationId: $conversationId, userDetails: $userDetails, opponentDetails: $opponentDetails, initiatorDetails: $initiatorDetails, conversationDetails: $conversationDetails, sentAt: $sentAt, lastMessageSentAt: $lastMessageSentAt, messageId: $messageId, messageIds: $messageIds, action: $action, memberId: $memberId, memberName: $memberName, initiatorName: $initiatorName, initiatorId: $initiatorId, reactionType: $reactionType, reactionsCount: $reactionsCount, members: $members, senderId: $senderId, senderName: $senderName, messageType: $messageType, customType: $customType, body: $body, attachments: $attachments, metaData: $metaData, isGroup : $isGroup)';
 
   @override
   bool operator ==(covariant IsmChatMqttActionModel other) {
@@ -251,7 +255,8 @@ class IsmChatMqttActionModel {
         other.customType == customType &&
         other.body == body &&
         listEquals(other.attachments, attachments) &&
-        other.metaData == metaData;
+        other.metaData == metaData &&
+        other.isGroup == isGroup;
   }
 
   @override
@@ -279,7 +284,8 @@ class IsmChatMqttActionModel {
       customType.hashCode ^
       body.hashCode ^
       attachments.hashCode ^
-      metaData.hashCode;
+      metaData.hashCode ^
+      isGroup.hashCode;
 }
 
 class Members {

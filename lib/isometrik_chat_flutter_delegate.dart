@@ -61,13 +61,12 @@ class IsmChatDelegate {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatMqttBinding().dependencies();
     }
-    if (!shouldSetupMqtt) {
-      await Get.find<IsmChatMqttController>().setup(
-        config: config,
-        topics: topics,
-        topicChannels: topicChannels,
-      );
-    }
+    await Get.find<IsmChatMqttController>().setup(
+      shouldSetupMqtt: shouldSetupMqtt,
+      config: config,
+      topics: topics,
+      topicChannels: topicChannels,
+    );
   }
 
   Future<void> listenMqttEvent({

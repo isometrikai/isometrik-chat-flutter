@@ -951,10 +951,15 @@ mixin IsmChatMqttEventMixin {
   Future<void> _handleCreateConversation(
       IsmChatMqttActionModel actionModel) async {
     IsmChatLog.error(
-        '_handleCreateConversation callback step1 ${actionModel.opponentDetails} == ${_controller.userConfig?.userId}');
-    if (actionModel.opponentDetails?.userId == _controller.userConfig?.userId) {
+        '_handleCreateConversation callback step1 ${actionModel.userDetails} == ${_controller.userConfig?.userId}');
+    if ((actionModel.isGroup ?? false) &&
+        actionModel.userDetails?.userId == _controller.userConfig?.userId) {
+      return;
+    } else if (actionModel.opponentDetails?.userId ==
+        _controller.userConfig?.userId) {
       return;
     }
+
     IsmChatLog.error('_handleCreateConversation callback step2 ');
 
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
