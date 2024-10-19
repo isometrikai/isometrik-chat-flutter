@@ -3,18 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatHeaderThemeData {
-  IsmChatHeaderThemeData(
-      {this.backgroundColor,
-      this.iconColor,
-      this.elevation,
-      this.shadowColor,
-      this.subtileStyle,
-      this.titleStyle,
-      this.popupBackgroundColor,
-      this.popupShape,
-      this.popupshadowColor,
-      this.systemUiOverlayStyle,
-      this.popupLableStyle});
+  IsmChatHeaderThemeData({
+    this.backgroundColor,
+    this.iconColor,
+    this.elevation,
+    this.shadowColor,
+    this.subtileStyle,
+    this.titleStyle,
+    this.popupBackgroundColor,
+    this.popupShape,
+    this.popupshadowColor,
+    this.systemUiOverlayStyle,
+    this.popupLableStyle,
+    this.popupLableColor,
+  });
 
   IsmChatHeaderThemeData.light()
       : backgroundColor = IsmChatColors.backgroundColorLight,
@@ -27,7 +29,8 @@ class IsmChatHeaderThemeData {
         popupShape = null,
         popupshadowColor = IsmChatColors.whiteColor,
         systemUiOverlayStyle = null,
-        popupLableStyle = null;
+        popupLableStyle = null,
+        popupLableColor = null;
 
   IsmChatHeaderThemeData.dark()
       : backgroundColor = IsmChatColors.backgroundColorDark,
@@ -39,6 +42,7 @@ class IsmChatHeaderThemeData {
         popupBackgroundColor = IsmChatColors.whiteColor,
         popupShape = null,
         popupLableStyle = null,
+        popupLableColor = null,
         systemUiOverlayStyle = null,
         popupshadowColor = IsmChatColors.whiteColor;
   final Color? backgroundColor;
@@ -46,15 +50,13 @@ class IsmChatHeaderThemeData {
 
   final Color? popupBackgroundColor;
 
-  // final Color? dialogBackgroundColor;
-  // final Color? dialogTextColor;
-
   final double? elevation;
   final Color? shadowColor;
   final TextStyle? titleStyle;
   final TextStyle? subtileStyle;
   final ShapeBorder? popupShape;
   final TextStyle? popupLableStyle;
+  final Color? popupLableColor;
 
   final Color? popupshadowColor;
   static const double _kelevation = 1;

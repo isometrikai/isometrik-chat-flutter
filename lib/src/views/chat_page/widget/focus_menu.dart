@@ -205,8 +205,8 @@ class IsmChatFocusMenu extends StatelessWidget {
                                                     ? IsmChatColors.redColor
                                                     : IsmChatConfig
                                                             .chatTheme
-                                                            .chatPageTheme
-                                                            ?.onMessageFocusbackgroundColor ??
+                                                            .chatPageHeaderTheme
+                                                            ?.popupBackgroundColor ??
                                                         IsmChatConfig.chatTheme
                                                             .backgroundColor,
                                               ),
@@ -222,7 +222,10 @@ class IsmChatFocusMenu extends StatelessWidget {
                                                                   .delete
                                                           ? IsmChatColors
                                                               .whiteColor
-                                                          : null,
+                                                          : IsmChatConfig
+                                                              .chatTheme
+                                                              .chatPageHeaderTheme
+                                                              ?.popupLableColor,
                                                     ),
                                                   ),
                                                   const Spacer(),
@@ -233,7 +236,10 @@ class IsmChatFocusMenu extends StatelessWidget {
                                                                 .delete
                                                         ? IsmChatColors
                                                             .whiteColor
-                                                        : null,
+                                                        : IsmChatConfig
+                                                            .chatTheme
+                                                            .chatPageHeaderTheme
+                                                            ?.iconColor,
                                                   ),
                                                 ],
                                               ),
