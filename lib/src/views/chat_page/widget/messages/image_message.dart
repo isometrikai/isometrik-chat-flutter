@@ -11,7 +11,7 @@ class IsmChatImageMessage extends StatelessWidget {
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
         child: BlurFilter(
-          isNotBlured: message.metaData?.isDownloaded ?? false,
+          isNotBlured: message.metaData?.isDownloaded ?? true,
           child: Stack(
             alignment: Alignment.center,
             children: [
