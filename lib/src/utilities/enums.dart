@@ -671,7 +671,8 @@ enum IsmChatFeature {
   chageWallpaper,
   searchMessage,
   mediaDownload,
-  showMessageStatus;
+  showMessageStatus,
+  mentionMember;
 }
 
 enum IsmChatDbBox { main, pending }

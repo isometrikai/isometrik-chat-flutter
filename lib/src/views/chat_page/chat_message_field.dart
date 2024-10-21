@@ -261,7 +261,13 @@ class IsmChatMessageField extends StatelessWidget {
                                                     .conversation?.customType !=
                                                 IsmChatStrings.broadcast) {
                                           controller.notifyTyping();
-                                          controller.showMentionsUserList(_);
+                                          if (IsmChatProperties
+                                              .chatPageProperties.features
+                                              .contains(
+                                            IsmChatFeature.mentionMember,
+                                          )) {
+                                            controller.showMentionsUserList(_);
+                                          }
                                         }
                                       },
                                     ),
