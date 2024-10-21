@@ -209,25 +209,39 @@ class MessageBubble extends StatelessWidget {
                                   IsmChatCustomMessageType
                                       .deletedForEveryone) ...[
                             IsmChatDimens.boxWidth2,
-                            Icon(
-                              _message.messageId?.isEmpty == true
-                                  ? Icons.watch_later_outlined
-                                  : _message.deliveredToAll ?? false
-                                      ? Icons.done_all_rounded
-                                      : Icons.done_rounded,
-                              color: _message.messageId?.isEmpty == true
-                                  ? IsmChatConfig.chatTheme.chatPageTheme
-                                          ?.unreadCheckColor ??
-                                      Colors.white
-                                  : _message.readByAll ?? false
-                                      ? IsmChatConfig.chatTheme.chatPageTheme
-                                              ?.readCheckColor ??
-                                          Colors.blue
-                                      : IsmChatConfig.chatTheme.chatPageTheme
-                                              ?.unreadCheckColor ??
-                                          Colors.white,
-                              size: IsmChatDimens.forteen,
-                            ),
+                            if (_message.messageId?.isEmpty == true) ...[
+                              Icon(
+                                Icons.watch_later_outlined,
+                                color: IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.unreadCheckColor ??
+                                    Colors.white,
+                                size: IsmChatDimens.forteen,
+                              ),
+                            ] else if (IsmChatProperties
+                                .chatPageProperties.features
+                                .contains(
+                              IsmChatFeature.showMessageStatus,
+                            )) ...[
+                              Icon(
+                                _message.messageId?.isEmpty == true
+                                    ? Icons.watch_later_outlined
+                                    : _message.deliveredToAll ?? false
+                                        ? Icons.done_all_rounded
+                                        : Icons.done_rounded,
+                                color: _message.messageId?.isEmpty == true
+                                    ? IsmChatConfig.chatTheme.chatPageTheme
+                                            ?.unreadCheckColor ??
+                                        Colors.white
+                                    : _message.readByAll ?? false
+                                        ? IsmChatConfig.chatTheme.chatPageTheme
+                                                ?.readCheckColor ??
+                                            Colors.blue
+                                        : IsmChatConfig.chatTheme.chatPageTheme
+                                                ?.unreadCheckColor ??
+                                            Colors.white,
+                                size: IsmChatDimens.forteen,
+                              ),
+                            ]
                           ],
                         ],
                       ),
