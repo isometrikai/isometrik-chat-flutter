@@ -34,6 +34,7 @@ part './mixins/get_message.dart';
 part './mixins/group_admin.dart';
 part './mixins/send_message.dart';
 part './mixins/show_dialog.dart';
+part './mixins/taps_controller.dart';
 
 class IsmChatPageController extends GetxController
     with
@@ -41,6 +42,7 @@ class IsmChatPageController extends GetxController
         IsmChatPageGetMessageMixin,
         IsmChatGroupAdminMixin,
         IsmChatShowDialogMixin,
+        IsmChatTapsController,
         GetTickerProviderStateMixin {
   IsmChatPageController(this.viewModel);
   final IsmChatPageViewModel viewModel;

@@ -107,33 +107,9 @@ class _MessageCardState extends State<MessageCard>
                 focusColor: IsmChatColors.transparent,
                 highlightColor: IsmChatColors.transparent,
                 onTap: () {
-                  controller.closeOverlay();
-                  if (widget.message.messageType == IsmChatMessageType.reply) {
-                    if ([
-                      IsmChatCustomMessageType.image,
-                      IsmChatCustomMessageType.video,
-                      IsmChatCustomMessageType.file,
-                      if (!IsmChatResponsive.isWeb(context))
-                        IsmChatCustomMessageType.contact,
-                    ].contains(
-                      widget.message.metaData?.replyMessage
-                          ?.parentMessageMessageType,
-                    )) {
-                      controller.tapForMediaPreviewWithMetaData(widget.message);
-                    }
-                  } else if ([
-                    IsmChatCustomMessageType.image,
-                    IsmChatCustomMessageType.video,
-                    IsmChatCustomMessageType.file,
-                    if (!IsmChatResponsive.isWeb(context))
-                      IsmChatCustomMessageType.contact,
-                  ].contains(widget.message.customType)) {
-                    controller.tapForMediaPreview(widget.message);
-                  }
-                  IsmChatProperties.chatPageProperties.onMessageTap?.call(
-                    context,
-                    widget.message,
-                    controller.conversation!,
+                  controller.onMessageTap(
+                    context: context,
+                    message: widget.message,
                   );
                 },
                 child: Stack(

@@ -360,4 +360,11 @@ mixin IsmChatPageGetMessageMixin on GetxController {
             _controller.conversation?.opponentDetails?.userIdentifier ?? '',
         userId: _controller.conversation?.opponentDetails?.userId ?? '',
       );
+
+  Future<void> updateMessage() async {
+    final response = await _controller.viewModel.updateMessage(
+      metaData: {},
+      isLoading: true,
+    );
+  }
 }

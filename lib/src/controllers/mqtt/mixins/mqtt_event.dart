@@ -255,6 +255,11 @@ mixin IsmChatMqttEventMixin {
   }
 
   Future<void> _handleMessage(IsmChatMessageModel message) async {
+    message.metaData = message.metaData?.copyWith(
+      isDownloaded: IsmChatProperties.chatPageProperties.features.contains(
+        IsmChatFeature.mediaDownload,
+      ),
+    );
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {

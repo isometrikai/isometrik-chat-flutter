@@ -90,7 +90,6 @@ class ChatList extends StatelessWidget {
                 ),
                 text: 'No Messages',
               ),
-              onMessageTap: (p0, p1, p2) {},
 
               attachments: const [
                 IsmChatAttachmentType.camera,

@@ -719,4 +719,27 @@ class IsmChatPageRepository {
       return null;
     }
   }
+
+  Future<bool> updateMessage({
+    required Map<String, dynamic> metaData,
+    required bool isLoading,
+  }) async {
+    try {
+      final payload = {
+        'metaData': metaData,
+      };
+
+      var response = await _apiWrapper.patch(
+        IsmChatAPI.sendMessage,
+        payload: payload,
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+
+      return !response.hasError;
+    } catch (e, st) {
+      IsmChatLog.error('updateMessage  $e', st);
+      return false;
+    }
+  }
 }

@@ -484,6 +484,7 @@ class IsmChatMessageModel {
   List<MessageStatus>? readBy;
   List<MessageStatus>? deliveredTo;
   bool? isUploading;
+
   Map<String, dynamic>? conversationDetails;
   IsmChatEvents? events;
   List<CallDuration>? callDurations;
@@ -547,6 +548,7 @@ class IsmChatMessageModel {
     List<MessageStatus>? readBy,
     List<MessageStatus>? deliveredTo,
     bool? isUploading,
+    bool? isDownloaded,
     Map<String, dynamic>? conversationDetails,
     IsmChatEvents? events,
     List<CallDuration>? callDurations,

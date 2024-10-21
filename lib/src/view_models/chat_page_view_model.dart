@@ -573,4 +573,13 @@ class IsmChatPageViewModel {
         metaData: metaData,
         searchableTags: searchableTags,
       );
+
+  Future<bool> updateMessage({
+    required Map<String, dynamic> metaData,
+    required bool isLoading,
+  }) async =>
+      await _repository.updateMessage(
+        metaData: metaData,
+        isLoading: isLoading,
+      );
 }

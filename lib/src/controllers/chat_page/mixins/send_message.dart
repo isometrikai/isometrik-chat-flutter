@@ -260,6 +260,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
+        isDownloaded: true,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.audio,
@@ -387,6 +388,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             sentByMe: true,
             isUploading: true,
             metaData: IsmChatMetaData(
+              isDownloaded: true,
               replyMessage: _controller.isreplying
                   ? IsmChatReplyMessageModel(
                       forMessageType: IsmChatCustomMessageType.file,
@@ -548,6 +550,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         sentByMe: true,
         isUploading: true,
         metaData: IsmChatMetaData(
+          isDownloaded: true,
           caption: caption,
           replyMessage: _controller.isreplying
               ? IsmChatReplyMessageModel(
@@ -672,6 +675,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
+        isDownloaded: true,
         caption: caption,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
