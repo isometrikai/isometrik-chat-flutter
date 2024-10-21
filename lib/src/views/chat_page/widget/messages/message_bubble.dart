@@ -208,8 +208,8 @@ class MessageBubble extends StatelessWidget {
                               _message.customType !=
                                   IsmChatCustomMessageType
                                       .deletedForEveryone) ...[
-                            IsmChatDimens.boxWidth2,
                             if (_message.messageId?.isEmpty == true) ...[
+                              IsmChatDimens.boxWidth2,
                               Icon(
                                 Icons.watch_later_outlined,
                                 color: IsmChatConfig.chatTheme.chatPageTheme
@@ -222,6 +222,7 @@ class MessageBubble extends StatelessWidget {
                                 .contains(
                               IsmChatFeature.showMessageStatus,
                             )) ...[
+                              IsmChatDimens.boxWidth2,
                               Icon(
                                 _message.messageId?.isEmpty == true
                                     ? Icons.watch_later_outlined
