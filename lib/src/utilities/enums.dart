@@ -403,7 +403,8 @@ enum IsmChatActionEvents {
   userUpdate,
   meetingEndedByHost,
   meetingCreated,
-  meetingEndedDueToRejectionByAll;
+  meetingEndedDueToRejectionByAll,
+  messageDetailsUpdated;
 
   factory IsmChatActionEvents.fromName(String name) {
     switch (name) {
@@ -467,6 +468,8 @@ enum IsmChatActionEvents {
         return IsmChatActionEvents.meetingCreated;
       case 'meetingEndedDueToRejectionByAll':
         return IsmChatActionEvents.meetingEndedDueToRejectionByAll;
+      case 'messageDetailsUpdated':
+        return IsmChatActionEvents.messageDetailsUpdated;
       default:
         return IsmChatActionEvents.typingEvent;
     }
@@ -523,7 +526,6 @@ enum IsmChatActionEvents {
         return 'broadcast';
       case IsmChatActionEvents.memberJoin:
         return 'memberJoin';
-
       case IsmChatActionEvents.observerJoin:
         return 'observerJoin';
       case IsmChatActionEvents.observerLeave:
@@ -536,6 +538,8 @@ enum IsmChatActionEvents {
         return 'meetingCreated';
       case IsmChatActionEvents.meetingEndedDueToRejectionByAll:
         return 'meetingEndedDueToRejectionByAll';
+      case IsmChatActionEvents.messageDetailsUpdated:
+        return 'messageDetailsUpdated';
     }
   }
 }

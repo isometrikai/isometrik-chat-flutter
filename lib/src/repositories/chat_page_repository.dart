@@ -722,11 +722,15 @@ class IsmChatPageRepository {
 
   Future<bool> updateMessage({
     required Map<String, dynamic> metaData,
+    required String messageId,
+    required String conversationId,
     required bool isLoading,
   }) async {
     try {
       final payload = {
         'metaData': metaData,
+        'messageId': messageId,
+        'conversationId': conversationId,
       };
 
       var response = await _apiWrapper.patch(

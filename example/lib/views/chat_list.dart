@@ -52,6 +52,7 @@ class ChatList extends StatelessWidget {
             ),
 
             chatPageProperties: IsmChatPageProperties(
+              features: [],
               // isAllowedDeleteChatFromLocal: true,
               // onCoverstaionStatus: (p0, conversation) {
               //   IsmChatLog.error(conversation.usersOwnDetails?.isDeleted);
@@ -90,6 +91,9 @@ class ChatList extends StatelessWidget {
                 ),
                 text: 'No Messages',
               ),
+              onMessageTap: (p0, message) async {
+                return true;
+              },
 
               attachments: const [
                 IsmChatAttachmentType.camera,

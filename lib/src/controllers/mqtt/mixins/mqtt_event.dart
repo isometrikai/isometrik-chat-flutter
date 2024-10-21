@@ -120,6 +120,7 @@ mixin IsmChatMqttEventMixin {
         _handleObserverJoinAndLeave(actionModel);
         break;
       case IsmChatActionEvents.userUpdate:
+      case IsmChatActionEvents.messageDetailsUpdated:
         break;
       case IsmChatActionEvents.meetingCreated:
       case IsmChatActionEvents.meetingEndedByHost:

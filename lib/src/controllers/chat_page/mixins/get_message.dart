@@ -361,10 +361,42 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         userId: _controller.conversation?.opponentDetails?.userId ?? '',
       );
 
-  Future<void> updateMessage() async {
-    final response = await _controller.viewModel.updateMessage(
-      metaData: {},
-      isLoading: true,
-    );
+  Future<void> updateMessage({
+    required String messageId,
+    required String conversationId,
+    bool isOpponentMessage = false,
+  }) async {
+    if (!isOpponentMessage) {
+      final response = await _controller.viewModel.updateMessage(
+        metaData: {'isDownloaded': true},
+        messageId: messageId,
+        conversationId: conversationId,
+        isLoading: true,
+      );
+      if (response) {
+        await _controller.getMessagesFromDB(conversationId);
+      }
+    } else {
+      var allMessages =
+          await IsmChatConfig.dbWrapper!.getMessage(conversationId);
+      if (allMessages == null) return;
+      var messageIndex =
+          allMessages.indexWhere((e) => e.messageId == messageId);
+      if (messageIndex != -1) {
+        final message = allMessages[messageIndex];
+        message.metaData = message.metaData?.copyWith(
+          isDownloaded: true,
+        );
+        allMessages[messageIndex] = message;
+        var conversation = await IsmChatConfig.dbWrapper!
+            .getConversation(conversationId: conversationId);
+        if (conversation != null) {
+          conversation = conversation.copyWith(messages: allMessages);
+          await IsmChatConfig.dbWrapper!
+              .saveConversation(conversation: conversation);
+        }
+        await getMessagesFromDB(conversationId);
+      }
+    }
   }
 }

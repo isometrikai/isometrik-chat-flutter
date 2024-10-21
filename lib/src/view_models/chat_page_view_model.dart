@@ -33,6 +33,7 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.reactionAdd.name,
           IsmChatActionEvents.reactionRemove.name,
           IsmChatActionEvents.conversationDetailsUpdated.name,
+          IsmChatActionEvents.messageDetailsUpdated.name,
         ].contains(e.action));
     if (searchText == null || searchText.isEmpty) {
       final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
@@ -577,9 +578,12 @@ class IsmChatPageViewModel {
   Future<bool> updateMessage({
     required Map<String, dynamic> metaData,
     required bool isLoading,
+    required String messageId,
+    required String conversationId,
   }) async =>
       await _repository.updateMessage(
-        metaData: metaData,
-        isLoading: isLoading,
-      );
+          metaData: metaData,
+          isLoading: isLoading,
+          messageId: messageId,
+          conversationId: conversationId);
 }
