@@ -73,7 +73,7 @@ class IsmChatDimens {
   static final double appBarHeight = 56.sp;
   static final double appBarElevation = 8.sp;
 
-  static final Widget box0 = SizedBox(height: zero);
+  static const Widget box0 = SizedBox.shrink();
 
   static final Widget boxHeight4 = SizedBox(height: four);
   static final Widget boxHeight2 = SizedBox(height: two);

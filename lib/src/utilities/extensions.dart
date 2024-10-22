@@ -501,7 +501,7 @@ extension ModelConversion on IsmChatConversationModel {
       (a, b) => a.userName.toLowerCase().compareTo(b.userName.toLowerCase()),
     );
 
-    return isGroup!
+    return isGroup == true
         ? '${users.map((e) => e.userName).join(', ')} is ${IsmChatStrings.typing}'
         : IsmChatStrings.typing;
   }

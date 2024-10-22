@@ -172,7 +172,7 @@ class _NetworkImage extends StatelessWidget {
             }
             return Container(
               decoration: BoxDecoration(
-                border: Border.all(color: IsmChatColors.whiteColor),
+                // border: Border.all(color: IsmChatColors.whiteColor),
                 shape: _isProfileImage ? BoxShape.circle : BoxShape.rectangle,
                 color:
                     backgroundColor ?? IsmChatConfig.chatTheme.backgroundColor!,

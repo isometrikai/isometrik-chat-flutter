@@ -52,7 +52,6 @@ class ChatList extends StatelessWidget {
             ),
 
             chatPageProperties: IsmChatPageProperties(
-              features: [],
               // isAllowedDeleteChatFromLocal: true,
               // onCoverstaionStatus: (p0, conversation) {
               //   IsmChatLog.error(conversation.usersOwnDetails?.isDeleted);
@@ -63,15 +62,25 @@ class ChatList extends StatelessWidget {
               // },
 
               header: IsmChatPageHeaderProperties(
+                subtitleBuilder: (p0, conversation) {
+                  if (conversation.isSomeoneTyping) {
+                    return const Text(
+                      'Typing....',
+                    );
+                  }
+                  return const Text(
+                    'Tap to more info',
+                  );
+                },
 
-                  // height: (p0, p1) => 200,
-                  // bottom: (p0, p1) {
-                  //   return Container(
-                  //       alignment: Alignment.center,
-                  //       width: double.infinity,
-                  //       child: const Text('Rahul Saryam'));
-                  // },
-                  ),
+                // height: (p0, p1) => 200,
+                // bottom: (p0, p1) {
+                //   return Container(
+                //       alignment: Alignment.center,
+                //       width: double.infinity,
+                //       child: const Text('Rahul Saryam'));
+                // },
+              ),
               // meessageFieldFocusNode: (_, coverstaion, value) {
               //   IsmChatLog.info(value);
               //   controller.isBottomVisibile = !controller.isBottomVisibile;
