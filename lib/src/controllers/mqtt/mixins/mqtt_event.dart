@@ -55,6 +55,7 @@ mixin IsmChatMqttEventMixin {
         break;
       case IsmChatActionEvents.conversationCreated:
         await _handleCreateConversation(actionModel);
+
         _handleUnreadMessages(actionModel.userDetails?.userId ?? '');
 
         break;
@@ -963,6 +964,12 @@ mixin IsmChatMqttEventMixin {
         _controller.userConfig?.userId) {
       return;
     }
+
+    showPushNotification(
+      title: actionModel.userDetails?.userName ?? '',
+      body: 'Conversation Created',
+      conversationId: actionModel.conversationId ?? '',
+    );
 
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
 
