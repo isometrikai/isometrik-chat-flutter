@@ -47,6 +47,7 @@ class IsmChatThemeData with Diagnosticable {
         iconTheme: const IconThemeData(
           color: IsmChatColors.primaryColorLight,
         ),
+        dialogTheme: const DialogTheme(),
       );
 
   factory IsmChatThemeData.dark() => IsmChatThemeData(
@@ -64,6 +65,7 @@ class IsmChatThemeData with Diagnosticable {
         iconTheme: const IconThemeData(
           color: IsmChatColors.primaryColorDark,
         ),
+        dialogTheme: const DialogTheme(),
       );
 
   final Color? primaryColor;
