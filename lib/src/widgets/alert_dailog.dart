@@ -38,16 +38,20 @@ class IsmChatAlertDialogBox extends StatelessWidget {
             ? AlertDialog(
                 actionsPadding: IsmChatDimens.edgeInsets16,
                 title: Text(title),
-                backgroundColor: IsmChatConfig
-                        .chatTheme.chatPageHeaderTheme?.backgroundColor ??
-                    IsmChatColors.whiteColor,
-                titleTextStyle: IsmChatStyles.w600Black14,
-                contentPadding: contentPadding,
-                contentTextStyle: contentTextStyle,
+                backgroundColor:
+                    IsmChatConfig.chatTheme.dialogTheme?.backgroundColor ??
+                        IsmChatColors.whiteColor,
+                titleTextStyle:
+                    IsmChatConfig.chatTheme.dialogTheme?.titleTextStyle ??
+                        IsmChatStyles.w600Black14,
+                contentPadding:
+                    IsmChatConfig.chatTheme.dialogTheme?.insetPadding ??
+                        contentPadding,
+                contentTextStyle:
+                    IsmChatConfig.chatTheme.dialogTheme?.contentTextStyle ??
+                        contentTextStyle,
                 content: content,
-                shape:
-                    IsmChatConfig.chatTheme.chatPageHeaderTheme?.popupShape ??
-                        shape,
+                shape: IsmChatConfig.chatTheme.dialogTheme?.shape ?? shape,
                 actions: [
                   IsmChatTapHandler(
                     onTap: onCancel ??
@@ -64,10 +68,10 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                     IsmChatTapHandler(
                       onTap: () {
                         Get.back<void>();
-                        callbackActions!.first();
+                        callbackActions?.first();
                       },
                       child: Text(
-                        actionLabels!.first,
+                        actionLabels?.first ?? '',
                         style: IsmChatStyles.w400Black14,
                       ),
                     ),
