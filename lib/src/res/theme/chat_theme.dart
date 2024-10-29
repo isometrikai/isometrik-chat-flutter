@@ -12,6 +12,7 @@ class IsmChatThemeData with Diagnosticable {
     Color? notificationColor,
     FloatingActionButtonThemeData? floatingActionButtonTheme,
     IconThemeData? iconTheme,
+    DialogTheme? dialogTheme,
     this.chatPageHeaderTheme,
     this.chatPageTheme,
     this.chatListCardThemData,
@@ -25,6 +26,7 @@ class IsmChatThemeData with Diagnosticable {
         floatingActionButtonTheme = floatingActionButtonTheme ??
             IsmChatThemeData.light().floatingActionButtonTheme,
         iconTheme = iconTheme ?? IsmChatThemeData.light().iconTheme,
+        dialogTheme = dialogTheme ?? IsmChatThemeData.light().dialogTheme,
         chatListTheme = chatListTheme ?? IsmChatThemeData.light().chatListTheme,
         dividerColor = verticalDividerColor ?? primaryColor;
 
@@ -81,6 +83,8 @@ class IsmChatThemeData with Diagnosticable {
   final FloatingActionButtonThemeData? floatingActionButtonTheme;
 
   final IconThemeData? iconTheme;
+
+  final DialogTheme? dialogTheme;
 
   final IsmChatPageThemeData? chatPageTheme;
 
