@@ -167,14 +167,9 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class _TitleSubTitleWidget extends StatelessWidget {
-  const _TitleSubTitleWidget({
-    super.key,
-    this.onTap,
-    required this.controller,
-  });
+  const _TitleSubTitleWidget({this.onTap, required this.controller});
 
   final IsmChatPageController controller;
-
   final VoidCallback? onTap;
 
   @override
@@ -320,10 +315,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
 }
 
 class _PopupMenuWidget extends StatelessWidget {
-  const _PopupMenuWidget({
-    super.key,
-    required this.controller,
-  });
+  const _PopupMenuWidget({required this.controller});
 
   final IsmChatPageController controller;
 

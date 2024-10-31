@@ -193,8 +193,7 @@ class LinkifyText extends StatelessWidget {
     if (link.startsWith('@')) {
       // Mention detected
       // Handle mention logic here (e.g., navigate to a user's profile)
-      print(
-          'Mention tapped: $link'); // Here you can implement your logic for mentions
+      // Here you can implement your logic for mentions
     } else if (link.startsWith('http') || link.startsWith('www')) {
       // URL detected
       if (!link.startsWith('http')) {

@@ -323,7 +323,8 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                               Get.find<IsmChatPageController>(
                                                       tag: IsmChat.i.tag)
                                                   .conversation!,
-                                              IsmChatCustomMessageType.location) ??
+                                              IsmChatCustomMessageType
+                                                  .location) ??
                                       true) {
                                     controller.sendLocation(
                                         conversationId: controller

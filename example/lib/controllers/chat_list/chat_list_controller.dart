@@ -61,9 +61,10 @@ class ChatListController extends GetxController {
   unSubscribeToTopic() async {
     if (!kIsWeb) {
       try {
-        await FirebaseMessaging.instance
-            .unsubscribeFromTopic('chat-${userDetails.userId}');
-      } catch (e) {}
+        await FirebaseMessaging.instance.unsubscribeFromTopic(
+          'chat-${userDetails.userId}',
+        );
+      } catch (_) {}
     }
   }
 

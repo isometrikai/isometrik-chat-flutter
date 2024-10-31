@@ -105,10 +105,7 @@ class _ConversationList extends StatelessWidget {
 }
 
 class _SlidableWidget extends StatefulWidget {
-  const _SlidableWidget({
-    super.key,
-    required this.conversation,
-  });
+  const _SlidableWidget({required this.conversation});
 
   final IsmChatConversationModel conversation;
 

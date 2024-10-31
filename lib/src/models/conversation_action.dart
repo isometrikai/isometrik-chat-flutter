@@ -8,7 +8,6 @@ class IsmChatConversationAction {
     this.label,
     this.decoration,
     required this.icon,
-   
   });
 
   final Decoration? decoration;
@@ -16,6 +15,4 @@ class IsmChatConversationAction {
   final String? label;
   final TextStyle? labelStyle;
   final void Function(IsmChatConversationModel) onTap;
-
-
 }

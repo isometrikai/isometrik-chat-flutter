@@ -504,9 +504,9 @@ class IsmChatPageController extends GetxController
       conversation = conversationController.currentConversation;
       await Future.delayed(Duration.zero);
       try {
-        var arguments = Get.arguments as Map<String, dynamic>? ?? {};
+        final arguments = Get.arguments as Map<String, dynamic>? ?? {};
         isBroadcast = arguments['isBroadcast'] as bool? ?? isBroadcasts;
-      } catch (e) {}
+      } catch (_) {}
 
       if (conversation?.conversationId?.isNotEmpty == true) {
         await callFunctionsWithConversationId(
