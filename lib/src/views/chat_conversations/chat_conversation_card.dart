@@ -14,6 +14,8 @@ class IsmChatConversationCard extends StatefulWidget {
     this.name,
     this.profileImageUrl,
     this.subtitle,
+    this.trailingBuilder,
+    this.trailing,
     this.isShowBackgroundColor,
     this.onProfileTap,
     this.canShowStack,
@@ -28,6 +30,8 @@ class IsmChatConversationCard extends StatefulWidget {
   final ConversationStringCallback? name;
   final ConversationWidgetCallback? subtitleBuilder;
   final ConversationStringCallback? subtitle;
+  final ConversationWidgetCallback? trailingBuilder;
+  final ConversationStringCallback? trailing;
   final bool? isShowBackgroundColor;
   final ConversationVoidCallback? onProfileTap;
   final bool? canShowStack;

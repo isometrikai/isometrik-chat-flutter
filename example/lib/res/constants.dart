@@ -28,20 +28,12 @@ class Constants {
 
   static const String hostname = 'connections.isometrik.ai';
   static const int port = 2086;
-
-  // static const String hostname = 'connections.isometrik.ai';
-  // static const int port = 2052;
-
-  // static const String hostname = 'connections.isometrik.io';
-  // static const int port = 2052;
-
   static const String hostnameForWeb =
       'wss://connections.isometrik.ai:2096/mqtt';
   static const int portForWeb = 2096;
 
-  // static const String hostnameForWeb =
-  //     'wss://connections.isometrik.ai:2053/mqtt';
-  // static const int portForWeb = 2053;
+  // static const String hostname = 'connections.isometrik.io';
+  // static const int port = 2052;
 
   // static const String hostnameForWeb =
   //     'wss://connections.isometrik.io:2053/mqtt';

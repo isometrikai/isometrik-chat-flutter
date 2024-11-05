@@ -224,6 +224,10 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                 .conversationProperties.cardElementBuilders?.name,
             nameBuilder: IsmChatProperties
                 .conversationProperties.cardElementBuilders?.nameBuilder,
+            trailing: IsmChatProperties
+                .conversationProperties.cardElementBuilders?.trailing,
+            trailingBuilder: IsmChatProperties
+                .conversationProperties.cardElementBuilders?.trailingBuilder,
             profileImageUrl: IsmChatProperties
                 .conversationProperties.cardElementBuilders?.profileImageUrl,
             subtitle: IsmChatProperties
