@@ -11,6 +11,7 @@ mixin IsmChatTapsController on GetxController {
     if (await IsmChatProperties.chatPageProperties.onMessageTap?.call(
           context,
           message,
+          _controller.conversation!,
         ) ??
         true) {
       if (message.messageType == IsmChatMessageType.reply) {

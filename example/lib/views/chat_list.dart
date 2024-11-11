@@ -90,7 +90,7 @@ class ChatList extends StatelessWidget {
                 ),
                 text: 'No Messages',
               ),
-              onMessageTap: (p0, message) async {
+              onMessageTap: (p0, message, _) async {
                 return true;
               },
 
