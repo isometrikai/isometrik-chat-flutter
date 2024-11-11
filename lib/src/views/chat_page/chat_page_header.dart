@@ -195,7 +195,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                       style: IsmChatConfig
                               .chatTheme.chatPageHeaderTheme?.titleStyle ??
                           IsmChatStyles.w600White16,
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
               ),
@@ -263,7 +263,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                               ?.subtileStyle ??
                                           IsmChatStyles.w400White12,
                                       overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                                      maxLines: 2,
                                     ))
                                 : controller.conversation?.opponentDetails
                                             ?.online ??
@@ -278,33 +278,25 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                                 ?.subtileStyle ??
                                             IsmChatStyles.w400White12,
                                       )
-                                    : Flexible(
-                                        child: Text(
-                                          controller
-                                                          .conversation
-                                                          ?.opponentDetails
-                                                          ?.lastSeen !=
-                                                      null &&
-                                                  controller
-                                                          .conversation
-                                                          ?.opponentDetails
-                                                          ?.lastSeen !=
-                                                      0
-                                              ? controller
-                                                      .conversation
-                                                      ?.opponentDetails
-                                                      ?.lastSeen
-                                                      ?.toCurrentTimeStirng() ??
-                                                  ''
-                                              : IsmChatStrings.tapInfo,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: IsmChatConfig
-                                                  .chatTheme
-                                                  .chatPageHeaderTheme
-                                                  ?.subtileStyle ??
-                                              IsmChatStyles.w400White12,
-                                        ),
+                                    : Text(
+                                        controller.conversation?.opponentDetails
+                                                        ?.lastSeen !=
+                                                    null &&
+                                                controller.conversation
+                                                        ?.opponentDetails?.lastSeen !=
+                                                    0
+                                            ? controller.conversation
+                                                    ?.opponentDetails?.lastSeen
+                                                    ?.toCurrentTimeStirng() ??
+                                                ''
+                                            : IsmChatStrings.tapInfo,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: IsmChatConfig
+                                                .chatTheme
+                                                .chatPageHeaderTheme
+                                                ?.subtileStyle ??
+                                            IsmChatStyles.w400White12,
                                       ),
                       ),
               ]
