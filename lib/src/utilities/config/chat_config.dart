@@ -36,4 +36,13 @@ class IsmChatConfig {
   static String? fontFamily;
   static String? notificationIconPath;
   static BuildContext? context;
+  static bool? isPadiWalletMessage;
+  static IsmPaidWalletModel? paidWalletModel;
+}
+
+class IsmPaidWalletModel {
+  IsmPaidWalletModel({required this.apiUrl, required this.authToken});
+
+  final String apiUrl;
+  final String authToken;
 }

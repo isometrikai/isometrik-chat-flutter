@@ -134,7 +134,7 @@ class IsmChatCommonViewModel {
         }
       } else {
         var dbBox = IsmChatConfig.dbWrapper;
-        final chatPendingMessages = await dbBox!.getConversation(
+        final chatPendingMessages = await dbBox?.getConversation(
             conversationId: conversationId, dbBox: IsmChatDbBox.pending);
         if (chatPendingMessages == null) {
           return false;
@@ -151,15 +151,14 @@ class IsmChatCommonViewModel {
           pendingMessage.readByAll = false;
           pendingMessage.isUploading = false;
           chatPendingMessages.messages?.removeAt(x);
-          await dbBox.saveConversation(
+          await dbBox?.saveConversation(
               conversation: chatPendingMessages, dbBox: IsmChatDbBox.pending);
           if (chatPendingMessages.messages?.isEmpty == true) {
-            await dbBox.pendingMessageBox
+            await dbBox?.pendingMessageBox
                 .delete(chatPendingMessages.conversationId ?? '');
           }
           var conversationModel =
-              await dbBox.getConversation(conversationId: conversationId);
-
+              await dbBox?.getConversation(conversationId: conversationId);
           if (conversationModel != null) {
             final messages = conversationModel.messages ?? [];
             messages.add(pendingMessage);
@@ -172,7 +171,7 @@ class IsmChatCommonViewModel {
               messages: messages,
             );
           }
-          await dbBox.saveConversation(conversation: conversationModel!);
+          await dbBox?.saveConversation(conversation: conversationModel!);
         }
         return true;
       }
@@ -182,6 +181,39 @@ class IsmChatCommonViewModel {
       return false;
     }
   }
+
+  Future<bool> sendPaidWalletMessage({
+    required bool showInConversation,
+    required int messageType,
+    required bool encrypted,
+    required String deviceId,
+    required String conversationId,
+    required String body,
+    required String notificationBody,
+    required String notificationTitle,
+    String? parentMessageId,
+    IsmChatMetaData? metaData,
+    List<Map<String, dynamic>>? mentionedUsers,
+    Map<String, dynamic>? events,
+    String? customType,
+    List<Map<String, dynamic>>? attachments,
+  }) async =>
+      await _repository.sendPaidWalletMessage(
+        showInConversation: showInConversation,
+        messageType: messageType,
+        encrypted: encrypted,
+        deviceId: deviceId,
+        conversationId: conversationId,
+        body: body,
+        notificationBody: notificationBody,
+        notificationTitle: notificationTitle,
+        attachments: attachments,
+        customType: customType,
+        events: events,
+        mentionedUsers: mentionedUsers,
+        parentMessageId: parentMessageId,
+        metaData: metaData,
+      );
 
   List<IsmChatMessageModel> sortMessages(List<IsmChatMessageModel> messages) {
     messages.sort((a, b) => a.sentAt.compareTo(b.sentAt));

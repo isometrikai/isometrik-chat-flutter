@@ -75,16 +75,21 @@ class IsmChat {
   /// [showNotification] is the callback for showing notifications.
   /// [context] is the build context.
   /// [shouldSetupMqtt] is whether to set up MQTT. Defaults to `false`.
-  Future<void> initialize(
-    IsmChatCommunicationConfig communicationConfig, {
-    bool useDatabase = true,
-    String databaseName = IsmChatStrings.dbname,
-    NotificaitonCallback? showNotification,
-    BuildContext? context,
-    bool shouldSetupMqtt = false,
-    List<String>? topics,
-    List<String>? topicChannels,
-  }) async {
+  Future<void> initialize(IsmChatCommunicationConfig communicationConfig,
+      {bool useDatabase = true,
+      String databaseName = IsmChatStrings.dbname,
+      NotificaitonCallback? showNotification,
+      BuildContext? context,
+      bool shouldSetupMqtt = false,
+      List<String>? topics,
+      List<String>? topicChannels,
+      bool isPadiWalletMessage = false,
+      IsmPaidWalletModel? chargeableModel}) async {
+    if (isPadiWalletMessage) {
+      assert(isPadiWalletMessage && chargeableModel != null,
+          'isPadiWalletMessage = true, chargeableModel should be mandatory');
+    }
+
     await _delegate.initialize(
       communicationConfig,
       useDatabase: useDatabase,
@@ -94,6 +99,8 @@ class IsmChat {
       shouldSetupMqtt: shouldSetupMqtt,
       topics: topics,
       topicChannels: topicChannels,
+      isPadiWalletMessage: isPadiWalletMessage,
+      chargeableModel: chargeableModel,
     );
     _initialized = true;
   }
@@ -102,7 +109,7 @@ class IsmChat {
   ///
   /// data is the data to listen for.
   /// [showNotification] is the callback for showing notifications.
-  ///
+  ///,
   /// Throws an [AssertionError] if the MQTT controller has not been initialized.
   Future<void> listenMqttEvent(
     EventModel event, {

@@ -26,7 +26,28 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool isBroadcast = false,
     bool sendPushNotification = true,
   }) async {
-    if (_controller.conversation?.customType != IsmChatStrings.broadcast) {
+    if (IsmChatConfig.isPadiWalletMessage ?? false) {
+      await _controller.commonController.sendPaidWalletMessage(
+        showInConversation: true,
+        messageType: messageType,
+        encrypted: true,
+        deviceId: deviceId,
+        conversationId: conversationId,
+        body: body,
+        notificationBody: notificationBody,
+        notificationTitle: notificationTitle,
+        attachments: attachments,
+        customType: customType,
+        events: {
+          'updateUnreadCount': true,
+          'sendPushNotification': sendPushNotification
+        },
+        mentionedUsers: mentionedUsers,
+        metaData: metaData,
+        parentMessageId: parentMessageId,
+      );
+    } else if (_controller.conversation?.customType !=
+        IsmChatStrings.broadcast) {
       var isMessageSent = await _controller.commonController.sendMessage(
         showInConversation: true,
         encrypted: true,
