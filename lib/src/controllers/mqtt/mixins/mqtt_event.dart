@@ -266,7 +266,9 @@ mixin IsmChatMqttEventMixin {
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
       IsmChatLog.error('Yes this is my msg ${message.toMap()}');
-      _updateOwnMessage(message);
+      if (IsmChatConfig.isPadiWalletMessage == true) {
+        _updateOwnMessage(message);
+      }
       return;
     }
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
