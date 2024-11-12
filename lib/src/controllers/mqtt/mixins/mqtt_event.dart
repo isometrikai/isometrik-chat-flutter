@@ -265,9 +265,8 @@ mixin IsmChatMqttEventMixin {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
-      IsmChatLog.error('Yes this is my msg ${message.toMap()}');
       if (IsmChatConfig.isPadiWalletMessage == true) {
-        _updateOwnMessage(message);
+        await _updateOwnMessage(message);
       }
       return;
     }
@@ -1102,7 +1101,7 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
-  void _updateOwnMessage(IsmChatMessageModel message) async {
+  Future<void> _updateOwnMessage(IsmChatMessageModel message) async {
     var dbBox = IsmChatConfig.dbWrapper;
     final chatPendingMessages = await dbBox?.getConversation(
         conversationId: message.conversationId, dbBox: IsmChatDbBox.pending);
@@ -1142,6 +1141,12 @@ mixin IsmChatMqttEventMixin {
       }
       await dbBox?.saveConversation(conversation: conversationModel!);
     }
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) return;
+    var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+    if (chatController.conversation?.conversationId != message.conversationId) {
+      return;
+    }
+    await chatController.getMessagesFromDB(message.conversationId ?? '');
   }
 
   Future<String> getChatConversationsCount({
