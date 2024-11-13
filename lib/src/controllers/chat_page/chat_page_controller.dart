@@ -1614,8 +1614,8 @@ class IsmChatPageController extends GetxController
 
   Future<bool> updateLastMessage() async {
     if (!didReactedLast) {
-      var chatConversation = await IsmChatConfig.dbWrapper!
-          .getConversation(conversationId: conversation?.conversationId ?? '');
+      var chatConversation = await IsmChatConfig.dbWrapper
+          ?.getConversation(conversationId: conversation?.conversationId ?? '');
       if (chatConversation != null) {
         if (messages.isNotEmpty &&
             messages.last.customType != IsmChatCustomMessageType.removeMember) {
