@@ -13,6 +13,7 @@ class IsmChatConfig {
   static IsmChatDBWrapper? dbWrapper;
 
   static bool useDatabase = false;
+  static bool shouldPendingMessageSend = true;
   static bool shouldSetupMqtt = false;
   static String dbName = IsmChatStrings.dbname;
   static Duration animationDuration = const Duration(milliseconds: 300);

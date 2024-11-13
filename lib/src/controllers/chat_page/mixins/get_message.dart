@@ -15,10 +15,15 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       return;
     }
 
-    var pendingmessages = await IsmChatConfig.dbWrapper!
-        .getMessage(conversationId, IsmChatDbBox.pending);
-    if (pendingmessages != null || (pendingmessages?.isNotEmpty == true)) {
-      messages.addAll(pendingmessages ?? []);
+    if (IsmChatConfig.shouldPendingMessageSend) {
+      var pendingmessages = await IsmChatConfig.dbWrapper
+          ?.getMessage(conversationId, IsmChatDbBox.pending);
+      if (pendingmessages != null || (pendingmessages?.isNotEmpty == true)) {
+        messages.addAll(pendingmessages ?? []);
+      }
+    } else {
+      await IsmChatConfig.dbWrapper
+          ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
 
     _controller.messages =
@@ -378,7 +383,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       }
     } else {
       var allMessages =
-          await IsmChatConfig.dbWrapper!.getMessage(conversationId);
+          await IsmChatConfig.dbWrapper?.getMessage(conversationId);
       if (allMessages == null) return;
       var messageIndex =
           allMessages.indexWhere((e) => e.messageId == messageId);
@@ -388,8 +393,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           isDownloaded: true,
         );
         allMessages[messageIndex] = message;
-        var conversation = await IsmChatConfig.dbWrapper!
-            .getConversation(conversationId: conversationId);
+        var conversation = await IsmChatConfig.dbWrapper
+            ?.getConversation(conversationId: conversationId);
         if (conversation != null) {
           conversation = conversation.copyWith(messages: allMessages);
           await IsmChatConfig.dbWrapper!
