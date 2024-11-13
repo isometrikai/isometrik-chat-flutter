@@ -182,7 +182,7 @@ class IsmChatCommonViewModel {
     }
   }
 
-  Future<bool> sendPaidWalletMessage({
+  Future<IsmChatResponseModel?> sendPaidWalletMessage({
     required bool showInConversation,
     required int messageType,
     required bool encrypted,

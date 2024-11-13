@@ -26,8 +26,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool isBroadcast = false,
     bool sendPushNotification = true,
   }) async {
-    if (IsmChatConfig.isPadiWalletMessage ?? false) {
-      await _controller.commonController.sendPaidWalletMessage(
+    if (IsmChatConfig.isPaidWalletMessage ?? false) {
+      final response = await _controller.commonController.sendPaidWalletMessage(
         showInConversation: true,
         messageType: messageType,
         encrypted: true,
@@ -46,6 +46,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         metaData: metaData,
         parentMessageId: parentMessageId,
       );
+      IsmChatConfig.isPaidWalletMessageApiResponse?.call(response);
     } else if (_controller.conversation?.customType !=
         IsmChatStrings.broadcast) {
       var isMessageSent = await _controller.commonController.sendMessage(

@@ -95,7 +95,7 @@ class IsmChatCommonController extends GetxController {
           searchableTags: searchableTags,
           isUpdateMesage: isUpdateMesage);
 
-  Future<bool> sendPaidWalletMessage({
+  Future<IsmChatResponseModel?> sendPaidWalletMessage({
     required bool showInConversation,
     required int messageType,
     required bool encrypted,

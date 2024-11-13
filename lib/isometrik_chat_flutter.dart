@@ -75,19 +75,26 @@ class IsmChat {
   /// [showNotification] is the callback for showing notifications.
   /// [context] is the build context.
   /// [shouldSetupMqtt] is whether to set up MQTT. Defaults to `false`.
-  Future<void> initialize(IsmChatCommunicationConfig communicationConfig,
-      {bool useDatabase = true,
-      String databaseName = IsmChatStrings.dbname,
-      NotificaitonCallback? showNotification,
-      BuildContext? context,
-      bool shouldSetupMqtt = false,
-      List<String>? topics,
-      List<String>? topicChannels,
-      bool isPadiWalletMessage = false,
-      IsmPaidWalletModel? chargeableModel}) async {
-    if (isPadiWalletMessage) {
-      assert(isPadiWalletMessage && chargeableModel != null,
-          'isPadiWalletMessage = true, chargeableModel should be mandatory');
+  Future<void> initialize(
+    IsmChatCommunicationConfig communicationConfig, {
+    bool useDatabase = true,
+    String databaseName = IsmChatStrings.dbname,
+    NotificaitonCallback? showNotification,
+    BuildContext? context,
+    bool shouldSetupMqtt = false,
+    List<String>? topics,
+    List<String>? topicChannels,
+    bool isPaidWalletMessage = false,
+    IsmPaidWalletConfig? paidWalletConfig,
+    ResponseCallback? isPaidWalletMessageApiResponse,
+  }) async {
+    if (isPaidWalletMessage) {
+      assert(isPaidWalletMessage && paidWalletConfig != null,
+          'isPadiWalletMessage = true, paidWalletConfig should be mandatory');
+    }
+    if (isPaidWalletMessageApiResponse != null) {
+      assert(isPaidWalletMessage && paidWalletConfig != null,
+          'isPadiWalletMessage = true, paidWalletConfig should be mandatory for isPaidWalletMessageApiResponse callback');
     }
 
     await _delegate.initialize(
@@ -99,8 +106,9 @@ class IsmChat {
       shouldSetupMqtt: shouldSetupMqtt,
       topics: topics,
       topicChannels: topicChannels,
-      isPadiWalletMessage: isPadiWalletMessage,
-      chargeableModel: chargeableModel,
+      isPaidWalletMessage: isPaidWalletMessage,
+      paidWalletConfig: paidWalletConfig,
+      isPaidWalletMessageApiResponse: isPaidWalletMessageApiResponse,
     );
     _initialized = true;
   }

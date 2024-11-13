@@ -265,7 +265,7 @@ mixin IsmChatMqttEventMixin {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
-      if (IsmChatConfig.isPadiWalletMessage == true) {
+      if (IsmChatConfig.isPaidWalletMessage == true) {
         await _updateOwnMessage(message);
       }
       return;
