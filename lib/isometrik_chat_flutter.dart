@@ -86,13 +86,13 @@ class IsmChat {
     List<String>? topicChannels,
     bool isPaidWalletMessage = false,
     IsmPaidWalletConfig? paidWalletConfig,
-    ResponseCallback? isPaidWalletMessageApiResponse,
+    ResponseCallback? paidWalletMessageApiResponse,
   }) async {
     if (isPaidWalletMessage) {
       assert(isPaidWalletMessage && paidWalletConfig != null,
           'isPadiWalletMessage = true, paidWalletConfig should be mandatory');
     }
-    if (isPaidWalletMessageApiResponse != null) {
+    if (paidWalletMessageApiResponse != null) {
       assert(isPaidWalletMessage && paidWalletConfig != null,
           'isPadiWalletMessage = true, paidWalletConfig should be mandatory for isPaidWalletMessageApiResponse callback');
     }
@@ -108,7 +108,7 @@ class IsmChat {
       topicChannels: topicChannels,
       isPaidWalletMessage: isPaidWalletMessage,
       paidWalletConfig: paidWalletConfig,
-      isPaidWalletMessageApiResponse: isPaidWalletMessageApiResponse,
+      paidWalletMessageApiResponse: paidWalletMessageApiResponse,
     );
     _initialized = true;
   }

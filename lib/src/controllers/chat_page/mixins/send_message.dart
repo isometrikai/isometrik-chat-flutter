@@ -46,7 +46,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         metaData: metaData,
         parentMessageId: parentMessageId,
       );
-      IsmChatConfig.isPaidWalletMessageApiResponse?.call(response);
+      IsmChatConfig.paidWalletMessageApiResponse?.call(response);
     } else if (_controller.conversation?.customType !=
         IsmChatStrings.broadcast) {
       var isMessageSent = await _controller.commonController.sendMessage(

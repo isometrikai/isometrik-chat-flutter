@@ -34,7 +34,7 @@ class IsmChatConfig {
   static BuildContext? context;
   static bool? isPaidWalletMessage;
   static IsmPaidWalletConfig? paidWalletModel;
-  static ResponseCallback? isPaidWalletMessageApiResponse;
+  static ResponseCallback? paidWalletMessageApiResponse;
 }
 
 class IsmPaidWalletConfig {
