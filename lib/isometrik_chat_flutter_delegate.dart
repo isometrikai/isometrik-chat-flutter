@@ -33,11 +33,11 @@ class IsmChatDelegate {
     bool shouldSetupMqtt = false,
     List<String>? topics,
     List<String>? topicChannels,
+    bool shouldPendingMessageSend = true,
     bool isPaidWalletMessage = false,
     IsmPaidWalletConfig? paidWalletConfig,
     ResponseCallback? paidWalletMessageApiResponse,
   }) async {
-    IsmChatConfig.configInitilized = true;
     _config = config;
     IsmChatConfig.context = context;
     IsmChatConfig.dbName = databaseName;
@@ -45,9 +45,11 @@ class IsmChatDelegate {
     IsmChatConfig.communicationConfig = config;
     IsmChatConfig.shouldSetupMqtt = shouldSetupMqtt;
     IsmChatConfig.showNotification = showNotification;
+    IsmChatConfig.shouldPendingMessageSend = shouldPendingMessageSend;
     IsmChatConfig.isPaidWalletMessage = isPaidWalletMessage;
     IsmChatConfig.paidWalletModel = paidWalletConfig;
     IsmChatConfig.paidWalletMessageApiResponse = paidWalletMessageApiResponse;
+    IsmChatConfig.configInitilized = true;
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
     await _initializeMqtt(
       config: _config,

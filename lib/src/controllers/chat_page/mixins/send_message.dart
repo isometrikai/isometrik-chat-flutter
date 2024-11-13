@@ -303,9 +303,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     _controller.messages.add(audioMessage);
 
     if (!_controller.isBroadcast) {
-      await IsmChatConfig.dbWrapper!
-          .saveMessage(audioMessage, IsmChatDbBox.pending);
-
+      await IsmChatConfig.dbWrapper
+          ?.saveMessage(audioMessage, IsmChatDbBox.pending);
       if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(audioMessage);
       }

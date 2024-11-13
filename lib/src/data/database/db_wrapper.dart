@@ -360,6 +360,7 @@ class IsmChatDBWrapper {
 
   Future<void> removeConversation(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
+    IsmChatLog.error('removeConversation $dbBox');
     switch (dbBox) {
       case IsmChatDbBox.main:
         var conversation =
@@ -374,7 +375,7 @@ class IsmChatDBWrapper {
         var pendingConversation =
             await getConversation(conversationId: conversationId, dbBox: dbBox);
         if (pendingConversation != null) {
-          await chatConversationBox.delete(conversationId);
+          await pendingMessageBox.delete(conversationId);
         }
         break;
     }

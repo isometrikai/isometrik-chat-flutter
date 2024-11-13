@@ -345,7 +345,7 @@ mixin IsmChatMqttEventMixin {
       return;
     }
     unawaited(chatController.getMessagesFromDB(message.conversationId ?? ''));
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 300));
     if (_controller.isAppInBackground == false) {
       await chatController.readSingleMessage(
         conversationId: message.conversationId ?? '',
