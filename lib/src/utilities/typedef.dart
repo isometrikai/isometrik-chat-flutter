@@ -84,7 +84,9 @@ typedef MeessageFieldFocusNode = void Function(
 );
 
 typedef ConversationParser = (IsmChatConversationModel, bool)? Function(
-    IsmChatConversationModel, Map<String, dynamic>);
+  IsmChatConversationModel,
+  Map<String, dynamic>,
+);
 
 typedef InternetFileProgress = void Function(
   int receivedLength,
@@ -92,7 +94,8 @@ typedef InternetFileProgress = void Function(
 );
 
 typedef IsmChatConversationModifier = Future<IsmChatConversationModel> Function(
-    IsmChatConversationModel);
+  IsmChatConversationModel,
+);
 
 typedef NotificaitonCallback = void Function(
   String,
@@ -101,4 +104,11 @@ typedef NotificaitonCallback = void Function(
 );
 
 typedef MessageCallback = Future<bool> Function(
-    BuildContext, IsmChatMessageModel, IsmChatConversationModel);
+  BuildContext,
+  IsmChatMessageModel,
+  IsmChatConversationModel,
+);
+
+typedef ResponseCallback = void Function(
+  IsmChatResponseModel?,
+);

@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: _flutterfire_internals
-      sha256: "5534e701a2c505fed1f0799e652dd6ae23bd4d2c4cf797220e5ced5764a7c1c2"
+      sha256: "5a0296da7ae717ffb7444dee8439ca25ac80e162a345b933aa57f0a4a48dca2c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.44"
+    version: "1.3.45"
   any_link_preview:
     dependency: transitive
     description:
@@ -173,10 +173,10 @@ packages:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: "0d04cec8715b59fb6dc60eefb47e69024f51233c570e475b886dc9290568bca7"
+      sha256: "2e4c568f70e406ccb87376bc06b53d2f5bebaab71e2fbcc1a950e31449381bcf"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.17+4"
+    version: "0.9.17+5"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -277,10 +277,10 @@ packages:
     dependency: "direct main"
     description:
       name: device_info_plus
-      sha256: c4af09051b4f0508f6c1dc0a5c085bf014d5c9a4a0678ce1799c2b4d716387a0
+      sha256: f545ffbadee826f26f2e1a0f0cbd667ae9a6011cc0f77c0f8f00a969655e6e95
       url: "https://pub.dev"
     source: hosted
-    version: "11.1.0"
+    version: "11.1.1"
   device_info_plus_platform_interface:
     dependency: transitive
     description:
@@ -309,10 +309,10 @@ packages:
     dependency: transitive
     description:
       name: elegant_notification
-      sha256: "5a5943c194d5a70ae0b871474eac4bb7b45137ac35cccf758743b22d4c83d037"
+      sha256: "7b71f3f778ee2b3c647089ad2321ae923705a66cfebe403cbd0092577bc8ff9c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.1"
   emoji_picker_flutter:
     dependency: transitive
     description:
@@ -421,10 +421,10 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_core
-      sha256: "51dfe2fbf3a984787a2e7b8592f2f05c986bfedd6fdacea3f9e0a7beb334de96"
+      sha256: e59141ff83e70a9ba571a1f8733c5598cf57e6e68037ab185581d7fc0a436738
       url: "https://pub.dev"
     source: hosted
-    version: "3.6.0"
+    version: "3.7.0"
   firebase_core_platform_interface:
     dependency: transitive
     description:
@@ -445,26 +445,26 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_messaging
-      sha256: eb6e28a3a35deda61fe8634967c84215efc19133ba58d8e0fc6c9a2af2cba05e
+      sha256: a988c6ab37fa5a6abf2f8087a44b765e058848ace6f3253fb1602d1d44a63747
       url: "https://pub.dev"
     source: hosted
-    version: "15.1.3"
+    version: "15.1.4"
   firebase_messaging_platform_interface:
     dependency: transitive
     description:
       name: firebase_messaging_platform_interface
-      sha256: b316c4ee10d93d32c033644207afc282d9b2b4372f3cf9c6022f3558b3873d2d
+      sha256: "66aa477277baf2430904096234dd2095ad2e0248d0bfefc1b11695e68bf1790e"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.46"
+    version: "4.5.47"
   firebase_messaging_web:
     dependency: transitive
     description:
       name: firebase_messaging_web
-      sha256: d7f0147a1a9fe4313168e20154a01fd5cf332898de1527d3930ff77b8c7f5387
+      sha256: "8b590d8c421dc4f63a28c6b9690a050424c28b99a54886ded4510c0806237130"
       url: "https://pub.dev"
     source: hosted
-    version: "3.9.2"
+    version: "3.9.3"
   fixnum:
     dependency: transitive
     description:
@@ -602,10 +602,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
-      sha256: "7b4ca6cf3304575fe9c8ec64813c8d02ee41d2afe60bcfe0678bcb5375d596a2"
+      sha256: "578bd8c508144fdaffd4f77b8ef2d8c523602275cd697cc3db284dbd762ef4ce"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.10+1"
+    version: "2.0.14"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -740,10 +740,10 @@ packages:
     dependency: transitive
     description:
       name: google_maps_flutter_android
-      sha256: "6caec25edb8014ec7d503babc597794de2d4c1baf3e3d20b57c41bd3e439b916"
+      sha256: bccf64ccbb2ea672dc62a61177b315a340af86b0228564484b023657544a3fd5
       url: "https://pub.dev"
     source: hosted
-    version: "2.14.10"
+    version: "2.14.11"
   google_maps_flutter_ios:
     dependency: transitive
     description:
@@ -1075,10 +1075,10 @@ packages:
     dependency: transitive
     description:
       name: path_parsing
-      sha256: caa17e8f0b386eb190dd5b6a3b71211c76375aa8b6ffb4465b5863d019bdb334
+      sha256: "883402936929eac138ee0a45da5b0f2c80f89913e6dc3bf77eb65b84b409c6ca"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.3"
+    version: "1.1.0"
   path_provider:
     dependency: "direct main"
     description:
@@ -1315,10 +1315,10 @@ packages:
     dependency: transitive
     description:
       name: share_plus
-      sha256: "3af2cda1752e5c24f2fc04b6083b40f013ffe84fb90472f30c6499a9213d5442"
+      sha256: "9c9bafd4060728d7cdb2464c341743adbd79d327cb067ec7afb64583540b47c8"
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.1"
+    version: "10.1.2"
   share_plus_platform_interface:
     dependency: transitive
     description:
@@ -1331,10 +1331,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences
-      sha256: "746e5369a43170c25816cc472ee016d3a66bc13fcf430c0bc41ad7b4b2922051"
+      sha256: "95f9997ca1fb9799d494d0cb2a780fd7be075818d59f00c43832ed112b158a82"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.2"
+    version: "2.3.3"
   shared_preferences_android:
     dependency: transitive
     description:
@@ -1408,10 +1408,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite
-      sha256: "79a297dc3cc137e758c6a4baf83342b039e5a6d2436fcdf3f96a00adaaf2ad62"
+      sha256: "2d7299468485dca85efeeadf5d38986909c5eb0cd71fd3db2c2f000e6c9454bb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.4.1"
   sqflite_android:
     dependency: transitive
     description:
@@ -1432,10 +1432,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite_darwin
-      sha256: "769733dddf94622d5541c73e4ddc6aa7b252d865285914b6fcd54a63c4b4f027"
+      sha256: "96a698e2bc82bd770a4d6aab00b42396a7c63d9e33513a56945cbccb594c2474"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.1-1"
+    version: "2.4.1"
   sqflite_platform_interface:
     dependency: transitive
     description:
@@ -1568,10 +1568,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: "0dea215895a4d254401730ca0ba8204b29109a34a99fb06ae559a2b60988d2de"
+      sha256: "6fc2f56536ee873eeb867ad176ae15f304ccccc357848b351f6f0d8d4a40d193"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.13"
+    version: "6.3.14"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -1640,26 +1640,26 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics
-      sha256: "32c3c684e02f9bc0afb0ae0aa653337a2fe022e8ab064bcd7ffda27a74e288e3"
+      sha256: "773c9522d66d523e1c7b25dfb95cc91c26a1e17b107039cfe147285e92de7878"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.11+1"
+    version: "1.1.14"
   vector_graphics_codec:
     dependency: transitive
     description:
       name: vector_graphics_codec
-      sha256: c86987475f162fadff579e7320c7ddda04cd2fdeffbe1129227a85d9ac9e03da
+      sha256: "2430b973a4ca3c4dbc9999b62b8c719a160100dcbae5c819bae0cacce32c9cdb"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.11+1"
+    version: "1.1.12"
   vector_graphics_compiler:
     dependency: transitive
     description:
       name: vector_graphics_compiler
-      sha256: "12faff3f73b1741a36ca7e31b292ddeb629af819ca9efe9953b70bd63fc8cd81"
+      sha256: ab9ff38fc771e9ee1139320adbe3d18a60327370c218c60752068ebee4b49ab1
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.11+1"
+    version: "1.1.15"
   vector_math:
     dependency: transitive
     description:
@@ -1760,10 +1760,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "10169d3934549017f0ae278ccb07f828f9d6ea21573bab0fb77b0e1ef0fce454"
+      sha256: "84ba388638ed7a8cb3445a320c8273136ab2631cd5f2c57888335504ddab1bc2"
       url: "https://pub.dev"
     source: hosted
-    version: "5.7.2"
+    version: "5.8.0"
   win32_registry:
     dependency: transitive
     description:

@@ -16,11 +16,7 @@ class IsmChatConfig {
   static bool shouldSetupMqtt = false;
   static String dbName = IsmChatStrings.dbname;
   static Duration animationDuration = const Duration(milliseconds: 300);
-  static void Function(
-    String title,
-    String body,
-    String conversationId,
-  )? showNotification;
+  static NotificaitonCallback? showNotification;
   // static bool isShowMqttConnectErrorDailog = false;
 
   /// This callback is to be used if you want to make certain changes while conversation data is being parsed from the API
@@ -36,4 +32,13 @@ class IsmChatConfig {
   static String? fontFamily;
   static String? notificationIconPath;
   static BuildContext? context;
+  static bool? isPaidWalletMessage;
+  static IsmPaidWalletConfig? paidWalletModel;
+  static ResponseCallback? paidWalletMessageApiResponse;
+}
+
+class IsmPaidWalletConfig {
+  IsmPaidWalletConfig({required this.apiUrl, required this.authToken});
+  final String apiUrl;
+  final String authToken;
 }

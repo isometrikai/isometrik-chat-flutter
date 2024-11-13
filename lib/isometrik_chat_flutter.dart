@@ -84,7 +84,19 @@ class IsmChat {
     bool shouldSetupMqtt = false,
     List<String>? topics,
     List<String>? topicChannels,
+    bool isPaidWalletMessage = false,
+    IsmPaidWalletConfig? paidWalletConfig,
+    ResponseCallback? paidWalletMessageApiResponse,
   }) async {
+    if (isPaidWalletMessage) {
+      assert(isPaidWalletMessage && paidWalletConfig != null,
+          'isPadiWalletMessage = true, paidWalletConfig should be mandatory');
+    }
+    if (paidWalletMessageApiResponse != null) {
+      assert(isPaidWalletMessage && paidWalletConfig != null,
+          'isPadiWalletMessage = true, paidWalletConfig should be mandatory for isPaidWalletMessageApiResponse callback');
+    }
+
     await _delegate.initialize(
       communicationConfig,
       useDatabase: useDatabase,
@@ -94,6 +106,9 @@ class IsmChat {
       shouldSetupMqtt: shouldSetupMqtt,
       topics: topics,
       topicChannels: topicChannels,
+      isPaidWalletMessage: isPaidWalletMessage,
+      paidWalletConfig: paidWalletConfig,
+      paidWalletMessageApiResponse: paidWalletMessageApiResponse,
     );
     _initialized = true;
   }
@@ -102,7 +117,7 @@ class IsmChat {
   ///
   /// data is the data to listen for.
   /// [showNotification] is the callback for showing notifications.
-  ///
+  ///,
   /// Throws an [AssertionError] if the MQTT controller has not been initialized.
   Future<void> listenMqttEvent(
     EventModel event, {

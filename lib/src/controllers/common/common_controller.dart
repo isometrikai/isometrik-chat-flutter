@@ -95,6 +95,39 @@ class IsmChatCommonController extends GetxController {
           searchableTags: searchableTags,
           isUpdateMesage: isUpdateMesage);
 
+  Future<IsmChatResponseModel?> sendPaidWalletMessage({
+    required bool showInConversation,
+    required int messageType,
+    required bool encrypted,
+    required String deviceId,
+    required String conversationId,
+    required String body,
+    required String notificationBody,
+    required String notificationTitle,
+    String? parentMessageId,
+    IsmChatMetaData? metaData,
+    List<Map<String, dynamic>>? mentionedUsers,
+    Map<String, dynamic>? events,
+    String? customType,
+    List<Map<String, dynamic>>? attachments,
+  }) async =>
+      await viewModel.sendPaidWalletMessage(
+        showInConversation: showInConversation,
+        messageType: messageType,
+        encrypted: encrypted,
+        deviceId: deviceId,
+        conversationId: conversationId,
+        body: body,
+        notificationBody: notificationBody,
+        notificationTitle: notificationTitle,
+        attachments: attachments,
+        customType: customType,
+        events: events,
+        mentionedUsers: mentionedUsers,
+        parentMessageId: parentMessageId,
+        metaData: metaData,
+      );
+
   Future<IsmChatConversationModel?> createConversation({
     required List<String> userId,
     IsmChatMetaData? metaData,

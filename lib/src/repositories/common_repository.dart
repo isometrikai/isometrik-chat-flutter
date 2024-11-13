@@ -106,6 +106,57 @@ class IsmChatCommonRepository {
     }
   }
 
+  Future<IsmChatResponseModel?> sendPaidWalletMessage({
+    required bool showInConversation,
+    required int messageType,
+    required bool encrypted,
+    required String deviceId,
+    required String conversationId,
+    required String body,
+    required String notificationBody,
+    required String notificationTitle,
+    String? parentMessageId,
+    IsmChatMetaData? metaData,
+    List<Map<String, dynamic>>? mentionedUsers,
+    Map<String, dynamic>? events,
+    String? customType,
+    List<Map<String, dynamic>>? attachments,
+  }) async {
+    try {
+      final payload = {
+        'showInConversation': showInConversation,
+        'messageType': messageType,
+        'encrypted': encrypted,
+        'deviceId': deviceId,
+        'conversationId': conversationId,
+        'body': body,
+        'parentMessageId': parentMessageId,
+        'metaData': metaData?.toMap(),
+        'events': events,
+        'customType': customType,
+        'attachments': attachments,
+        'notificationBody': notificationBody,
+        'notificationTitle': notificationTitle,
+        'searchableTags': [body],
+        'mentionedUsers': mentionedUsers
+      }.removeNullValues();
+      var headers = IsmChatUtility.tokenCommonHeader();
+      headers.addEntries(
+        {'Authorization': IsmChatConfig.paidWalletModel?.authToken ?? ''}
+            .entries,
+      );
+      var response = await _apiWrapper.post(
+        IsmChatConfig.paidWalletModel?.apiUrl ?? '',
+        payload: payload,
+        headers: headers,
+      );
+      return response;
+    } catch (e, st) {
+      IsmChatLog.error('sendPaidWalletMessage $e', st);
+      return null;
+    }
+  }
+
   Future<PresignedUrlModel?> postMediaUrl({
     required String conversationId,
     required String nameWithExtension,

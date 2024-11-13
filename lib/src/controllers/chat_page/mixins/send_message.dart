@@ -26,7 +26,29 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool isBroadcast = false,
     bool sendPushNotification = true,
   }) async {
-    if (_controller.conversation?.customType != IsmChatStrings.broadcast) {
+    if (IsmChatConfig.isPaidWalletMessage ?? false) {
+      final response = await _controller.commonController.sendPaidWalletMessage(
+        showInConversation: true,
+        messageType: messageType,
+        encrypted: true,
+        deviceId: deviceId,
+        conversationId: conversationId,
+        body: body,
+        notificationBody: notificationBody,
+        notificationTitle: notificationTitle,
+        attachments: attachments,
+        customType: customType,
+        events: {
+          'updateUnreadCount': true,
+          'sendPushNotification': sendPushNotification
+        },
+        mentionedUsers: mentionedUsers,
+        metaData: metaData,
+        parentMessageId: parentMessageId,
+      );
+      IsmChatConfig.paidWalletMessageApiResponse?.call(response);
+    } else if (_controller.conversation?.customType !=
+        IsmChatStrings.broadcast) {
       var isMessageSent = await _controller.commonController.sendMessage(
         showInConversation: true,
         encrypted: true,
@@ -208,7 +230,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     String? extension;
     var sentAt = DateTime.now().millisecondsSinceEpoch;
-
     if (path == null || path.isEmpty) {
       return;
     }
@@ -260,6 +281,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
         isDownloaded: true,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
@@ -388,6 +410,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             sentByMe: true,
             isUploading: true,
             metaData: IsmChatMetaData(
+              messageSentAt: sentAt,
               isDownloaded: true,
               replyMessage: _controller.isreplying
                   ? IsmChatReplyMessageModel(
@@ -550,6 +573,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         sentByMe: true,
         isUploading: true,
         metaData: IsmChatMetaData(
+          messageSentAt: sentAt,
           isDownloaded: true,
           caption: caption,
           replyMessage: _controller.isreplying
@@ -675,6 +699,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
         isDownloaded: true,
         caption: caption,
         replyMessage: _controller.isreplying
@@ -782,6 +807,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       isUploading: true,
       metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
         caption: caption,
       ),
     );
@@ -862,6 +888,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         ),
       ],
       metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.location,
@@ -940,6 +967,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
       metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
         contacts: contacts
             .map(
               (e) => IsmChatContactMetaDatModel(
@@ -1022,6 +1050,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentAt: sentAt,
       sentByMe: true,
       metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.text,
@@ -1315,6 +1344,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentAt: sentAt,
       sentByMe: true,
       metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
         aboutText: outSideMessage?.aboutText,
         caption: outSideMessage?.caption,
         replyMessage: _controller.isreplying

@@ -22,6 +22,7 @@ class IsmChatMetaData {
     this.phoneIsoCode,
     this.aboutText,
     this.isDownloaded,
+    this.messageSentAt,
   });
 
   factory IsmChatMetaData.fromMap(Map<String, dynamic> map) => IsmChatMetaData(
@@ -72,6 +73,7 @@ class IsmChatMetaData {
             ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
             : null,
         isDownloaded: map['isDownloaded'] as bool? ?? true,
+        messageSentAt: map['messageSentAt'] as int? ?? 0,
         aboutText: map['aboutText'] != null
             ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
             : map['about'] != null
@@ -103,6 +105,7 @@ class IsmChatMetaData {
   final String? countryCode;
   final AboutTextModel? aboutText;
   final bool? isDownloaded;
+  final int? messageSentAt;
 
   IsmChatMetaData copyWith({
     String? parentMessageBody,
@@ -126,6 +129,7 @@ class IsmChatMetaData {
     String? about,
     AboutTextModel? aboutText,
     bool? isDownloaded,
+    int? messageSentAt,
   }) =>
       IsmChatMetaData(
         locationAddress: locationAddress ?? this.locationAddress,
@@ -145,6 +149,7 @@ class IsmChatMetaData {
         countryCode: countryCode ?? this.countryCode,
         aboutText: aboutText ?? this.aboutText,
         isDownloaded: isDownloaded ?? this.isDownloaded,
+        messageSentAt: messageSentAt ?? this.messageSentAt,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -164,6 +169,7 @@ class IsmChatMetaData {
         'phone': phone,
         'countryCode': countryCode,
         'isDownloaded': isDownloaded,
+        'messageSentAt': messageSentAt,
         'aboutText': aboutText?.toMap()
       }.removeNullValues();
 
@@ -171,7 +177,7 @@ class IsmChatMetaData {
 
   @override
   String toString() =>
-      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo  phoneIsoCode : $phoneIsoCode, phone : $phone, countryCode : $countryCode,aboutText : $aboutText, isDownloaded : $isDownloaded)';
+      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo  phoneIsoCode : $phoneIsoCode, phone : $phone, countryCode : $countryCode,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt)';
 
   @override
   bool operator ==(covariant IsmChatMetaData other) {
@@ -193,6 +199,7 @@ class IsmChatMetaData {
         other.phone == phone &&
         other.countryCode == countryCode &&
         other.isDownloaded == isDownloaded &&
+        other.messageSentAt == messageSentAt &&
         other.aboutText == aboutText;
   }
 
@@ -214,5 +221,6 @@ class IsmChatMetaData {
       phoneIsoCode.hashCode ^
       countryCode.hashCode ^
       isDownloaded.hashCode ^
+      messageSentAt.hashCode ^
       aboutText.hashCode;
 }
