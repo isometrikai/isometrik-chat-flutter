@@ -1686,8 +1686,8 @@ class IsmChatPageController extends GetxController
           );
         }
 
-        await IsmChatConfig.dbWrapper!
-            .saveConversation(conversation: chatConversation);
+        await IsmChatConfig.dbWrapper
+            ?.saveConversation(conversation: chatConversation);
         await conversationController.getConversationsFromDB();
       }
     } else {
