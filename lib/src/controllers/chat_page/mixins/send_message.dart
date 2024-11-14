@@ -27,6 +27,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool sendPushNotification = true,
   }) async {
     if (IsmChatConfig.isPaidWalletMessage ?? false) {
+      var messageMetaData = metaData?.toMap() ?? {};
+      if (IsmChatConfig.paidWalletModel?.customType != null) {
+        final customType = IsmChatConfig.paidWalletModel?.customType ?? {};
+        messageMetaData['customType'] = customType;
+      }
       final response = await _controller.commonController.sendPaidWalletMessage(
         showInConversation: true,
         messageType: messageType,
@@ -43,7 +48,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           'sendPushNotification': sendPushNotification
         },
         mentionedUsers: mentionedUsers,
-        metaData: metaData,
+        metaData: messageMetaData,
         parentMessageId: parentMessageId,
       );
       IsmChatConfig.paidWalletMessageApiResponse?.call(response);

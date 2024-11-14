@@ -105,7 +105,7 @@ class IsmChatCommonController extends GetxController {
     required String notificationBody,
     required String notificationTitle,
     String? parentMessageId,
-    IsmChatMetaData? metaData,
+    Map<String, dynamic>? metaData,
     List<Map<String, dynamic>>? mentionedUsers,
     Map<String, dynamic>? events,
     String? customType,

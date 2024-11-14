@@ -39,7 +39,12 @@ class IsmChatConfig {
 }
 
 class IsmPaidWalletConfig {
-  IsmPaidWalletConfig({required this.apiUrl, required this.authToken});
+  IsmPaidWalletConfig({
+    required this.apiUrl,
+    required this.authToken,
+    this.customType,
+  });
   final String apiUrl;
   final String authToken;
+  final Map<String, String>? customType;
 }
