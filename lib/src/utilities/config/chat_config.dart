@@ -46,7 +46,7 @@ class IsmPaidWalletConfig {
   });
   final String apiUrl;
   final String authToken;
-  final Future<Map<String, String>> Function(
+  final Future<Map<String, dynamic>> Function(
     IsmChatConversationModel,
   )? customType;
 }
