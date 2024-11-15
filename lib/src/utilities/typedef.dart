@@ -103,7 +103,7 @@ typedef NotificaitonCallback = void Function(
   String,
 );
 
-typedef MessageFutureCallback = Future<bool> Function(
+typedef MessageFutureCallback = Future<(Map<String, dynamic>?, bool)> Function(
   BuildContext,
   IsmChatMessageModel,
   IsmChatConversationModel,

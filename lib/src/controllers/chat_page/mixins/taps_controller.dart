@@ -8,12 +8,13 @@ mixin IsmChatTapsController on GetxController {
       {required BuildContext context,
       required IsmChatMessageModel message}) async {
     _controller.closeOverlay();
-    if (await IsmChatProperties.chatPageProperties.onMessageTap?.call(
-          context,
-          message,
-          _controller.conversation!,
-        ) ??
-        true) {
+    final response =
+        await IsmChatProperties.chatPageProperties.onMessageTap?.call(
+      context,
+      message,
+      _controller.conversation!,
+    );
+    if (response?.$2 ?? true) {
       if (message.messageType == IsmChatMessageType.reply) {
         if ([
           IsmChatCustomMessageType.image,
@@ -35,19 +36,20 @@ mixin IsmChatTapsController on GetxController {
       ].contains(message.customType)) {
         _controller.tapForMediaPreview(message);
       }
-      // Todo Will check this
-      // if (!IsmChatProperties.chatPageProperties.features.contains(
-      //       IsmChatFeature.mediaDownload,
-      //     ) &&
-      //     !message.sentByMe) {
-      //   unawaited(
-      //     _controller.updateMessage(
-      //       messageId: message.messageId ?? '',
-      //       conversationId: message.conversationId ?? '',
-      //       isOpponentMessage: true,
-      //     ),
-      //   );
-      // }
+      if (message.sentByMe == false) {
+        unawaited(
+          _controller.updateMessage(
+            messageId: message.messageId ?? '',
+            conversationId: message.conversationId ?? '',
+            isOpponentMessage: true,
+            metaData: response?.$1 != null
+                ? IsmChatMetaData.fromMap(
+                    response?.$1 ?? {},
+                  )
+                : null,
+          ),
+        );
+      }
     }
   }
 }

@@ -370,6 +370,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     required String messageId,
     required String conversationId,
     bool isOpponentMessage = false,
+    IsmChatMetaData? metaData,
   }) async {
     if (!isOpponentMessage) {
       final response = await _controller.viewModel.updateMessage(
@@ -389,9 +390,13 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           allMessages.indexWhere((e) => e.messageId == messageId);
       if (messageIndex != -1) {
         final message = allMessages[messageIndex];
-        message.metaData = message.metaData?.copyWith(
-          isDownloaded: true,
-        );
+        if (metaData != null) {
+          message.metaData = metaData;
+        } else {
+          message.metaData = message.metaData?.copyWith(
+            isDownloaded: true,
+          );
+        }
         allMessages[messageIndex] = message;
         var conversation = await IsmChatConfig.dbWrapper
             ?.getConversation(conversationId: conversationId);
