@@ -670,7 +670,7 @@ enum IsmChatFeature {
   reaction,
   chageWallpaper,
   searchMessage,
-  mediaDownload,
+  // mediaDownload,
   showMessageStatus,
   mentionMember;
 }

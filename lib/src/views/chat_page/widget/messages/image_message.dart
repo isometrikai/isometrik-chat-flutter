@@ -11,7 +11,10 @@ class IsmChatImageMessage extends StatelessWidget {
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
         child: BlurFilter(
-          isNotBlured: message.metaData?.isDownloaded ?? true,
+          isNotBlured: IsmChatProperties
+                  .chatPageProperties.isShowMediaMeessageBlure
+                  ?.call(context, message) ??
+              true,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -37,8 +40,8 @@ class IsmChatImageMessage extends StatelessWidget {
                                         : false,
                               )
                             : Image.memory(
-                                message.attachments?.first.mediaUrl!
-                                        .strigToUnit8List ??
+                                message.attachments?.first.mediaUrl
+                                        ?.strigToUnit8List ??
                                     Uint8List(0),
                                 fit: BoxFit.cover,
                               )

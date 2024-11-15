@@ -103,10 +103,15 @@ typedef NotificaitonCallback = void Function(
   String,
 );
 
-typedef MessageCallback = Future<bool> Function(
+typedef MessageFutureCallback = Future<bool> Function(
   BuildContext,
   IsmChatMessageModel,
   IsmChatConversationModel,
+);
+
+typedef MessageCallback = bool Function(
+  BuildContext,
+  IsmChatMessageModel,
 );
 
 typedef ResponseCallback = void Function(

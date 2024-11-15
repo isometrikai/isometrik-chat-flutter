@@ -26,6 +26,7 @@ class IsmChatPageProperties {
     this.mentionUserName,
     this.mentionUserProfileUrl,
     this.onMessageTap,
+    this.isShowMediaMeessageBlure,
   });
 
   final Widget? placeholder;
@@ -120,5 +121,7 @@ class IsmChatPageProperties {
   final Future<bool?>? Function(BuildContext, IsmChatConversationModel)?
       isSendMediaAllowed;
 
-  final MessageCallback? onMessageTap;
+  final MessageFutureCallback? onMessageTap;
+
+  final MessageCallback? isShowMediaMeessageBlure;
 }

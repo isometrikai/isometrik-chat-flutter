@@ -35,18 +35,19 @@ mixin IsmChatTapsController on GetxController {
       ].contains(message.customType)) {
         _controller.tapForMediaPreview(message);
       }
-      if (!IsmChatProperties.chatPageProperties.features.contains(
-            IsmChatFeature.mediaDownload,
-          ) &&
-          !message.sentByMe) {
-        unawaited(
-          _controller.updateMessage(
-            messageId: message.messageId ?? '',
-            conversationId: message.conversationId ?? '',
-            isOpponentMessage: true,
-          ),
-        );
-      }
+      // Todo Will check this
+      // if (!IsmChatProperties.chatPageProperties.features.contains(
+      //       IsmChatFeature.mediaDownload,
+      //     ) &&
+      //     !message.sentByMe) {
+      //   unawaited(
+      //     _controller.updateMessage(
+      //       messageId: message.messageId ?? '',
+      //       conversationId: message.conversationId ?? '',
+      //       isOpponentMessage: true,
+      //     ),
+      //   );
+      // }
     }
   }
 }

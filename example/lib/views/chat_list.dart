@@ -106,6 +106,7 @@ class ChatList extends StatelessWidget {
               //   IsmChatFeature.reply,
               // ]
             ),
+
             noChatSelectedPlaceholder: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -162,6 +163,7 @@ class ChatList extends StatelessWidget {
               isSlidableEnable: (_, conversation) {
                 return true;
               },
+
               // cardElementBuilders: const IsmChatCardProperties(
               // onProfileTap: (p0, p1) {
               //   IsmChatLog.error('Yes i am tap');
