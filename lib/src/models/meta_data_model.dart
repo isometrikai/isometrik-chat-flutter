@@ -25,61 +25,70 @@ class IsmChatMetaData {
     this.messageSentAt,
   });
 
-  factory IsmChatMetaData.fromMap(Map<String, dynamic> map) => IsmChatMetaData(
-        caption: map['caption'] != null
-            ? IsmChatUtility.decodeString(map['caption'] as String)
-            : map['captionMessage'] != null
-                ? IsmChatUtility.decodeString(map['captionMessage'] as String)
-                : '',
-        locationAddress: map['locationAddress'] as String? ?? '',
-        locationSubAddress: map['locationSubAddress'] as String? ?? '',
-        profilePic: map['profilePic'] as String? ?? '',
-        firstName: map['firstName'] as String? ?? '',
-        lastName: map['lastName'] as String? ?? '',
-        countryCode: map['countryCode'] as String? ?? '',
-        phone: map['phone'] as String? ?? '',
-        phoneIsoCode: map['phoneIsoCode'] as String? ?? '',
-        customType: map['customType'].runtimeType == String
-            ? {'${map['customType']}': map['customType']}
-            : map['customType'] as Map<String, dynamic>? ?? {},
-        assetList: map['assetList'] == null
-            ? []
-            : List<Map<String, IsmChatBackgroundModel>>.from(
-                map['assetList'].map(
-                  (x) => Map.from(x).map(
-                    (k, v) => MapEntry<String, IsmChatBackgroundModel>(
-                      k,
-                      v.runtimeType == String
-                          ? IsmChatBackgroundModel.fromJson(v)
-                          : IsmChatBackgroundModel.fromMap(v),
-                    ),
+  factory IsmChatMetaData.fromMap(Map<String, dynamic> map) {
+    var data = IsmChatMetaData(
+      caption: map['caption'] != null
+          ? IsmChatUtility.decodeString(map['caption'] as String)
+          : map['captionMessage'] != null
+              ? IsmChatUtility.decodeString(map['captionMessage'] as String)
+              : '',
+      locationAddress: map['locationAddress'] as String? ?? '',
+      locationSubAddress: map['locationSubAddress'] as String? ?? '',
+      profilePic: map['profilePic'] as String? ?? '',
+      firstName: map['firstName'] as String? ?? '',
+      lastName: map['lastName'] as String? ?? '',
+      countryCode: map['countryCode'] as String? ?? '',
+      phone: map['phone'] as String? ?? '',
+      phoneIsoCode: map['phoneIsoCode'] as String? ?? '',
+      customType: map['customType'].runtimeType == String
+          ? {'${map['customType']}': map['customType']}
+          : map['customType'] as Map<String, dynamic>? ?? {},
+      assetList: map['assetList'] == null
+          ? []
+          : List<Map<String, IsmChatBackgroundModel>>.from(
+              map['assetList'].map(
+                (x) => Map.from(x).map(
+                  (k, v) => MapEntry<String, IsmChatBackgroundModel>(
+                    k,
+                    v.runtimeType == String
+                        ? IsmChatBackgroundModel.fromJson(v)
+                        : IsmChatBackgroundModel.fromMap(v),
                   ),
                 ),
-              ).toList(),
-        duration: Duration(seconds: map['duration'] as int? ?? 0),
-        replyMessage: map['replyMessage'] != null
-            ? IsmChatReplyMessageModel.fromMap(
-                map['replyMessage'] as Map<String, dynamic>)
-            : null,
-        contacts: map['contacts'] != null
-            ? List<IsmChatContactMetaDatModel>.from(
-                (map['contacts'] as List).map<IsmChatContactMetaDatModel?>(
-                  (x) => IsmChatContactMetaDatModel.fromMap(
-                      x as Map<String, dynamic>),
-                ),
-              )
-            : null,
-        senderInfo: map['senderInfo'] != null
-            ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
-            : null,
-        isDownloaded: map['isDownloaded'] as bool? ?? true,
-        messageSentAt: map['messageSentAt'] as int? ?? 0,
-        aboutText: map['aboutText'] != null
-            ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
-            : map['about'] != null
-                ? AboutTextModel(title: map['about'] as String? ?? '')
-                : null,
-      );
+              ),
+            ).toList(),
+      duration: Duration(seconds: map['duration'] as int? ?? 0),
+      replyMessage: map['replyMessage'] != null
+          ? IsmChatReplyMessageModel.fromMap(
+              map['replyMessage'] as Map<String, dynamic>)
+          : null,
+      contacts: map['contacts'] != null
+          ? List<IsmChatContactMetaDatModel>.from(
+              (map['contacts'] as List).map<IsmChatContactMetaDatModel?>(
+                (x) => IsmChatContactMetaDatModel.fromMap(
+                    x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+      senderInfo: map['senderInfo'] != null
+          ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
+          : null,
+      isDownloaded: map['isDownloaded'] as bool? ?? true,
+      messageSentAt: map['messageSentAt'] as int? ?? 0,
+      aboutText: map['aboutText'] != null
+          ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
+          : map['about'] != null
+              ? AboutTextModel(title: map['about'] as String? ?? '')
+              : null,
+    );
+
+    data = data.copyWith(
+      isDownloaded: IsmChatProperties.chatPageProperties.features.contains(
+        IsmChatFeature.mediaDownload,
+      ),
+    );
+    return data;
+  }
 
   factory IsmChatMetaData.fromJson(String? source) {
     if (source?.isEmpty == true || source == null) {
