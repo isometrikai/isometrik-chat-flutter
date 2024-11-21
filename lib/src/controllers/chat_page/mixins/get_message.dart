@@ -271,6 +271,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         }
 
         IsmChatLog.success('Updated conversation');
+        unawaited(_controller.conversationController.getBlockUser());
       }
       if (data.statusCode == 400 && conversationId.isNotEmpty) {
         _controller.isActionAllowed = true;
