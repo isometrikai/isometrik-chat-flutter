@@ -91,7 +91,7 @@ class ChatList extends StatelessWidget {
                 text: 'No Messages',
               ),
               onMessageTap: (p0, message, _) async {
-                return true;
+                return (<String, dynamic>{}, false);
               },
 
               attachments: const [
