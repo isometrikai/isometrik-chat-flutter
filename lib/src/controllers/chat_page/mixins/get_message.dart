@@ -235,6 +235,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         _controller.conversation = data.data.copyWith(
           conversationId: conversationId,
           metaData: _controller.conversation?.metaData,
+          outSideMessage: _controller.conversation?.outSideMessage,
         );
         IsmChatProperties.chatPageProperties.onCoverstaionStatus
             ?.call(Get.context!, _controller.conversation!);
