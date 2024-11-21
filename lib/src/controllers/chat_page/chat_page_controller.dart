@@ -499,9 +499,8 @@ class IsmChatPageController extends GetxController
     _startAnimated();
     _scrollListener();
     _intputAndFocustNode();
-    IsmChatLog.error('step1');
+
     if (conversationController.currentConversation != null) {
-      IsmChatLog.error('step2');
       _currentUser();
       conversation = conversationController.currentConversation;
       await Future.delayed(Duration.zero);
@@ -611,13 +610,11 @@ class IsmChatPageController extends GetxController
     _getBackGroundAsset();
     if (!isBroadcast) {
       await getMessagesFromDB(conversationId);
-      await Future.wait([
-        getMessagesFromAPI(),
-        getConverstaionDetails(
-          conversationId: conversationId,
-          includeMembers: conversation?.isGroup == true ? true : false,
-        ),
-      ]);
+      await getConverstaionDetails(
+        conversationId: conversationId,
+        includeMembers: conversation?.isGroup == true ? true : false,
+      );
+      await getMessagesFromAPI();
       await readAllMessages(
         conversationId: conversationId,
         timestamp: messages.isNotEmpty
@@ -649,12 +646,13 @@ class IsmChatPageController extends GetxController
           conversation?.chatName ?? ''
         ],
       );
-      await getMessagesFromAPI(
-        conversationId: conversation?.conversationId ?? '',
-      );
+
       await getConverstaionDetails(
         conversationId: conversation?.conversationId ?? '',
         includeMembers: conversation?.isGroup == true ? true : false,
+      );
+      await getMessagesFromAPI(
+        conversationId: conversation?.conversationId ?? '',
       );
       checkUserStatus();
     }
@@ -662,12 +660,9 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> sendWithOutSideMessage() async {
-    IsmChatLog.error('step3 ${conversation?.outSideMessage?.toMap()} ');
     if (conversation?.outSideMessage != null) {
-      IsmChatLog.error('step4');
       await Future.delayed(const Duration(milliseconds: 100));
       if (conversation?.outSideMessage?.aboutText != null) {
-        IsmChatLog.error('step5');
         sendAboutTextMessage(
           conversationId: conversation?.conversationId ?? '',
           userId: conversation?.opponentDetails?.userId ?? '',
@@ -676,7 +671,6 @@ class IsmChatPageController extends GetxController
         );
       } else if (!(conversation?.outSideMessage?.imageUrl.isNullOrEmpty ==
           true)) {
-        IsmChatLog.error('step6');
         await sendMessageWithImageUrl(
           conversationId: conversation?.conversationId ?? '',
           userId: conversation?.opponentDetails?.userId ?? '',
@@ -686,7 +680,6 @@ class IsmChatPageController extends GetxController
       } else if (!(conversation
               ?.outSideMessage?.messageFromOutSide.isNullOrEmpty ==
           true)) {
-        IsmChatLog.error('step7');
         chatInputController.text =
             conversation?.outSideMessage?.messageFromOutSide ?? '';
         if (chatInputController.text.isNotEmpty) {
@@ -697,7 +690,6 @@ class IsmChatPageController extends GetxController
           );
         }
       }
-      IsmChatLog.error('step8');
     }
   }
 
