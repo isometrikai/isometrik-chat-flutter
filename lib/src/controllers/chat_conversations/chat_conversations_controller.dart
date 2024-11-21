@@ -566,7 +566,6 @@ class IsmChatConversationsController extends GetxController {
     }
     unawaited(getBlockUser());
     IsmChatUtility.showToast(IsmChatStrings.unBlockedSuccessfully);
-
     if (fromUser) {
       return false;
     }
@@ -890,7 +889,7 @@ class IsmChatConversationsController extends GetxController {
     isConversationsLoading = false;
   }
 
-  Future<void> getBlockUser({bool isLoading = false}) async {
+  Future<List<UserDetails>> getBlockUser({bool isLoading = false}) async {
     var users = await _viewModel.getBlockUser(
       skip: 0,
       limit: 20,
@@ -901,6 +900,7 @@ class IsmChatConversationsController extends GetxController {
     } else {
       blockUsers = [];
     }
+    return blockUsers;
   }
 
   Future<void> getUserData({bool isLoading = false}) async {

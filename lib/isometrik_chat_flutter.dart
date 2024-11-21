@@ -923,4 +923,7 @@ class IsmChat {
   void unSubscribeTopics(List<String> topic) {
     _delegate.unSubscribeTopics(topic);
   }
+
+  Future<List<UserDetails>> getBlockUser({bool isLoading = false}) async =>
+      await _delegate.getBlockUser(isLoading: isLoading);
 }

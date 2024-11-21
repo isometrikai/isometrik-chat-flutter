@@ -151,12 +151,16 @@ class IsmChatConversationsViewModel {
         messageId: messageId,
       );
 
-  Future<IsmChatUserListModel?> getBlockUser(
-          {required int? skip,
-          required int limit,
-          required bool isLoading}) async =>
+  Future<IsmChatUserListModel?> getBlockUser({
+    required int? skip,
+    required int limit,
+    required bool isLoading,
+  }) async =>
       await _repository.getBlockUser(
-          skip: skip, limit: limit, isLoading: isLoading);
+        skip: skip,
+        limit: limit,
+        isLoading: isLoading,
+      );
 
   Future<IsmChatResponseModel?> updateConversation({
     required String conversationId,

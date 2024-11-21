@@ -1889,19 +1889,18 @@ class IsmChatPageController extends GetxController
     if (!blokedUser) {
       return;
     }
-    if (blokedUser == true) {
-      IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
-      await Future.wait([
-        conversationController.getBlockUser(),
-        if (fromUser == false) ...[
-          getConverstaionDetails(
-            conversationId: conversation?.conversationId ?? '',
-            includeMembers: includeMembers,
-          ),
-          getMessagesFromAPI()
-        ]
-      ]);
-    }
+
+    IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
+    await Future.wait([
+      conversationController.getBlockUser(),
+      if (fromUser == false) ...[
+        getConverstaionDetails(
+          conversationId: conversation?.conversationId ?? '',
+          includeMembers: includeMembers,
+        ),
+        getMessagesFromAPI()
+      ]
+    ]);
   }
 
   Future<void> unblockUser(

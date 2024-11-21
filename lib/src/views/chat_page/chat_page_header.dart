@@ -441,10 +441,12 @@ class _PopupMenuWidget extends StatelessWidget {
                 .popupItems!(context, controller.conversation!)
                 .map(
               (e) => PopupMenuItem(
-                value: IsmChatProperties.chatPageProperties.header!
-                        .popupItems!(context, controller.conversation!)
-                        .indexOf(e) +
-                    6,
+                value:
+                    (IsmChatProperties.chatPageProperties.header?.popupItems!(
+                                    context, controller.conversation!) ??
+                                [])
+                            .indexOf(e) +
+                        6,
                 child: Row(
                   children: [
                     Icon(

@@ -569,4 +569,13 @@ class IsmChatDelegate {
       Get.find<IsmChatMqttController>().unSubscribeTopics(topic);
     }
   }
+
+  Future<List<UserDetails>> getBlockUser({bool isLoading = false}) async {
+    if (Get.isRegistered<IsmChatConversationsController>()) {
+      return await Get.find<IsmChatConversationsController>()
+          .getBlockUser(isLoading: isLoading);
+    } else {
+      return [];
+    }
+  }
 }
