@@ -958,7 +958,7 @@ mixin IsmChatMqttEventMixin {
     if ((actionModel.isGroup ?? false) &&
         actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
-    } else if (actionModel.opponentDetails?.userId !=
+    } else if (actionModel.userDetails?.userId ==
         _controller.userConfig?.userId) {
       return;
     }
@@ -968,12 +968,9 @@ mixin IsmChatMqttEventMixin {
       body: 'Conversation Created',
       conversationId: actionModel.conversationId ?? '',
     );
-
-    if (!Get.isRegistered<IsmChatConversationsController>()) return;
-
-    var ismChatConversationController =
-        Get.find<IsmChatConversationsController>();
-    await ismChatConversationController.getChatConversations();
+    if (Get.isRegistered<IsmChatConversationsController>()) {
+      await Get.find<IsmChatConversationsController>().getChatConversations();
+    }
   }
 
   void _handleAddAndRemoveReaction(IsmChatMqttActionModel actionModel) async {
