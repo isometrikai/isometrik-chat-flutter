@@ -82,11 +82,6 @@ class IsmChatMetaData {
               : null,
     );
 
-    // data = data.copyWith(
-    //   isDownloaded: IsmChatProperties.chatPageProperties.features.contains(
-    //     IsmChatFeature.mediaDownload,
-    //   ),
-    // );
     return data;
   }
 

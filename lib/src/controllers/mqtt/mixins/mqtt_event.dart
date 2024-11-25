@@ -257,12 +257,6 @@ mixin IsmChatMqttEventMixin {
   }
 
   Future<void> _handleMessage(IsmChatMessageModel message) async {
-    // Todo Will chaeck this
-    // message.metaData = message.metaData?.copyWith(
-    //   isDownloaded: IsmChatProperties.chatPageProperties.features.contains(
-    //     IsmChatFeature.mediaDownload,
-    //   ),
-    // );
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
@@ -964,7 +958,7 @@ mixin IsmChatMqttEventMixin {
     if ((actionModel.isGroup ?? false) &&
         actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
-    } else if (actionModel.opponentDetails?.userId ==
+    } else if (actionModel.opponentDetails?.userId !=
         _controller.userConfig?.userId) {
       return;
     }
