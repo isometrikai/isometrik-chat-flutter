@@ -1,6 +1,6 @@
 {
-  "name": "Flutter chat",
-  "short_name": "Flutter chat",
+  "name": "Isomterik flutter web chat",
+  "short_name": "Isomterik flutter web chat",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",

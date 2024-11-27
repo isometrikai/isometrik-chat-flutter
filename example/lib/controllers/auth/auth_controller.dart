@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:chat_component_example/res/res.dart';
-import 'package:chat_component_example/utilities/utilities.dart';
-import 'package:chat_component_example/view_models/view_models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter_example/res/res.dart';
+import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
+import 'package:isometrik_chat_flutter_example/view_models/view_models.dart';
 
 class AuthController extends GetxController {
   final AuthViewModel _viewModel;

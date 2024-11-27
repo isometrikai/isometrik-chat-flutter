@@ -1,5 +1,5 @@
-import 'package:chat_component_example/view_models/view_models.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter_example/view_models/view_models.dart';
 
 import 'auth_controller.dart';
 

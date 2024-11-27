@@ -1,6 +1,6 @@
-import 'package:chat_component_example/res/dimens.dart';
-import 'package:chat_component_example/res/res.dart';
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter_example/res/dimens.dart';
+import 'package:isometrik_chat_flutter_example/res/res.dart';
 
 class Button extends StatelessWidget {
   const Button({

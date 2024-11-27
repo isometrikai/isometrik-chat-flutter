@@ -1,8 +1,8 @@
-import 'package:chat_component_example/controllers/controllers.dart';
-import 'package:chat_component_example/views/signup_view.dart';
-import 'package:chat_component_example/views/views.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter_example/controllers/controllers.dart';
+import 'package:isometrik_chat_flutter_example/views/signup_view.dart';
+import 'package:isometrik_chat_flutter_example/views/views.dart';
 
 class AppPages {
   static final pages = [

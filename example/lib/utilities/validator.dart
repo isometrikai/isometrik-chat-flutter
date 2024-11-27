@@ -1,5 +1,5 @@
-import 'package:chat_component_example/res/strings.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter_example/res/strings.dart';
 
 class AppValidator {
   const AppValidator._();

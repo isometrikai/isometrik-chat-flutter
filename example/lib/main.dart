@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:chat_component_example/res/res.dart';
-import 'package:chat_component_example/utilities/utilities.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter_example/res/res.dart';
+import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'data/data.dart';
@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
       child: GetMaterialApp(
         key: const Key('ChatApp'),
 
-        title: 'Flutter chat',
+        title: 'Isomterik flutter web chat',
         locale: const Locale('en', 'US'),
         // localizationsDelegates:  [
         //   ...GlobalMaterialLocalizations.delegates,

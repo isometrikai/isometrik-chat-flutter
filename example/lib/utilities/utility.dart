@@ -1,6 +1,6 @@
-import 'package:chat_component_example/res/res.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter_example/res/res.dart';
 
 class Utility {
   const Utility._();

@@ -131,9 +131,10 @@ enum IsmChatCustomMessageType {
     if (body.isEmpty) {
       return IsmChatCustomMessageType.text;
     }
-    if (body.toLowerCase().contains('map')) {
-      return IsmChatCustomMessageType.location;
-    }
+
+    // if (body.toLowerCase().contains('map')) {
+    //   return IsmChatCustomMessageType.location;
+    // }
 
     /// This code run for react web messages
     // if (IsmChatConstants.imageExtensions

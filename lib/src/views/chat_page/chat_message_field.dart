@@ -320,31 +320,28 @@ class _ReplyMessage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  controller.replayMessage?.sentByMe ?? false
-                      ? IsmChatStrings.you
-                      : IsmChatProperties.chatPageProperties.header?.title
-                              ?.call(context, controller.conversation!,
-                                  controller.conversation!.chatName) ??
-                          controller.conversation?.chatName.capitalizeFirst ??
-                          '',
-                  style: IsmChatStyles.w600White14,
-                ),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: Get.width * 0.7,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    controller.replayMessage?.sentByMe ?? false
+                        ? IsmChatStrings.you
+                        : IsmChatProperties.chatPageProperties.header?.title
+                                ?.call(context, controller.conversation!,
+                                    controller.conversation!.chatName) ??
+                            controller.conversation?.chatName.capitalizeFirst ??
+                            '',
+                    style: IsmChatStyles.w600White14,
                   ),
-                  child: Text(
+                  Text(
                     messageBody,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             IsmChatTapHandler(
               onTap: () {
@@ -352,7 +349,7 @@ class _ReplyMessage extends StatelessWidget {
               },
               child: Icon(
                 Icons.close_rounded,
-                size: IsmChatDimens.sixteen,
+                size: IsmChatDimens.twenty,
               ),
             ),
           ],

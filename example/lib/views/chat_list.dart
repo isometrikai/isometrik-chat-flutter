@@ -1,10 +1,10 @@
-import 'package:chat_component_example/controllers/controllers.dart';
-import 'package:chat_component_example/res/res.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter_example/controllers/controllers.dart';
+import 'package:isometrik_chat_flutter_example/res/res.dart';
 
 class ChatList extends StatelessWidget {
   const ChatList({super.key});

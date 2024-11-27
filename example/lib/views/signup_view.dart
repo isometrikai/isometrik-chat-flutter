@@ -1,9 +1,9 @@
-import 'package:chat_component_example/controllers/auth/auth_controller.dart';
-import 'package:chat_component_example/res/res.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter_example/controllers/auth/auth_controller.dart';
+import 'package:isometrik_chat_flutter_example/res/res.dart';
 
 import '../res/dimens.dart';
 import '../widgets/widgets.dart';

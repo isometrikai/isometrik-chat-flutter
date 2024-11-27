@@ -1,6 +1,6 @@
-import 'package:chat_component_example/views/login_view.dart';
-import 'package:chat_component_example/views/signup_view.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter_example/views/login_view.dart';
+import 'package:isometrik_chat_flutter_example/views/signup_view.dart';
 
 class RouteManagement {
   const RouteManagement._();

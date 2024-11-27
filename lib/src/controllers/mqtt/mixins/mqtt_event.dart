@@ -454,7 +454,13 @@ mixin IsmChatMqttEventMixin {
           title: Text(notificationTitle.isNotEmpty
               ? notificationTitle
               : message.notificationTitle ?? ''),
-          description: Text(mqttMessage ?? ''),
+          description: Expanded(
+            child: Text(
+              mqttMessage ?? '',
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           progressIndicatorColor:
               IsmChatConfig.chatTheme.primaryColor ?? Colors.blue,
         ).show(IsmChatConfig.context ??
