@@ -474,32 +474,32 @@ mixin IsmChatMqttEventMixin {
     required String body,
     required String conversationId,
   }) {
-    LocalNoticeService().cancelAllNotification();
-    LocalNoticeService().addNotification(
-      title, // Add the  sender user name here
-      body, // MessageName
-      DateTime.now().millisecondsSinceEpoch + 1 * 1000,
-      sound: '',
-      channel: 'message',
-      payload: {
-        'conversationId': conversationId,
-      },
-    );
-    if (GetPlatform.isAndroid) {
-      if (IsmChatConfig.showNotification != null) {
-        IsmChatConfig.showNotification?.call(
-          title,
-          body,
-          conversationId,
-        );
-      } else {
-        LocalNoticeService().showFlutterNotification(
-          title,
-          body,
-          conversataionId: conversationId,
-        );
-      }
+    // LocalNoticeService().cancelAllNotification();
+    // LocalNoticeService().addNotification(
+    //   title, // Add the  sender user name here
+    //   body, // MessageName
+    //   DateTime.now().millisecondsSinceEpoch + 1 * 1000,
+    //   sound: '',
+    //   channel: 'message',
+    //   payload: {
+    //     'conversationId': conversationId,
+    //   },
+    // );
+    // if (GetPlatform.isAndroid) {
+    if (IsmChatConfig.showNotification != null) {
+      IsmChatConfig.showNotification?.call(
+        title,
+        body,
+        conversationId,
+      );
+    } else {
+      LocalNoticeService().showFlutterNotification(
+        title,
+        body,
+        conversataionId: conversationId,
+      );
     }
+    // }
   }
 
   void _handleTypingEvent(IsmChatMqttActionModel actionModel) {
