@@ -76,14 +76,31 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                if (profileImage != null)
-                  profileImage!
-                else
-                  IsmChatImage.profile(
-                    controller.userDetails?.userProfileImageUrl ?? '',
-                    name: controller.userDetails?.userName,
-                    dimensions: IsmChatDimens.appBarHeight * 0.8,
-                  ),
+                Stack(children: [
+                  if (profileImage != null) ...[
+                    profileImage ?? IsmChatDimens.box0
+                  ] else ...[
+                    IsmChatImage.profile(
+                      controller.userDetails?.userProfileImageUrl ?? '',
+                      name: controller.userDetails?.userName,
+                      dimensions: IsmChatDimens.appBarHeight * 0.8,
+                    )
+                  ],
+                  Positioned(
+                    top: IsmChatDimens.eight,
+                    right: IsmChatDimens.zero,
+                    child: Container(
+                      height: IsmChatDimens.eight,
+                      width: IsmChatDimens.eight,
+                      decoration: BoxDecoration(
+                        color: IsmChat.i.isMqttConnected
+                            ? IsmChatColors.greenColor
+                            : IsmChatColors.redColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  )
+                ]),
                 IsmChatDimens.boxWidth8,
                 Text(
                   title ?? IsmChatStrings.chats,
