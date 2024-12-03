@@ -1206,7 +1206,9 @@ class IsmChatPageController extends GetxController
             messagesScrollController.position.maxScrollExtent.toInt()) {
           canCallCurrentApi = false;
           await getMessagesFromAPI(
-              forPagination: true, lastMessageTimestamp: 0);
+            forPagination: true,
+            lastMessageTimestamp: 0,
+          );
         }
         toggleEmojiBoard(false, false);
         if (Get.height * 0.3 < (messagesScrollController.offset)) {

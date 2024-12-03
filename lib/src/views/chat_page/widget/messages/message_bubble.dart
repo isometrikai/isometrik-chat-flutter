@@ -177,7 +177,6 @@ class MessageBubble extends StatelessWidget {
                             ],
                           ],
                         ),
-                        // BlurFilter(child:),
                         IsmChatMessageWrapper(_message)
                       ],
                     ),
