@@ -796,6 +796,19 @@ class IsmChatConversationsController extends GetxController {
     }
     conversations.sort((a, b) => (b.lastMessageDetails?.sentAt ?? 0)
         .compareTo(a.lastMessageDetails?.sentAt ?? 0));
+
+    if (IsmChatConfig.sortConversationWithIdentifier != null) {
+      var target = IsmChatConfig.sortConversationWithIdentifier?.call();
+      conversations.sort((a, b) {
+        if (a.opponentDetails?.userIdentifier == target) {
+          return -1;
+        }
+        if (b.opponentDetails?.userIdentifier == target) {
+          return 1;
+        }
+        return -1;
+      });
+    }
   }
 
   String getConversationId(String userId) {

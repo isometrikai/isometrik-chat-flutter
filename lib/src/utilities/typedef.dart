@@ -114,6 +114,13 @@ typedef MessageCallback = bool Function(
   IsmChatMessageModel,
 );
 
+typedef ConversationCallback = bool Function(
+  BuildContext,
+  IsmChatConversationModel,
+);
+
 typedef ResponseCallback = void Function(
   IsmChatResponseModel?,
 );
+
+typedef SortingConversationCallback = String Function();

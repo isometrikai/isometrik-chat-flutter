@@ -37,6 +37,7 @@ class IsmChatDelegate {
     bool isPaidWalletMessage = false,
     IsmPaidWalletConfig? paidWalletConfig,
     ResponseCallback? paidWalletMessageApiResponse,
+    SortingConversationCallback? sortConversationWithIdentifier,
   }) async {
     _config = config;
     IsmChatConfig.context = context;
@@ -45,6 +46,8 @@ class IsmChatDelegate {
     IsmChatConfig.communicationConfig = config;
     IsmChatConfig.shouldSetupMqtt = shouldSetupMqtt;
     IsmChatConfig.showNotification = showNotification;
+    IsmChatConfig.sortConversationWithIdentifier =
+        sortConversationWithIdentifier;
     IsmChatConfig.shouldPendingMessageSend = shouldPendingMessageSend;
     IsmChatConfig.isPaidWalletMessage = isPaidWalletMessage;
     IsmChatConfig.paidWalletModel = paidWalletConfig;

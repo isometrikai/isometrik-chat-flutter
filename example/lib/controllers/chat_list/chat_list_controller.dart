@@ -8,6 +8,8 @@ import 'package:isometrik_chat_flutter_example/res/res.dart';
 import 'package:isometrik_chat_flutter_example/utilities/config.dart';
 import 'package:isometrik_chat_flutter_example/utilities/device_config.dart';
 
+import '../../utilities/local_notice_service.dart';
+
 class ChatListController extends GetxController {
   UserDetailsModel userDetails = UserDetailsModel();
 
@@ -50,6 +52,13 @@ class ChatListController extends GetxController {
           deviceId: deviceConfig.deviceId ?? '',
         ),
       ),
+      showNotification: (title, body, conversataionId) {
+        LocalNoticeService().showFlutterNotification(
+          title,
+          body,
+          conversataionId: conversataionId,
+        );
+      },
     );
   }
 

@@ -246,11 +246,17 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                     ),
             onTap: () async {
               if (IsmChatProperties.conversationProperties.onChatTap != null) {
-                IsmChatProperties.conversationProperties.onChatTap!(
-                    context, widget.conversation);
+                IsmChatProperties.conversationProperties.onChatTap?.call(
+                  context,
+                  widget.conversation,
+                );
               }
-              controller.updateLocalConversation(widget.conversation);
-              await controller.goToChatPage();
+              if (IsmChatProperties.conversationProperties.shouldGoToChatPage
+                      ?.call(context, widget.conversation) ??
+                  true) {
+                controller.updateLocalConversation(widget.conversation);
+                await controller.goToChatPage();
+              }
             },
           ),
         ),

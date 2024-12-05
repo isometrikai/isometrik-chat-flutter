@@ -18,6 +18,7 @@ class IsmChatConfig {
   static String dbName = IsmChatStrings.dbname;
   static Duration animationDuration = const Duration(milliseconds: 300);
   static NotificaitonCallback? showNotification;
+  static SortingConversationCallback? sortConversationWithIdentifier;
   // static bool isShowMqttConnectErrorDailog = false;
 
   /// This callback is to be used if you want to make certain changes while conversation data is being parsed from the API

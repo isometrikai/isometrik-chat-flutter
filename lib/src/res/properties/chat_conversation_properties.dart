@@ -28,6 +28,7 @@ class IsmChatConversationProperties {
     this.appBar,
     this.header,
     this.isHeaderAppBar = false,
+    this.shouldGoToChatPage,
     this.headerHeight,
     this.thirdColumnWidget,
     this.conversationPredicate,
@@ -183,6 +184,10 @@ class IsmChatConversationProperties {
 
   /// The height of the header.
   final double? headerHeight;
+
+  /// Whether to go to chat page when a chat item is tapped.
+  ///
+  final ConversationCallback? shouldGoToChatPage;
 
   /// Provide this allowedConversations parameter, to allow different types of conversations.
   ///

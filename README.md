@@ -12,23 +12,6 @@ For detailed setup instructions, please refer to the platform-specific guides an
 
 - [Web](./README_web.md)
 
-## Initialization
-
-Before using the Isometrik Chat Flutter SDK, you need to ensure the necessary initializations are done.
-
-```dart
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await LocalNoticeService().setup();
-  runApp(MyApp());
-}
-```
-
-## Explanation
-
-`await LocalNoticeService().setup()`:
-Sets up the local notification service. This ensures that the app can handle in-app notifications properly.
-
 ## Usage
 
 The Isometrik Chat Flutter SDK supports various use cases to enhance your chat functionality:

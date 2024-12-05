@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
+import 'package:isometrik_chat_flutter_example/utilities/local_notice_service.dart';
 import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
 import 'package:url_strategy/url_strategy.dart';
 
