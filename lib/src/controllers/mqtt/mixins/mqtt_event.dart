@@ -252,7 +252,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   Future<void> _handleMessage(IsmChatMessageModel message) async {
-    if (messageId == message.messageId) return;
+    if (messageId != message.messageId) return;
     messageId = message.messageId ?? '';
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
@@ -347,7 +347,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleLocalNotification(IsmChatMessageModel message) {
-    if (messageId == message.messageId) return;
+    if (messageId != message.messageId) return;
     messageId = message.messageId ?? '';
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
       return;
@@ -729,7 +729,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleBlockUserOrUnBlock(IsmChatMqttActionModel actionModel) async {
-    if (messageId == actionModel.sentAt.toString()) return;
+    if (messageId != actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
     if (actionModel.initiatorDetails?.userId ==
         _controller.userConfig?.userId) {
@@ -754,7 +754,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleOneToOneCall(IsmChatMqttActionModel actionModel) async {
-    if (messageId == actionModel.sentAt.toString()) return;
+    if (messageId != actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
     if (actionModel.initiatorId == _controller.userConfig?.userId) return;
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
@@ -770,7 +770,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleGroupRemoveAndAddUser(IsmChatMqttActionModel actionModel) async {
-    if (messageId == actionModel.sentAt.toString()) return;
+    if (messageId != actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -866,7 +866,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleMemberJoinAndLeave(IsmChatMqttActionModel actionModel) async {
-    if (messageId == actionModel.sentAt.toString()) return;
+    if (messageId != actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -887,7 +887,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleAdminRemoveAndAdd(IsmChatMqttActionModel actionModel) async {
-    if (messageId == actionModel.sentAt.toString()) return;
+    if (messageId != actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -1052,7 +1052,7 @@ mixin IsmChatMqttEventMixin {
   }
 
   Future<void> _updateOwnMessage(IsmChatMessageModel message) async {
-    if (messageId == message.messageId) return;
+    if (messageId != message.messageId) return;
     messageId = message.messageId ?? '';
     var dbBox = IsmChatConfig.dbWrapper;
     final chatPendingMessages = await dbBox?.getConversation(
