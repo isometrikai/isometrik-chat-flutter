@@ -41,6 +41,9 @@ mixin IsmChatMqttEventMixin {
       }
     } else {
       var message = IsmChatMessageModel.fromMap(payload);
+
+      if (messageId == message.messageId) return;
+      messageId = message.messageId ?? '';
       _handleLocalNotification(message);
       deliverdActions.clear();
       readActions.clear();
@@ -257,8 +260,6 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleMessage(IsmChatMessageModel message) async {
-    if (messageId == message.messageId) return;
-    messageId = message.messageId ?? '';
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
@@ -352,8 +353,6 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleLocalNotification(IsmChatMessageModel message) {
-    if (messageId == message.messageId) return;
-    messageId = message.messageId ?? '';
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
       return;
     }
