@@ -253,16 +253,22 @@ class IsmChatUtility {
           toolbarWidgetColor: IsmChatColors.whiteColor,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
-          // cropStyle: CropStyle.circle,
+          cropStyle: CropStyle.circle,
         ),
         IOSUiSettings(
           title: 'Cropper',
-
-          // cropStyle: CropStyle.circle,
-        )
+          cropStyle: CropStyle.circle,
+        ),
+        WebUiSettings(
+          context: Get.context!,
+        ),
       ],
     );
-    return [XFile(croppedFile!.path)];
+
+    if (croppedFile != null) {
+      return [XFile(croppedFile.path)];
+    }
+    return [];
   }
 
   /// Returns text representation of a provided bytes value (e.g. 1kB, 1GB)

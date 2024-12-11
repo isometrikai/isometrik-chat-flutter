@@ -593,6 +593,7 @@ class IsmChatConversationsController extends GetxController {
     if (file.isEmpty) {
       return '';
     }
+
     Uint8List? bytes;
     String? extension;
     if (kIsWeb) {
@@ -615,6 +616,7 @@ class IsmChatConversationsController extends GetxController {
     if (file.isEmpty) {
       return;
     }
+
     var bytes = await file.first?.readAsBytes();
     var fileExtension = file.first?.path.split('.').last;
     await getPresignedUrl(fileExtension!, bytes!);
