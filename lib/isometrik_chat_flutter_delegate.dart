@@ -578,6 +578,7 @@ class IsmChatDelegate {
     if (Get.isRegistered<IsmChatPageController>()) {
       final controller = Get.find<IsmChatPageController>();
       await controller.getConverstaionDetails();
+      await controller.getMessagesFromAPI();
     }
   }
 }

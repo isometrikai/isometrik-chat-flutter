@@ -920,4 +920,6 @@ class IsmChat {
 
   Future<List<UserDetails>> getBlockUser({bool isLoading = false}) async =>
       await _delegate.getBlockUser(isLoading: isLoading);
+
+  Future<void> updateChatPage() async => await _delegate.updateChatPage();
 }
