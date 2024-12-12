@@ -618,72 +618,74 @@ mixin IsmChatMqttEventMixin {
     if (IsmChatConfig.dbWrapper == null) {
       return;
     }
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: actionModel.conversationId);
-    var allMessages = conversation?.messages ?? [];
-    var modifiedMessages = <IsmChatMessageModel>[];
-    for (var message in allMessages) {
-      if (message.deliveredToAll == true && message.readByAll == true) {
-        modifiedMessages.add(message);
-      } else {
-        var isDelivered = message.deliveredTo
-            ?.any((e) => e.userId == actionModel.userDetails?.userId);
-        var isRead = message.readBy
-            ?.any((e) => e.userId == actionModel.userDetails?.userId);
-        var deliveredTo = message.deliveredTo ?? [];
-        var readBy = message.readBy ?? [];
-        var modified = message.copyWith(
-          deliveredTo: isDelivered == true
-              ? deliveredTo
-              : [
-                  ...deliveredTo,
-                  MessageStatus(
-                    userId: actionModel.userDetails?.userId ?? '',
-                    timestamp: actionModel.sentAt,
-                  ),
-                ],
-          readBy: isRead == true
-              ? readBy
-              : [
-                  ...readBy,
-                  MessageStatus(
-                    userId: actionModel.userDetails?.userId ?? '',
-                    timestamp: actionModel.sentAt,
-                  ),
-                ],
-        );
+    var conversation = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: actionModel.conversationId);
+    if (conversation != null) {
+      var allMessages = conversation.messages ?? [];
+      var modifiedMessages = <IsmChatMessageModel>[];
+      for (var message in allMessages) {
+        if (message.deliveredToAll == true && message.readByAll == true) {
+          modifiedMessages.add(message);
+        } else {
+          var isDelivered = message.deliveredTo
+              ?.any((e) => e.userId == actionModel.userDetails?.userId);
+          var isRead = message.readBy
+              ?.any((e) => e.userId == actionModel.userDetails?.userId);
+          var deliveredTo = message.deliveredTo ?? [];
+          var readBy = message.readBy ?? [];
+          var modified = message.copyWith(
+            deliveredTo: isDelivered == true
+                ? deliveredTo
+                : [
+                    ...deliveredTo,
+                    MessageStatus(
+                      userId: actionModel.userDetails?.userId ?? '',
+                      timestamp: actionModel.sentAt,
+                    ),
+                  ],
+            readBy: isRead == true
+                ? readBy
+                : [
+                    ...readBy,
+                    MessageStatus(
+                      userId: actionModel.userDetails?.userId ?? '',
+                      timestamp: actionModel.sentAt,
+                    ),
+                  ],
+          );
 
-        modified = modified.copyWith(
-          readByAll:
-              modified.readBy?.length == (conversation?.membersCount ?? 0) - 1
-                  ? true
-                  : false,
-          deliveredToAll: modified.deliveredTo?.length ==
-                  (conversation?.membersCount ?? 0) - 1
-              ? true
-              : false,
-        );
+          modified = modified.copyWith(
+            readByAll:
+                modified.readBy?.length == (conversation.membersCount ?? 0) - 1
+                    ? true
+                    : false,
+            deliveredToAll: modified.deliveredTo?.length ==
+                    (conversation.membersCount ?? 0) - 1
+                ? true
+                : false,
+          );
 
-        modifiedMessages.add(modified);
+          modifiedMessages.add(modified);
+        }
       }
-    }
-    conversation = conversation?.copyWith(
-      messages: modifiedMessages,
-      lastMessageDetails: conversation.lastMessageDetails?.copyWith(
-        deliverCount: modifiedMessages.isEmpty
-            ? 1
-            : modifiedMessages.last.deliveredTo?.length ?? 0,
-        readCount: modifiedMessages.isEmpty
-            ? 1
-            : modifiedMessages.last.readBy?.length ?? 0,
-        readBy: modifiedMessages.isEmpty ? [] : modifiedMessages.last.readBy,
-        deliveredTo:
-            modifiedMessages.isEmpty ? [] : modifiedMessages.last.deliveredTo,
-      ),
-    );
+      conversation = conversation.copyWith(
+        messages: modifiedMessages,
+        lastMessageDetails: conversation.lastMessageDetails?.copyWith(
+          deliverCount: modifiedMessages.isEmpty
+              ? 1
+              : modifiedMessages.last.deliveredTo?.length ?? 0,
+          readCount: modifiedMessages.isEmpty
+              ? 1
+              : modifiedMessages.last.readBy?.length ?? 0,
+          readBy: modifiedMessages.isEmpty ? [] : modifiedMessages.last.readBy,
+          deliveredTo:
+              modifiedMessages.isEmpty ? [] : modifiedMessages.last.deliveredTo,
+        ),
+      );
 
-    await IsmChatConfig.dbWrapper
-        ?.saveConversation(conversation: conversation!);
+      await IsmChatConfig.dbWrapper
+          ?.saveConversation(conversation: conversation);
+    }
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation?.conversationId ==
