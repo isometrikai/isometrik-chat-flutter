@@ -610,10 +610,7 @@ class IsmChatPageController extends GetxController
     _getBackGroundAsset();
     if (!isBroadcast) {
       await getMessagesFromDB(conversationId);
-      await getConverstaionDetails(
-        conversationId: conversationId,
-        includeMembers: conversation?.isGroup == true ? true : false,
-      );
+      await getConverstaionDetails();
       await getMessagesFromAPI();
       await readAllMessages(
         conversationId: conversationId,
@@ -647,13 +644,8 @@ class IsmChatPageController extends GetxController
         ],
       );
 
-      await getConverstaionDetails(
-        conversationId: conversation?.conversationId ?? '',
-        includeMembers: conversation?.isGroup == true ? true : false,
-      );
-      await getMessagesFromAPI(
-        conversationId: conversation?.conversationId ?? '',
-      );
+      await getConverstaionDetails();
+      await getMessagesFromAPI();
       checkUserStatus();
     }
     isMessagesLoading = false;
@@ -1852,9 +1844,7 @@ class IsmChatPageController extends GetxController
         }
         if (conversation?.conversationId != null ||
             conversation?.conversationId?.isNotEmpty == true) {
-          getConverstaionDetails(
-              conversationId: conversation?.conversationId ?? '',
-              includeMembers: conversation?.isGroup == true ? true : false);
+          getConverstaionDetails();
         }
       },
     );
@@ -1871,7 +1861,6 @@ class IsmChatPageController extends GetxController
 
   Future<void> blockUser({
     required String opponentId,
-    bool includeMembers = false,
     bool isLoading = false,
     bool fromUser = false,
     required bool userBlockOrNot,
@@ -1895,19 +1884,12 @@ class IsmChatPageController extends GetxController
     IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
     await Future.wait([
       conversationController.getBlockUser(),
-      if (fromUser == false) ...[
-        getConverstaionDetails(
-          conversationId: conversation?.conversationId ?? '',
-          includeMembers: includeMembers,
-        ),
-        getMessagesFromAPI()
-      ]
+      if (fromUser == false) ...[getConverstaionDetails(), getMessagesFromAPI()]
     ]);
   }
 
   Future<void> unblockUser(
       {required String opponentId,
-      bool includeMembers = false,
       bool isLoading = false,
       bool fromUser = false,
       required bool userBlockOrNot}) async {
@@ -1932,10 +1914,7 @@ class IsmChatPageController extends GetxController
     }
     chatInputController.clear();
     await Future.wait([
-      getConverstaionDetails(
-        conversationId: conversation?.conversationId ?? '',
-        includeMembers: includeMembers,
-      ),
+      getConverstaionDetails(),
       getMessagesFromAPI(),
     ]);
   }

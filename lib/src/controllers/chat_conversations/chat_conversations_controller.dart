@@ -580,7 +580,6 @@ class IsmChatConversationsController extends GetxController {
       if (conversationId == chatPageController.conversation?.conversationId) {
         chatPageController.unblockUser(
           opponentId: opponentId,
-          includeMembers: true,
           isLoading: false,
           userBlockOrNot: true,
         );

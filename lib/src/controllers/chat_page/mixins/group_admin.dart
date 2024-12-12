@@ -7,7 +7,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
   /// Add members to a conversation
   Future<void> addMembers(
       {required List<String> memberIds, bool isLoading = false}) async {
-    var conversationId = _controller.conversation!.conversationId!;
+    var conversationId = _controller.conversation?.conversationId ?? '';
     var response = await _controller.viewModel.addMembers(
         memberList: memberIds,
         conversationId: conversationId,
@@ -16,8 +16,6 @@ mixin IsmChatGroupAdminMixin on GetxController {
       return;
     }
     await _controller.getConverstaionDetails(
-      conversationId: conversationId,
-      includeMembers: true,
       isLoading: false,
     );
     await _controller.getMessagesFromAPI();
@@ -72,9 +70,8 @@ mixin IsmChatGroupAdminMixin on GetxController {
 
   ///Remove members from conversation
   Future<void> removeMember(String userId) async {
-    var conversationId = _controller.conversation!.conversationId!;
     var response = await _controller.viewModel.removeMember(
-      conversationId: conversationId,
+      conversationId: _controller.conversation?.conversationId ?? '',
       userId: userId,
     );
 
@@ -82,8 +79,6 @@ mixin IsmChatGroupAdminMixin on GetxController {
       return;
     }
     await _controller.getConverstaionDetails(
-      conversationId: conversationId,
-      includeMembers: true,
       isLoading: false,
     );
     await _controller.getMessagesFromAPI();
@@ -157,10 +152,9 @@ mixin IsmChatGroupAdminMixin on GetxController {
     String userName, [
     bool updateConversation = true,
   ]) async {
-    var conversationId = _controller.conversation!.conversationId!;
-
-    var response = await _controller.viewModel
-        .makeAdmin(memberId: memberId, conversationId: conversationId);
+    var response = await _controller.viewModel.makeAdmin(
+        memberId: memberId,
+        conversationId: _controller.conversation?.conversationId ?? '');
     if (response?.hasError ?? true) {
       return;
     }
@@ -168,8 +162,6 @@ mixin IsmChatGroupAdminMixin on GetxController {
       IsmChatUtility.showToast('You has made $userName a admin of this group',
           timeOutInSec: 2);
       await _controller.getConverstaionDetails(
-        conversationId: conversationId,
-        includeMembers: true,
         isLoading: false,
       );
     }
@@ -177,9 +169,8 @@ mixin IsmChatGroupAdminMixin on GetxController {
 
   ///Remove member as admin from conversation
   Future<void> removeAdmin(String memberId, String userName) async {
-    var conversationId = _controller.conversation!.conversationId!;
     var response = await _controller.viewModel.removeAdmin(
-      conversationId: conversationId,
+      conversationId: _controller.conversation?.conversationId ?? '',
       memberId: memberId,
     );
 
@@ -189,8 +180,6 @@ mixin IsmChatGroupAdminMixin on GetxController {
     IsmChatUtility.showToast('You has removed $userName a admin of this group',
         timeOutInSec: 2);
     await _controller.getConverstaionDetails(
-      conversationId: conversationId,
-      includeMembers: true,
       isLoading: false,
     );
   }

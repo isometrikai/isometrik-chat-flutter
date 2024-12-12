@@ -97,14 +97,12 @@ mixin IsmChatShowDialogMixin on GetxController {
                 ? _controller.unblockUser(
                     opponentId:
                         _controller.conversation?.opponentDetails?.userId ?? '',
-                    includeMembers: includeMembers,
                     isLoading: true,
                     userBlockOrNot: userBlockOrNot,
                   )
                 : _controller.blockUser(
                     opponentId:
                         _controller.conversation?.opponentDetails?.userId ?? '',
-                    includeMembers: includeMembers,
                     isLoading: true,
                     userBlockOrNot: userBlockOrNot,
                   );

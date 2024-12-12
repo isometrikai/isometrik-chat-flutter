@@ -777,7 +777,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       );
       conversationId = _controller.conversation?.conversationId ?? '';
       unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
+        _controller.getConverstaionDetails(),
+      );
     }
     IsmChatMessageModel? imageMessage;
     var sentAt = DateTime.now().millisecondsSinceEpoch;
@@ -1327,7 +1328,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       );
       conversationId = _controller.conversation?.conversationId ?? '';
       unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
+        _controller.getConverstaionDetails(),
+      );
     }
     var sentAt = DateTime.now().millisecondsSinceEpoch;
     var aboutTextMessage = IsmChatMessageModel(
@@ -1436,7 +1438,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       );
       conversationId = _controller.conversation?.conversationId ?? '';
       unawaited(
-          _controller.getConverstaionDetails(conversationId: conversationId));
+        _controller.getConverstaionDetails(),
+      );
     } else if (_controller.isBroadcast && _controller.messages.isEmpty) {
       conversationId = await _controller.createBroadcastConversation(
             groupcastImageUrl:

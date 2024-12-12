@@ -744,11 +744,10 @@ mixin IsmChatMqttEventMixin {
       var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation?.conversationId ==
           actionModel.conversationId) {
-        await controller.getConverstaionDetails(
-            conversationId: actionModel.conversationId ?? '');
+        await controller.getConverstaionDetails();
         await controller.getMessagesFromAPI(
-            conversationId: actionModel.conversationId ?? '',
-            lastMessageTimestamp: controller.messages.last.sentAt);
+          lastMessageTimestamp: controller.messages.last.sentAt,
+        );
       }
     }
     if (Get.isRegistered<IsmChatConversationsController>()) {
@@ -771,8 +770,8 @@ mixin IsmChatMqttEventMixin {
     var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     if (controller.conversation?.conversationId == actionModel.conversationId) {
       await controller.getMessagesFromAPI(
-          conversationId: actionModel.conversationId ?? '',
-          lastMessageTimestamp: controller.messages.last.sentAt);
+        lastMessageTimestamp: controller.messages.last.sentAt,
+      );
     }
   }
 
@@ -885,8 +884,8 @@ mixin IsmChatMqttEventMixin {
               actionModel.conversationId &&
           controller.conversation?.lastMessageSentAt != actionModel.sentAt) {
         await controller.getMessagesFromAPI(
-            conversationId: actionModel.conversationId ?? '',
-            lastMessageTimestamp: controller.messages.last.sentAt);
+          lastMessageTimestamp: controller.messages.last.sentAt,
+        );
       }
     }
     if (Get.isRegistered<IsmChatConversationsController>()) {
@@ -908,8 +907,8 @@ mixin IsmChatMqttEventMixin {
               IsmChatConfig.communicationConfig.userConfig.userId &&
           controller.conversation?.lastMessageSentAt != actionModel.sentAt) {
         await controller.getMessagesFromAPI(
-            conversationId: actionModel.conversationId ?? '',
-            lastMessageTimestamp: controller.messages.last.sentAt);
+          lastMessageTimestamp: controller.messages.last.sentAt,
+        );
       }
     }
     if (actionModel.memberId ==
@@ -1037,20 +1036,13 @@ mixin IsmChatMqttEventMixin {
       var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (controller.conversation?.conversationId ==
           actionModel.conversationId) {
-        await controller.getConverstaionDetails(
-          conversationId: actionModel.conversationId ?? '',
-          includeMembers:
-              controller.conversation?.isGroup == true ? true : false,
-        );
+        await controller.getConverstaionDetails();
         if (controller.messages.isNotEmpty) {
           await controller.getMessagesFromAPI(
-            conversationId: actionModel.conversationId ?? '',
             lastMessageTimestamp: controller.messages.last.sentAt,
           );
         } else {
-          await controller.getMessagesFromAPI(
-            conversationId: actionModel.conversationId ?? '',
-          );
+          await controller.getMessagesFromAPI();
         }
       }
     }

@@ -231,30 +231,25 @@ class IsmChatDelegate {
   }
 
   Future<IsmChatConversationModel?> getConverstaionDetails({
-    required String conversationId,
-    bool? includeMembers,
     required bool isLoading,
   }) async {
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       return await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
           .getConverstaionDetails(
-              conversationId: conversationId,
-              includeMembers: includeMembers,
-              isLoading: isLoading);
+        isLoading: isLoading,
+      );
     }
     return null;
   }
 
   Future<void> unblockUser({
     required String opponentId,
-    required bool includeMembers,
     required bool isLoading,
     required bool fromUser,
   }) async {
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       await Get.find<IsmChatPageController>(tag: IsmChat.i.tag).unblockUser(
         opponentId: opponentId,
-        includeMembers: includeMembers,
         isLoading: isLoading,
         fromUser: fromUser,
         userBlockOrNot: true,
@@ -264,14 +259,12 @@ class IsmChatDelegate {
 
   Future<void> blockUser({
     required String opponentId,
-    required bool includeMembers,
     required bool isLoading,
     required bool fromUser,
   }) async {
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       await Get.find<IsmChatPageController>(tag: IsmChat.i.tag).blockUser(
         opponentId: opponentId,
-        includeMembers: includeMembers,
         isLoading: isLoading,
         fromUser: fromUser,
         userBlockOrNot: false,
@@ -307,7 +300,6 @@ class IsmChatDelegate {
       final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       await controller.getMessagesFromAPI(
         isBroadcast: isBroadcast,
-        conversationId: controller.conversation?.conversationId ?? '',
         lastMessageTimestamp: controller.messages.isNotEmpty
             ? controller.messages.last.sentAt
             : 0,
@@ -579,6 +571,13 @@ class IsmChatDelegate {
           .getBlockUser(isLoading: isLoading);
     } else {
       return [];
+    }
+  }
+
+  Future<void> updateChatPage() async {
+    if (Get.isRegistered<IsmChatPageController>()) {
+      final controller = Get.find<IsmChatPageController>();
+      await controller.getConverstaionDetails();
     }
   }
 }

@@ -443,14 +443,10 @@ class IsmChat {
   /// print('Conversation details: $conversationDetails');
   /// ```
   Future<IsmChatConversationModel?> getConverstaionDetails({
-    required String conversationId,
-    bool? includeMembers,
     bool isLoading = false,
   }) async =>
       await _delegate.getConverstaionDetails(
-        conversationId: conversationId,
         isLoading: isLoading,
-        includeMembers: includeMembers,
       );
 
   /// Unblock a user.
@@ -477,13 +473,11 @@ class IsmChat {
   /// ```
   Future<void> unblockUser({
     required String opponentId,
-    bool includeMembers = false,
     bool isLoading = false,
     bool fromUser = false,
   }) async =>
       await _delegate.unblockUser(
         opponentId: opponentId,
-        includeMembers: includeMembers,
         isLoading: isLoading,
         fromUser: fromUser,
       );
@@ -512,13 +506,11 @@ class IsmChat {
   /// ```
   Future<void> blockUser({
     required String opponentId,
-    required bool includeMembers,
     required bool isLoading,
     required bool fromUser,
   }) async =>
       await _delegate.blockUser(
         opponentId: opponentId,
-        includeMembers: includeMembers,
         isLoading: isLoading,
         fromUser: fromUser,
       );

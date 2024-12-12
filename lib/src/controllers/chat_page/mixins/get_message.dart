@@ -68,7 +68,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   }
 
   Future<void> getMessagesFromAPI({
-    String conversationId = '',
+    // String conversationId = '',
     bool forPagination = false,
     int? lastMessageTimestamp,
     bool isBroadcast = false,
@@ -87,9 +87,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       var messagesList = List<IsmChatMessageModel>.from(_controller.messages);
       messagesList.removeWhere(
           (element) => element.customType == IsmChatCustomMessageType.date);
-      var conversationID = conversationId.isNotEmpty
-          ? conversationId
-          : _controller.conversation?.conversationId ?? '';
+      var conversationID = _controller.conversation?.conversationId ?? '';
 
       var data = await _controller.viewModel.getChatMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
@@ -211,22 +209,18 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     _controller.readMessageMembers = response;
   }
 
-  Future<IsmChatConversationModel?> getConverstaionDetails({
-    required String conversationId,
-    bool? includeMembers,
-    // String? ids,
-    // int? membersSkip,
-    // int? membersLimit,
-    bool? isLoading,
-  }) async {
+  Future<IsmChatConversationModel?> getConverstaionDetails(
+      {bool? isLoading}) async {
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       if (!_controller.isCoverationApiDetails) {
         return null;
       }
       _controller.isCoverationApiDetails = false;
+      final conversationId = _controller.conversation?.conversationId ?? '';
       var data = await _controller.viewModel.getConverstaionDetails(
         conversationId: conversationId,
-        includeMembers: includeMembers,
+        includeMembers:
+            _controller.conversation?.isGroup == true ? true : false,
         isLoading: isLoading,
       );
 
