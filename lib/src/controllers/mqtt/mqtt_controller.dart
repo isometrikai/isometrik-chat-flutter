@@ -109,9 +109,9 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       chatDelegate.isMqttConnected = value;
     });
     mqttHelper.onEvent(
-      (event) async {
+      (event) {
         IsmChatLog.info('Mqtt event ${event.toMap()}');
-        await onMqttEvent(event: event);
+        onMqttEvent(event: event);
       },
     );
   }

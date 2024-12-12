@@ -28,7 +28,7 @@ mixin IsmChatMqttEventMixin {
   bool get isAppInBackground => _isAppBackground.value;
   set isAppInBackground(bool value) => _isAppBackground.value = value;
 
-  Future<void> onMqttEvent({required EventModel event}) async {
+  void onMqttEvent({required EventModel event}) async {
     _controller.eventStreamController.add(event);
     final payload = event.payload;
     if (payload['action'] != 'chatMessageSent') {
@@ -37,7 +37,7 @@ mixin IsmChatMqttEventMixin {
           .map((e) => e.toString())
           .contains(action)) {
         var actionModel = IsmChatMqttActionModel.fromMap(payload);
-        await _handleAction(actionModel);
+        _handleAction(actionModel);
       }
     } else {
       var message = IsmChatMessageModel.fromMap(payload);
@@ -51,14 +51,13 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
-  Future<void> _handleAction(IsmChatMqttActionModel actionModel) async {
+  void _handleAction(IsmChatMqttActionModel actionModel) async {
     switch (actionModel.action) {
       case IsmChatActionEvents.typingEvent:
         _handleTypingEvent(actionModel);
         break;
       case IsmChatActionEvents.conversationCreated:
         await _handleCreateConversation(actionModel);
-
         _handleUnreadMessages(actionModel.userDetails?.userId ?? '');
 
         break;
@@ -736,14 +735,13 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _handleBlockUserOrUnBlock(IsmChatMqttActionModel actionModel) async {
-    if (messageId == actionModel.sentAt.toString()) return;
-    messageId = actionModel.sentAt.toString();
     if (actionModel.initiatorDetails?.userId ==
         _controller.userConfig?.userId) {
       return;
     }
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+
       if (controller.conversation?.conversationId ==
           actionModel.conversationId) {
         await controller.getConverstaionDetails();

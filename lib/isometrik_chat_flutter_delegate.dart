@@ -85,7 +85,7 @@ class IsmChatDelegate {
   }) async {
     if (Get.isRegistered<IsmChatMqttController>()) {
       IsmChatConfig.showNotification = showNotification;
-      await Get.find<IsmChatMqttController>().onMqttEvent(
+      Get.find<IsmChatMqttController>().onMqttEvent(
         event: event,
       );
     }
