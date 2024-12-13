@@ -41,7 +41,6 @@ mixin IsmChatMqttEventMixin {
       }
     } else {
       var message = IsmChatMessageModel.fromMap(payload);
-
       if (messageId == message.messageId) return;
       messageId = message.messageId ?? '';
       _handleLocalNotification(message);
@@ -1053,6 +1052,8 @@ mixin IsmChatMqttEventMixin {
 
   Future<void> _updateOwnMessage(IsmChatMessageModel message) async {
     var dbBox = IsmChatConfig.dbWrapper;
+    if (!Get.isRegistered<IsmChatConversationsController>()) return;
+    var conversationController = Get.find<IsmChatConversationsController>();
     final chatPendingMessages = await dbBox?.getConversation(
         conversationId: message.conversationId, dbBox: IsmChatDbBox.pending);
     if (chatPendingMessages == null) {
@@ -1096,6 +1097,7 @@ mixin IsmChatMqttEventMixin {
     if (chatController.conversation?.conversationId != message.conversationId) {
       return;
     }
+    unawaited(conversationController.getConversationsFromDB());
     await chatController.getMessagesFromDB(message.conversationId ?? '');
   }
 
