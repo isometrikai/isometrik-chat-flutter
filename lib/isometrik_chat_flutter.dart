@@ -61,9 +61,6 @@ class IsmChat {
   /// Gets the unread conversation messages.
   String get unReadConversationMessages => _delegate.unReadConversationMessages;
 
-  /// Gets whether the MQTT connection is connected.
-  bool get isMqttConnected => _delegate.isMqttConnected;
-
   Future<String?> getPlatformVersion() =>
       IsometrikChatFlutterPlatform.instance.getPlatformVersion();
 

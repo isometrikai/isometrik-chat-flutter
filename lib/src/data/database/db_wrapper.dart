@@ -90,7 +90,7 @@ class IsmChatDBWrapper {
   Future<void> deleteChatLocalDb() async {
     if (!IsmChatConfig.shouldSetupMqtt) {
       final mqttController = Get.find<IsmChatMqttController>();
-      if (IsmChat.i.isMqttConnected) {
+      if (mqttController.connectionState == IsmChatConnectionState.connected) {
         mqttController.mqttHelper
             .unsubscribeTopics(mqttController.subscribedTopics);
         IsmChatLog.success('MQTT Topics Unsubscribed Successfully');

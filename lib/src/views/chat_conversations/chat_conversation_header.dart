@@ -93,9 +93,11 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                       height: IsmChatDimens.eight,
                       width: IsmChatDimens.eight,
                       decoration: BoxDecoration(
-                        color: IsmChat.i.isMqttConnected
-                            ? IsmChatColors.greenColor
-                            : IsmChatColors.redColor,
+                        color:
+                            Get.find<IsmChatMqttController>().connectionState ==
+                                    IsmChatConnectionState.connected
+                                ? IsmChatColors.greenColor
+                                : IsmChatColors.redColor,
                         shape: BoxShape.circle,
                       ),
                     ),

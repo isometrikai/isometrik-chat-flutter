@@ -112,7 +112,6 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       },
     );
     mqttHelper.onConnectionChange((value) {
-      chatDelegate.isMqttConnected = value;
       if (value) {
         IsmChatConfig.mqttConnectionStatus
             ?.call(IsmChatConnectionState.connected);
@@ -131,7 +130,6 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   /// onConnected callback, it will be called when connection is established
   void _onConnected() {
-    chatDelegate.isMqttConnected = true;
     connectionState = IsmChatConnectionState.connected;
     IsmChatConfig.mqttConnectionStatus?.call(connectionState);
     IsmChatLog.success('Mqtt event');
@@ -146,19 +144,16 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   /// onSubscribed callback, it will be called when connection successfully subscribes to certain topic
   void _onSubscribed(String topic) {
-    connectionState = IsmChatConnectionState.subscribed;
     IsmChatLog.success('MQTT Subscribed - $topic');
   }
 
   /// onUnsubscribed callback, it will be called when connection successfully unsubscribes to certain topic
   void _onUnSubscribed(String? topic) {
-    connectionState = IsmChatConnectionState.unsubscribed;
     IsmChatLog.success('MQTT Unsubscribed - $topic');
   }
 
   /// onSubscribeFailed callback, it will be called when connection fails to subscribe to certain topic
   void _onSubscribeFailed(String topic) {
-    connectionState = IsmChatConnectionState.unsubscribed;
     IsmChatLog.error('MQTT Subscription failed - $topic');
   }
 
@@ -167,13 +162,13 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   }
 
   void subscribeTopics(List<String> topic) {
-    if (chatDelegate.isMqttConnected) {
+    if (connectionState == IsmChatConnectionState.connected) {
       mqttHelper.subscribeTopics(topic);
     }
   }
 
   void unSubscribeTopics(List<String> topic) {
-    if (chatDelegate.isMqttConnected) {
+    if (connectionState == IsmChatConnectionState.connected) {
       mqttHelper.unsubscribeTopics(topic);
     }
   }

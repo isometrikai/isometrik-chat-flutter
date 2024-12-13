@@ -287,10 +287,10 @@ enum IsmChatCustomMessageType {
 
 enum IsmChatConnectionState {
   connected,
-  disconnected,
-  connecting,
-  subscribed,
-  unsubscribed;
+  disconnected;
+  // connecting;
+  // subscribed,
+  // unsubscribed;
 
   @override
   String toString() =>

@@ -16,10 +16,6 @@ class IsmChatDelegate {
   set unReadConversationMessages(String value) =>
       _unReadConversationMessages.value = value;
 
-  static final RxBool _isMqttConnected = false.obs;
-  bool get isMqttConnected => _isMqttConnected.value;
-  set isMqttConnected(bool value) => _isMqttConnected.value = value;
-
   static final Rx<String?> _tag = Rx<String?>(null);
   String? get tag => _tag.value;
   set tag(String? value) => _tag.value = value;
