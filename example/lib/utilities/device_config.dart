@@ -26,7 +26,7 @@ class DeviceConfig {
 
   /// Device id
   String? get deviceId => kIsWeb
-      ? _webDeviceInfo?.appVersion!.substring(0, 3)
+      ? _webDeviceInfo?.appVersion?.substring(0, 3)
       : GetPlatform.isAndroid
           ? _androidDeviceInfo?.id
           : _iosDeviceInfo?.identifierForVendor;

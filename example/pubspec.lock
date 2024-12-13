@@ -1035,8 +1035,8 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: fc37fe2
-      resolved-ref: fc37fe2089218410bb0d1341cd5e3e8880b0f605
+      ref: "55eac2b"
+      resolved-ref: "55eac2bce081f52e994ba238b564621dda7e28d4"
       url: "https://github.com/rahulsaryam285/mqtt_helper.git"
     source: git
     version: "1.0.0"

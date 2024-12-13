@@ -315,7 +315,9 @@ class IsmChatDelegate {
         Get.delete<IsmChatCommonController>(force: true),
         Get.delete<IsmChatMqttController>(force: true),
       ]);
-    } catch (e) {}
+    } catch (e, st) {
+      IsmChatLog.error('Error $e stackTree $st');
+    }
   }
 
   Future<void> clearChatLocalDb() async {

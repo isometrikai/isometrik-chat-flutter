@@ -28,6 +28,7 @@ class ChatListController extends GetxController {
   }
 
   void initialize() async {
+    IsmChatLog.error(AppConfig.userDetail?.toJson());
     await IsmChat.i.initialize(
       IsmChatCommunicationConfig(
         userConfig: IsmChatUserConfig(
@@ -39,8 +40,8 @@ class ChatListController extends GetxController {
         mqttConfig: const IsmChatMqttConfig(
           hostName: kIsWeb ? Constants.hostnameForWeb : Constants.hostname,
           port: kIsWeb ? Constants.portForWeb : Constants.port,
-          useWebSocket: kIsWeb ? true : false,
-          websocketProtocols: kIsWeb ? <String>['mqtt'] : [],
+          useWebSocket: kIsWeb,
+          websocketProtocols: [if (kIsWeb) 'mqtt'],
         ),
         projectConfig: IsmChatProjectConfig(
           accountId: Constants.accountId,
