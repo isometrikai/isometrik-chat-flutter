@@ -45,7 +45,7 @@ dependencies:
   image_picker: ^1.1.2
   intl: ^0.19.0
   just_audio: ^0.9.39
-  mqtt_client: ^10.3.0
+  mqtt_client: ^10.5.1
   mqtt_helper: ^1.0.1
   open_filex: ^4.4.0
   path: ^1.9.0

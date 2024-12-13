@@ -93,6 +93,7 @@ class IsmChatDBWrapper {
       if (IsmChat.i.isMqttConnected) {
         mqttController.mqttHelper
             .unsubscribeTopics(mqttController.subscribedTopics);
+        IsmChatLog.success('MQTT Topics Unsubscribed Successfully');
         mqttController.mqttHelper.disconnect();
       }
     }

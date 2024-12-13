@@ -10,7 +10,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   final mqttHelper = MqttHelper();
 
-  final List<String> subscribedTopics = [];
+  List<String> subscribedTopics = [];
 
   IsmChatProjectConfig? projectConfig;
 
@@ -104,6 +104,9 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       ),
       autoSubscribe: true,
       topics: subscribedTopics,
+      subscribedTopicsCallback: (topics) {
+        subscribedTopics = topics;
+      },
     );
     mqttHelper.onConnectionChange((value) {
       chatDelegate.isMqttConnected = value;
@@ -127,7 +130,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   void _onDisconnected() {
     chatDelegate.isMqttConnected = false;
     connectionState = IsmChatConnectionState.disconnected;
-    IsmChatLog.error('MQTT Disconnected');
+    IsmChatLog.error('MQTT Disconnected Successfully ');
   }
 
   /// onSubscribed callback, it will be called when connection successfully subscribes to certain topic
