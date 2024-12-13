@@ -98,7 +98,6 @@ class IsmChatDBWrapper {
       }
     }
     await clearChatLocalDb();
-    IsmChatLog.success('[DELETED] - All entries are removed from database');
   }
 
   Future<void> clearChatLocalDb() async {

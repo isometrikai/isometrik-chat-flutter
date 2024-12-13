@@ -107,6 +107,9 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       subscribedTopicsCallback: (topics) {
         subscribedTopics = topics;
       },
+      unSubscribedTopicsCallback: (topics) {
+        subscribedTopics = topics;
+      },
     );
     mqttHelper.onConnectionChange((value) {
       chatDelegate.isMqttConnected = value;

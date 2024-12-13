@@ -67,7 +67,7 @@ class ChatListController extends GetxController {
         .subscribeToTopic('chat-${userDetails.userId}');
   }
 
-  unSubscribeToTopic() async {
+  Future<void> unSubscribeToTopic() async {
     if (!kIsWeb) {
       try {
         await FirebaseMessaging.instance.unsubscribeFromTopic(
@@ -78,9 +78,9 @@ class ChatListController extends GetxController {
   }
 
   void onSignOut() async {
-    unSubscribeToTopic();
-    dbWrapper?.deleteChatLocalDb();
-    IsmChat.i.logout();
+    await unSubscribeToTopic();
+    await dbWrapper?.deleteChatLocalDb();
+    await IsmChat.i.logout();
     Get.offAllNamed(AppRoutes.login);
   }
 

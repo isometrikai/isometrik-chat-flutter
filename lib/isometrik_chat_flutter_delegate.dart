@@ -308,12 +308,14 @@ class IsmChatDelegate {
   }
 
   Future<void> logout() async {
-    await IsmChatConfig.dbWrapper?.deleteChatLocalDb();
-    await Future.wait([
-      Get.delete<IsmChatConversationsController>(force: true),
-      Get.delete<IsmChatCommonController>(force: true),
-      Get.delete<IsmChatMqttController>(force: true),
-    ]);
+    try {
+      await IsmChatConfig.dbWrapper?.deleteChatLocalDb();
+      await Future.wait([
+        Get.delete<IsmChatConversationsController>(force: true),
+        Get.delete<IsmChatCommonController>(force: true),
+        Get.delete<IsmChatMqttController>(force: true),
+      ]);
+    } catch (e) {}
   }
 
   Future<void> clearChatLocalDb() async {
