@@ -49,7 +49,7 @@ dependencies:
   mqtt_helper:
     git:
       url: https://github.com/rahulsaryam285/mqtt_helper.git
-      ref: 55eac2b
+      ref: 45255ff
 
   open_filex: ^4.4.0
   path: ^1.9.0

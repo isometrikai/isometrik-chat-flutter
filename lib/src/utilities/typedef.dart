@@ -124,3 +124,7 @@ typedef ResponseCallback = void Function(
 );
 
 typedef SortingConversationCallback = String Function();
+
+typedef ConnectionStateCallback = void Function(
+  IsmChatConnectionState,
+);

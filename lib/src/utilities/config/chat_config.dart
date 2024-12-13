@@ -18,6 +18,7 @@ class IsmChatConfig {
   static String dbName = IsmChatStrings.dbname;
   static Duration animationDuration = const Duration(milliseconds: 300);
   static NotificaitonCallback? showNotification;
+  static ConnectionStateCallback? mqttConnectionStatus;
   static SortingConversationCallback? sortConversationWithIdentifier;
   // static bool isShowMqttConnectErrorDailog = false;
 

@@ -89,6 +89,7 @@ class IsmChat {
     IsmPaidWalletConfig? paidWalletConfig,
     ResponseCallback? paidWalletMessageApiResponse,
     SortingConversationCallback? sortingConversationWithIdentifier,
+    ConnectionStateCallback? mqttConnectionStatus,
   }) async {
     if (isPaidWalletMessage) {
       assert(isPaidWalletMessage && paidWalletConfig != null,
@@ -113,6 +114,7 @@ class IsmChat {
       paidWalletConfig: paidWalletConfig,
       paidWalletMessageApiResponse: paidWalletMessageApiResponse,
       sortConversationWithIdentifier: sortingConversationWithIdentifier,
+      mqttConnectionStatus: mqttConnectionStatus,
     );
     _initialized = true;
   }

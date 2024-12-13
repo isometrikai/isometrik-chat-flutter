@@ -113,6 +113,13 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
     );
     mqttHelper.onConnectionChange((value) {
       chatDelegate.isMqttConnected = value;
+      if (value) {
+        IsmChatConfig.mqttConnectionStatus
+            ?.call(IsmChatConnectionState.connected);
+      } else {
+        IsmChatConfig.mqttConnectionStatus
+            ?.call(IsmChatConnectionState.disconnected);
+      }
     });
     mqttHelper.onEvent(
       (event) {
@@ -126,13 +133,14 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   void _onConnected() {
     chatDelegate.isMqttConnected = true;
     connectionState = IsmChatConnectionState.connected;
+    IsmChatConfig.mqttConnectionStatus?.call(connectionState);
     IsmChatLog.success('Mqtt event');
   }
 
   /// onDisconnected callback, it will be called when connection is breaked
   void _onDisconnected() {
-    chatDelegate.isMqttConnected = false;
     connectionState = IsmChatConnectionState.disconnected;
+    IsmChatConfig.mqttConnectionStatus?.call(connectionState);
     IsmChatLog.error('MQTT Disconnected Successfully ');
   }
 
