@@ -46,11 +46,7 @@ dependencies:
   intl: ^0.19.0
   just_audio: ^0.9.39
   mqtt_client: ^10.5.1
-  mqtt_helper:
-    git:
-      url: https://github.com/rahulsaryam285/mqtt_helper.git
-      ref: 45255ff
-
+  mqtt_helper: ^1.0.1
   open_filex: ^4.4.0
   path: ^1.9.0
   path_provider: ^2.1.4

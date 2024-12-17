@@ -16,7 +16,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   IsmChatUserConfig? userConfig;
 
-  late IsmChatConnectionState connectionState;
+  IsmChatConnectionState connectionState = IsmChatConnectionState.disconnected;
 
   IsmChatMqttConfig? mqttConfig;
 
@@ -107,9 +107,9 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       subscribedTopicsCallback: (topics) {
         subscribedTopics = topics;
       },
-      unSubscribedTopicsCallback: (topics) {
-        subscribedTopics = topics;
-      },
+      // unSubscribedTopicsCallback: (topics) {
+      //   subscribedTopics = topics;
+      // },
     );
     mqttHelper.onConnectionChange((value) {
       if (value) {
