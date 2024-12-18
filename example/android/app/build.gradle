@@ -55,21 +55,29 @@ android {
         multiDexEnabled true
         minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
-        versionCode configProperties['VERSION_CODE_D'].toInteger()
-        versionName configProperties['VERSION_NAME_D'].toString()
+        versionCode configProperties['VERSION_CODE_R'].toInteger()
+        versionName configProperties['VERSION_NAME_R'].toString()
     }
 
     def appName = configProperties['BUILD_NAME']
     archivesBaseName = "${appName}_v${defaultConfig.versionName}_c${defaultConfig.versionCode}"
 
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
-            
-        }
-    }
+       release {
+           debuggable false
+           minifyEnabled true
+           shrinkResources true
+           signingConfig signingConfigs.debug
+           proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+       }
+       debug {
+           debuggable true
+           minifyEnabled false
+           shrinkResources false
+           signingConfig signingConfigs.debug
+           proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+       }
+   }
 }
 
 flutter {

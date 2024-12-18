@@ -28,10 +28,13 @@ class MessageReactionModel {
 
   factory MessageReactionModel.fromMap(Map<String, dynamic> map) =>
       MessageReactionModel(
-          emojiKey: map['emojiKey'] as String,
-          userIds: List<String>.from(
-            map['userIds'] as List<dynamic>,
-          ));
+        emojiKey: map['emojiKey'] as String? ?? '',
+        userIds: map['userIds'] != null
+            ? List<String>.from(
+                map['userIds'] as List,
+              )
+            : [],
+      );
 
   String toJson() => json.encode(toMap());
 

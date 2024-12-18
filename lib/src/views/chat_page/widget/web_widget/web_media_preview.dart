@@ -170,15 +170,15 @@ class WebMediaPreview extends StatelessWidget {
                         children: [
                           Expanded(
                             child: IsmChatInputField(
-                              fillColor:
-                                  IsmChatColors.greyColor.applyIsmOpacity(.5),
+                              // fillColor:
+                              //     IsmChatColors.greyColor.applyIsmOpacity(.5),
                               autofocus: false,
                               // padding: IsmChatDimens.edgeInsets40,
                               contentPadding: IsmChatDimens.edgeInsets20,
                               hint: IsmChatStrings.addCaption,
-                              hintStyle: IsmChatStyles.w400White16,
-                              cursorColor: IsmChatColors.whiteColor,
-                              style: IsmChatStyles.w400White16,
+                              hintStyle: IsmChatStyles.w400Black16,
+                              cursorColor: IsmChatColors.blackColor,
+                              style: IsmChatStyles.w400Black16,
                               controller: controller.textEditingController,
                               onChanged: (value) {
                                 controller.webMedia[controller.assetsIndex] =

@@ -325,7 +325,7 @@ class _PopupMenuWidget extends StatelessWidget {
             IsmChatConfig.chatTheme.chatPageHeaderTheme?.popupshadowColor,
         itemBuilder: (context) => [
           if (IsmChatProperties.chatPageProperties.features
-              .contains(IsmChatFeature.searchMessage))
+              .contains(IsmChatFeature.searchMessage)) ...[
             PopupMenuItem(
               value: 1,
               child: Row(
@@ -344,9 +344,10 @@ class _PopupMenuWidget extends StatelessWidget {
                   )
                 ],
               ),
-            ),
+            )
+          ],
           if (IsmChatProperties.chatPageProperties.features
-              .contains(IsmChatFeature.chageWallpaper))
+              .contains(IsmChatFeature.chageWallpaper)) ...[
             PopupMenuItem(
               value: 2,
               child: Row(
@@ -365,7 +366,8 @@ class _PopupMenuWidget extends StatelessWidget {
                   )
                 ],
               ),
-            ),
+            )
+          ],
           if (!(controller.conversation?.isGroup ?? false))
             PopupMenuItem(
               value: 3,
@@ -388,25 +390,28 @@ class _PopupMenuWidget extends StatelessWidget {
                 ],
               ),
             ),
-          PopupMenuItem(
-            value: 4,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.delete,
-                  color:
-                      IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??
-                          IsmChatColors.blackColor,
-                ),
-                IsmChatDimens.boxWidth8,
-                Text(
-                  IsmChatStrings.clearChat,
-                  style: IsmChatConfig
-                      .chatTheme.chatPageHeaderTheme?.popupLableStyle,
-                )
-              ],
+          if (IsmChatProperties.chatPageProperties.features
+              .contains(IsmChatFeature.clearChat)) ...[
+            PopupMenuItem(
+              value: 4,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete,
+                    color: IsmChatConfig
+                            .chatTheme.chatPageHeaderTheme?.iconColor ??
+                        IsmChatColors.blackColor,
+                  ),
+                  IsmChatDimens.boxWidth8,
+                  Text(
+                    IsmChatStrings.clearChat,
+                    style: IsmChatConfig
+                        .chatTheme.chatPageHeaderTheme?.popupLableStyle,
+                  )
+                ],
+              ),
             ),
-          ),
+          ],
           if ((controller.conversation?.lastMessageDetails?.customType ==
                       IsmChatCustomMessageType.removeMember &&
                   controller.conversation?.lastMessageDetails?.userId ==
