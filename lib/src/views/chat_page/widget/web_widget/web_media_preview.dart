@@ -171,7 +171,7 @@ class WebMediaPreview extends StatelessWidget {
                           Expanded(
                             child: IsmChatInputField(
                               fillColor:
-                                  IsmChatColors.greyColor.applyOpacity(.5),
+                                  IsmChatColors.greyColor.applyIsmOpacity(.5),
                               autofocus: false,
                               // padding: IsmChatDimens.edgeInsets40,
                               contentPadding: IsmChatDimens.edgeInsets20,

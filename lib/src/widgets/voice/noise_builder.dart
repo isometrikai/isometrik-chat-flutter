@@ -34,8 +34,8 @@ class NoiseBuilder extends StatelessWidget {
                     height: IsmChatDimens.eighty,
                     width: IsmChatDimens.oneHundredTwenty,
                     color: widget.me
-                        ? widget.meBgColor.applyOpacity(.4)
-                        : widget.contactBgColor.applyOpacity(.35),
+                        ? widget.meBgColor.applyIsmOpacity(.4)
+                        : widget.contactBgColor.applyIsmOpacity(.35),
                   ),
                 ),
               ),

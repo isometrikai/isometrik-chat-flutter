@@ -91,7 +91,7 @@ class _IsmDocsViewState extends State<IsmDocsView>
                           ),
                         ),
                         separatorBuilder: (_, index) => Divider(
-                          color: IsmChatColors.greyColor.applyOpacity(.5),
+                          color: IsmChatColors.greyColor.applyIsmOpacity(.5),
                         ),
                         itemCount: value.length,
                       )

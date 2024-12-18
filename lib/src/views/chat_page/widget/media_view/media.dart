@@ -144,7 +144,7 @@ class _TabBarView extends StatelessWidget {
                 Container(
                   height: IsmChatDimens.twenty,
                   width: IsmChatDimens.two,
-                  color: IsmChatColors.greyColor.applyOpacity(.1),
+                  color: IsmChatColors.greyColor.applyIsmOpacity(.1),
                 )
             ],
           ),
@@ -165,7 +165,7 @@ class _TabBarView extends StatelessWidget {
                 Container(
                   height: IsmChatDimens.twenty,
                   width: IsmChatDimens.two,
-                  color: IsmChatColors.greyColor.applyOpacity(.1),
+                  color: IsmChatColors.greyColor.applyIsmOpacity(.1),
                 ),
               Container(
                   margin: IsmChatDimens.edgeInsets4,

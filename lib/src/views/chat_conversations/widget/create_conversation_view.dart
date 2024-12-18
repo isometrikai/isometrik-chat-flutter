@@ -212,7 +212,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                 ColoredBox(
                                   color: user.isUserSelected
                                       ? IsmChatConfig.chatTheme.primaryColor!
-                                          .applyOpacity(.2)
+                                          .applyIsmOpacity(.2)
                                       : Colors.transparent,
                                   child: ListTile(
                                     onTap: () async {
@@ -300,7 +300,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                             decoration: BoxDecoration(
                                               color: IsmChatConfig
                                                   .chatTheme.primaryColor
-                                                  ?.applyOpacity(.2),
+                                                  ?.applyIsmOpacity(.2),
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       IsmChatDimens.eight),
@@ -331,7 +331,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                           color: Colors.white,
                           border: Border(
                             top: BorderSide(
-                              color: Colors.grey.applyOpacity(0.5),
+                              color: Colors.grey.applyIsmOpacity(0.5),
                             ),
                           ),
                         ),

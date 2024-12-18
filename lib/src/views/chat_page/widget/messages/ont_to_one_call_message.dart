@@ -19,7 +19,7 @@ class IsmOneToOneCallMessage extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(IsmChatDimens.ten),
-                color: message.textColor?.applyOpacity(.2),
+                color: message.textColor?.applyIsmOpacity(.2),
               ),
               padding: IsmChatDimens.edgeInsets10,
               child: oneToOneCallWidget(message)),
@@ -31,7 +31,7 @@ class IsmOneToOneCallMessage extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-                color: message.textColor?.applyOpacity(.2),
+                color: message.textColor?.applyIsmOpacity(.2),
                 borderRadius: BorderRadius.circular(IsmChatDimens.fifty)),
             padding: IsmChatDimens.edgeInsets10,
             child: Icon(

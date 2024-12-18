@@ -197,7 +197,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Colors.white.applyOpacity(0.8),
+                            color: Colors.white.applyIsmOpacity(0.8),
                           ),
                           height: IsmChatDimens.thirtyFive,
                           width: IsmChatDimens.thirtyFive,

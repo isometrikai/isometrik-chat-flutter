@@ -52,7 +52,7 @@ class _ReplyMessage extends StatelessWidget {
                     color: (message.sentByMe
                             ? IsmChatColors.whiteColor
                             : IsmChatColors.greyColor)
-                        .applyOpacity(0.2),
+                        .applyIsmOpacity(0.2),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,

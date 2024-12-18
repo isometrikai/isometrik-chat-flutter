@@ -140,7 +140,7 @@ class IsmChatEligibleMembersView extends StatelessWidget {
                               color: Colors.white,
                               border: Border(
                                 top: BorderSide(
-                                  color: Colors.grey.applyOpacity(0.5),
+                                  color: Colors.grey.applyIsmOpacity(0.5),
                                 ),
                               ),
                             ),

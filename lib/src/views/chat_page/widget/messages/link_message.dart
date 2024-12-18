@@ -88,7 +88,7 @@ class _LinkPreview extends StatelessWidget {
                   color: (sentByMe
                           ? IsmChatColors.whiteColor
                           : IsmChatColors.greyColor)
-                      .applyOpacity(0.2),
+                      .applyIsmOpacity(0.2),
                   borderRadius: BorderRadius.circular(IsmChatDimens.eight),
                 ),
                 padding: IsmChatDimens.edgeInsets8_10,

@@ -117,7 +117,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                   ? (IsmChatConfig
                               .chatTheme.chatPageTheme?.messageSelectionColor ??
                           IsmChatConfig.chatTheme.primaryColor!)
-                      .applyOpacity(.2)
+                      .applyIsmOpacity(.2)
                   : null,
               child: UnconstrainedBox(
                 clipBehavior: Clip.antiAlias,

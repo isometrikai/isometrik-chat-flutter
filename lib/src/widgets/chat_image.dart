@@ -91,7 +91,7 @@ class _AssetImage extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: IsmChatColors.whiteColor),
           color: backgroundColor ??
-              IsmChatConfig.chatTheme.primaryColor!.applyOpacity(0.2),
+              IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(0.2),
           shape: BoxShape.circle,
         ),
         child: Text(
@@ -124,7 +124,7 @@ class _MemeroyImage extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(color: IsmChatColors.whiteColor),
               color: backgroundColor ??
-                  IsmChatConfig.chatTheme.primaryColor!.applyOpacity(0.2),
+                  IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(0.2),
               shape: BoxShape.circle,
             ),
             child: Text(
@@ -192,7 +192,7 @@ class _NetworkImage extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(color: IsmChatColors.whiteColor),
             color: backgroundColor ??
-                IsmChatConfig.chatTheme.primaryColor!.applyOpacity(0.2),
+                IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(0.2),
             shape: _isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: _isProfileImage
@@ -230,7 +230,7 @@ class _ErrorImage extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(color: IsmChatColors.whiteColor),
-          color: IsmChatConfig.chatTheme.primaryColor!.applyOpacity(0.2),
+          color: IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(0.2),
           shape: _isProfileImage ? BoxShape.circle : BoxShape.rectangle,
         ),
         child: _isProfileImage
@@ -244,7 +244,7 @@ class _ErrorImage extends StatelessWidget {
               )
             : Container(
                 decoration: BoxDecoration(
-                  color: IsmChatColors.greyColor.applyOpacity(0.2),
+                  color: IsmChatColors.greyColor.applyIsmOpacity(0.2),
                   borderRadius: BorderRadius.circular(IsmChatDimens.eight),
                 ),
                 alignment: Alignment.center,

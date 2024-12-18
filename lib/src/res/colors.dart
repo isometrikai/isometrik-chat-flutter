@@ -36,11 +36,11 @@ class IsmChatColors {
   static const Color darkBlueGreyColor = Color(0xFFEFF0FC);
 
   static const Color pink = Color(0xFFFF4550);
-  static Color pink100 = pink.applyOpacity(.1);
-  static Color pink300 = pink.applyOpacity(.3);
-  static Color pink400 = pink.applyOpacity(.4);
+  static Color pink100 = pink.applyIsmOpacity(.1);
+  static Color pink300 = pink.applyIsmOpacity(.3);
+  static Color pink400 = pink.applyIsmOpacity(.4);
 }
 
 extension ColorExt on Color {
-  Color applyOpacity(double opacity) => withValues(alpha: opacity);
+  Color applyIsmOpacity(double opacity) => withValues(alpha: opacity);
 }

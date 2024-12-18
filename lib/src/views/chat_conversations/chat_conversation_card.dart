@@ -57,7 +57,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
             ? Get.find<IsmChatConversationsController>()
                         .currentConversationId ==
                     widget.conversation.conversationId
-                ? IsmChatConfig.chatTheme.primaryColor?.applyOpacity(.2)
+                ? IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2)
                 : null
             : null,
         padding:
@@ -79,7 +79,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                       IsmChatConversationType.open) ...[
                     Container(
                       decoration: BoxDecoration(
-                        color: IsmChatColors.greyColorLight.applyOpacity(.4),
+                        color: IsmChatColors.greyColorLight.applyIsmOpacity(.4),
                         border: Border.all(
                           color: IsmChatColors.whiteColor,
                           width: IsmChatDimens.two,
@@ -120,7 +120,8 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                       left: IsmChatDimens.seven,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: IsmChatColors.greyColorLight.applyOpacity(.4),
+                          color:
+                              IsmChatColors.greyColorLight.applyIsmOpacity(.4),
                           border: Border.all(
                             color: IsmChatColors.whiteColor,
                             width: IsmChatDimens.two,

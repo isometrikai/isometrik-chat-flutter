@@ -314,7 +314,7 @@ class _ReplyMessage extends StatelessWidget {
           borderRadius: BorderRadius.circular(
             IsmChatDimens.sixteen,
           ),
-          color: IsmChatConfig.chatTheme.primaryColor!.applyOpacity(.5),
+          color: IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(.5),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

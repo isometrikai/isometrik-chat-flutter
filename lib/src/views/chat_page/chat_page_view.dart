@@ -428,7 +428,7 @@ class _IsmChatPageView extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           color: IsmChatConfig
                                               .chatTheme.backgroundColor!
-                                              .applyOpacity(0.5),
+                                              .applyIsmOpacity(0.5),
                                           border: Border.all(
                                             color: IsmChatConfig
                                                 .chatTheme.primaryColor!,

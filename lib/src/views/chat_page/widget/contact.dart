@@ -264,7 +264,7 @@ class IsmChatContactView extends StatelessWidget {
                                   selected: user.isConotactSelected,
                                   selectedTileColor: IsmChatConfig
                                       .chatTheme.primaryColor!
-                                      .applyOpacity(0.2),
+                                      .applyIsmOpacity(0.2),
                                   onTap: () {
                                     if (!user.isConotactSelected &&
                                         controller.contactSelectedList.length >=

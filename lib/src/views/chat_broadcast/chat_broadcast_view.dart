@@ -132,7 +132,7 @@ class IsmChatBroadCastView extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: IsmChatConfig.chatTheme.primaryColor
-                                        ?.applyOpacity(.1),
+                                        ?.applyIsmOpacity(.1),
                                   ),
                                   child: const Icon(Icons.campaign_rounded),
                                 ),
