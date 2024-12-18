@@ -1,4 +1,4 @@
-library isometrik_chat_flutter;
+library;
 
 import 'dart:async';
 

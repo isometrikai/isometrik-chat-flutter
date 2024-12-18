@@ -440,7 +440,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                             Divider(
                               thickness: 1,
                               color:
-                                  IsmChatColors.greyColorLight.withOpacity(.3),
+                                  IsmChatColors.greyColorLight.applyOpacity(.3),
                             ),
                             IsmChatDimens.boxHeight5,
                             TextButton.icon(
@@ -499,7 +499,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               height: 0,
                               thickness: 1,
                               color:
-                                  IsmChatColors.greyColorLight.withOpacity(.3),
+                                  IsmChatColors.greyColorLight.applyOpacity(.3),
                             ),
                             TextButton.icon(
                               onPressed: () async {
@@ -533,7 +533,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               height: 0,
                               thickness: 1,
                               color:
-                                  IsmChatColors.greyColorLight.withOpacity(.3),
+                                  IsmChatColors.greyColorLight.applyOpacity(.3),
                             ),
                             TextButton.icon(
                               onPressed: () async {

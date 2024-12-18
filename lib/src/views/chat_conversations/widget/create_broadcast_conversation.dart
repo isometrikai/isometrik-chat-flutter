@@ -117,7 +117,7 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                     color: Colors.white,
                     border: Border(
                       top: BorderSide(
-                        color: Colors.grey.withOpacity(0.5),
+                        color: Colors.grey.applyOpacity(0.5),
                       ),
                     ),
                   ),
@@ -287,7 +287,7 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                                         color: user.isUserSelected
                                             ? IsmChatConfig
                                                 .chatTheme.primaryColor!
-                                                .withOpacity(.2)
+                                                .applyOpacity(.2)
                                             : Colors.transparent,
                                         child: ListTile(
                                           onTap: () {
@@ -300,7 +300,7 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                                           // tileColor: user.isUserSelected
                                           //     ? IsmChatConfig
                                           //         .chatTheme.primaryColor!
-                                          //         .withOpacity(.2)
+                                          //         .applyOpacity(.2)
                                           //     : null,
                                           leading: IsmChatImage.profile(
                                             user.userDetails

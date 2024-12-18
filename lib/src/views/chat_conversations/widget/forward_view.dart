@@ -249,7 +249,7 @@ class IsmChatForwardView extends StatelessWidget {
                                         color: user.isUserSelected
                                             ? IsmChatConfig
                                                 .chatTheme.primaryColor!
-                                                .withOpacity(.2)
+                                                .applyOpacity(.2)
                                             : Colors.transparent,
                                         child: ListTile(
                                           onTap: !user.isUserSelected &&
@@ -317,7 +317,7 @@ class IsmChatForwardView extends StatelessWidget {
                           color: Colors.white,
                           border: Border(
                             top: BorderSide(
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.grey.applyOpacity(0.5),
                             ),
                           ),
                         ),

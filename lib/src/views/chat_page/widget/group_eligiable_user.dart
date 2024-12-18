@@ -202,7 +202,7 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
                                     color: controller.groupEligibleUser[index]
                                             .isUserSelected
                                         ? IsmChatConfig.chatTheme.primaryColor!
-                                            .withOpacity(.2)
+                                            .applyOpacity(.2)
                                         : null,
                                     child: Column(
                                       children: [

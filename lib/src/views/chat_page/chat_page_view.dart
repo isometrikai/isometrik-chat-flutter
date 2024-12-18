@@ -84,9 +84,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   @override
   Widget build(BuildContext context) => WillPopScope(
         onWillPop: () async {
-          if (!GetPlatform.isAndroid) {
-            return false;
-          }
+          if (!GetPlatform.isAndroid) return false;
           return IsmChat.i.tag == null ? await navigateBack() : false;
         },
         child: GetPlatform.isIOS
@@ -430,7 +428,7 @@ class _IsmChatPageView extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           color: IsmChatConfig
                                               .chatTheme.backgroundColor!
-                                              .withOpacity(0.5),
+                                              .applyOpacity(0.5),
                                           border: Border.all(
                                             color: IsmChatConfig
                                                 .chatTheme.primaryColor!,

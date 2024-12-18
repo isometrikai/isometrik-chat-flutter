@@ -131,7 +131,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                     ),
                     child: Container(
                       color: (blurBackgroundColor ?? Colors.black)
-                          .withOpacity(0.5),
+                          .applyOpacity(0.5),
                     ),
                   ),
                   Container(

@@ -40,9 +40,7 @@ class IsmChatBoradcastMessagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WillPopScope(
         onWillPop: () async {
-          if (!GetPlatform.isAndroid) {
-            return false;
-          }
+          if (!GetPlatform.isAndroid) return false;
           return await _back(context);
         },
         child: GetPlatform.isIOS

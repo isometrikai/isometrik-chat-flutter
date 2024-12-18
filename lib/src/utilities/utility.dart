@@ -376,14 +376,14 @@ class IsmChatUtility {
           [Color? backgroundColor, Color? animatedColor, double? value]) =>
       DecoratedBox(
         decoration: BoxDecoration(
-          color: backgroundColor?.withOpacity(.5),
+          color: backgroundColor?.applyOpacity(.5),
           borderRadius: BorderRadius.circular(15),
         ),
         child: CircularProgressIndicator(
           value: value,
           backgroundColor: animatedColor,
           valueColor: AlwaysStoppedAnimation(
-            backgroundColor?.withOpacity(.5),
+            backgroundColor?.applyOpacity(.5),
           ),
         ),
       );

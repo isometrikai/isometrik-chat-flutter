@@ -98,7 +98,7 @@ class _AzListWidgtetState<T> extends State<AzListWidgtet<T>> {
                 ),
                 ColoredBox(
                   color: widget.isSelected.call(member)
-                      ? IsmChatConfig.chatTheme.primaryColor!.withOpacity(.2)
+                      ? IsmChatConfig.chatTheme.primaryColor!.applyOpacity(.2)
                       : IsmChatColors.transparent,
                   child: ListTile(
                     onTap: () {
@@ -125,7 +125,7 @@ class _AzListWidgtetState<T> extends State<AzListWidgtet<T>> {
                       padding: IsmChatDimens.edgeInsets8_4,
                       decoration: BoxDecoration(
                         color: IsmChatConfig.chatTheme.primaryColor
-                            ?.withOpacity(.2),
+                            ?.applyOpacity(.2),
                         borderRadius:
                             BorderRadius.circular(IsmChatDimens.eight),
                       ),

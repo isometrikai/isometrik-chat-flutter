@@ -9,9 +9,11 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
 
   static const String route = IsmPageRoutes.openChatMessagePage;
 
-  Future<bool> _back(
-      BuildContext context, IsmChatPageController controller) async {
-    var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  Future<bool> _back({
+    required BuildContext context,
+    required IsmChatPageController controller,
+  }) async {
+    final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     final conversationController = Get.find<IsmChatConversationsController>();
     if (IsmChatResponsive.isWeb(context)) {
       controller.isBroadcast = false;
@@ -23,10 +25,9 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
     } else {
       Get.back();
     }
-    unawaited(
-      conversationController.leaveObserver(
-          conversationId: controller.conversation?.conversationId ?? ''),
-    );
+    unawaited(conversationController.leaveObserver(
+      conversationId: controller.conversation?.conversationId ?? '',
+    ));
     return true;
   }
 
@@ -34,7 +35,10 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.tag,
         builder: (controller) => WillPopScope(
-          onWillPop: () async => await _back(context, controller),
+          onWillPop: () async => await _back(
+            context: context,
+            controller: controller,
+          ),
           child: Scaffold(
             backgroundColor:
                 IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
@@ -42,7 +46,7 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
             appBar: IsmChatAppBar(
               leadingWidth: IsmChatDimens.thirty,
               leading: IsmChatTapHandler(
-                onTap: () => _back(context, controller),
+                onTap: () => _back(context: context, controller: controller),
                 child: Icon(
                   IsmChatResponsive.isWeb(context)
                       ? Icons.close_rounded

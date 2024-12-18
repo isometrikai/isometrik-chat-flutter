@@ -15,6 +15,7 @@ analyzer:
     missing_return: error
     todo: warning
     no_wildcard_variable_uses: ignore
+    unintended_html_in_doc_comment: ignore
 
 linter:
   rules:

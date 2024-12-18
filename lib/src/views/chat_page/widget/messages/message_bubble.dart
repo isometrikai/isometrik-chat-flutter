@@ -282,7 +282,7 @@ class MessageBubble extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(
                                       IsmChatDimens.fifty),
                                   color:
-                                      IsmChatColors.whiteColor.withOpacity(.5),
+                                      IsmChatColors.whiteColor.applyOpacity(.5),
                                   border: Border.all(
                                     color: IsmChatColors.blackColor,
                                   ),

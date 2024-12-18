@@ -187,7 +187,7 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                 height: IsmChatDimens.hundred,
                 width: IsmChatDimens.percentWidth(1),
                 decoration: BoxDecoration(
-                  color: IsmChatColors.blackColor.withOpacity(.3),
+                  color: IsmChatColors.blackColor.applyOpacity(.3),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(IsmChatDimens.twenty),
                     topRight: Radius.circular(IsmChatDimens.twenty),
@@ -292,7 +292,7 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                       borderRadius:
                           BorderRadius.circular(IsmChatDimens.fifteen),
                       border: Border.all(color: IsmChatColors.whiteColor),
-                      color: IsmChatColors.blackColor.withOpacity(.3),
+                      color: IsmChatColors.blackColor.applyOpacity(.3),
                     ),
                     child: Text(
                       'Set wallpaper',
