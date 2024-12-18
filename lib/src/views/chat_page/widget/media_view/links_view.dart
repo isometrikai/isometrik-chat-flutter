@@ -29,6 +29,7 @@ class _IsmLinksViewState extends State<IsmLinksView>
           chatPageController.sortMessages(widget.mediaListLinks);
       storeWidgetLinksList =
           chatPageController.sortMediaList(storeSortLinks).reversed.toList();
+      setState(() {});
     });
   }
 
@@ -65,29 +66,46 @@ class _IsmLinksViewState extends State<IsmLinksView>
                         addAutomaticKeepAlives: true,
                         shrinkWrap: true,
                         itemCount: value.length,
-                        itemBuilder: (context, valueIndex) => IsmChatTapHandler(
-                          child: Container(
-                            padding: IsmChatDimens.edgeInsets10,
-                            width: context.width * 0.8,
-                            child: AnyLinkPreview(
-                              displayDirection:
-                                  UIDirection.uiDirectionHorizontal,
-                              bodyMaxLines: 4,
-                              urlLaunchMode: LaunchMode.externalApplication,
-                              removeElevation: true,
-                              bodyTextOverflow: TextOverflow.ellipsis,
-                              cache: const Duration(minutes: 5),
-                              link: value[valueIndex].body.convertToValidUrl,
-                              backgroundColor: Colors.transparent,
-                              titleStyle: IsmChatStyles.w500Black16,
-                              errorWidget: Text(
-                                  IsmChatStrings.errorLoadingPreview,
-                                  style: IsmChatStyles.w400White12),
-                              placeholderWidget: Text('Loading preview...',
-                                  style: IsmChatStyles.w400White12),
-                            ),
-                          ),
-                        ),
+                        itemBuilder: (context, valueIndex) {
+                          if (AnyLinkPreview.isValidLink(
+                              value[valueIndex].body)) {
+                            return IsmChatTapHandler(
+                              child: Container(
+                                padding: IsmChatDimens.edgeInsets10,
+                                width: context.width * 0.8,
+                                decoration: BoxDecoration(
+                                  color: IsmChatConfig.chatTheme.primaryColor,
+                                  borderRadius: BorderRadius.circular(
+                                    IsmChatDimens.ten,
+                                  ),
+                                ),
+                                child: AnyLinkPreview(
+                                  displayDirection:
+                                      UIDirection.uiDirectionHorizontal,
+                                  bodyMaxLines: 4,
+                                  urlLaunchMode: LaunchMode.externalApplication,
+                                  removeElevation: true,
+                                  bodyTextOverflow: TextOverflow.ellipsis,
+                                  cache: const Duration(minutes: 5),
+                                  link: value[valueIndex].body,
+                                  backgroundColor: Colors.transparent,
+                                  titleStyle: IsmChatStyles.w500Black16,
+                                  errorWidget: Text(
+                                      IsmChatStrings.errorLoadingPreview,
+                                      style: IsmChatStyles.w400White12),
+                                  placeholderWidget: Text('Loading preview...',
+                                      style: IsmChatStyles.w400White12),
+                                  errorBody: 'Preview not available',
+                                  errorTitle: 'Google',
+                                  showMultimedia: false,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Text('Invalid Url',
+                                style: IsmChatStyles.w400White12);
+                          }
+                        },
                         separatorBuilder: (_, index) =>
                             IsmChatDimens.boxHeight10,
                       ),

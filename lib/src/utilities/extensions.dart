@@ -783,7 +783,7 @@ extension MentionMessage on IsmChatMessageModel {
           );
         }
 
-        final linkText = match.group(0)!;
+        final linkText = match.group(0) ?? '';
         messageList.add(
           LocalMentionAndLinkData(
             text: linkText,

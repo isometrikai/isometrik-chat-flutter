@@ -227,7 +227,7 @@ class IsmChatMessageModel {
           customType: model.customType != null &&
                   model.customType != IsmChatCustomMessageType.text
               ? model.customType
-              : IsmChatCustomMessageType.withBody(model.body),
+              : IsmChatCustomMessageType.withBody(model),
           sentByMe: model.senderInfo != null
               ? model.senderInfo?.userId ==
                   IsmChatConfig.communicationConfig.userConfig.userId

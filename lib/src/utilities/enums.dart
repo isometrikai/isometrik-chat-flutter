@@ -1,4 +1,5 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 enum IsmChatMessageType {
   normal(0),
@@ -127,8 +128,8 @@ enum IsmChatCustomMessageType {
     }
   }
 
-  factory IsmChatCustomMessageType.withBody(String body) {
-    if (body.isEmpty) {
+  factory IsmChatCustomMessageType.withBody(IsmChatMessageModel message) {
+    if (message.body.isEmpty) {
       return IsmChatCustomMessageType.text;
     }
 
@@ -157,6 +158,14 @@ enum IsmChatCustomMessageType {
     //     body.toLowerCase().contains('.com')) {
     //   return IsmChatCustomMessageType.link;
     // }
+
+    if (message.mentionList.isNotEmpty && message.mentionList.first.isLink) {
+      if (message.mentionList.first.text.startsWith('http') ||
+          message.mentionList.first.text.startsWith('www')) {
+        return IsmChatCustomMessageType.link;
+      }
+    }
+
     return IsmChatCustomMessageType.text;
   }
 
