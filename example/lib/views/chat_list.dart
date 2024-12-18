@@ -52,57 +52,58 @@ class ChatList extends StatelessWidget {
             ),
 
             chatPageProperties: IsmChatPageProperties(
-                // isAllowedDeleteChatFromLocal: true,
-                // onCoverstaionStatus: (p0, conversation) {
-                //   IsmChatLog.error(conversation.usersOwnDetails?.isDeleted);
-                // },
-                // onCallBlockUnblock: (p0, p1, p2) async {
-                //   IsmChatLog.error(p2);
-                //   return true;
-                // },
+              // isAllowedDeleteChatFromLocal: true,
+              // onCoverstaionStatus: (p0, conversation) {
+              //   IsmChatLog.error(conversation.usersOwnDetails?.isDeleted);
+              // },
+              // onCallBlockUnblock: (p0, p1, p2) async {
+              //   IsmChatLog.error(p2);
+              //   return true;
+              // },
 
-                header: IsmChatPageHeaderProperties(
+              header: IsmChatPageHeaderProperties(
 
-                    // height: (p0, p1) => 200,
-                    // bottom: (p0, p1) {
-                    //   return Container(
-                    //       alignment: Alignment.center,
-                    //       width: double.infinity,
-                    //       child: const Text('Rahul Saryam'));
-                    // },
-                    ),
-                // meessageFieldFocusNode: (_, coverstaion, value) {
-                //   IsmChatLog.info(value);
-                //   controller.isBottomVisibile = !controller.isBottomVisibile;
-                //   controller.update();
-                // },
-                messageAllowedConfig: MessageAllowedConfig(
-                  isMessgeAllowed: (p0, p1, type) {
-                    IsmChatLog.error(type);
-                    return null;
-                  },
-                ),
-                placeholder: IsmChatEmptyView(
-                  icon: Icon(
-                    Icons.chat_outlined,
-                    size: IsmChatDimens.fifty,
-                    color: IsmChatColors.greyColor,
+                  // height: (p0, p1) => 200,
+                  // bottom: (p0, p1) {
+                  //   return Container(
+                  //       alignment: Alignment.center,
+                  //       width: double.infinity,
+                  //       child: const Text('Rahul Saryam'));
+                  // },
                   ),
-                  text: 'No Messages',
-                ),
-                onMessageTap: (p0, message, _) async {
-                  return (<String, dynamic>{}, false);
+              // meessageFieldFocusNode: (_, coverstaion, value) {
+              //   IsmChatLog.info(value);
+              //   controller.isBottomVisibile = !controller.isBottomVisibile;
+              //   controller.update();
+              // },
+              messageAllowedConfig: MessageAllowedConfig(
+                isMessgeAllowed: (p0, p1, type) {
+                  IsmChatLog.error(type);
+                  return null;
                 },
-                attachments: const [
-                  IsmChatAttachmentType.camera,
-                  IsmChatAttachmentType.gallery,
-                  IsmChatAttachmentType.document,
-                  if (!kIsWeb) IsmChatAttachmentType.location,
-                  if (!kIsWeb) IsmChatAttachmentType.contact,
-                ],
-                features: [
-                  IsmChatFeature.reply,
-                ]),
+              ),
+              placeholder: IsmChatEmptyView(
+                icon: Icon(
+                  Icons.chat_outlined,
+                  size: IsmChatDimens.fifty,
+                  color: IsmChatColors.greyColor,
+                ),
+                text: 'No Messages',
+              ),
+              onMessageTap: (p0, message, _) async {
+                return (<String, dynamic>{}, false);
+              },
+              attachments: const [
+                IsmChatAttachmentType.camera,
+                IsmChatAttachmentType.gallery,
+                IsmChatAttachmentType.document,
+                if (!kIsWeb) IsmChatAttachmentType.location,
+                if (!kIsWeb) IsmChatAttachmentType.contact,
+              ],
+              // features: [
+              //   IsmChatFeature.reply,
+              // ],
+            ),
 
             noChatSelectedPlaceholder: Center(
               child: Column(
