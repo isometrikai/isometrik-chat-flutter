@@ -42,5 +42,5 @@ class IsmChatColors {
 }
 
 extension ColorExt on Color {
-  Color applyIsmOpacity(double opacity) => withValues(alpha: opacity);
+  Color applyIsmOpacity(double opacity) => withOpacity(opacity);
 }
