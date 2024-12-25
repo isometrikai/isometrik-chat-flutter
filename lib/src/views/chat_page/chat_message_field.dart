@@ -214,8 +214,8 @@ class IsmChatMessageField extends StatelessWidget {
                                                 ?.textFiledThemData
                                                 ?.hintTextStyle ??
                                             IsmChatStyles.w400Black12,
-                                        isDense: true,
-                                        filled: true,
+                                        // isDense: true,
+                                        // filled: true,
                                         fillColor: IsmChatConfig
                                                 .chatTheme
                                                 .chatPageTheme
