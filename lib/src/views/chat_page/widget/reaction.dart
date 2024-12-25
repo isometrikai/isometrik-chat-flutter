@@ -1,4 +1,4 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -52,8 +52,8 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
             var reactionName = widget.message.reactions?[index].emojiKey;
             var reactionValue =
                 IsmChatEmoji.values.firstWhere((e) => e.value == reactionName);
-            var reaction = widget._controller.reactions
-                .firstWhere((e) => e.name == reactionValue.emojiKeyword);
+            // var reaction = widget._controller.reactions
+            //     .firstWhere((e) => e.name == reactionValue.emojiKeyword);
             return InkWell(
               onTap: () {
                 widget._controller.showReactionUser(
@@ -81,27 +81,27 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          EmojiCell.fromConfig(
-                            emojiBoxSize: IsmChatDimens.eighteen,
-                            emoji: reaction,
-                            emojiSize: IsmChatDimens.fifteen,
-                            onEmojiSelected: (_, emoji) {
-                              widget._controller.showReactionUser(
-                                  index: index,
-                                  message: widget.message,
-                                  reactionType: reactionName ?? '');
-                            },
-                            config: Config(
-                              categoryViewConfig: CategoryViewConfig(
-                                  indicatorColor:
-                                      IsmChatConfig.chatTheme.primaryColor!),
-                              emojiViewConfig: EmojiViewConfig(
-                                emojiSizeMax: IsmChatDimens.twentyFour,
-                                backgroundColor:
-                                    IsmChatConfig.chatTheme.backgroundColor!,
-                              ),
-                            ),
-                          ),
+                          // EmojiCell.fromConfig(
+                          //   emojiBoxSize: IsmChatDimens.eighteen,
+                          //   emoji: reaction,
+                          //   emojiSize: IsmChatDimens.fifteen,
+                          //   onEmojiSelected: (_, emoji) {
+                          //     widget._controller.showReactionUser(
+                          //         index: index,
+                          //         message: widget.message,
+                          //         reactionType: reactionName ?? '');
+                          //   },
+                          //   config: Config(
+                          //     categoryViewConfig: CategoryViewConfig(
+                          //         indicatorColor:
+                          //             IsmChatConfig.chatTheme.primaryColor!),
+                          //     emojiViewConfig: EmojiViewConfig(
+                          //       emojiSizeMax: IsmChatDimens.twentyFour,
+                          //       backgroundColor:
+                          //           IsmChatConfig.chatTheme.backgroundColor!,
+                          //     ),
+                          //   ),
+                          // ),
                           Text(
                               '${widget.message.reactions?[index].userIds.length}')
                         ],

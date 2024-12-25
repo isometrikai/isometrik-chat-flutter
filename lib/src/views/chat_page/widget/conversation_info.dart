@@ -81,7 +81,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                       if (value == 1) {
                         controller.showDialogForChangeGroupTitle();
                       } else {
-                        controller.showDialogForChangeGroupProfile();
+                        // controller.showDialogForChangeGroupProfile();
                       }
                     },
                   ),
@@ -100,7 +100,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                     IsmChatTapHandler(
                       onTap: controller.conversation?.isGroup ?? false
                           ? () {
-                              controller.showDialogForChangeGroupProfile();
+                              // controller.showDialogForChangeGroupProfile();
                             }
                           : null,
                       child: Stack(

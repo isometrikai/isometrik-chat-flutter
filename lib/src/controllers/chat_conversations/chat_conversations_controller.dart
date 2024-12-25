@@ -4,13 +4,13 @@ import 'dart:io';
 
 import 'package:azlistview/azlistview.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -239,7 +239,7 @@ class IsmChatConversationsController extends GetxController {
   /// Emojis comes from package
   ///
   /// When we intnilized this controller
-  List<Emoji> reactions = [];
+  // List<Emoji> reactions = [];
 
   /// This variabel use for debounceing calling api
   final debounce = IsmChatDebounce();
@@ -343,7 +343,7 @@ class IsmChatConversationsController extends GetxController {
     super.onInit();
     intilizedContrller = false;
     _isInterNetConnect();
-    await _generateReactionList();
+    // await _generateReactionList();
     var users = await IsmChatConfig.dbWrapper?.userDetailsBox
         .get(IsmChatStrings.userData);
     if (users != null) {
@@ -523,15 +523,15 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  Future<void> _generateReactionList() async {
-    reactions = await Future.wait(
-      IsmChatEmoji.values.map(
-        (e) async => (await EmojiPickerUtils()
-                .searchEmoji(e.emojiKeyword, defaultEmojiSet))
-            .first,
-      ),
-    );
-  }
+  // Future<void> _generateReactionList() async {
+  //   reactions = await Future.wait(
+  //     IsmChatEmoji.values.map(
+  //       (e) async => (await EmojiPickerUtils()
+  //               .searchEmoji(e.emojiKeyword, defaultEmojiSet))
+  //           .first,
+  //     ),
+  //   );
+  // }
 
   /// This function will be used in [Forward Screen and New conversation screen] to Select or Unselect users
   void onForwardUserTap(int index) {
@@ -587,39 +587,39 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  Future<String> ismUploadImage(ImageSource imageSource) async {
-    var file = await IsmChatUtility.pickMedia(imageSource);
-    if (file.isEmpty) {
-      return '';
-    }
+  // Future<String> ismUploadImage(ImageSource imageSource) async {
+  //   var file = await IsmChatUtility.pickMedia(imageSource);
+  //   if (file.isEmpty) {
+  //     return '';
+  //   }
 
-    Uint8List? bytes;
-    String? extension;
-    if (kIsWeb) {
-      bytes = await file.first?.readAsBytes();
-      extension = 'jpg';
-    } else {
-      bytes = await file.first?.readAsBytes();
-      extension = file.first?.path.split('.').last;
-    }
-    return await getPresignedUrl(
-      extension!,
-      bytes!,
-      true,
-    );
-  }
+  //   Uint8List? bytes;
+  //   String? extension;
+  //   if (kIsWeb) {
+  //     bytes = await file.first?.readAsBytes();
+  //     extension = 'jpg';
+  //   } else {
+  //     bytes = await file.first?.readAsBytes();
+  //     extension = file.first?.path.split('.').last;
+  //   }
+  //   return await getPresignedUrl(
+  //     extension,
+  //     bytes,
+  //     true,
+  //   );
+  // }
 
   /// function to pick image for group profile
-  Future<void> ismChangeImage(ImageSource imageSource) async {
-    var file = await IsmChatUtility.pickMedia(imageSource);
-    if (file.isEmpty) {
-      return;
-    }
+  // Future<void> ismChangeImage(ImageSource imageSource) async {
+  //   var file = await IsmChatUtility.pickMedia(imageSource);
+  //   if (file.isEmpty) {
+  //     return;
+  //   }
 
-    var bytes = await file.first?.readAsBytes();
-    var fileExtension = file.first?.path.split('.').last;
-    await getPresignedUrl(fileExtension!, bytes!);
-  }
+  //   var bytes = await file.first?.readAsBytes();
+  //   var fileExtension = file.first?.path.split('.').last;
+  //   await getPresignedUrl(fileExtension!, bytes!);
+  // }
 
   // / get Api for presigned Url.....
   Future<String> getPresignedUrl(
@@ -1355,19 +1355,19 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  void updateUserDetails(ImageSource source) async {
-    Get.back();
-    final imageUrl = await ismUploadImage(source);
-    if (imageUrl.isNotEmpty) {
-      await updateUserData(
-        userProfileImageUrl: imageUrl,
-        isloading: true,
-      );
-      await getUserData(
-        isLoading: true,
-      );
-    }
-  }
+  // void updateUserDetails(ImageSource source) async {
+  //   Get.back();
+  //   final imageUrl = await ismUploadImage(source);
+  //   if (imageUrl.isNotEmpty) {
+  //     await updateUserData(
+  //       userProfileImageUrl: imageUrl,
+  //       isloading: true,
+  //     );
+  //     await getUserData(
+  //       isLoading: true,
+  //     );
+  //   }
+  // }
 
   /// Ask permission for contacts
   Future<void> askPermissions() async {

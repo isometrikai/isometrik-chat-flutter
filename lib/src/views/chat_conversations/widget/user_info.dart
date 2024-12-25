@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatUserView extends StatelessWidget {
@@ -77,23 +77,23 @@ class IsmChatUserView extends StatelessWidget {
                       right: IsmChatDimens.ten,
                       child: IsmChatTapHandler(
                         onTap: () {
-                          if (IsmChatResponsive.isWeb(context)) {
-                            controller.ismUploadImage(ImageSource.gallery);
-                          } else {
-                            Get.bottomSheet<void>(
-                              IsmChatProfilePhotoBottomSheet(
-                                onCameraTap: () async {
-                                  controller
-                                      .updateUserDetails(ImageSource.camera);
-                                },
-                                onGalleryTap: () async {
-                                  controller
-                                      .updateUserDetails(ImageSource.gallery);
-                                },
-                              ),
-                              elevation: 0,
-                            );
-                          }
+                          // if (IsmChatResponsive.isWeb(context)) {
+                          //   controller.ismUploadImage(ImageSource.gallery);
+                          // } else {
+                          //   Get.bottomSheet<void>(
+                          //     IsmChatProfilePhotoBottomSheet(
+                          //       onCameraTap: () async {
+                          //         controller
+                          //             .updateUserDetails(ImageSource.camera);
+                          //       },
+                          //       onGalleryTap: () async {
+                          //         controller
+                          //             .updateUserDetails(ImageSource.gallery);
+                          //       },
+                          //     ),
+                          //     elevation: 0,
+                          //   );
+                          // }
                         },
                         child: Container(
                           alignment: Alignment.center,

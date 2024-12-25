@@ -7,8 +7,8 @@ import 'package:app_settings/app_settings.dart';
 import 'package:azlistview/azlistview.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:file_picker/file_picker.dart';
+// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+// import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,13 +17,11 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
     if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
-import 'package:isometrik_chat_flutter/src/views/chat_page/widget/profile_change.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:pdfx/pdfx.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -413,7 +411,7 @@ class IsmChatPageController extends GetxController
 
   List<MentionModel> userMentionedList = [];
 
-  List<Emoji> reactions = [];
+  // List<Emoji> reactions = [];
 
   bool didReactedLast = false;
 
@@ -495,7 +493,7 @@ class IsmChatPageController extends GetxController
   }) async {
     recordVoice = AudioRecorder();
     isActionAllowed = false;
-    _generateReactionList();
+    // _generateReactionList();
     _startAnimated();
     _scrollListener();
     _intputAndFocustNode();
@@ -564,15 +562,15 @@ class IsmChatPageController extends GetxController
     );
   }
 
-  _generateReactionList() async {
-    reactions = await Future.wait(
-      IsmChatEmoji.values.map(
-        (e) async => (await EmojiPickerUtils()
-                .searchEmoji(e.emojiKeyword, defaultEmojiSet))
-            .first,
-      ),
-    );
-  }
+  // _generateReactionList() async {
+  //   reactions = await Future.wait(
+  //     IsmChatEmoji.values.map(
+  //       (e) async => (await EmojiPickerUtils()
+  //               .searchEmoji(e.emojiKeyword, defaultEmojiSet))
+  //           .first,
+  //     ),
+  //   );
+  // }
 
   _getBackGroundAsset() {
     var assets = conversationController.userDetails?.metaData?.assetList ?? [];
@@ -881,14 +879,14 @@ class IsmChatPageController extends GetxController
 
         break;
       case IsmChatAttachmentType.gallery:
-        listOfAssetsPath.clear();
-        kIsWeb ? getMediaWithWeb() : getMedia();
+        // listOfAssetsPath.clear();
+        // kIsWeb ? getMediaWithWeb() : getMedia();
         break;
       case IsmChatAttachmentType.document:
-        sendDocument(
-          conversationId: conversation?.conversationId ?? '',
-          userId: conversation?.opponentDetails?.userId ?? '',
-        );
+        // sendDocument(
+        //   conversationId: conversation?.conversationId ?? '',
+        //   userId: conversation?.opponentDetails?.userId ?? '',
+        // );
         break;
       case IsmChatAttachmentType.location:
         textEditingController.clear();
@@ -931,74 +929,74 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  void getMediaWithWeb() async {
-    webMedia.clear();
-    assetsIndex = 0;
-    final result = await IsmChatUtility.pickMedia(
-      ImageSource.gallery,
-      isVideoAndImage: true,
-    );
+  // void getMediaWithWeb() async {
+  //   webMedia.clear();
+  //   assetsIndex = 0;
+  //   final result = await IsmChatUtility.pickMedia(
+  //     ImageSource.gallery,
+  //     isVideoAndImage: true,
+  //   );
 
-    if (result.isEmpty) {
-      return;
-    }
-    if (result.isNotEmpty) {
-      IsmChatUtility.showLoader();
-      for (var x in result) {
-        var bytes = await x?.readAsBytes();
-        // var bytes = await IsmChatUtility.fetchBytesFromBlobUrl(x?.path ?? '')
-        // as Uint8List;
-        var extension = x?.mimeType?.split('/').last;
-        var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
-        var platformFile = IsmchPlatformFile(
-          name: x?.name ?? '',
-          size: bytes?.length,
-          bytes: bytes,
-          path: x?.path,
-          extension: extension,
-        );
-        if (IsmChatConstants.videoExtensions.contains(extension)) {
-          var thumbnailBytes =
-              await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
-          if (thumbnailBytes != null) {
-            webMedia.add(
-              WebMediaModel(
-                isVideo: IsmChatConstants.videoExtensions.contains(extension),
-                platformFile: platformFile,
-                thumbnailBytes: thumbnailBytes,
-                dataSize: dataSize,
-              ),
-            );
-          }
-        } else {
-          webMedia.add(
-            WebMediaModel(
-              isVideo: IsmChatConstants.videoExtensions.contains(extension),
-              platformFile: platformFile,
-              thumbnailBytes: Uint8List(0),
-              dataSize: dataSize,
-            ),
-          );
-        }
-      }
-      IsmChatUtility.closeLoader();
-      if (IsmChatResponsive.isMobile(Get.context!)) {
-        IsmChatRouteManagement.goToWebMediaPreview();
-      }
-    }
-  }
+  //   if (result.isEmpty) {
+  //     return;
+  //   }
+  //   if (result.isNotEmpty) {
+  //     IsmChatUtility.showLoader();
+  //     for (var x in result) {
+  //       var bytes = await x?.readAsBytes();
+  //       // var bytes = await IsmChatUtility.fetchBytesFromBlobUrl(x?.path ?? '')
+  //       // as Uint8List;
+  //       var extension = x?.mimeType?.split('/').last;
+  //       var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+  //       var platformFile = IsmchPlatformFile(
+  //         name: x?.name ?? '',
+  //         size: bytes?.length,
+  //         bytes: bytes,
+  //         path: x?.path,
+  //         extension: extension,
+  //       );
+  //       if (IsmChatConstants.videoExtensions.contains(extension)) {
+  //         var thumbnailBytes =
+  //             await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
+  //         if (thumbnailBytes != null) {
+  //           webMedia.add(
+  //             WebMediaModel(
+  //               isVideo: IsmChatConstants.videoExtensions.contains(extension),
+  //               platformFile: platformFile,
+  //               thumbnailBytes: thumbnailBytes,
+  //               dataSize: dataSize,
+  //             ),
+  //           );
+  //         }
+  //       } else {
+  //         webMedia.add(
+  //           WebMediaModel(
+  //             isVideo: IsmChatConstants.videoExtensions.contains(extension),
+  //             platformFile: platformFile,
+  //             thumbnailBytes: Uint8List(0),
+  //             dataSize: dataSize,
+  //           ),
+  //         );
+  //       }
+  //     }
+  //     IsmChatUtility.closeLoader();
+  //     if (IsmChatResponsive.isMobile(Get.context!)) {
+  //       IsmChatRouteManagement.goToWebMediaPreview();
+  //     }
+  //   }
+  // }
 
-  void getMedia() async {
-    final result = await IsmChatUtility.pickMedia(
-      ImageSource.gallery,
-      isVideoAndImage: true,
-    );
+  // void getMedia() async {
+  //   final result = await IsmChatUtility.pickMedia(
+  //     ImageSource.gallery,
+  //     isVideoAndImage: true,
+  //   );
 
-    if (result.isEmpty) {
-      return;
-    }
-    IsmChatRouteManagement.goToGalleryAssetsView(result);
-  }
+  //   if (result.isEmpty) {
+  //     return;
+  //   }
+  //   IsmChatRouteManagement.goToGalleryAssetsView(result);
+  // }
 
   Future<void> selectAssets(List<XFile?> assetList) async {
     assetsIndex = 0;

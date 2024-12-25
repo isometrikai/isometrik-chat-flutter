@@ -755,11 +755,11 @@ extension ReactionLastMessgae on String {
   String get reactionString {
     var reactionValue = IsmChatEmoji.values.firstWhere((e) => e.value == this);
 
-    var reaction = Get.find<IsmChatConversationsController>()
-        .reactions
-        .firstWhere((e) => e.name == reactionValue.emojiKeyword);
+    // var reaction = Get.find<IsmChatConversationsController>()
+    //     .reactions
+    //     .firstWhere((e) => e.name == reactionValue.emojiKeyword);
 
-    return reaction.emoji;
+    return ''; //  reaction.emoji;
   }
 }
 

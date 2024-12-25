@@ -13,8 +13,7 @@ import 'package:gal/gal.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -219,57 +218,57 @@ class IsmChatUtility {
     );
   }
 
-  static Future<List<XFile?>> pickMedia(ImageSource source,
-      {bool isVideoAndImage = false}) async {
-    List<XFile?> result;
+  // static Future<List<XFile?>> pickMedia(ImageSource source,
+  //     {bool isVideoAndImage = false}) async {
+  //   List<XFile?> result;
 
-    if (isVideoAndImage) {
-      result = await ImagePicker().pickMultipleMedia(
-        imageQuality: 25,
-        requestFullMetadata: true,
-      );
-    } else {
-      result = [
-        await ImagePicker().pickImage(
-          imageQuality: 25,
-          source: source,
-        )
-      ];
-    }
+  //   if (isVideoAndImage) {
+  //     result = await ImagePicker().pickMultipleMedia(
+  //       imageQuality: 25,
+  //       requestFullMetadata: true,
+  //     );
+  //   } else {
+  //     result = [
+  //       await ImagePicker().pickImage(
+  //         imageQuality: 25,
+  //         source: source,
+  //       )
+  //     ];
+  //   }
 
-    if (result.isEmpty) {
-      return [];
-    }
-    if (isVideoAndImage) {
-      return result;
-    }
-    var croppedFile = await ImageCropper().cropImage(
-      sourcePath: result.first?.path ?? '',
-      compressQuality: 100,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Cropper'.tr,
-          toolbarColor: IsmChatColors.blackColor,
-          toolbarWidgetColor: IsmChatColors.whiteColor,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
-          cropStyle: CropStyle.circle,
-        ),
-        IOSUiSettings(
-          title: 'Cropper',
-          cropStyle: CropStyle.circle,
-        ),
-        WebUiSettings(
-          context: Get.context!,
-        ),
-      ],
-    );
+  //   if (result.isEmpty) {
+  //     return [];
+  //   }
+  //   if (isVideoAndImage) {
+  //     return result;
+  //   }
+  //   var croppedFile = await ImageCropper().cropImage(
+  //     sourcePath: result.first?.path ?? '',
+  //     compressQuality: 100,
+  //     uiSettings: [
+  //       AndroidUiSettings(
+  //         toolbarTitle: 'Cropper'.tr,
+  //         toolbarColor: IsmChatColors.blackColor,
+  //         toolbarWidgetColor: IsmChatColors.whiteColor,
+  //         initAspectRatio: CropAspectRatioPreset.original,
+  //         lockAspectRatio: false,
+  //         cropStyle: CropStyle.circle,
+  //       ),
+  //       IOSUiSettings(
+  //         title: 'Cropper',
+  //         cropStyle: CropStyle.circle,
+  //       ),
+  //       WebUiSettings(
+  //         context: Get.context!,
+  //       ),
+  //     ],
+  //   );
 
-    if (croppedFile != null) {
-      return [XFile(croppedFile.path)];
-    }
-    return [];
-  }
+  //   if (croppedFile != null) {
+  //     return [XFile(croppedFile.path)];
+  //   }
+  //   return [];
+  // }
 
   /// Returns text representation of a provided bytes value (e.g. 1kB, 1GB)
   static String formatBytes(int size, [int fractionDigits = 2]) {

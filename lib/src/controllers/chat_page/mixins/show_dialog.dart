@@ -62,22 +62,22 @@ mixin IsmChatShowDialogMixin on GetxController {
   }
 
   /// function to show dialog for changing the group profile
-  Future<void> showDialogForChangeGroupProfile() async {
-    if (kIsWeb) {
-      await _controller.conversationController
-          .ismChangeImage(ImageSource.gallery);
-      await _controller.changeGroupProfile(
-          conversationImageUrl: _controller.conversationController.profileImage,
-          conversationId: _controller.conversation?.conversationId ?? '',
-          isLoading: true);
-    } else {
-      await Get.bottomSheet(
-        const ProfileChange(),
-        isDismissible: false,
-        elevation: 0,
-      );
-    }
-  }
+  // Future<void> showDialogForChangeGroupProfile() async {
+  //   if (kIsWeb) {
+  //     await _controller.conversationController
+  //         .ismChangeImage(ImageSource.gallery);
+  //     await _controller.changeGroupProfile(
+  //         conversationImageUrl: _controller.conversationController.profileImage,
+  //         conversationId: _controller.conversation?.conversationId ?? '',
+  //         isLoading: true);
+  //   } else {
+  //     await Get.bottomSheet(
+  //       const ProfileChange(),
+  //       isDismissible: false,
+  //       elevation: 0,
+  //     );
+  //   }
+  // }
 
   void showDialogForBlockUnBlockUser(
     bool userBlockOrNot, [

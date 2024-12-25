@@ -1,4 +1,4 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 enum IsmChatMessageType {
@@ -658,8 +658,8 @@ enum IsmChatEmoji {
   factory IsmChatEmoji.fromMap(String value) =>
       IsmChatEmoji.values.firstWhere((e) => e.value == value);
 
-  factory IsmChatEmoji.fromEmoji(Emoji emoji) =>
-      IsmChatEmoji.values.firstWhere((e) => e.emojiKeyword == emoji.name);
+  // factory IsmChatEmoji.fromEmoji(Emoji emoji) =>
+  //     IsmChatEmoji.values.firstWhere((e) => e.emojiKeyword == emoji.name);
 
   const IsmChatEmoji({
     required this.value,

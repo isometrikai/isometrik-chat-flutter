@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:azlistview/azlistview.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCreateConversationView extends StatelessWidget {
@@ -528,26 +527,26 @@ class _GroupChatImageAndName extends StatelessWidget {
                 else
                   IsmChatTapHandler(
                     onTap: () {
-                      if (kIsWeb) {
-                        controller.ismUploadImage(ImageSource.gallery);
-                      } else {
-                        Get.back();
-                        Get.bottomSheet<void>(
-                          IsmChatProfilePhotoBottomSheet(
-                            onCameraTap: () async {
-                              Get.back();
-                              await controller
-                                  .ismUploadImage(ImageSource.camera);
-                            },
-                            onGalleryTap: () async {
-                              Get.back();
-                              await controller
-                                  .ismUploadImage(ImageSource.gallery);
-                            },
-                          ),
-                          elevation: 0,
-                        );
-                      }
+                      // if (kIsWeb) {
+                      //   controller.ismUploadImage(ImageSource.gallery);
+                      // } else {
+                      //   Get.back();
+                      //   Get.bottomSheet<void>(
+                      //     IsmChatProfilePhotoBottomSheet(
+                      //       onCameraTap: () async {
+                      //         Get.back();
+                      //         await controller
+                      //             .ismUploadImage(ImageSource.camera);
+                      //       },
+                      //       onGalleryTap: () async {
+                      //         Get.back();
+                      //         await controller
+                      //             .ismUploadImage(ImageSource.gallery);
+                      //       },
+                      //     ),
+                      //     elevation: 0,
+                      //   );
+                      // }
                     },
                     child: IsmChatImage.profile(
                       controller.profileImage,
@@ -559,25 +558,25 @@ class _GroupChatImageAndName extends StatelessWidget {
                   right: IsmChatDimens.four,
                   child: IsmChatTapHandler(
                     onTap: () {
-                      if (IsmChatResponsive.isWeb(context)) {
-                        controller.ismUploadImage(ImageSource.gallery);
-                      } else {
-                        Get.bottomSheet<void>(
-                          IsmChatProfilePhotoBottomSheet(
-                            onCameraTap: () async {
-                              Get.back();
-                              await controller
-                                  .ismUploadImage(ImageSource.camera);
-                            },
-                            onGalleryTap: () async {
-                              Get.back();
-                              await controller
-                                  .ismUploadImage(ImageSource.gallery);
-                            },
-                          ),
-                          elevation: 0,
-                        );
-                      }
+                      // if (IsmChatResponsive.isWeb(context)) {
+                      //   controller.ismUploadImage(ImageSource.gallery);
+                      // } else {
+                      //   Get.bottomSheet<void>(
+                      //     IsmChatProfilePhotoBottomSheet(
+                      //       onCameraTap: () async {
+                      //         Get.back();
+                      //         await controller
+                      //             .ismUploadImage(ImageSource.camera);
+                      //       },
+                      //       onGalleryTap: () async {
+                      //         Get.back();
+                      //         await controller
+                      //             .ismUploadImage(ImageSource.gallery);
+                      //       },
+                      //     ),
+                      //     elevation: 0,
+                      //   );
+                      // }
                     },
                     child: Container(
                       alignment: Alignment.center,

@@ -1,4 +1,4 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -82,43 +82,43 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                     '${IsmChatStrings.all} ${allReactions.length} ',
                     style: IsmChatStyles.w400Black18,
                   ),
-                  ...List.generate(reactionLength, (index) {
-                    var reactionValue = getIsmChatEmoji(
-                        reaction: widget.message.reactions![index]);
-                    var reaction = widget._controller.reactions.firstWhere(
-                        (e) => e.name == reactionValue.emojiKeyword);
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        AbsorbPointer(
-                          absorbing: true,
-                          child: EmojiCell.fromConfig(
-                            emojiBoxSize: IsmChatDimens.forty,
-                            emoji: reaction,
-                            emojiSize: IsmChatDimens.thirty,
-                            onEmojiSelected: (_, emoji) {},
-                            config: Config(
-                              categoryViewConfig: CategoryViewConfig(
-                                  indicatorColor:
-                                      IsmChatConfig.chatTheme.primaryColor!),
-                              emojiViewConfig: EmojiViewConfig(
-                                emojiSizeMax: IsmChatDimens.twentyFour,
-                                backgroundColor:
-                                    IsmChatConfig.chatTheme.backgroundColor!,
-                              ),
-                            ),
-                          ),
-                        ),
-                        IsmChatDimens.boxWidth8,
-                        Text(
-                          '${widget.message.reactions?[index].userIds.length}',
-                          style: IsmChatStyles.w400Black16,
-                        )
-                      ],
-                    );
-                  }),
+                  // ...List.generate(reactionLength, (index) {
+                  //   var reactionValue = getIsmChatEmoji(
+                  //       reaction: widget.message.reactions![index]);
+                  //   // var reaction = widget._controller.reactions.firstWhere(
+                  //   //     (e) => e.name == reactionValue.emojiKeyword);
+                  //   return Row(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     children: [
+                  //       AbsorbPointer(
+                  //         absorbing: true,
+                  //         child: EmojiCell.fromConfig(
+                  //           emojiBoxSize: IsmChatDimens.forty,
+                  //           emoji: reaction,
+                  //           emojiSize: IsmChatDimens.thirty,
+                  //           onEmojiSelected: (_, emoji) {},
+                  //           config: Config(
+                  //             categoryViewConfig: CategoryViewConfig(
+                  //                 indicatorColor:
+                  //                     IsmChatConfig.chatTheme.primaryColor!),
+                  //             emojiViewConfig: EmojiViewConfig(
+                  //               emojiSizeMax: IsmChatDimens.twentyFour,
+                  //               backgroundColor:
+                  //                   IsmChatConfig.chatTheme.backgroundColor!,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       IsmChatDimens.boxWidth8,
+                  //       Text(
+                  //         '${widget.message.reactions?[index].userIds.length}',
+                  //         style: IsmChatStyles.w400Black16,
+                  //       )
+                  //     ],
+                  //   );
+                  // }),
                 ]),
           ),
           SizedBox(
@@ -144,8 +144,8 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
 
                     var reactionValue =
                         getIsmChatEmoji(reaction: allReactions[index]);
-                    var reaction = widget._controller.reactions.firstWhere(
-                        (e) => e.name == reactionValue.emojiKeyword);
+                    // var reaction = widget._controller.reactions.firstWhere(
+                    //     (e) => e.name == reactionValue.emojiKeyword);
                     return IsmChatTapHandler(
                       onTap: () async {
                         Get.back();
@@ -168,25 +168,26 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                 : widget._controller.conversation?.chatName ??
                                     ''),
                         trailing: SizedBox(
-                          height: IsmChatDimens.thirtyTwo,
-                          width: IsmChatDimens.thirtyTwo,
-                          child: EmojiCell.fromConfig(
-                            emojiBoxSize: 20,
-                            emoji: reaction,
-                            emojiSize: IsmChatDimens.twenty,
-                            onEmojiSelected: (_, emoji) {},
-                            config: Config(
-                              categoryViewConfig: CategoryViewConfig(
-                                  indicatorColor:
-                                      IsmChatConfig.chatTheme.primaryColor!),
-                              emojiViewConfig: EmojiViewConfig(
-                                emojiSizeMax: IsmChatDimens.twentyFour,
-                                backgroundColor:
-                                    IsmChatConfig.chatTheme.backgroundColor!,
-                              ),
+                            height: IsmChatDimens.thirtyTwo,
+                            width: IsmChatDimens.thirtyTwo,
+                            child: const Text('')
+                            //  EmojiCell.fromConfig(
+                            //   emojiBoxSize: 20,
+                            //   emoji: reaction,
+                            //   emojiSize: IsmChatDimens.twenty,
+                            //   onEmojiSelected: (_, emoji) {},
+                            //   config: Config(
+                            //     categoryViewConfig: CategoryViewConfig(
+                            //         indicatorColor:
+                            //             IsmChatConfig.chatTheme.primaryColor!),
+                            //     emojiViewConfig: EmojiViewConfig(
+                            //       emojiSizeMax: IsmChatDimens.twentyFour,
+                            //       backgroundColor:
+                            //           IsmChatConfig.chatTheme.backgroundColor!,
+                            //     ),
+                            //   ),
+                            // ),
                             ),
-                          ),
-                        ),
                         subtitle: showOwnUser
                             ? const Text(IsmChatStrings.removeReaction)
                             : widget._controller.conversation!.isGroup!
