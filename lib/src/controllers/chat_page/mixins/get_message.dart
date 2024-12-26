@@ -400,8 +400,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
             ?.getConversation(conversationId: conversationId);
         if (conversation != null) {
           conversation = conversation.copyWith(messages: allMessages);
-          await IsmChatConfig.dbWrapper!
-              .saveConversation(conversation: conversation);
+          await IsmChatConfig.dbWrapper
+              ?.saveConversation(conversation: conversation);
         }
         await getMessagesFromDB(conversationId);
       }

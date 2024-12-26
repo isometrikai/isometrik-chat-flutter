@@ -21,6 +21,7 @@ class IsmChatInputField extends StatelessWidget {
     this.readOnly = false,
     this.focusNode,
     this.contentPadding,
+    this.isShowBorderColor = false,
     super.key,
   });
   final FocusNode? focusNode;
@@ -41,6 +42,7 @@ class IsmChatInputField extends StatelessWidget {
   final TextCapitalization? textCapitalization;
   final bool readOnly;
   final EdgeInsets? contentPadding;
+  final bool isShowBorderColor;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -68,49 +70,61 @@ class IsmChatInputField extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
-                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
-                        ?.borderColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
+                color: isShowBorderColor
+                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                            ?.borderColor ??
+                        IsmChatConfig.chatTheme.primaryColor!
+                    : IsmChatColors.transparent,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
-                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
-                        ?.borderColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
+                color: isShowBorderColor
+                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                            ?.borderColor ??
+                        IsmChatConfig.chatTheme.primaryColor!
+                    : IsmChatColors.transparent,
               ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
-                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
-                        ?.borderColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
+                color: isShowBorderColor
+                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                            ?.borderColor ??
+                        IsmChatConfig.chatTheme.primaryColor!
+                    : IsmChatColors.transparent,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
-                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
-                        ?.borderColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
+                color: isShowBorderColor
+                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                            ?.borderColor ??
+                        IsmChatConfig.chatTheme.primaryColor!
+                    : IsmChatColors.transparent,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
-                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
-                        ?.borderColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
+                color: isShowBorderColor
+                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                            ?.borderColor ??
+                        IsmChatConfig.chatTheme.primaryColor!
+                    : IsmChatColors.transparent,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
-                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
-                        ?.borderColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
+                color: isShowBorderColor
+                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                            ?.borderColor ??
+                        IsmChatConfig.chatTheme.primaryColor!
+                    : IsmChatColors.transparent,
               ),
             ),
             suffixIcon: suffixIcon,
