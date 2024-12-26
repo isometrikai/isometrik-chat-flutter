@@ -90,9 +90,9 @@ class ChatList extends StatelessWidget {
                 ),
                 text: 'No Messages',
               ),
-              onMessageTap: (p0, message, _) async {
-                return (<String, dynamic>{}, false);
-              },
+              // onMessageTap: (p0, message, _) async {
+              //   return (<String, dynamic>{}, false);
+              // },
               attachments: const [
                 IsmChatAttachmentType.camera,
                 IsmChatAttachmentType.gallery,

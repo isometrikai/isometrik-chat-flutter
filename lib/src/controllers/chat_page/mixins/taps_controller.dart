@@ -14,6 +14,7 @@ mixin IsmChatTapsController on GetxController {
       message,
       _controller.conversation!,
     );
+
     if (response?.$2 ?? true) {
       if (message.messageType == IsmChatMessageType.reply) {
         if ([

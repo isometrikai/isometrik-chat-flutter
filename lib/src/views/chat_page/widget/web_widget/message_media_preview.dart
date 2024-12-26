@@ -50,7 +50,7 @@ class IsmWebMessageMediaPreview extends StatefulWidget {
 
 class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   /// Page controller for handing the PageView pages
-  PageController pageController = PageController();
+  PageController? pageController;
 
   final chatPageController =
       Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
@@ -78,6 +78,9 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
       int.parse(
           '${widget._messageData![widget._mediaIndex ?? 0].attachments?.first.size}'),
     );
+    pageController =
+        PageController(initialPage: chatPageController.assetsIndex);
+    updateState();
   }
 
   void updateState() {
@@ -179,19 +182,18 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 children: [
                   PageView.builder(
                     controller: pageController,
+                    itemCount: widget._messageData?.length ?? 0,
                     itemBuilder: (
                       BuildContext context,
                       int index,
                     ) {
-                      var url = widget._messageData?[index].attachments!.first
-                              .mediaUrl ??
-                          '';
+                      var media = widget._messageData?[index];
+                      var url = media?.attachments?.first.mediaUrl ?? '';
                       var customType =
-                          (widget._messageData?[index].messageType ==
-                                  IsmChatMessageType.normal)
-                              ? widget._messageData![index].customType
-                              : widget._messageData?[index].metaData
-                                  ?.replyMessage?.parentMessageMessageType;
+                          (media?.messageType == IsmChatMessageType.normal)
+                              ? media?.customType
+                              : media?.metaData?.replyMessage
+                                  ?.parentMessageMessageType;
                       return customType == IsmChatCustomMessageType.image
                           ? PhotoView(
                               backgroundDecoration: const BoxDecoration(
@@ -209,17 +211,15 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                           : VideoViewPage(path: url);
                     },
                     onPageChanged: (index) {
-                      initiated = widget._messageData?[index].sentByMe ?? false;
-                      mediaTime =
-                          widget._messageData?[index].sentAt.deliverTime ?? '';
+                      var media = widget._messageData?[index];
+                      initiated = media?.sentByMe ?? false;
+                      mediaTime = media?.sentAt.deliverTime ?? '';
                       chatPageController.assetsIndex = index;
                       mediaSize = IsmChatUtility.formatBytes(
-                        int.parse(
-                            '${widget._messageData![index].attachments?.first.size}'),
+                        int.parse('${media?.attachments?.first.size}'),
                       );
                       updateState();
                     },
-                    itemCount: widget._messageData?.length ?? 0,
                   ),
                   Padding(
                     padding: IsmChatDimens.edgeInsets20_0,
@@ -243,7 +243,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                                       .deliverTime ??
                                   '';
                               updateState();
-                              await pageController.animateToPage(
+                              await pageController?.animateToPage(
                                   chatPageController.assetsIndex,
                                   curve: Curves.linear,
                                   duration: const Duration(milliseconds: 100));
@@ -286,7 +286,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                                       .deliverTime ??
                                   '';
                               updateState();
-                              await pageController.animateToPage(
+                              await pageController?.animateToPage(
                                 chatPageController.assetsIndex,
                                 curve: Curves.linear,
                                 duration: const Duration(milliseconds: 100),
@@ -329,18 +329,17 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 itemCount: widget._messageData?.length ?? 0,
                 itemBuilder: (context, index) {
                   var media = widget._messageData?[index].attachments;
+                  var mediaMessage = widget._messageData?[index];
                   var isVideo = IsmChatConstants.videoExtensions.contains(
                     media?.first.extension,
                   );
                   return InkWell(
                     onTap: () async {
-                      initiated = widget._messageData?[index].sentByMe ?? false;
-                      mediaTime =
-                          widget._messageData?[index].sentAt.deliverTime ?? '';
-
+                      initiated = mediaMessage?.sentByMe ?? false;
+                      mediaTime = mediaMessage?.sentAt.deliverTime ?? '';
                       chatPageController.assetsIndex = index;
                       chatPageController.isVideoVisible = false;
-                      await pageController.animateToPage(index,
+                      await pageController?.animateToPage(index,
                           curve: Curves.linear,
                           duration: const Duration(milliseconds: 100));
                       updateState();
