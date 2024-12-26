@@ -43,7 +43,7 @@ class IsmChatInputField extends StatelessWidget {
   final EdgeInsets? contentPadding;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) => Container(
         padding: padding ?? IsmChatDimens.edgeInsets10_4,
         child: TextFormField(
           focusNode: focusNode,
@@ -58,7 +58,6 @@ class IsmChatInputField extends StatelessWidget {
           style: style ?? IsmChatStyles.w500White16,
           readOnly: readOnly,
           decoration: InputDecoration(
-            border: InputBorder.none,
             hintText: hint,
             hintStyle: hintStyle ?? IsmChatStyles.w400Grey12,
             contentPadding: contentPadding ?? IsmChatDimens.edgeInsets10,
@@ -66,13 +65,53 @@ class IsmChatInputField extends StatelessWidget {
             isCollapsed: true,
             filled: true,
             fillColor: fillColor ?? IsmChatConfig.chatTheme.backgroundColor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderSide: BorderSide(
+                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                        ?.borderColor ??
+                    IsmChatConfig.chatTheme.primaryColor!,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderSide: BorderSide(
+                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                        ?.borderColor ??
+                    IsmChatConfig.chatTheme.primaryColor!,
+              ),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderSide: BorderSide(
+                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                        ?.borderColor ??
+                    IsmChatConfig.chatTheme.primaryColor!,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderSide: BorderSide(
+                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                        ?.borderColor ??
+                    IsmChatConfig.chatTheme.primaryColor!,
+              ),
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
-              borderSide: const BorderSide(color: Colors.transparent),
+              borderSide: BorderSide(
+                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                        ?.borderColor ??
+                    IsmChatConfig.chatTheme.primaryColor!,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
-              borderSide: const BorderSide(color: Colors.transparent),
+              borderSide: BorderSide(
+                color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
+                        ?.borderColor ??
+                    IsmChatConfig.chatTheme.primaryColor!,
+              ),
             ),
             suffixIcon: suffixIcon,
           ),
