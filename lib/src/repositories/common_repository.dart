@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCommonRepository {
@@ -232,7 +233,13 @@ class IsmChatCommonRepository {
         if (response.errorCode.toString().startsWith('4')) {
           var error = (jsonDecode(response.data) as Map)['error'] as String? ??
               'Error in creating conversation';
-          await IsmChatUtility.showErrorDialog(error);
+          await IsmChatUtility.showErrorDialog(
+            error,
+            onCancel: () {
+              Get.back();
+              Get.back();
+            },
+          );
         }
         return null;
       }

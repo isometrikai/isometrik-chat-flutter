@@ -114,11 +114,13 @@ class IsmChatUtility {
     );
   }
 
-  static Future<void> showErrorDialog(String message) async {
+  static Future<void> showErrorDialog(String message,
+      {void Function()? onCancel}) async {
     await Get.dialog(
       IsmChatAlertDialogBox(
         title: message,
         cancelLabel: IsmChatStrings.okay,
+        onCancel: onCancel,
       ),
     );
   }
