@@ -511,10 +511,10 @@ extension ModelConversion on IsmChatConversationModel {
       .contains(conversationId);
 
   Widget get sender {
-    if (!isGroup! ||
+    if (!(isGroup ?? false) ||
         lastMessageDetails!.messageBody.isEmpty ||
         [IsmChatCustomMessageType.memberLeave]
-            .contains(lastMessageDetails!.customType)) {
+            .contains(lastMessageDetails?.customType)) {
       return const SizedBox.shrink();
     }
 
@@ -531,10 +531,10 @@ extension ModelConversion on IsmChatConversationModel {
   Widget get readCheck {
     try {
       if (!(lastMessageDetails?.sentByMe ?? false)) {
-        return const SizedBox.shrink();
+        return IsmChatDimens.box0;
       }
       if (lastMessageDetails?.messageBody.isEmpty == true) {
-        return const SizedBox.shrink();
+        return IsmChatDimens.box0;
       }
 
       if ([
@@ -548,7 +548,7 @@ extension ModelConversion on IsmChatConversationModel {
         IsmChatCustomMessageType.conversationImageUpdated,
         IsmChatCustomMessageType.conversationTitleUpdated,
       ].contains(lastMessageDetails!.customType)) {
-        return const SizedBox.shrink();
+        return IsmChatDimens.box0;
       }
 
       var deliveredToAll = false;
@@ -571,22 +571,26 @@ extension ModelConversion on IsmChatConversationModel {
         }
       }
 
-      return Icon(
-        lastMessageDetails?.messageId.isEmpty == true
-            ? Icons.watch_later_outlined
-            : deliveredToAll
-                ? Icons.done_all_rounded
-                : Icons.done_rounded,
-        color: lastMessageDetails?.messageId.isEmpty == true
-            ? IsmChatConfig.chatTheme.chatPageTheme?.unreadCheckColor ??
-                IsmChatColors.whiteColor
-            : readByAll
-                ? IsmChatConfig.chatTheme.chatPageTheme?.readCheckColor ??
-                    IsmChatColors.blueColor
-                : IsmChatConfig.chatTheme.chatPageTheme?.unreadCheckColor ??
-                    IsmChatColors.greyColor,
-        size: IsmChatDimens.sixteen,
-      );
+      return lastMessageDetails?.messageId.isEmpty == true
+          ? Icon(
+              Icons.watch_later_outlined,
+              color: IsmChatConfig.chatTheme.chatPageTheme?.unreadCheckColor ??
+                  IsmChatColors.whiteColor,
+            )
+          : IsmChatProperties.chatPageProperties.features.contains(
+              IsmChatFeature.showMessageStatus,
+            )
+              ? Icon(
+                  deliveredToAll ? Icons.done_all_rounded : Icons.done_rounded,
+                  color: readByAll
+                      ? IsmChatConfig.chatTheme.chatPageTheme?.readCheckColor ??
+                          IsmChatColors.blueColor
+                      : IsmChatConfig
+                              .chatTheme.chatPageTheme?.unreadCheckColor ??
+                          IsmChatColors.greyColor,
+                  size: IsmChatDimens.sixteen,
+                )
+              : IsmChatDimens.box0;
     } catch (e, st) {
       IsmChatLog.error(e, st);
       return const SizedBox.shrink();

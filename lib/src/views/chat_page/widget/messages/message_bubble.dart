@@ -223,22 +223,16 @@ class MessageBubble extends StatelessWidget {
                             )) ...[
                               IsmChatDimens.boxWidth2,
                               Icon(
-                                _message.messageId?.isEmpty == true
-                                    ? Icons.watch_later_outlined
-                                    : _message.deliveredToAll ?? false
-                                        ? Icons.done_all_rounded
-                                        : Icons.done_rounded,
-                                color: _message.messageId?.isEmpty == true
+                                _message.deliveredToAll ?? false
+                                    ? Icons.done_all_rounded
+                                    : Icons.done_rounded,
+                                color: _message.readByAll ?? false
                                     ? IsmChatConfig.chatTheme.chatPageTheme
+                                            ?.readCheckColor ??
+                                        Colors.blue
+                                    : IsmChatConfig.chatTheme.chatPageTheme
                                             ?.unreadCheckColor ??
-                                        Colors.white
-                                    : _message.readByAll ?? false
-                                        ? IsmChatConfig.chatTheme.chatPageTheme
-                                                ?.readCheckColor ??
-                                            Colors.blue
-                                        : IsmChatConfig.chatTheme.chatPageTheme
-                                                ?.unreadCheckColor ??
-                                            Colors.white,
+                                        Colors.white,
                                 size: IsmChatDimens.forteen,
                               ),
                             ]
