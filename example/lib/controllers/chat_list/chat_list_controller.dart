@@ -79,9 +79,11 @@ class ChatListController extends GetxController {
   }
 
   void onSignOut() async {
+    IsmChatUtility.showLoader();
     await unSubscribeToTopic();
     await dbWrapper?.deleteChatLocalDb();
     await IsmChat.i.logout();
+    IsmChatUtility.closeLoader();
     Get.offAllNamed(AppRoutes.login);
   }
 
