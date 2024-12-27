@@ -54,10 +54,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                 shape: IsmChatConfig.chatTheme.dialogTheme?.shape ?? shape,
                 actions: [
                   IsmChatTapHandler(
-                    onTap: onCancel ??
-                        () {
-                          Get.back<void>();
-                        },
+                    onTap: onCancel ?? Get.back,
                     child: Text(
                       cancelLabel,
                       style: IsmChatStyles.w400Black14,
@@ -67,7 +64,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                     IsmChatDimens.boxWidth8,
                     IsmChatTapHandler(
                       onTap: () {
-                        Get.back<void>();
+                        Get.back();
                         callbackActions?.first();
                       },
                       child: Text(
@@ -93,7 +90,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                         return SimpleDialogOption(
                           child: IsmChatTapHandler(
                             onTap: () {
-                              Get.back<void>();
+                              Get.back();
                               action();
                             },
                             child: Text(label),
