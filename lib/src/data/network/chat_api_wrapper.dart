@@ -256,12 +256,13 @@ class IsmChatApiWrapper {
       case 503:
       case 522:
       default:
-        IsmChatConfig.chatInvalidate?.call();
-        return IsmChatResponseModel(
+        final res = IsmChatResponseModel(
           data: response.body,
           hasError: true,
           errorCode: response.statusCode,
         );
+        IsmChatConfig.chatInvalidate?.call(res);
+        return res;
     }
   }
 }

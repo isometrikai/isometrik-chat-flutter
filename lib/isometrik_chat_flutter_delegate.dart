@@ -35,7 +35,7 @@ class IsmChatDelegate {
     ResponseCallback? paidWalletMessageApiResponse,
     SortingConversationCallback? sortConversationWithIdentifier,
     ConnectionStateCallback? mqttConnectionStatus,
-    VoidCallback? chatInvalidate,
+    ResponseCallback? chatInvalidate,
   }) async {
     _config = config;
     IsmChatConfig.context = context;

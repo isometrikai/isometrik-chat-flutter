@@ -38,7 +38,7 @@ class IsmChatConfig {
   static bool? isPaidWalletMessage;
   static IsmPaidWalletConfig? paidWalletModel;
   static ResponseCallback? paidWalletMessageApiResponse;
-  static VoidCallback? chatInvalidate;
+  static ResponseCallback? chatInvalidate;
 }
 
 class IsmPaidWalletConfig {
