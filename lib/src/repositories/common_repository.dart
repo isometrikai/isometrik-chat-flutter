@@ -44,7 +44,6 @@ class IsmChatCommonRepository {
         showLoader: isLoading,
       );
 
-      IsmChatLog.error(IsmChatUtility.commonHeader());
       if (response.hasError) {
         return null;
       }

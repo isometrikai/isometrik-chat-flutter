@@ -24,7 +24,8 @@ class IsmChatApiWrapper {
     bool showDailog = true,
     required Map<String, String> headers,
   }) async {
-    IsmChatLog('Request - GET $api');
+    IsmChatLog('Request - GET $api \n$headers');
+
     // if (!(await IsmChatUtility.isNetworkAvailable)) {
     //   return await _handleNoInternet(showDailog);
     // }
@@ -64,7 +65,7 @@ class IsmChatApiWrapper {
     bool showLoader = false,
     bool showDailog = true,
   }) async {
-    IsmChatLog('Request - POST $api $payload');
+    IsmChatLog('Request - POST $api \n$payload \n$headers');
     // if (!(await IsmChatUtility.isNetworkAvailable)) {
     //   return await _handleNoInternet(showDailog);
     // }
@@ -106,7 +107,7 @@ class IsmChatApiWrapper {
     bool forAwsUpload = false,
     bool showDailog = true,
   }) async {
-    IsmChatLog('Request - PUT $api $payload');
+    IsmChatLog('Request - PUT $api \n$payload \n$headers');
     // if (!(await IsmChatUtility.isNetworkAvailable)) {
     //   return await _handleNoInternet(showDailog);
     // }
@@ -149,7 +150,7 @@ class IsmChatApiWrapper {
     bool showLoader = false,
     bool showDailog = true,
   }) async {
-    IsmChatLog('Request - PATCH $api $payload');
+    IsmChatLog('Request - PATCH $api \n$payload \n$headers');
     // if (!(await IsmChatUtility.isNetworkAvailable)) {
     //   return await _handleNoInternet(showDailog);
     // }
@@ -190,7 +191,7 @@ class IsmChatApiWrapper {
     bool showLoader = false,
     bool showDailog = true,
   }) async {
-    IsmChatLog('Request - DELETE $api $payload');
+    IsmChatLog('Request - DELETE $api \n$payload \n$headers');
     // if (!(await IsmChatUtility.isNetworkAvailable)) {
     //   return await _handleNoInternet(showDailog);
     // }
