@@ -35,6 +35,7 @@ class IsmChatDelegate {
     ResponseCallback? paidWalletMessageApiResponse,
     SortingConversationCallback? sortConversationWithIdentifier,
     ConnectionStateCallback? mqttConnectionStatus,
+    VoidCallback? chatInvalidate,
   }) async {
     _config = config;
     IsmChatConfig.context = context;
@@ -50,6 +51,7 @@ class IsmChatDelegate {
     IsmChatConfig.isPaidWalletMessage = isPaidWalletMessage;
     IsmChatConfig.paidWalletModel = paidWalletConfig;
     IsmChatConfig.paidWalletMessageApiResponse = paidWalletMessageApiResponse;
+    IsmChatConfig.chatInvalidate = chatInvalidate;
     IsmChatConfig.configInitilized = true;
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
     await _initializeMqtt(

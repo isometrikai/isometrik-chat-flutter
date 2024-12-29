@@ -249,12 +249,14 @@ class IsmChatApiWrapper {
       case 400:
       case 401:
       case 404:
+      case 406:
       case 409:
       case 422:
       case 500:
       case 503:
       case 522:
       default:
+        IsmChatConfig.chatInvalidate?.call();
         return IsmChatResponseModel(
           data: response.body,
           hasError: true,
