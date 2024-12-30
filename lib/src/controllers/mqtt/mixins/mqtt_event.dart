@@ -280,6 +280,7 @@ mixin IsmChatMqttEventMixin {
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId &&
         IsmChatConfig.isPaidWalletMessage == true) {
+      await Future.delayed(const Duration(milliseconds: 500));
       await _updateOwnMessage(message);
       return;
     }
