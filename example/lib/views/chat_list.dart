@@ -52,6 +52,7 @@ class ChatList extends StatelessWidget {
             ),
 
             chatPageProperties: IsmChatPageProperties(
+              // isShowMediaMeessageBlure: (p0, p1) => true,
               // isAllowedDeleteChatFromLocal: true,
               // onCoverstaionStatus: (p0, conversation) {
               //   IsmChatLog.error(conversation.usersOwnDetails?.isDeleted);

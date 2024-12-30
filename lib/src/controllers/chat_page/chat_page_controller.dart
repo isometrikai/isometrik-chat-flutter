@@ -1388,30 +1388,34 @@ class IsmChatPageController extends GetxController
     if ([IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
         .contains(message.customType)) {
       var mediaList = messages
-          .where((item) => [
-                IsmChatCustomMessageType.image,
-                IsmChatCustomMessageType.video
-              ].contains(item.customType))
+          .where((item) =>
+              [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
+                  .contains(item.customType) &&
+              (IsmChatProperties.chatPageProperties.isShowMediaMeessageBlure
+                      ?.call(Get.context!, item) ??
+                  true))
           .toList();
-      var selectedMediaIndex = mediaList.indexOf(message);
-      if (IsmChatResponsive.isWeb(Get.context!)) {
-        {
-          await Get.dialog(IsmWebMessageMediaPreview(
+      if (mediaList.isNotEmpty) {
+        var selectedMediaIndex = mediaList.indexOf(message);
+        if (IsmChatResponsive.isWeb(Get.context!)) {
+          {
+            await Get.dialog(IsmWebMessageMediaPreview(
+              mediaIndex: selectedMediaIndex,
+              messageData: mediaList,
+              mediaUserName: message.chatName,
+              initiated: message.sentByMe,
+              mediaTime: message.sentAt,
+            ));
+          }
+        } else {
+          IsmChatRouteManagement.goToMediaPreview(
             mediaIndex: selectedMediaIndex,
             messageData: mediaList,
             mediaUserName: message.chatName,
             initiated: message.sentByMe,
             mediaTime: message.sentAt,
-          ));
+          );
         }
-      } else {
-        IsmChatRouteManagement.goToMediaPreview(
-          mediaIndex: selectedMediaIndex,
-          messageData: mediaList,
-          mediaUserName: message.chatName,
-          initiated: message.sentByMe,
-          mediaTime: message.sentAt,
-        );
       }
     } else if (message.customType == IsmChatCustomMessageType.file) {
       var localPath = message.attachments?.first.mediaUrl;
