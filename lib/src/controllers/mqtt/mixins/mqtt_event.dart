@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:elegant_notification/resources/arrays.dart';
@@ -8,6 +9,10 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 mixin IsmChatMqttEventMixin {
   IsmChatMqttController get _controller => Get.find<IsmChatMqttController>();
+
+  final Queue<IsmChatMessageModel> _eventQueue = Queue();
+
+  var _isEventProcessing = false;
 
   String messageId = '';
 
@@ -46,8 +51,20 @@ mixin IsmChatMqttEventMixin {
       _handleLocalNotification(message);
       deliverdActions.clear();
       readActions.clear();
-      _handleMessage(message);
+      _eventQueue.add(message);
+      if (!_isEventProcessing) {
+        _eventProcessQueue();
+      }
     }
+  }
+
+  void _eventProcessQueue() async {
+    _isEventProcessing = true;
+    while (_eventQueue.isNotEmpty) {
+      final event = _eventQueue.removeFirst();
+      await _handleMessage(event);
+    }
+    _isEventProcessing = false;
   }
 
   void _handleAction(IsmChatMqttActionModel actionModel) async {
@@ -257,13 +274,12 @@ mixin IsmChatMqttEventMixin {
     );
   }
 
-  void _handleMessage(IsmChatMessageModel message) async {
+  Future<void> _handleMessage(IsmChatMessageModel message) async {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
-    if (message.senderInfo?.userId == _controller.userConfig?.userId) {
-      if (IsmChatConfig.isPaidWalletMessage == true) {
-        await _updateOwnMessage(message);
-      }
+    if (message.senderInfo?.userId == _controller.userConfig?.userId &&
+        IsmChatConfig.isPaidWalletMessage == true) {
+      await _updateOwnMessage(message);
       return;
     }
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
