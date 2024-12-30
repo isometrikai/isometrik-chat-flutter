@@ -59,12 +59,19 @@ mixin IsmChatMqttEventMixin {
   }
 
   void _eventProcessQueue() async {
+    if (_isEventProcessing) return;
     _isEventProcessing = true;
-    while (_eventQueue.isNotEmpty) {
-      final event = _eventQueue.removeFirst();
-      await _handleMessage(event);
+    try {
+      while (_eventQueue.isNotEmpty) {
+        final event = _eventQueue.removeFirst();
+        await _handleMessage(event);
+      }
+    } catch (e, stack) {
+      IsmChatLog.error(
+          'Error during event processing: $e Stack trace: $stack ');
+    } finally {
+      _isEventProcessing = false;
     }
-    _isEventProcessing = false;
   }
 
   void _handleAction(IsmChatMqttActionModel actionModel) async {
@@ -277,10 +284,9 @@ mixin IsmChatMqttEventMixin {
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
-    IsmChatLog.error('event step1');
+
     if (message.senderInfo?.userId == _controller.userConfig?.userId &&
         IsmChatConfig.isPaidWalletMessage == true) {
-      IsmChatLog.error('event step2');
       await _updateOwnMessage(message);
       return;
     }
@@ -1071,14 +1077,13 @@ mixin IsmChatMqttEventMixin {
   Future<void> _updateOwnMessage(IsmChatMessageModel message) async {
     var dbBox = IsmChatConfig.dbWrapper;
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
-    IsmChatLog.error('event step3');
+
     var conversationController = Get.find<IsmChatConversationsController>();
     final chatPendingMessages = await dbBox?.getConversation(
         conversationId: message.conversationId, dbBox: IsmChatDbBox.pending);
     if (chatPendingMessages == null) {
       return;
     }
-    IsmChatLog.error('event step4');
 
     for (var x = 0; x < (chatPendingMessages.messages?.length ?? 0); x++) {
       var pendingMessage = chatPendingMessages.messages![x];
