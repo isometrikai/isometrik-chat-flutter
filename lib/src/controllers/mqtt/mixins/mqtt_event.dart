@@ -276,6 +276,7 @@ mixin IsmChatMqttEventMixin {
 
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
+    IsmChatLog.info('event procesing ${message.body}');
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId &&
         IsmChatConfig.isPaidWalletMessage == true) {
