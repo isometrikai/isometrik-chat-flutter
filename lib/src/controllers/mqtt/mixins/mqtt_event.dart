@@ -276,11 +276,11 @@ mixin IsmChatMqttEventMixin {
 
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
-    IsmChatLog.info('event procesing ${message.body}');
     await Future.delayed(const Duration(milliseconds: 100));
+    IsmChatLog.error('event step1');
     if (message.senderInfo?.userId == _controller.userConfig?.userId &&
         IsmChatConfig.isPaidWalletMessage == true) {
-      await Future.delayed(const Duration(milliseconds: 500));
+      IsmChatLog.error('event step2');
       await _updateOwnMessage(message);
       return;
     }
@@ -1071,12 +1071,14 @@ mixin IsmChatMqttEventMixin {
   Future<void> _updateOwnMessage(IsmChatMessageModel message) async {
     var dbBox = IsmChatConfig.dbWrapper;
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
+    IsmChatLog.error('event step3');
     var conversationController = Get.find<IsmChatConversationsController>();
     final chatPendingMessages = await dbBox?.getConversation(
         conversationId: message.conversationId, dbBox: IsmChatDbBox.pending);
     if (chatPendingMessages == null) {
       return;
     }
+    IsmChatLog.error('event step4');
 
     for (var x = 0; x < (chatPendingMessages.messages?.length ?? 0); x++) {
       var pendingMessage = chatPendingMessages.messages![x];
@@ -1110,6 +1112,7 @@ mixin IsmChatMqttEventMixin {
       }
       await dbBox?.saveConversation(conversation: conversationModel!);
     }
+    IsmChatLog.error('event step5');
     if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) return;
     var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     if (chatController.conversation?.conversationId != message.conversationId) {
@@ -1117,6 +1120,7 @@ mixin IsmChatMqttEventMixin {
     }
     unawaited(conversationController.getConversationsFromDB());
     await chatController.getMessagesFromDB(message.conversationId ?? '');
+    IsmChatLog.error('event step6');
   }
 
   Future<String> getChatConversationsCount({
