@@ -33,6 +33,8 @@ mixin IsmChatMqttEventMixin {
   bool get isAppInBackground => _isAppBackground.value;
   set isAppInBackground(bool value) => _isAppBackground.value = value;
 
+  IsmChatConversationModel? chatPendingMessages;
+
   void onMqttEvent({required EventModel event}) async {
     _controller.eventStreamController.add(event);
     final payload = event.payload;
@@ -1079,34 +1081,36 @@ mixin IsmChatMqttEventMixin {
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
 
     var conversationController = Get.find<IsmChatConversationsController>();
-    final chatPendingMessages = await dbBox?.getConversation(
+
+    final chatPendingMessagesData = await dbBox?.getConversation(
         conversationId: message.conversationId, dbBox: IsmChatDbBox.pending);
-    if (chatPendingMessages == null) {
-      return;
+
+    if (chatPendingMessagesData != null) {
+      chatPendingMessages = chatPendingMessagesData;
     }
 
-    for (var x = 0; x < (chatPendingMessages.messages?.length ?? 0); x++) {
-      var pendingMessage = chatPendingMessages.messages![x];
-      if (pendingMessage.messageId?.isNotEmpty == true ||
-          pendingMessage.sentAt != message.metaData?.messageSentAt) {
+    for (var x = 0; x < (chatPendingMessages?.messages?.length ?? 0); x++) {
+      var pendingMessage = chatPendingMessages?.messages?[x];
+      if (pendingMessage?.messageId?.isNotEmpty == true ||
+          pendingMessage?.sentAt != message.metaData?.messageSentAt) {
         continue;
       }
-      pendingMessage.messageId = message.messageId;
-      pendingMessage.deliveredToAll = false;
-      pendingMessage.readByAll = false;
-      pendingMessage.isUploading = false;
-      chatPendingMessages.messages?.removeAt(x);
+      pendingMessage?.messageId = message.messageId;
+      pendingMessage?.deliveredToAll = false;
+      pendingMessage?.readByAll = false;
+      pendingMessage?.isUploading = false;
+      chatPendingMessages?.messages?.removeAt(x);
       await dbBox?.saveConversation(
-          conversation: chatPendingMessages, dbBox: IsmChatDbBox.pending);
-      if (chatPendingMessages.messages?.isEmpty == true) {
+          conversation: chatPendingMessages!, dbBox: IsmChatDbBox.pending);
+      if (chatPendingMessages?.messages?.isEmpty == true) {
         await dbBox?.pendingMessageBox
-            .delete(chatPendingMessages.conversationId ?? '');
+            .delete(chatPendingMessages?.conversationId ?? '');
       }
       var conversationModel =
           await dbBox?.getConversation(conversationId: message.conversationId);
       if (conversationModel != null) {
         final messages = conversationModel.messages ?? [];
-        messages.add(pendingMessage);
+        messages.add(pendingMessage!);
         conversationModel = conversationModel.copyWith(
           lastMessageDetails: conversationModel.lastMessageDetails?.copyWith(
             reactionType: '',
