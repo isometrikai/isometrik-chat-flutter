@@ -1121,7 +1121,7 @@ mixin IsmChatMqttEventMixin {
       }
       await dbBox?.saveConversation(conversation: conversationModel!);
     }
-    IsmChatLog.error('event step5');
+
     if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) return;
     var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
     if (chatController.conversation?.conversationId != message.conversationId) {
@@ -1129,7 +1129,6 @@ mixin IsmChatMqttEventMixin {
     }
     unawaited(conversationController.getConversationsFromDB());
     await chatController.getMessagesFromDB(message.conversationId ?? '');
-    IsmChatLog.error('event step6');
   }
 
   Future<String> getChatConversationsCount({
