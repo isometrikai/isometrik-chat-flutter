@@ -140,17 +140,14 @@ class IsmChatCommonViewModel {
           return false;
         }
 
-        for (var x = 0; x < (chatPendingMessages.messages?.length ?? 0); x++) {
-          var pendingMessage = chatPendingMessages.messages![x];
-          if (pendingMessage.messageId?.isNotEmpty == true ||
-              pendingMessage.sentAt != createdAt) {
-            continue;
-          }
+        var pendingMessage = chatPendingMessages.messages?['$createdAt'];
+        if (pendingMessage != null) {
           pendingMessage.messageId = messageId;
           pendingMessage.deliveredToAll = false;
           pendingMessage.readByAll = false;
           pendingMessage.isUploading = false;
-          chatPendingMessages.messages?.removeAt(x);
+          chatPendingMessages.messages
+              ?.removeWhere((key, value) => key == '$createdAt');
           await dbBox?.saveConversation(
               conversation: chatPendingMessages, dbBox: IsmChatDbBox.pending);
           if (chatPendingMessages.messages?.isEmpty == true) {
@@ -160,8 +157,8 @@ class IsmChatCommonViewModel {
           var conversationModel =
               await dbBox?.getConversation(conversationId: conversationId);
           if (conversationModel != null) {
-            final messages = conversationModel.messages ?? [];
-            messages.add(pendingMessage);
+            final messages = conversationModel.messages ?? {};
+            messages.addEntries({'$createdAt': pendingMessage}.entries);
             conversationModel = conversationModel.copyWith(
               lastMessageDetails:
                   conversationModel.lastMessageDetails?.copyWith(

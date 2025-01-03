@@ -68,12 +68,12 @@ class IsmChatConversationModel {
                 map['usersOwnDetails'] as Map<String, dynamic>)
             : null,
         messages: map['messages'] != null
-            ? (map['messages'] as List)
-                .map(
-                  (e) => IsmChatMessageModel.fromMap(e as Map<String, dynamic>),
-                )
-                .toList()
-            : [],
+            ? {
+                for (var entry in (map['messages'] as Map).entries)
+                  entry.key: IsmChatMessageModel.fromMap(
+                      entry.value as Map<String, dynamic>)
+              }
+            : {},
         outSideMessage: map['outSideMessage'] != null
             ? OutSideMessage.fromMap(
                 map['messageFromOutSide'] as Map<String, dynamic>)
@@ -141,7 +141,7 @@ class IsmChatConversationModel {
   final IsmChatUserOwnDetails? usersOwnDetails;
   final String? createdBy;
   final String? createdByUserName;
-  final List<IsmChatMessageModel>? messages;
+  final Map<String, IsmChatMessageModel>? messages;
   final OutSideMessage? outSideMessage;
   final bool? isCreateGroupFromOutSide;
   final String? customType;
@@ -189,7 +189,7 @@ class IsmChatConversationModel {
     int? adminCount,
     List<UserDetails>? members,
     IsmChatUserOwnDetails? usersOwnDetails,
-    List<IsmChatMessageModel>? messages,
+    Map<String, IsmChatMessageModel>? messages,
     OutSideMessage? outSideMessage,
     bool? isCreateGroupFromOutSide,
     bool? pushNotifications,
@@ -238,7 +238,12 @@ class IsmChatConversationModel {
         'createdAt': createdAt,
         'members': members?.map((e) => e.toMap()).toList(),
         'usersOwnDetails': usersOwnDetails?.toMap(),
-        'messages': messages?.map((e) => e.toMap()).toList(),
+        'messages': messages != null
+            ? {
+                for (var entry in messages!.entries)
+                  entry.key: entry.value.toMap()
+              }
+            : {},
         'updatedAt': updatedAt,
         'unreadMessagesCount': unreadMessagesCount,
         'userIds': userIds,
@@ -292,7 +297,7 @@ class IsmChatConversationModel {
         other.createdByUserName == createdByUserName &&
         other.customType == customType &&
         other.pushNotifications == pushNotifications &&
-        listEquals(other.messages, messages);
+        other.messages == messages;
   }
 
   @override

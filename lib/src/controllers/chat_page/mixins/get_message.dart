@@ -10,24 +10,22 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
     var messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
-    if (messages == null || (messages.isEmpty)) {
+    if (messages == null) {
       _controller.messages.clear();
       return;
     }
-
     if (IsmChatConfig.shouldPendingMessageSend) {
       var pendingmessages = await IsmChatConfig.dbWrapper
           ?.getMessage(conversationId, IsmChatDbBox.pending);
-      if (pendingmessages != null || (pendingmessages?.isNotEmpty == true)) {
-        messages.addAll(pendingmessages ?? []);
+      if (pendingmessages != null) {
+        messages.addAll(pendingmessages);
       }
     } else {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
-
-    _controller.messages =
-        _controller.commonController.sortMessages(filterMessages(messages));
+    _controller.messages = _controller.commonController
+        .sortMessages(filterMessages(messages.values.toList()));
 
     if (_controller.messages.isEmpty) {
       return;
@@ -68,7 +66,6 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   }
 
   Future<void> getMessagesFromAPI({
-    // String conversationId = '',
     bool forPagination = false,
     int? lastMessageTimestamp,
     bool isBroadcast = false,
@@ -180,7 +177,11 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         (e) => e.conversationId == _controller.conversation?.conversationId);
     chatConersationController.conversations[converstionIndex] =
         chatConersationController.conversations[converstionIndex]
-            .copyWith(messages: _controller.messages);
+            .copyWith(messages: {
+      for (var message in _controller.messages)
+        '${message.metaData?.messageSentAt ?? DateTime.now().millisecondsSinceEpoch}':
+            message
+    });
   }
 
   Future<void> getMessageDeliverTime(IsmChatMessageModel message) async {
@@ -384,10 +385,10 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       var allMessages =
           await IsmChatConfig.dbWrapper?.getMessage(conversationId);
       if (allMessages == null) return;
-      var messageIndex =
-          allMessages.indexWhere((e) => e.messageId == messageId);
-      if (messageIndex != -1) {
-        final message = allMessages[messageIndex];
+      var message = allMessages.entries
+          .cast<IsmChatMessageModel?>()
+          .firstWhere((e) => e?.messageId == messageId, orElse: () => null);
+      if (message != null) {
         if (metaData != null) {
           message.metaData = metaData;
         } else {
@@ -395,7 +396,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
             isDownloaded: true,
           );
         }
-        allMessages[messageIndex] = message;
+        allMessages['${message.metaData?.messageSentAt}'] = message;
         var conversation = await IsmChatConfig.dbWrapper
             ?.getConversation(conversationId: conversationId);
         if (conversation != null) {

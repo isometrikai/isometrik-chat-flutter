@@ -170,8 +170,8 @@ class IsmChatCommonController extends GetxController {
           messagingDisabled: conversation.messagingDisabled,
           membersCount: conversation.membersCount,
           unreadMessagesCount: conversation.unreadMessagesCount,
-          messages: [
-            IsmChatMessageModel(
+          messages: {
+            '${DateTime.now().millisecondsSinceEpoch}': IsmChatMessageModel(
               body: '',
               customType: IsmChatCustomMessageType.conversationCreated,
               sentAt: DateTime.now().millisecondsSinceEpoch,
@@ -179,7 +179,7 @@ class IsmChatCommonController extends GetxController {
               conversationId: conversationId,
               action: 'conversationCreated',
             )
-          ],
+          },
           opponentDetails: conversation.opponentDetails,
           lastMessageDetails:
               conversation.lastMessageDetails?.copyWith(deliverCount: 0),

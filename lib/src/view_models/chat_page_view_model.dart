@@ -46,7 +46,11 @@ class IsmChatPageViewModel {
             .getConversation(conversationId: conversationId);
 
         if (conversation != null) {
-          conversation.messages?.addAll(messages);
+          conversation.messages?.addAll({
+            for (var message in messages)
+              '${message.metaData?.messageSentAt ?? DateTime.now().millisecondsSinceEpoch}':
+                  message
+          });
           await IsmChatConfig.dbWrapper!
               .saveConversation(conversation: conversation);
         }
@@ -260,55 +264,56 @@ class IsmChatPageViewModel {
       );
 
   Future<void> deleteMessageForMe(
-    List<IsmChatMessageModel> messages,
+    IsmChatMessages messages,
   ) async {
-    var conversationId = messages.first.conversationId!;
-    messages.removeWhere((e) => e.messageId == '');
+    var conversationId = messages.values.first.conversationId ?? '';
+    messages.removeWhere((key, value) => value.messageId == '');
     if (messages.isEmpty) {
       return;
     }
-    var myMessages = messages
+    var myMessages = messages.entries
         .where((m) =>
-            m.sentByMe &&
-            m.customType != IsmChatCustomMessageType.deletedForEveryone)
+            m.value.sentByMe &&
+            m.value.customType != IsmChatCustomMessageType.deletedForEveryone)
         .toList();
     if (myMessages.isNotEmpty) {
       var response = await _repository.deleteMessageForMe(
         conversationId: conversationId,
-        messageIds: myMessages.map((e) => e.messageId).join(','),
+        messageIds: myMessages.map((e) => e.value.messageId).join(','),
       );
       if (response == null || response.hasError) {
         return;
       }
     }
 
-    var allMessages = await IsmChatConfig.dbWrapper!.getMessage(conversationId);
+    var allMessages = await IsmChatConfig.dbWrapper?.getMessage(conversationId);
     if (allMessages == null) {
       return;
     }
 
-    for (var x in messages) {
+    for (var x in messages.values) {
       allMessages.removeWhere(
-        (e) {
-          if (e.messageId == x.messageId &&
-              e.customType == IsmChatCustomMessageType.deletedForEveryone) {
+        (key, value) {
+          if (value.messageId == x.messageId &&
+              value.customType == IsmChatCustomMessageType.deletedForEveryone) {
             return true;
           }
-          if (e.messageId == x.messageId &&
-              e.customType != IsmChatCustomMessageType.deletedForEveryone) {
+          if (value.messageId == x.messageId &&
+              value.customType != IsmChatCustomMessageType.deletedForEveryone) {
             return true;
           }
+
           return false;
         },
       );
     }
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
+    var conversation = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: conversationId);
     if (conversation != null) {
       conversation = conversation.copyWith(messages: allMessages);
 
-      await IsmChatConfig.dbWrapper!
-          .saveConversation(conversation: conversation);
+      await IsmChatConfig.dbWrapper
+          ?.saveConversation(conversation: conversation);
     }
 
     await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
@@ -316,40 +321,41 @@ class IsmChatPageViewModel {
   }
 
   Future<void> deleteMessageForEveryone(
-    List<IsmChatMessageModel> messages,
+    IsmChatMessages messages,
   ) async {
-    messages.removeWhere((e) => e.messageId == '');
+    messages.removeWhere((key, value) => value.messageId == '');
     if (messages.isEmpty) {
       return;
     }
-    var conversationId = messages.first.conversationId!;
+    var conversationId = messages.values.first.conversationId ?? '';
     var response = await _repository.deleteMessageForEveryone(
       conversationId: conversationId,
-      messages: messages.map((e) => e.messageId).join(','),
+      messages: messages.values.map((e) => e.messageId).join(','),
     );
     if (response == null || response.hasError) {
       return;
     }
 
-    var allMessages = await IsmChatConfig.dbWrapper!.getMessage(conversationId);
+    var allMessages = await IsmChatConfig.dbWrapper?.getMessage(conversationId);
     if (allMessages == null) {
       return;
     }
 
-    for (var x in messages) {
-      var messageIndex =
-          allMessages.indexWhere((e) => e.messageId == x.messageId);
-      if (messageIndex != -1) {
-        allMessages[messageIndex].customType =
+    for (var message in messages.entries) {
+      var gotMessage =
+          allMessages.values.toList().cast<IsmChatMessageModel?>().firstWhere(
+                (e) => e?.messageId == message.value.messageId,
+                orElse: () => null,
+              );
+      if (gotMessage != null) {
+        allMessages['${gotMessage.metaData?.messageSentAt}']?.customType =
             IsmChatCustomMessageType.deletedForEveryone;
-        allMessages[messageIndex].reactions = [];
+        allMessages['${gotMessage.metaData?.messageSentAt}']?.reactions = [];
       }
-
-      // allMessages.removeWhere((e) => e.messageId == x.messageId);
     }
 
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
+    var conversation = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: conversationId);
     if (conversation != null) {
       conversation = conversation.copyWith(messages: allMessages);
       await IsmChatConfig.dbWrapper!
@@ -367,8 +373,8 @@ class IsmChatPageViewModel {
       conversationId: conversationId,
     );
     if (!response!.hasError) {
-      await IsmChatConfig.dbWrapper!
-          .clearAllMessage(conversationId: conversationId);
+      await IsmChatConfig.dbWrapper
+          ?.clearAllMessage(conversationId: conversationId);
       await Get.find<IsmChatConversationsController>().getChatConversations();
     }
   }
@@ -419,47 +425,48 @@ class IsmChatPageViewModel {
     }
 
     var allMessages =
-        await IsmChatConfig.dbWrapper!.getMessage(reaction.conversationId);
+        await IsmChatConfig.dbWrapper?.getMessage(reaction.conversationId);
     if (allMessages == null) {
       return null;
     }
 
-    var message =
-        allMessages.where((e) => e.messageId == reaction.messageId).first;
+    var message = allMessages.values.cast<IsmChatMessageModel?>().firstWhere(
+          (e) => e?.messageId == reaction.messageId,
+          orElse: () => null,
+        );
 
-    var isEmoji = false;
-    for (var x in message.reactions ?? <MessageReactionModel>[]) {
-      if (x.emojiKey == reaction.reactionType.value) {
-        x.userIds.add(IsmChatConfig.communicationConfig.userConfig.userId);
-        isEmoji = true;
-        break;
+    if (message != null) {
+      var isEmoji = false;
+      for (var x in message.reactions ?? <MessageReactionModel>[]) {
+        if (x.emojiKey == reaction.reactionType.value) {
+          x.userIds.add(IsmChatConfig.communicationConfig.userConfig.userId);
+          isEmoji = true;
+          break;
+        }
       }
-    }
-    if (isEmoji == false) {
-      message.reactions ??= [];
+      if (isEmoji == false) {
+        message.reactions ??= [];
 
-      message.reactions?.add(
-        MessageReactionModel(
-          emojiKey: reaction.reactionType.value,
-          userIds: [IsmChatConfig.communicationConfig.userConfig.userId],
-        ),
-      );
+        message.reactions?.add(
+          MessageReactionModel(
+            emojiKey: reaction.reactionType.value,
+            userIds: [IsmChatConfig.communicationConfig.userConfig.userId],
+          ),
+        );
+      }
+      allMessages['${message.metaData?.messageSentAt}'] = message;
+      var conversation = await IsmChatConfig.dbWrapper
+          ?.getConversation(conversationId: reaction.conversationId);
+      if (conversation != null) {
+        conversation = conversation.copyWith(messages: allMessages);
+        await IsmChatConfig.dbWrapper
+            ?.saveConversation(conversation: conversation);
+      }
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      controller.didReactedLast = true;
+      await controller.getMessagesFromDB(reaction.conversationId);
     }
 
-    var messageIndex =
-        allMessages.indexWhere((e) => e.messageId == reaction.messageId);
-
-    allMessages[messageIndex] = message;
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: reaction.conversationId);
-    if (conversation != null) {
-      conversation = conversation.copyWith(messages: allMessages);
-      await IsmChatConfig.dbWrapper!
-          .saveConversation(conversation: conversation);
-    }
-    var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
-    controller.didReactedLast = true;
-    await controller.getMessagesFromDB(reaction.conversationId);
     return response;
   }
 
@@ -471,43 +478,47 @@ class IsmChatPageViewModel {
     }
 
     var allMessages =
-        await IsmChatConfig.dbWrapper!.getMessage(reaction.conversationId);
+        await IsmChatConfig.dbWrapper?.getMessage(reaction.conversationId);
     if (allMessages == null) {
       return null;
     }
 
-    var message =
-        allMessages.where((e) => e.messageId == reaction.messageId).first;
-    var reactionMap = message.reactions;
-    var isEmoji = false;
-    for (var x in reactionMap ?? <MessageReactionModel>[]) {
-      if (x.emojiKey == reaction.reactionType.value && x.userIds.length > 1) {
-        x.userIds.remove(IsmChatConfig.communicationConfig.userConfig.userId);
-        x.userIds.toSet().toList();
-        isEmoji = true;
+    var message = allMessages.values.cast<IsmChatMessageModel?>().firstWhere(
+          (e) => e?.messageId == reaction.messageId,
+          orElse: () => null,
+        );
+
+    if (message != null) {
+      var reactionMap = message.reactions ?? [];
+      var isEmoji = false;
+      for (var x in reactionMap) {
+        if (x.emojiKey == reaction.reactionType.value && x.userIds.length > 1) {
+          x.userIds.remove(IsmChatConfig.communicationConfig.userConfig.userId);
+          x.userIds.toSet().toList();
+          isEmoji = true;
+        }
       }
-    }
-    if (isEmoji == false) {
-      reactionMap
-          ?.removeWhere((e) => e.emojiKey == reaction.reactionType.value);
+      if (isEmoji == false) {
+        reactionMap
+            .removeWhere((e) => e.emojiKey == reaction.reactionType.value);
+      }
+
+      message.reactions = reactionMap;
+
+      allMessages['${message.metaData?.messageSentAt ?? 0}'] = message;
+
+      var conversation = await IsmChatConfig.dbWrapper
+          ?.getConversation(conversationId: reaction.conversationId);
+      if (conversation != null) {
+        conversation = conversation.copyWith(messages: allMessages);
+        await IsmChatConfig.dbWrapper!
+            .saveConversation(conversation: conversation);
+      }
+      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      controller.didReactedLast = true;
+      await controller.getMessagesFromDB(reaction.conversationId);
     }
 
-    message.reactions = reactionMap;
-    var messageIndex =
-        allMessages.indexWhere((e) => e.messageId == reaction.messageId);
-
-    allMessages[messageIndex] = message;
-
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: reaction.conversationId);
-    if (conversation != null) {
-      conversation = conversation.copyWith(messages: allMessages);
-      await IsmChatConfig.dbWrapper!
-          .saveConversation(conversation: conversation);
-    }
-    var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
-    controller.didReactedLast = true;
-    await controller.getMessagesFromDB(reaction.conversationId);
     return response;
   }
 

@@ -570,9 +570,7 @@ class _MicOrSendButton extends StatelessWidget {
                       if (!await controller.isEncoderSupported(encoder)) {
                         return;
                       }
-                      final devs =
-                          await controller.recordVoice.listInputDevices();
-                      IsmChatLog.info(devs.toString());
+
                       const config =
                           RecordConfig(encoder: encoder, numChannels: 1);
                       await controller.recordVoice.start(

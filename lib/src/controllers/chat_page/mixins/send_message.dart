@@ -1092,8 +1092,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     _controller.chatInputController.clear();
     _controller.isMessageSent = false;
     if (!_controller.isBroadcast) {
-      await IsmChatConfig.dbWrapper!
-          .saveMessage(textMessage, IsmChatDbBox.pending);
+      await IsmChatConfig.dbWrapper
+          ?.saveMessage(textMessage, IsmChatDbBox.pending);
       if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
         _controller.updateLastMessagOnCurrentTime(textMessage);
       }

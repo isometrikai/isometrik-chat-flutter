@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+typedef IsmChatMessageMap = Map<dynamic, dynamic>;
+
+typedef IsmChatConversationMap = String;
+
+typedef IsmChatMessages = Map<String, IsmChatMessageModel>;
+
 typedef ConversationCardCallback = Widget Function(
   BuildContext,
   IsmChatConversationModel,

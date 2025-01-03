@@ -1157,16 +1157,16 @@ class IsmChatConversationsController extends GetxController {
   }
 
   void sendPendingMessgae({String conversationId = ''}) async {
-    var messages = <IsmChatMessageModel>[];
+    var messages = {} as IsmChatMessages;
     if (conversationId.isEmpty) {
       var pendingMessages =
           await IsmChatConfig.dbWrapper?.getAllPendingMessages();
 
-      messages.addAll(pendingMessages ?? []);
+      messages.addAll(pendingMessages ?? {});
     } else {
       messages = await IsmChatConfig.dbWrapper
               ?.getMessage(conversationId, IsmChatDbBox.pending) ??
-          [];
+          {};
     }
     if (messages.isEmpty) {
       return;
@@ -1176,7 +1176,7 @@ class IsmChatConversationsController extends GetxController {
             userDetails?.userName ??
             '';
 
-    for (var x in messages) {
+    for (var x in messages.values) {
       List<Map<String, dynamic>>? attachments;
       if ([
         IsmChatCustomMessageType.image,

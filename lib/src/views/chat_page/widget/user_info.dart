@@ -49,21 +49,21 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
 
   void getMessages() async {
     var messages =
-        await IsmChatConfig.dbWrapper!.getMessage(widget._conversationId);
-    if (messages?.isNotEmpty == true) {
-      mediaList = messages!
+        await IsmChatConfig.dbWrapper?.getMessage(widget._conversationId);
+    if (messages != null) {
+      mediaList = messages.values
           .where((e) => [
                 IsmChatCustomMessageType.video,
                 IsmChatCustomMessageType.image,
                 IsmChatCustomMessageType.audio
               ].contains(e.customType))
           .toList();
-      mediaListLinks = messages
+      mediaListLinks = messages.values
           .where((e) => [
                 IsmChatCustomMessageType.link,
               ].contains(e.customType))
           .toList();
-      mediaListDocs = messages
+      mediaListDocs = messages.values
           .where((e) => [
                 IsmChatCustomMessageType.file,
               ].contains(e.customType))
