@@ -52,7 +52,7 @@ class IsmChatStrings {
 
   static const String clearChat = 'Clear chat';
   static const String wallpaper = 'Wallpaper';
-  static const String hintText = 'Type your message';
+  static const String hintText = 'Type a message';
 
   static const String search = 'Search';
   static const String newGroup = 'New Group';
