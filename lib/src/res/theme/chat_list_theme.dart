@@ -12,14 +12,14 @@ class IsmChatListThemeData {
 
   const IsmChatListThemeData.light()
       : tileColor = IsmChatColors.backgroundColorLight,
-        dividerColor = IsmChatColors.backgroundColorDark,
+        dividerColor = IsmChatColors.primaryColorLight,
         backGroundColor = IsmChatColors.whiteColor,
         pushSnackBarBackGroundColor = IsmChatColors.whiteColor,
         dividerThickness = _kDividerThickness;
 
   const IsmChatListThemeData.dark()
       : tileColor = IsmChatColors.backgroundColorDark,
-        dividerColor = IsmChatColors.backgroundColorLight,
+        dividerColor = IsmChatColors.primaryColorDark,
         backGroundColor = IsmChatColors.whiteColor,
         pushSnackBarBackGroundColor = IsmChatColors.whiteColor,
         dividerThickness = _kDividerThickness;
@@ -31,5 +31,5 @@ class IsmChatListThemeData {
   final double? dividerThickness;
   final Color? pushSnackBarBackGroundColor;
 
-  static const double _kDividerThickness = 2;
+  static const double _kDividerThickness = 0.5;
 }
