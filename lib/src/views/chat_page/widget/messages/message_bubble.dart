@@ -196,12 +196,7 @@ class MessageBubble extends StatelessWidget {
                         children: [
                           Text(
                             _message.sentAt.toTimeString(),
-                            style: (_message.sentByMe
-                                    ? IsmChatStyles.w400White10
-                                    : IsmChatStyles.w400Grey10)
-                                .copyWith(
-                              color: _message.style.color,
-                            ),
+                            style: _message.style,
                           ),
                           if (_message.sentByMe &&
                               _message.customType !=
