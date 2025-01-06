@@ -574,7 +574,8 @@ extension ModelConversion on IsmChatConversationModel {
       return lastMessageDetails?.messageId.isEmpty == true
           ? Icon(
               Icons.watch_later_outlined,
-              color: IsmChatConfig.chatTheme.chatPageTheme?.unreadCheckColor ??
+              color: IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme
+                      ?.unreadCheckColor ??
                   IsmChatColors.whiteColor,
             )
           : IsmChatProperties.chatPageProperties.features.contains(
@@ -583,10 +584,11 @@ extension ModelConversion on IsmChatConversationModel {
               ? Icon(
                   deliveredToAll ? Icons.done_all_rounded : Icons.done_rounded,
                   color: readByAll
-                      ? IsmChatConfig.chatTheme.chatPageTheme?.readCheckColor ??
+                      ? IsmChatConfig.chatTheme.chatPageTheme
+                              ?.messageStatusTheme?.readCheckColor ??
                           IsmChatColors.blueColor
-                      : IsmChatConfig
-                              .chatTheme.chatPageTheme?.unreadCheckColor ??
+                      : IsmChatConfig.chatTheme.chatPageTheme
+                              ?.messageStatusTheme?.unreadCheckColor ??
                           IsmChatColors.greyColor,
                   size: IsmChatDimens.sixteen,
                 )

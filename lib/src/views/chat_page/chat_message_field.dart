@@ -165,13 +165,13 @@ class IsmChatMessageField extends StatelessWidget {
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: IsmChatConfig.chatTheme.chatPageTheme
-                                      ?.textFiledThemData?.borderColor ??
+                                      ?.textFiledTheme?.borderColor ??
                                   IsmChatConfig.chatTheme.primaryColor!,
                             ),
                             borderRadius:
                                 BorderRadius.circular(IsmChatDimens.twenty),
                             color: IsmChatConfig.chatTheme.chatPageTheme
-                                    ?.textFiledThemData?.backgroundColor ??
+                                    ?.textFiledTheme?.backgroundColor ??
                                 IsmChatConfig.chatTheme.backgroundColor,
                           ),
                           child: Column(
@@ -190,7 +190,7 @@ class IsmChatMessageField extends StatelessWidget {
                                       style: IsmChatConfig
                                           .chatTheme
                                           .chatPageTheme
-                                          ?.textFiledThemData
+                                          ?.textFiledTheme
                                           ?.inputTextStyle,
                                       maxLines: 4,
                                       minLines: 1,
@@ -201,7 +201,7 @@ class IsmChatMessageField extends StatelessWidget {
                                       cursorColor: IsmChatConfig
                                               .chatTheme
                                               .chatPageTheme
-                                              ?.textFiledThemData
+                                              ?.textFiledTheme
                                               ?.cursorColor ??
                                           IsmChatConfig.chatTheme.primaryColor,
                                       textCapitalization:
@@ -211,7 +211,7 @@ class IsmChatMessageField extends StatelessWidget {
                                         hintStyle: IsmChatConfig
                                                 .chatTheme
                                                 .chatPageTheme
-                                                ?.textFiledThemData
+                                                ?.textFiledTheme
                                                 ?.hintTextStyle ??
                                             IsmChatStyles.w400Black12,
                                         // isDense: true,
@@ -219,7 +219,7 @@ class IsmChatMessageField extends StatelessWidget {
                                         fillColor: IsmChatConfig
                                                 .chatTheme
                                                 .chatPageTheme
-                                                ?.textFiledThemData
+                                                ?.textFiledTheme
                                                 ?.backgroundColor ??
                                             IsmChatConfig
                                                 .chatTheme.backgroundColor,
@@ -233,7 +233,7 @@ class IsmChatMessageField extends StatelessWidget {
                                                 : _EmojiButton(IsmChatConfig
                                                     .chatTheme
                                                     .chatPageTheme
-                                                    ?.textFiledThemData
+                                                    ?.textFiledTheme
                                                     ?.emojiColor),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(
@@ -402,7 +402,7 @@ class _MicOrSendButton extends StatelessWidget {
         builder: (controller) => Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: IsmChatConfig.chatTheme.chatPageTheme?.sendButtonThemData
+            color: IsmChatConfig.chatTheme.chatPageTheme?.sendButtonTheme
                     ?.backgroundColor ??
                 IsmChatConfig.chatTheme.primaryColor,
           ),
@@ -843,8 +843,8 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                 }
               }
             },
-            color: IsmChatConfig.chatTheme.chatPageTheme?.textFiledThemData
-                    ?.attchmentColor ??
+            color: IsmChatConfig
+                    .chatTheme.chatPageTheme?.textFiledTheme?.attchmentColor ??
                 IsmChatConfig.chatTheme.primaryColor,
             icon: const Icon(Icons.attach_file_rounded),
           ),

@@ -72,7 +72,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         color: IsmChatConfig.chatTheme.chatPageTheme
-                                ?.centerMessageThemData?.backgroundColor ??
+                                ?.centerMessageTheme?.backgroundColor ??
                             IsmChatConfig.chatTheme.primaryColor,
                         borderRadius:
                             BorderRadius.circular(IsmChatDimens.eight),
@@ -82,7 +82,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                         _message?.sentAt.toMessageDateString() ?? '',
                         style: IsmChatStyles.w500Black12.copyWith(
                           color: IsmChatConfig.chatTheme.chatPageTheme
-                              ?.centerMessageThemData?.textColor,
+                              ?.centerMessageTheme?.textColor,
                         ),
                       ),
                     ),
@@ -252,16 +252,16 @@ class _MessageReadDelivered extends StatelessWidget {
               Text(
                 title,
                 style: IsmChatStyles.w600Black16.copyWith(
-                  color: IsmChatConfig.chatTheme.chatPageTheme
-                      ?.centerMessageThemData?.textColor,
+                  color: IsmChatConfig
+                      .chatTheme.chatPageTheme?.centerMessageTheme?.textColor,
                 ),
               ),
               IsmChatDimens.boxHeight5,
               Text(
                 '...',
                 style: IsmChatStyles.w600Black16.copyWith(
-                  color: IsmChatConfig.chatTheme.chatPageTheme
-                      ?.centerMessageThemData?.textColor,
+                  color: IsmChatConfig
+                      .chatTheme.chatPageTheme?.centerMessageTheme?.textColor,
                 ),
               )
             ],
@@ -295,18 +295,20 @@ class _UserInfo extends StatelessWidget {
                     title,
                     style: IsmChatStyles.w600Black16.copyWith(
                       color: IsmChatConfig.chatTheme.chatPageTheme
-                          ?.centerMessageThemData?.textColor,
+                          ?.centerMessageTheme?.textColor,
                     ),
                   ),
                   Icon(
                     Icons.done_all_rounded,
-                    size: IsmChatDimens.fifteen,
+                    size: IsmChatConfig.chatTheme.chatPageTheme
+                            ?.messageStatusTheme?.checkSize ??
+                        IsmChatDimens.forteen,
                     color: isRead
-                        ? IsmChatConfig
-                                .chatTheme.chatPageTheme?.readCheckColor ??
+                        ? IsmChatConfig.chatTheme.chatPageTheme
+                                ?.messageStatusTheme?.readCheckColor ??
                             Colors.blue
-                        : IsmChatConfig
-                                .chatTheme.chatPageTheme?.unreadCheckColor ??
+                        : IsmChatConfig.chatTheme.chatPageTheme
+                                ?.messageStatusTheme?.unreadCheckColor ??
                             Colors.grey,
                   ),
                 ],

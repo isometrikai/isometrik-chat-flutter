@@ -20,7 +20,7 @@ class IsmChatAddRevokeAdmin extends StatelessWidget {
   Widget build(BuildContext context) => Center(
         child: Container(
           decoration: BoxDecoration(
-            color: IsmChatConfig.chatTheme.chatPageTheme?.centerMessageThemData
+            color: IsmChatConfig.chatTheme.chatPageTheme?.centerMessageTheme
                     ?.backgroundColor ??
                 IsmChatConfig.chatTheme.backgroundColor,
             borderRadius: BorderRadius.circular(IsmChatDimens.eight),
@@ -31,8 +31,8 @@ class IsmChatAddRevokeAdmin extends StatelessWidget {
                 .trim(), //'${message.initiator} ${isAdded ? 'added' : 'removed'} $_user ${isAdded ? 'as' : 'as an '} Admin'.trim()
 
             textAlign: TextAlign.center,
-            style: IsmChatConfig.chatTheme.chatPageTheme?.centerMessageThemData
-                    ?.textStyle ??
+            style: IsmChatConfig
+                    .chatTheme.chatPageTheme?.centerMessageTheme?.textStyle ??
                 IsmChatStyles.w500Black12.copyWith(
                   color: IsmChatConfig.chatTheme.primaryColor,
                 ),

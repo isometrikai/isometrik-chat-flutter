@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class IsmChatCenterMessageThemData {
-  const IsmChatCenterMessageThemData(
+class IsmChatCenterMessageTheme {
+  const IsmChatCenterMessageTheme(
       {this.textStyle, this.backgroundColor, this.textColor});
 
   final Color? backgroundColor;

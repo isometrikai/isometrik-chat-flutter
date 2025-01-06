@@ -207,10 +207,15 @@ class MessageBubble extends StatelessWidget {
                               IsmChatDimens.boxWidth2,
                               Icon(
                                 Icons.watch_later_outlined,
-                                color: IsmChatConfig.chatTheme.chatPageTheme
+                                color: IsmChatConfig
+                                        .chatTheme
+                                        .chatPageTheme
+                                        ?.messageStatusTheme
                                         ?.unreadCheckColor ??
                                     Colors.white,
-                                size: IsmChatDimens.forteen,
+                                size: IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.messageStatusTheme?.checkSize ??
+                                    IsmChatDimens.forteen,
                               ),
                             ] else if (IsmChatProperties
                                 .chatPageProperties.features
@@ -223,13 +228,21 @@ class MessageBubble extends StatelessWidget {
                                     ? Icons.done_all_rounded
                                     : Icons.done_rounded,
                                 color: _message.readByAll ?? false
-                                    ? IsmChatConfig.chatTheme.chatPageTheme
+                                    ? IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
                                             ?.readCheckColor ??
                                         Colors.blue
-                                    : IsmChatConfig.chatTheme.chatPageTheme
+                                    : IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
                                             ?.unreadCheckColor ??
                                         Colors.white,
-                                size: IsmChatDimens.forteen,
+                                size: IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.messageStatusTheme?.checkSize ??
+                                    IsmChatDimens.forteen,
                               ),
                             ]
                           ],

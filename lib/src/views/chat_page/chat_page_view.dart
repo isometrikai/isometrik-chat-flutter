@@ -401,12 +401,12 @@ class _IsmChatPageView extends StatelessWidget {
                                                 padding: IsmChatConfig
                                                     .chatTheme
                                                     .chatPageTheme
-                                                    ?.textFiledThemData
+                                                    ?.textFiledTheme
                                                     ?.textfieldInsets,
                                                 decoration: IsmChatConfig
                                                     .chatTheme
                                                     .chatPageTheme
-                                                    ?.textFiledThemData
+                                                    ?.textFiledTheme
                                                     ?.decoration,
                                                 child: SafeArea(
                                                   bottom: !controller
