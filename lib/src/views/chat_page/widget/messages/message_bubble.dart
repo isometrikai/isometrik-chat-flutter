@@ -257,47 +257,56 @@ class MessageBubble extends StatelessWidget {
                             top: IsmChatDimens.four,
                             right: IsmChatDimens.five,
                             child: IsmChatTapHandler(
-                              onTap: () {
-                                if (controller.holdController?.isCompleted ==
-                                        true &&
-                                    controller.messageHoldOverlayEntry !=
-                                        null) {
-                                  controller.closeOverlay();
-                                } else {
-                                  if (!controller
-                                      .conversation!.isChattingAllowed) {
-                                    controller.showDialogCheckBlockUnBlock();
+                                onTap: () {
+                                  if (controller.holdController?.isCompleted ==
+                                          true &&
+                                      controller.messageHoldOverlayEntry !=
+                                          null) {
+                                    controller.closeOverlay();
                                   } else {
-                                    controller.holdController?.forward();
-                                    controller.showOverlayWeb(
-                                      _globalKey.currentContext!,
-                                      _message,
-                                      controller.holdAnimation!,
-                                    );
+                                    if (!(controller
+                                            .conversation?.isChattingAllowed ==
+                                        true)) {
+                                      controller.showDialogCheckBlockUnBlock();
+                                    } else {
+                                      controller.holdController?.forward();
+                                      controller.showOverlayWeb(
+                                        _globalKey.currentContext!,
+                                        _message,
+                                        controller.holdAnimation!,
+                                      );
+                                    }
                                   }
-                                }
-                              },
-                              child: Container(
-                                width: IsmChatDimens.thirty,
-                                height: IsmChatDimens.thirty,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                      IsmChatDimens.fifty),
-                                  color: IsmChatColors.whiteColor
+                                },
+                                child: CircleAvatar(
+                                  maxRadius: 15,
+                                  // minRadius: 1,
+                                  backgroundColor: IsmChatColors.whiteColor
                                       .applyIsmOpacity(.5),
-                                  border: Border.all(
-                                    color: IsmChatColors.blackColor,
+                                  child: Icon(
+                                    Icons.expand_more_rounded,
+                                    color: _message.textColor,
                                   ),
+                                )
+
+                                // Container(
+                                //   width: IsmChatDimens.thirty,
+                                //   height: IsmChatDimens.thirty,
+                                //   alignment: Alignment.center,
+                                //   decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(
+                                //         IsmChatDimens.fifty),
+                                //     color: IsmChatColors.whiteColor
+                                //         .applyIsmOpacity(.5),
+                                //     border: Border.all(
+                                //       color: IsmChatColors.blackColor,
+                                //     ),
+                                //   ),
+                                //   child: ,
+                                // ),
                                 ),
-                                child: Icon(
-                                  Icons.expand_more_rounded,
-                                  color: _message.textColor,
-                                ),
-                              ),
-                            ),
                           )
-                        : const SizedBox.shrink(),
+                        : IsmChatDimens.box0,
                   ),
                 ],
               ],
