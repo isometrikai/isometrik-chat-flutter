@@ -71,7 +71,6 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                       IsmChatConversationType.open
                   ? null
                   : Alignment.centerRight,
-              width: IsmChatDimens.sixty,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
