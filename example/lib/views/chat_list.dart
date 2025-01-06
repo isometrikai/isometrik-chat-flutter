@@ -35,19 +35,21 @@ class ChatList extends StatelessWidget {
                     const IsmChatCenterMessageTheme(textColor: Colors.white),
                 // backgroundColor: const Color(0xFF292030),
                 selfMessageTheme: IsmChatMessageTheme(
-                  borderColor: Colors.grey,
-                  // showProfile: ShowProfile(
-                  //   isShowProfile: true,
-                  //   isPostionBottom: false,
-                  // ),
-                ),
+                    borderColor: Colors.grey,
+                    textColor: Colors.white.withValues(alpha: 0.5)
+                    // showProfile: ShowProfile(
+                    //   isShowProfile: true,
+                    //   isPostionBottom: false,
+                    // ),
+                    ),
                 opponentMessageTheme: IsmChatMessageTheme(
-                  borderColor: AppColors.primaryColorLight,
-                  // showProfile: ShowProfile(
-                  //   isShowProfile: true,
-                  //   isPostionBottom: false,
-                  // ),
-                ),
+                    borderColor: AppColors.primaryColorLight,
+                    textColor: Colors.black.withValues(alpha: 0.5)
+                    // showProfile: ShowProfile(
+                    //   isShowProfile: true,
+                    //   isPostionBottom: false,
+                    // ),
+                    ),
               ),
             ),
 

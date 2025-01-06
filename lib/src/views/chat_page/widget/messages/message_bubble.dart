@@ -280,9 +280,18 @@ class MessageBubble extends StatelessWidget {
                                 },
                                 child: CircleAvatar(
                                   maxRadius: 15,
-                                  // minRadius: 1,
-                                  backgroundColor: IsmChatColors.whiteColor
-                                      .applyIsmOpacity(.5),
+                                  backgroundColor: _message.sentByMe
+                                      ? IsmChatConfig.chatTheme.chatPageTheme
+                                              ?.selfMessageTheme?.hoverColor ??
+                                          IsmChatColors.whiteColor
+                                              .applyIsmOpacity(.5)
+                                      : IsmChatConfig
+                                              .chatTheme
+                                              .chatPageTheme
+                                              ?.opponentMessageTheme
+                                              ?.hoverColor ??
+                                          IsmChatColors.blackColor
+                                              .applyIsmOpacity(.5),
                                   child: Icon(
                                     Icons.expand_more_rounded,
                                     color: _message.textColor,
