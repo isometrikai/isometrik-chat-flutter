@@ -196,7 +196,8 @@ class MessageBubble extends StatelessWidget {
                         children: [
                           Text(
                             _message.sentAt.toTimeString(),
-                            style: _message.style,
+                            style: _message.style.copyWith(
+                                fontSize: (_message.style.fontSize ?? 0) - 5),
                           ),
                           if (_message.sentByMe &&
                               _message.customType !=
