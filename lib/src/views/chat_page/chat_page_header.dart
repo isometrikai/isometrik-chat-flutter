@@ -119,7 +119,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                                       .conversation?.chatName ??
                                                   '') ??
                                       controller.conversation?.chatName,
-                                  dimensions: IsmChatDimens.forty,
+                                  dimensions: IsmChatDimens.fifty,
                                   isNetworkImage: (IsmChatProperties
                                               .chatPageProperties
                                               .header

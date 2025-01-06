@@ -66,6 +66,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IsmChatDimens.boxWidth14,
             Container(
               alignment: widget.conversation.conversationType ==
                       IsmChatConversationType.open

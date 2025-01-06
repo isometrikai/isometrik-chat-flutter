@@ -577,6 +577,9 @@ extension ModelConversion on IsmChatConversationModel {
               color: IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme
                       ?.unreadCheckColor ??
                   IsmChatColors.whiteColor,
+              size: IsmChatConfig
+                      .chatTheme.chatPageTheme?.messageStatusTheme?.checkSize ??
+                  IsmChatDimens.sixteen,
             )
           : IsmChatProperties.chatPageProperties.features.contains(
               IsmChatFeature.showMessageStatus,
@@ -590,7 +593,9 @@ extension ModelConversion on IsmChatConversationModel {
                       : IsmChatConfig.chatTheme.chatPageTheme
                               ?.messageStatusTheme?.unreadCheckColor ??
                           IsmChatColors.greyColor,
-                  size: IsmChatDimens.sixteen,
+                  size: IsmChatConfig.chatTheme.chatPageTheme
+                          ?.messageStatusTheme?.checkSize ??
+                      IsmChatDimens.sixteen,
                 )
               : IsmChatDimens.box0;
     } catch (e, st) {
