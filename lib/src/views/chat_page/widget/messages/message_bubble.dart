@@ -296,24 +296,7 @@ class MessageBubble extends StatelessWidget {
                                     Icons.expand_more_rounded,
                                     color: _message.textColor,
                                   ),
-                                )
-
-                                // Container(
-                                //   width: IsmChatDimens.thirty,
-                                //   height: IsmChatDimens.thirty,
-                                //   alignment: Alignment.center,
-                                //   decoration: BoxDecoration(
-                                //     borderRadius: BorderRadius.circular(
-                                //         IsmChatDimens.fifty),
-                                //     color: IsmChatColors.whiteColor
-                                //         .applyIsmOpacity(.5),
-                                //     border: Border.all(
-                                //       color: IsmChatColors.blackColor,
-                                //     ),
-                                //   ),
-                                //   child: ,
-                                // ),
-                                ),
+                                )),
                           )
                         : IsmChatDimens.box0,
                   ),
