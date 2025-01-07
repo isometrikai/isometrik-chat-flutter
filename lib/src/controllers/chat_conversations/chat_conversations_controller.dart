@@ -1157,7 +1157,7 @@ class IsmChatConversationsController extends GetxController {
   }
 
   void sendPendingMessgae({String conversationId = ''}) async {
-    var messages = {} as IsmChatMessages;
+    var messages = IsmChatMessages.from({});
     if (conversationId.isEmpty) {
       var pendingMessages =
           await IsmChatConfig.dbWrapper?.getAllPendingMessages();

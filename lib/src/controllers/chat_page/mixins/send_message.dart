@@ -52,8 +52,16 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         mentionedUsers: mentionedUsers,
         metaData: messageMetaData,
         parentMessageId: parentMessageId,
+        createdAt: createdAt,
       );
-      IsmChatConfig.paidWalletMessageApiResponse?.call(response);
+      if (response.$1) {
+        _controller.didReactedLast = false;
+        await _controller.getMessagesFromDB(conversationId);
+        if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+          await conversationController.getConversationsFromDB();
+        }
+      }
+      IsmChatConfig.paidWalletMessageApiResponse?.call(response.$2);
     } else if (_controller.conversation?.customType !=
         IsmChatStrings.broadcast) {
       var isMessageSent = await _controller.commonController.sendMessage(
