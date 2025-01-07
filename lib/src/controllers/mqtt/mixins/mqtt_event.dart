@@ -292,9 +292,6 @@ mixin IsmChatMqttEventMixin {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
-      // if (IsmChatConfig.isPaidWalletMessage == true) {
-      //   await _updateOwnMessage(message);
-      // }
       return;
     }
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
@@ -1077,58 +1074,6 @@ mixin IsmChatMqttEventMixin {
     if (Get.isRegistered<IsmChatConversationsController>()) {
       await Get.find<IsmChatConversationsController>().getChatConversations();
     }
-  }
-
-  Future<void> _updateOwnMessage(IsmChatMessageModel message) async {
-    var dbBox = IsmChatConfig.dbWrapper;
-    if (!Get.isRegistered<IsmChatConversationsController>()) return;
-
-    var conversationController = Get.find<IsmChatConversationsController>();
-
-    final chatPendingMessagesData = await dbBox?.getConversation(
-        conversationId: message.conversationId, dbBox: IsmChatDbBox.pending);
-
-    if (chatPendingMessagesData != null) {
-      chatPendingMessages = chatPendingMessagesData;
-    }
-    var pendingMessageKey = '${message.metaData?.messageSentAt}';
-    var pendingMessage = chatPendingMessages?.messages?[pendingMessageKey];
-    if (pendingMessage != null) {
-      pendingMessage.messageId = messageId;
-      pendingMessage.deliveredToAll = false;
-      pendingMessage.readByAll = false;
-      pendingMessage.isUploading = false;
-      chatPendingMessages?.messages
-          ?.removeWhere((key, value) => key == pendingMessageKey);
-      await dbBox?.saveConversation(
-          conversation: chatPendingMessages!, dbBox: IsmChatDbBox.pending);
-      if (chatPendingMessages?.messages?.isEmpty == true) {
-        await dbBox?.pendingMessageBox
-            .delete(chatPendingMessages?.conversationId ?? '');
-      }
-      var conversationModel = await dbBox?.getConversation(
-          conversationId: message.conversationId ?? '');
-      if (conversationModel != null) {
-        final messages = conversationModel.messages ?? {};
-        messages.addEntries({pendingMessageKey: pendingMessage}.entries);
-        conversationModel = conversationModel.copyWith(
-          lastMessageDetails: conversationModel.lastMessageDetails?.copyWith(
-            reactionType: '',
-            messageId: pendingMessage.messageId,
-          ),
-          messages: messages,
-        );
-      }
-      await dbBox?.saveConversation(conversation: conversationModel!);
-    }
-
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) return;
-    var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
-    if (chatController.conversation?.conversationId != message.conversationId) {
-      return;
-    }
-    unawaited(conversationController.getConversationsFromDB());
-    await chatController.getMessagesFromDB(message.conversationId ?? '');
   }
 
   Future<String> getChatConversationsCount({
