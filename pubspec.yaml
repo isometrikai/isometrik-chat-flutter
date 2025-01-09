@@ -21,14 +21,14 @@ dependencies:
   dio: ^5.7.0
   elegant_notification: ^2.4.1
   emoji_picker_flutter: ^4.2.0
-  file_picker: ^8.1.6
+  file_picker: ^8.1.7
   flutter:
     sdk: flutter
   flutter_contacts: ^1.1.9+2
-  flutter_image_compress: ^2.3.0
+  flutter_image_compress: ^2.4.0
   flutter_screenutil: ^5.9.3
   flutter_slidable: ^3.1.2
-  flutter_svg: ^2.0.16
+  flutter_svg: ^2.0.17
   flutter_web_plugins:
     sdk: flutter
   fluttertoast: ^8.2.10
@@ -46,7 +46,7 @@ dependencies:
   intl: ^0.20.1
   just_audio: ^0.9.42
   meta: ^1.16.0
-  mqtt_client: ^10.6.0
+  mqtt_client: ^10.6.3
   mqtt_helper: ^1.0.1
   open_filex: ^4.6.0
   path: ^1.9.1
@@ -63,7 +63,7 @@ dependencies:
   url_launcher: ^6.3.1
   video_compress: ^3.1.3
   video_player: ^2.9.2
-  video_trimmer: ^4.0.1
+  video_trimmer: ^4.0.2
   visibility_detector: ^0.4.0+2
 
 dependency_overrides:

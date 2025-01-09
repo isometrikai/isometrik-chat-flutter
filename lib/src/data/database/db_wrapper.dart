@@ -130,17 +130,13 @@ class IsmChatDBWrapper {
   }
 
   Future<IsmChatMessages> getAllPendingMessages() async {
-    var keys = await pendingMessageBox.getAllKeys();
-    var pendingMessages = await pendingMessageBox.getAll(keys);
-
-    if (pendingMessages.isEmpty) {
-      return {};
-    }
-
-    var allPendingMessage = pendingMessages;
-    // Todo
-    return {}
-        as IsmChatMessages; // allPendingMessage.map(IsmChatMessageModel.fromJson).toList();
+    final keys = await pendingMessageBox.getAllKeys();
+    final pendingMessages = await pendingMessageBox.getAll(keys);
+    if (pendingMessages.isEmpty) return {};
+    // final allPendingMessage = pendingMessages;
+    // TODO:
+    return {} as IsmChatMessages;
+    // allPendingMessage.map(IsmChatMessageModel.fromJson).toList();
   }
 
   Future<IsmChatConversationModel?> getConversation({

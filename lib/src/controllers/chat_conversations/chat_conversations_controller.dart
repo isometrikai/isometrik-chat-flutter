@@ -524,13 +524,15 @@ class IsmChatConversationsController extends GetxController {
   }
 
   Future<void> _generateReactionList() async {
-    reactions = await Future.wait(
-      IsmChatEmoji.values.map(
-        (e) async => (await EmojiPickerUtils()
-                .searchEmoji(e.emojiKeyword, defaultEmojiSet))
-            .first,
-      ),
-    );
+    reactions.clear();
+    for (final emoji in IsmChatEmoji.values) {
+      final emojiList = await EmojiPickerUtils().searchEmoji(
+        emoji.emojiKeyword,
+        defaultEmojiSet,
+      );
+      if (emojiList.isEmpty) continue;
+      reactions.add(emojiList.first);
+    }
   }
 
   /// This function will be used in [Forward Screen and New conversation screen] to Select or Unselect users

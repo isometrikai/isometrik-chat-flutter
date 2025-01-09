@@ -46,7 +46,7 @@ dependencies:
   path: ^1.9.1
   path_provider: ^2.1.5
   url_strategy: ^0.3.0
-  flutter_svg: ^2.0.16
+  flutter_svg: ^2.0.17
   timezone: ^0.10.0
 
 dependency_overrides:
