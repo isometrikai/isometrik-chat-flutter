@@ -197,7 +197,9 @@ extension DateConvertor on int {
     if (now.difference(timeStamp) <= const Duration(days: 1)) {
       return IsmChatStrings.yestarday.capitalizeFirst!;
     }
-    return DateFormat('dd/MM/yyyy').format(toDate());
+    return IsmChatConfig.isMonthFirst == true
+        ? DateFormat('MM/dd/yyyy').format(toDate())
+        : DateFormat('dd/MM/yyyy').format(toDate());
   }
 
   String get weekDayString {
