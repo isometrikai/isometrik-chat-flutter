@@ -197,7 +197,9 @@ extension DateConvertor on int {
     if (now.difference(timeStamp) <= const Duration(days: 1)) {
       return IsmChatStrings.yestarday.capitalizeFirst!;
     }
-    return DateFormat('dd/MM/yyyy').format(toDate());
+    return IsmChatConfig.isMonthFirst == true
+        ? DateFormat('MM/dd/yyyy').format(toDate())
+        : DateFormat('dd/MM/yyyy').format(toDate());
   }
 
   String get weekDayString {
@@ -765,12 +767,15 @@ extension LastMessageBody on LastMessageDetails {
 extension ReactionLastMessgae on String {
   String get reactionString {
     var reactionValue = IsmChatEmoji.values.firstWhere((e) => e.value == this);
+    var emoji = '';
+    for (var x in Get.find<IsmChatConversationsController>().reactions) {
+      if (x.name == reactionValue.emojiKeyword) {
+        emoji = x.emoji;
+        break;
+      }
+    }
 
-    var reaction = Get.find<IsmChatConversationsController>()
-        .reactions
-        .firstWhere((e) => e.name == reactionValue.emojiKeyword);
-
-    return reaction.emoji;
+    return emoji;
   }
 }
 

@@ -88,6 +88,7 @@ class IsmChat {
     SortingConversationCallback? sortingConversationWithIdentifier,
     ConnectionStateCallback? mqttConnectionStatus,
     ResponseCallback? chatInvalidate,
+    bool? isMonthFirst,
   }) async {
     if (isPaidWalletMessage) {
       assert(isPaidWalletMessage && paidWalletConfig != null,
@@ -114,6 +115,7 @@ class IsmChat {
       sortConversationWithIdentifier: sortingConversationWithIdentifier,
       mqttConnectionStatus: mqttConnectionStatus,
       chatInvalidate: chatInvalidate,
+      isMonthFirst: isMonthFirst,
     );
     _initialized = true;
   }

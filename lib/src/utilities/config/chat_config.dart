@@ -39,6 +39,7 @@ class IsmChatConfig {
   static IsmPaidWalletConfig? paidWalletModel;
   static ResponseCallback? paidWalletMessageApiResponse;
   static ResponseCallback? chatInvalidate;
+  static bool? isMonthFirst;
 }
 
 class IsmPaidWalletConfig {

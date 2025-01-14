@@ -36,6 +36,7 @@ class IsmChatDelegate {
     SortingConversationCallback? sortConversationWithIdentifier,
     ConnectionStateCallback? mqttConnectionStatus,
     ResponseCallback? chatInvalidate,
+    bool? isMonthFirst,
   }) async {
     _config = config;
     IsmChatConfig.context = context;
@@ -52,6 +53,7 @@ class IsmChatDelegate {
     IsmChatConfig.paidWalletModel = paidWalletConfig;
     IsmChatConfig.paidWalletMessageApiResponse = paidWalletMessageApiResponse;
     IsmChatConfig.chatInvalidate = chatInvalidate;
+    IsmChatConfig.isMonthFirst = isMonthFirst;
     IsmChatConfig.configInitilized = true;
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
     await _initializeMqtt(
