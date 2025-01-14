@@ -29,7 +29,7 @@ class IsmChatConversationsViewModel {
         if (dbConversations.isNotEmpty) {
           dbConversation = dbConversations.firstWhere(
             (e) => e.conversationId == conversation.conversationId,
-            orElse: () => IsmChatConversationModel(messages: []),
+            orElse: () => IsmChatConversationModel(messages: {}),
           );
         }
         conversation = conversation.copyWith(

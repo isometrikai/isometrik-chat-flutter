@@ -148,8 +148,10 @@ mixin IsmChatShowDialogMixin on GetxController {
             IsmChatStrings.deleteForMe,
           ],
           callbackActions: [
-            () => _controller.deleteMessageForEveryone([message]),
-            () => _controller.deleteMessageForMe([message]),
+            () => _controller.deleteMessageForEveryone(
+                {'${message.metaData?.messageSentAt}': message}),
+            () => _controller.deleteMessageForMe(
+                {'${message.metaData?.messageSentAt}': message}),
           ],
         ),
       );
@@ -161,7 +163,8 @@ mixin IsmChatShowDialogMixin on GetxController {
               '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
           actionLabels: const [IsmChatStrings.deleteForMe],
           callbackActions: [
-            () => _controller.deleteMessageForMe([message]),
+            () => _controller.deleteMessageForMe(
+                {'${message.metaData?.messageSentAt}': message}),
           ],
         ),
       );
@@ -170,7 +173,7 @@ mixin IsmChatShowDialogMixin on GetxController {
   }
 
   void showDialogForDeleteMultipleMessage(
-      bool sentByMe, List<IsmChatMessageModel> messages) async {
+      bool sentByMe, IsmChatMessages messages) async {
     if (sentByMe) {
       await Get.dialog(
         IsmChatAlertDialogBox(

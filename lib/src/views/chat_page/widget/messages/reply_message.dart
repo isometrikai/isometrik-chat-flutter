@@ -62,19 +62,19 @@ class _ReplyMessage extends StatelessWidget {
                         height: IsmChatDimens.fifty,
                         child: ColoredBox(
                           color: IsmChatConfig.chatTheme.chatPageTheme
-                                      ?.replyMessageThem !=
+                                      ?.replyMessageTheme !=
                                   null
                               ? replyingMyMessage
                                   ? IsmChatConfig
                                           .chatTheme
                                           .chatPageTheme
-                                          ?.replyMessageThem
+                                          ?.replyMessageTheme
                                           ?.selfReplayMessage ??
                                       IsmChatColors.yellowColor
                                   : IsmChatConfig
                                           .chatTheme
                                           .chatPageTheme
-                                          ?.replyMessageThem
+                                          ?.replyMessageTheme
                                           ?.opponentReplayMessage ??
                                       IsmChatColors.blueColor
                               : replyingMyMessage
@@ -125,18 +125,18 @@ class _ReplyMessage extends StatelessWidget {
                                   name,
                                   style: IsmChatStyles.w500Black14.copyWith(
                                     color: IsmChatConfig.chatTheme.chatPageTheme
-                                                ?.replyMessageThem !=
+                                                ?.replyMessageTheme !=
                                             null
                                         ? replyingMyMessage
                                             ? IsmChatConfig
                                                 .chatTheme
                                                 .chatPageTheme
-                                                ?.replyMessageThem
+                                                ?.replyMessageTheme
                                                 ?.selfReplayMessage
                                             : IsmChatConfig
                                                 .chatTheme
                                                 .chatPageTheme
-                                                ?.replyMessageThem
+                                                ?.replyMessageTheme
                                                 ?.opponentReplayMessage
                                         : replyingMyMessage
                                             ? IsmChatColors.yellowColor

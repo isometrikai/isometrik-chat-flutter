@@ -17,6 +17,7 @@ mixin IsmChatMqttEventMixin {
   String messageId = '';
 
   List<IsmChatMqttActionModel> deliverdActions = [];
+
   List<IsmChatMqttActionModel> readActions = [];
 
   final ismChatActionDebounce = IsmChatActionDebounce();
@@ -162,8 +163,8 @@ mixin IsmChatMqttEventMixin {
     if (actionModel.senderId == _controller.userConfig?.userId) {
       return;
     }
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: actionModel.conversationId);
+    var conversation = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: actionModel.conversationId);
     if (conversation != null) {
       var message = IsmChatMessageModel(
         body: '',
@@ -179,10 +180,12 @@ mixin IsmChatMqttEventMixin {
           online: true,
           lastSeen: 0,
         ),
+        metaData: IsmChatMetaData(messageSentAt: actionModel.sentAt),
       );
-      conversation.messages?.add(message);
-      await IsmChatConfig.dbWrapper!
-          .saveConversation(conversation: conversation);
+      conversation.messages
+          ?.addEntries({'${message.metaData?.messageSentAt}': message}.entries);
+      await IsmChatConfig.dbWrapper
+          ?.saveConversation(conversation: conversation);
       if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         var chatController =
             Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
@@ -236,25 +239,27 @@ mixin IsmChatMqttEventMixin {
       ),
     );
     var message = IsmChatMessageModel(
-        body: actionModel.body ?? '',
-        sentAt: actionModel.sentAt,
-        customType: actionModel.customType,
-        sentByMe: false,
-        messageId: actionModel.messageId,
-        attachments: actionModel.attachments,
-        conversationId: actionModel.conversationId,
-        isGroup: false,
-        messageType: actionModel.messageType,
-        metaData: actionModel.metaData,
-        senderInfo: UserDetails(
-          userProfileImageUrl: '',
-          userName: actionModel.senderName ?? '',
-          userIdentifier: '',
-          userId: actionModel.senderId ?? '',
-          online: false,
-          lastSeen: 0,
-        ));
-    conversation.messages?.add(message);
+      body: actionModel.body ?? '',
+      sentAt: actionModel.sentAt,
+      customType: actionModel.customType,
+      sentByMe: false,
+      messageId: actionModel.messageId,
+      attachments: actionModel.attachments,
+      conversationId: actionModel.conversationId,
+      isGroup: false,
+      messageType: actionModel.messageType,
+      metaData: actionModel.metaData,
+      senderInfo: UserDetails(
+        userProfileImageUrl: '',
+        userName: actionModel.senderName ?? '',
+        userIdentifier: '',
+        userId: actionModel.senderId ?? '',
+        online: false,
+        lastSeen: 0,
+      ),
+    );
+
+    conversation.messages?.addEntries({'${message.sentAt}': message}.entries);
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
     if (Get.isRegistered<IsmChatConversationsController>()) {
       var conversationController = Get.find<IsmChatConversationsController>();
@@ -286,17 +291,14 @@ mixin IsmChatMqttEventMixin {
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
-
-    if (message.senderInfo?.userId == _controller.userConfig?.userId &&
-        IsmChatConfig.isPaidWalletMessage == true) {
-      await _updateOwnMessage(message);
+    if (message.senderInfo?.userId == _controller.userConfig?.userId) {
       return;
     }
     if (!Get.isRegistered<IsmChatConversationsController>()) return;
     var conversationController = Get.find<IsmChatConversationsController>();
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: message.conversationId);
-    await Future.delayed(const Duration(milliseconds: 50));
+    var conversation = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: message.conversationId);
+
     if (conversation == null &&
         Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
@@ -350,7 +352,8 @@ mixin IsmChatMqttEventMixin {
       var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (chatController.conversation?.conversationId ==
           message.conversationId) {
-        conversation.messages?.add(message);
+        conversation.messages?.addEntries(
+            {'${message.metaData?.messageSentAt}': message}.entries);
       }
     }
 
@@ -367,7 +370,7 @@ mixin IsmChatMqttEventMixin {
       return;
     }
     unawaited(chatController.getMessagesFromDB(message.conversationId ?? ''));
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 100));
     if (_controller.isAppInBackground == false) {
       await chatController.readSingleMessage(
         conversationId: message.conversationId ?? '',
@@ -526,17 +529,17 @@ mixin IsmChatMqttEventMixin {
     final actionsData = List<IsmChatMqttActionModel>.from(deliverdActions);
     ismChatActionDebounce.run(() async {
       for (var action in actionsData) {
-        var conversation = await IsmChatConfig.dbWrapper!
-            .getConversation(conversationId: action.conversationId);
-        var message =
-            conversation?.messages?.cast<IsmChatMessageModel?>().firstWhere(
-                  (e) => e?.messageId == action.messageId,
-                  orElse: () => null,
-                );
+        var conversation = await IsmChatConfig.dbWrapper
+            ?.getConversation(conversationId: action.conversationId);
+        var message = conversation?.messages?.values
+            .cast<IsmChatMessageModel?>()
+            .firstWhere(
+              (e) => e?.messageId == action.messageId,
+              orElse: () => null,
+            );
         if (message != null) {
           var isDelivered = message.deliveredTo
               ?.any((e) => e.userId == action.userDetails?.userId);
-
           if (isDelivered == false) {
             message.deliveredTo?.add(
               MessageStatus(
@@ -547,27 +550,24 @@ mixin IsmChatMqttEventMixin {
           }
           message.deliveredToAll = message.deliveredTo?.length ==
               (conversation?.membersCount ?? 0) - 1;
-          final messageIndex = conversation?.messages
-              ?.indexWhere((e) => e.messageId == action.messageId);
-          if (messageIndex != -1) {
-            conversation?.messages?[
-                messageIndex ?? conversation.messages?.length ?? 0] = message;
-            conversation = conversation?.copyWith(
-              lastMessageDetails: conversation.lastMessageDetails?.copyWith(
-                deliverCount: message.deliveredTo?.length,
-                deliveredTo: message.deliveredTo,
-              ),
-            );
-            await IsmChatConfig.dbWrapper!
-                .saveConversation(conversation: conversation!);
-            if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
-              await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                  .getMessagesFromDB(action.conversationId ?? '');
-            }
-            if (Get.isRegistered<IsmChatConversationsController>()) {
-              unawaited(Get.find<IsmChatConversationsController>()
-                  .getConversationsFromDB());
-            }
+
+          conversation?.messages?['${message.metaData?.messageSentAt}'] =
+              message;
+          conversation = conversation?.copyWith(
+            lastMessageDetails: conversation.lastMessageDetails?.copyWith(
+              deliverCount: message.deliveredTo?.length,
+              deliveredTo: message.deliveredTo,
+            ),
+          );
+          await IsmChatConfig.dbWrapper
+              ?.saveConversation(conversation: conversation!);
+          if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+            await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                .getMessagesFromDB(action.conversationId ?? '');
+          }
+          if (Get.isRegistered<IsmChatConversationsController>()) {
+            unawaited(Get.find<IsmChatConversationsController>()
+                .getConversationsFromDB());
           }
         }
         deliverdActions.remove(action);
@@ -580,19 +580,19 @@ mixin IsmChatMqttEventMixin {
       return;
     }
     readActions.add(actionModel);
-
     ismChatActionDebounce.run(() async {
       final actionsData = List<IsmChatMqttActionModel>.from(readActions);
 
       for (var action in actionsData) {
-        var conversation = await IsmChatConfig.dbWrapper!
-            .getConversation(conversationId: action.conversationId);
+        var conversation = await IsmChatConfig.dbWrapper
+            ?.getConversation(conversationId: action.conversationId);
 
-        var message =
-            conversation?.messages?.cast<IsmChatMessageModel?>().firstWhere(
-                  (e) => e?.messageId == action.messageId,
-                  orElse: () => null,
-                );
+        var message = conversation?.messages?.values
+            .cast<IsmChatMessageModel?>()
+            .firstWhere(
+              (e) => e?.messageId == action.messageId,
+              orElse: () => null,
+            );
         if (message != null) {
           var isRead = message.readBy
               ?.any((e) => e.userId == action.userDetails?.userId);
@@ -607,27 +607,23 @@ mixin IsmChatMqttEventMixin {
           message.readByAll =
               message.readBy?.length == (conversation?.membersCount ?? 0) - 1;
 
-          final messageIndex = conversation?.messages
-              ?.indexWhere((e) => e.messageId == action.messageId);
-          if (messageIndex != -1) {
-            conversation?.messages?[
-                messageIndex ?? conversation.messages?.length ?? 0] = message;
-            conversation = conversation?.copyWith(
-              lastMessageDetails: conversation.lastMessageDetails?.copyWith(
-                readCount: message.readBy?.length,
-                readBy: message.readBy,
-              ),
-            );
-            await IsmChatConfig.dbWrapper!
-                .saveConversation(conversation: conversation!);
-            if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
-              await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                  .getMessagesFromDB(action.conversationId ?? '');
-            }
-            if (Get.isRegistered<IsmChatConversationsController>()) {
-              unawaited(Get.find<IsmChatConversationsController>()
-                  .getConversationsFromDB());
-            }
+          conversation?.messages?['${message.metaData?.messageSentAt}'] =
+              message;
+          conversation = conversation?.copyWith(
+            lastMessageDetails: conversation.lastMessageDetails?.copyWith(
+              readCount: message.readBy?.length,
+              readBy: message.readBy,
+            ),
+          );
+          await IsmChatConfig.dbWrapper
+              ?.saveConversation(conversation: conversation!);
+          if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+            await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                .getMessagesFromDB(action.conversationId ?? '');
+          }
+          if (Get.isRegistered<IsmChatConversationsController>()) {
+            unawaited(Get.find<IsmChatConversationsController>()
+                .getConversationsFromDB());
           }
         }
         readActions.remove(action);
@@ -645,11 +641,12 @@ mixin IsmChatMqttEventMixin {
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: actionModel.conversationId);
     if (conversation != null) {
-      var allMessages = conversation.messages ?? [];
-      var modifiedMessages = <IsmChatMessageModel>[];
-      for (var message in allMessages) {
+      var allMessages = conversation.messages ?? {};
+      var modifiedMessages = {};
+      for (var message in allMessages.values) {
         if (message.deliveredToAll == true && message.readByAll == true) {
-          modifiedMessages.add(message);
+          modifiedMessages.addEntries(
+              {'${message.metaData?.messageSentAt}': message}.entries);
         } else {
           var isDelivered = message.deliveredTo
               ?.any((e) => e.userId == actionModel.userDetails?.userId);
@@ -689,21 +686,21 @@ mixin IsmChatMqttEventMixin {
                 : false,
           );
 
-          modifiedMessages.add(modified);
+          modifiedMessages.addEntries(
+              {'${modified.metaData?.messageSentAt}': modified}.entries);
         }
       }
+      final meesages = IsmChatMessages.from(modifiedMessages);
       conversation = conversation.copyWith(
-        messages: modifiedMessages,
+        messages: meesages,
         lastMessageDetails: conversation.lastMessageDetails?.copyWith(
-          deliverCount: modifiedMessages.isEmpty
+          deliverCount: meesages.isEmpty
               ? 1
-              : modifiedMessages.last.deliveredTo?.length ?? 0,
-          readCount: modifiedMessages.isEmpty
-              ? 1
-              : modifiedMessages.last.readBy?.length ?? 0,
-          readBy: modifiedMessages.isEmpty ? [] : modifiedMessages.last.readBy,
-          deliveredTo:
-              modifiedMessages.isEmpty ? [] : modifiedMessages.last.deliveredTo,
+              : meesages.values.last.deliveredTo?.length ?? 0,
+          readCount:
+              meesages.isEmpty ? 1 : meesages.values.last.readBy?.length ?? 0,
+          readBy: meesages.isEmpty ? [] : meesages.values.last.readBy,
+          deliveredTo: meesages.isEmpty ? [] : meesages.values.last.deliveredTo,
         ),
       );
 
@@ -727,16 +724,18 @@ mixin IsmChatMqttEventMixin {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
     }
-    var allMessages = await IsmChatConfig.dbWrapper!
-        .getMessage(actionModel.conversationId ?? '');
+    var allMessages = await IsmChatConfig.dbWrapper
+        ?.getMessage(actionModel.conversationId ?? '');
     if (allMessages == null) {
       return;
     }
     if (actionModel.messageIds?.isNotEmpty == true) {
       for (var x in actionModel.messageIds ?? []) {
-        var messageIndex = allMessages.indexWhere((e) => e.messageId == x);
-        if (messageIndex != -1) {
-          allMessages[messageIndex].customType =
+        var message = allMessages.values
+            .cast<IsmChatMessageModel?>()
+            .firstWhere((e) => e?.messageId == x, orElse: () => null);
+        if (message != null) {
+          allMessages['${message.metaData?.messageSentAt}']?.customType =
               IsmChatCustomMessageType.deletedForEveryone;
         }
       }
@@ -746,8 +745,8 @@ mixin IsmChatMqttEventMixin {
         .getConversation(conversationId: actionModel.conversationId);
     if (conversation != null) {
       conversation = conversation.copyWith(messages: allMessages);
-      await IsmChatConfig.dbWrapper!
-          .saveConversation(conversation: conversation);
+      await IsmChatConfig.dbWrapper
+          ?.saveConversation(conversation: conversation);
     }
 
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
@@ -813,29 +812,31 @@ mixin IsmChatMqttEventMixin {
     }
     var allMessages = await IsmChatConfig.dbWrapper
         ?.getMessage(actionModel.conversationId ?? '');
-    allMessages?.add(
-      IsmChatMessageModel(
-        members: actionModel.members,
-        initiatorId: actionModel.userDetails?.userId,
-        initiatorName: actionModel.userDetails?.userName,
-        customType:
-            IsmChatCustomMessageType.fromString(actionModel.action.name),
-        body: '',
-        sentAt: actionModel.sentAt,
-        sentByMe: false,
-        isGroup: true,
-        conversationId: actionModel.conversationId,
-        memberId: actionModel.members?.first.memberId,
-        memberName: actionModel.members?.first.memberName,
-        senderInfo: UserDetails(
-          userProfileImageUrl: actionModel.userDetails?.profileImageUrl ?? '',
-          userName: actionModel.userDetails?.userName ?? '',
-          userIdentifier: actionModel.userDetails?.userIdentifier ?? '',
-          userId: actionModel.userDetails?.userId ?? '',
-          online: true,
-          lastSeen: 0,
-        ),
-      ),
+    allMessages?.addEntries(
+      {
+        '${actionModel.sentAt}': IsmChatMessageModel(
+          members: actionModel.members,
+          initiatorId: actionModel.userDetails?.userId,
+          initiatorName: actionModel.userDetails?.userName,
+          customType:
+              IsmChatCustomMessageType.fromString(actionModel.action.name),
+          body: '',
+          sentAt: actionModel.sentAt,
+          sentByMe: false,
+          isGroup: true,
+          conversationId: actionModel.conversationId,
+          memberId: actionModel.members?.first.memberId,
+          memberName: actionModel.members?.first.memberName,
+          senderInfo: UserDetails(
+            userProfileImageUrl: actionModel.userDetails?.profileImageUrl ?? '',
+            userName: actionModel.userDetails?.userName ?? '',
+            userIdentifier: actionModel.userDetails?.userIdentifier ?? '',
+            userId: actionModel.userDetails?.userId ?? '',
+            online: true,
+            lastSeen: 0,
+          ),
+        )
+      }.entries,
     );
 
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
@@ -970,13 +971,15 @@ mixin IsmChatMqttEventMixin {
 
     var allMessages = await IsmChatConfig.dbWrapper
         ?.getMessage(actionModel.conversationId ?? '');
-    if (!allMessages.isNullOrEmpty) {
-      var message =
-          allMessages?.where((e) => e.messageId == actionModel.messageId).first;
+
+    if (allMessages != null) {
+      var message = allMessages.entries
+          .where((e) => e.value.messageId == actionModel.messageId)
+          .first;
       var isEmoji = false;
 
       if (actionModel.action == IsmChatActionEvents.reactionAdd) {
-        for (var x in message?.reactions ?? <MessageReactionModel>[]) {
+        for (var x in message.value.reactions ?? <MessageReactionModel>[]) {
           if (x.emojiKey == actionModel.reactionType) {
             x.userIds.add(actionModel.userDetails?.userId ?? '');
             x.userIds.toSet().toList();
@@ -985,8 +988,8 @@ mixin IsmChatMqttEventMixin {
           }
         }
         if (isEmoji == false) {
-          message?.reactions ??= [];
-          message?.reactions?.add(
+          message.value.reactions ??= [];
+          message.value.reactions?.add(
             MessageReactionModel(
               emojiKey: actionModel.reactionType ?? '',
               userIds: [actionModel.userDetails?.userId ?? ''],
@@ -994,7 +997,7 @@ mixin IsmChatMqttEventMixin {
           );
         }
       } else {
-        for (var x in message?.reactions ?? <MessageReactionModel>[]) {
+        for (var x in message.value.reactions ?? <MessageReactionModel>[]) {
           if (x.emojiKey == actionModel.reactionType && x.userIds.length > 1) {
             x.userIds.remove(actionModel.userDetails?.userId ?? '');
             x.userIds.toSet().toList();
@@ -1003,15 +1006,12 @@ mixin IsmChatMqttEventMixin {
         }
 
         if (isEmoji == false) {
-          message?.reactions ??= [];
-          message?.reactions
+          message.value.reactions ??= [];
+          message.value.reactions
               ?.removeWhere((e) => e.emojiKey == actionModel.reactionType);
         }
       }
-
-      var messageIndex =
-          allMessages?.indexWhere((e) => e.messageId == actionModel.messageId);
-      allMessages?[messageIndex ?? 0] = message!;
+      allMessages[message.key] = message.value;
       var conversation = await IsmChatConfig.dbWrapper!
           .getConversation(conversationId: actionModel.conversationId);
       if (conversation != null) {
@@ -1074,61 +1074,6 @@ mixin IsmChatMqttEventMixin {
     if (Get.isRegistered<IsmChatConversationsController>()) {
       await Get.find<IsmChatConversationsController>().getChatConversations();
     }
-  }
-
-  Future<void> _updateOwnMessage(IsmChatMessageModel message) async {
-    var dbBox = IsmChatConfig.dbWrapper;
-    if (!Get.isRegistered<IsmChatConversationsController>()) return;
-
-    var conversationController = Get.find<IsmChatConversationsController>();
-
-    final chatPendingMessagesData = await dbBox?.getConversation(
-        conversationId: message.conversationId, dbBox: IsmChatDbBox.pending);
-
-    if (chatPendingMessagesData != null) {
-      chatPendingMessages = chatPendingMessagesData;
-    }
-
-    for (var x = 0; x < (chatPendingMessages?.messages?.length ?? 0); x++) {
-      var pendingMessage = chatPendingMessages?.messages?[x];
-      if (pendingMessage?.messageId?.isNotEmpty == true ||
-          pendingMessage?.sentAt != message.metaData?.messageSentAt) {
-        continue;
-      }
-      pendingMessage?.messageId = message.messageId;
-      pendingMessage?.deliveredToAll = false;
-      pendingMessage?.readByAll = false;
-      pendingMessage?.isUploading = false;
-      chatPendingMessages?.messages?.removeAt(x);
-      await dbBox?.saveConversation(
-          conversation: chatPendingMessages!, dbBox: IsmChatDbBox.pending);
-      if (chatPendingMessages?.messages?.isEmpty == true) {
-        await dbBox?.pendingMessageBox
-            .delete(chatPendingMessages?.conversationId ?? '');
-      }
-      var conversationModel =
-          await dbBox?.getConversation(conversationId: message.conversationId);
-      if (conversationModel != null) {
-        final messages = conversationModel.messages ?? [];
-        messages.add(pendingMessage!);
-        conversationModel = conversationModel.copyWith(
-          lastMessageDetails: conversationModel.lastMessageDetails?.copyWith(
-            reactionType: '',
-            messageId: pendingMessage.messageId,
-          ),
-          messages: messages,
-        );
-      }
-      await dbBox?.saveConversation(conversation: conversationModel!);
-    }
-
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) return;
-    var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
-    if (chatController.conversation?.conversationId != message.conversationId) {
-      return;
-    }
-    unawaited(conversationController.getConversationsFromDB());
-    await chatController.getMessagesFromDB(message.conversationId ?? '');
   }
 
   Future<String> getChatConversationsCount({

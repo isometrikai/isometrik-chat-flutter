@@ -196,12 +196,8 @@ class MessageBubble extends StatelessWidget {
                         children: [
                           Text(
                             _message.sentAt.toTimeString(),
-                            style: (_message.sentByMe
-                                    ? IsmChatStyles.w400White10
-                                    : IsmChatStyles.w400Grey10)
-                                .copyWith(
-                              color: _message.style.color,
-                            ),
+                            style: _message.style.copyWith(
+                                fontSize: (_message.style.fontSize ?? 0) - 5),
                           ),
                           if (_message.sentByMe &&
                               _message.customType !=
@@ -211,10 +207,15 @@ class MessageBubble extends StatelessWidget {
                               IsmChatDimens.boxWidth2,
                               Icon(
                                 Icons.watch_later_outlined,
-                                color: IsmChatConfig.chatTheme.chatPageTheme
+                                color: IsmChatConfig
+                                        .chatTheme
+                                        .chatPageTheme
+                                        ?.messageStatusTheme
                                         ?.unreadCheckColor ??
                                     Colors.white,
-                                size: IsmChatDimens.forteen,
+                                size: IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.messageStatusTheme?.checkSize ??
+                                    IsmChatDimens.forteen,
                               ),
                             ] else if (IsmChatProperties
                                 .chatPageProperties.features
@@ -227,13 +228,21 @@ class MessageBubble extends StatelessWidget {
                                     ? Icons.done_all_rounded
                                     : Icons.done_rounded,
                                 color: _message.readByAll ?? false
-                                    ? IsmChatConfig.chatTheme.chatPageTheme
+                                    ? IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
                                             ?.readCheckColor ??
                                         Colors.blue
-                                    : IsmChatConfig.chatTheme.chatPageTheme
+                                    : IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
                                             ?.unreadCheckColor ??
                                         Colors.white,
-                                size: IsmChatDimens.forteen,
+                                size: IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.messageStatusTheme?.checkSize ??
+                                    IsmChatDimens.forteen,
                               ),
                             ]
                           ],
@@ -248,47 +257,48 @@ class MessageBubble extends StatelessWidget {
                             top: IsmChatDimens.four,
                             right: IsmChatDimens.five,
                             child: IsmChatTapHandler(
-                              onTap: () {
-                                if (controller.holdController?.isCompleted ==
-                                        true &&
-                                    controller.messageHoldOverlayEntry !=
-                                        null) {
-                                  controller.closeOverlay();
-                                } else {
-                                  if (!controller
-                                      .conversation!.isChattingAllowed) {
-                                    controller.showDialogCheckBlockUnBlock();
+                                onTap: () {
+                                  if (controller.holdController?.isCompleted ==
+                                          true &&
+                                      controller.messageHoldOverlayEntry !=
+                                          null) {
+                                    controller.closeOverlay();
                                   } else {
-                                    controller.holdController?.forward();
-                                    controller.showOverlayWeb(
-                                      _globalKey.currentContext!,
-                                      _message,
-                                      controller.holdAnimation!,
-                                    );
+                                    if (!(controller
+                                            .conversation?.isChattingAllowed ==
+                                        true)) {
+                                      controller.showDialogCheckBlockUnBlock();
+                                    } else {
+                                      controller.holdController?.forward();
+                                      controller.showOverlayWeb(
+                                        _globalKey.currentContext!,
+                                        _message,
+                                        controller.holdAnimation!,
+                                      );
+                                    }
                                   }
-                                }
-                              },
-                              child: Container(
-                                width: IsmChatDimens.thirty,
-                                height: IsmChatDimens.thirty,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                      IsmChatDimens.fifty),
-                                  color: IsmChatColors.whiteColor
-                                      .applyIsmOpacity(.5),
-                                  border: Border.all(
-                                    color: IsmChatColors.blackColor,
+                                },
+                                child: CircleAvatar(
+                                  maxRadius: 15,
+                                  backgroundColor: _message.sentByMe
+                                      ? IsmChatConfig.chatTheme.chatPageTheme
+                                              ?.selfMessageTheme?.hoverColor ??
+                                          IsmChatColors.whiteColor
+                                              .applyIsmOpacity(.5)
+                                      : IsmChatConfig
+                                              .chatTheme
+                                              .chatPageTheme
+                                              ?.opponentMessageTheme
+                                              ?.hoverColor ??
+                                          IsmChatColors.blackColor
+                                              .applyIsmOpacity(.5),
+                                  child: Icon(
+                                    Icons.expand_more_rounded,
+                                    color: _message.textColor,
                                   ),
-                                ),
-                                child: Icon(
-                                  Icons.expand_more_rounded,
-                                  color: _message.textColor,
-                                ),
-                              ),
-                            ),
+                                )),
                           )
-                        : const SizedBox.shrink(),
+                        : IsmChatDimens.box0,
                   ),
                 ],
               ],

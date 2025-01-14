@@ -173,10 +173,16 @@ class _IsmChatPageView extends StatelessWidget {
                     actions: [
                       IconButton(
                         onPressed: () async {
+                          var selectedMessage = <String, IsmChatMessageModel>{};
+                          for (var message in controller.selectedMessage) {
+                            selectedMessage.addEntries({
+                              '${message.metaData?.messageSentAt}': message
+                            }.entries);
+                          }
                           var messageSenderSide =
                               controller.isAllMessagesFromMe();
                           controller.showDialogForDeleteMultipleMessage(
-                              messageSenderSide, controller.selectedMessage);
+                              messageSenderSide, selectedMessage);
                         },
                         icon: Icon(
                           Icons.delete_rounded,
@@ -395,12 +401,12 @@ class _IsmChatPageView extends StatelessWidget {
                                                 padding: IsmChatConfig
                                                     .chatTheme
                                                     .chatPageTheme
-                                                    ?.textFiledThemData
+                                                    ?.textFiledTheme
                                                     ?.textfieldInsets,
                                                 decoration: IsmChatConfig
                                                     .chatTheme
                                                     .chatPageTheme
-                                                    ?.textFiledThemData
+                                                    ?.textFiledTheme
                                                     ?.decoration,
                                                 child: SafeArea(
                                                   bottom: !controller

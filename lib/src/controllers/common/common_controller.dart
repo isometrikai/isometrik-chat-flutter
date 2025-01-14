@@ -95,7 +95,7 @@ class IsmChatCommonController extends GetxController {
           searchableTags: searchableTags,
           isUpdateMesage: isUpdateMesage);
 
-  Future<IsmChatResponseModel?> sendPaidWalletMessage({
+  Future<(bool, IsmChatResponseModel?)> sendPaidWalletMessage({
     required bool showInConversation,
     required int messageType,
     required bool encrypted,
@@ -104,6 +104,7 @@ class IsmChatCommonController extends GetxController {
     required String body,
     required String notificationBody,
     required String notificationTitle,
+    required int createdAt,
     String? parentMessageId,
     Map<String, dynamic>? metaData,
     List<Map<String, dynamic>>? mentionedUsers,
@@ -112,21 +113,21 @@ class IsmChatCommonController extends GetxController {
     List<Map<String, dynamic>>? attachments,
   }) async =>
       await viewModel.sendPaidWalletMessage(
-        showInConversation: showInConversation,
-        messageType: messageType,
-        encrypted: encrypted,
-        deviceId: deviceId,
-        conversationId: conversationId,
-        body: body,
-        notificationBody: notificationBody,
-        notificationTitle: notificationTitle,
-        attachments: attachments,
-        customType: customType,
-        events: events,
-        mentionedUsers: mentionedUsers,
-        parentMessageId: parentMessageId,
-        metaData: metaData,
-      );
+          showInConversation: showInConversation,
+          messageType: messageType,
+          encrypted: encrypted,
+          deviceId: deviceId,
+          conversationId: conversationId,
+          body: body,
+          notificationBody: notificationBody,
+          notificationTitle: notificationTitle,
+          attachments: attachments,
+          customType: customType,
+          events: events,
+          mentionedUsers: mentionedUsers,
+          parentMessageId: parentMessageId,
+          metaData: metaData,
+          createdAt: createdAt);
 
   Future<IsmChatConversationModel?> createConversation({
     required List<String> userId,
@@ -170,8 +171,8 @@ class IsmChatCommonController extends GetxController {
           messagingDisabled: conversation.messagingDisabled,
           membersCount: conversation.membersCount,
           unreadMessagesCount: conversation.unreadMessagesCount,
-          messages: [
-            IsmChatMessageModel(
+          messages: {
+            '${DateTime.now().millisecondsSinceEpoch}': IsmChatMessageModel(
               body: '',
               customType: IsmChatCustomMessageType.conversationCreated,
               sentAt: DateTime.now().millisecondsSinceEpoch,
@@ -179,7 +180,7 @@ class IsmChatCommonController extends GetxController {
               conversationId: conversationId,
               action: 'conversationCreated',
             )
-          ],
+          },
           opponentDetails: conversation.opponentDetails,
           lastMessageDetails:
               conversation.lastMessageDetails?.copyWith(deliverCount: 0),

@@ -12,7 +12,7 @@ class IsmChatConversationUpdate extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: IsmChatConfig.chatTheme.chatPageTheme?.centerMessageThemData
+          color: IsmChatConfig.chatTheme.chatPageTheme?.centerMessageTheme
                   ?.backgroundColor ??
               IsmChatConfig.chatTheme.backgroundColor,
           borderRadius: BorderRadius.circular(IsmChatDimens.eight),
@@ -22,7 +22,7 @@ class IsmChatConversationUpdate extends StatelessWidget {
           '${message.initiator} changed the ${message.customType == IsmChatCustomMessageType.conversationTitleUpdated ? 'title' : 'profile picture'} of the group',
           textAlign: TextAlign.center,
           style: IsmChatConfig
-                  .chatTheme.chatPageTheme?.centerMessageThemData?.textStyle ??
+                  .chatTheme.chatPageTheme?.centerMessageTheme?.textStyle ??
               IsmChatStyles.w500Black12.copyWith(
                 color: IsmChatConfig.chatTheme.primaryColor,
               ),

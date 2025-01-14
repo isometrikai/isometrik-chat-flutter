@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class IsmChatReplyMessageThem {
-  IsmChatReplyMessageThem({
+class IsmChatReplyMessageTheme {
+  IsmChatReplyMessageTheme({
     required this.selfReplayMessage,
     required this.opponentReplayMessage,
   });

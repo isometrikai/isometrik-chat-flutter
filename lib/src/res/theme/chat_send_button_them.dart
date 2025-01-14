@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class IsmChatSendButtonThemData {
-  IsmChatSendButtonThemData(
+class IsmChatSendButtonTheme {
+  IsmChatSendButtonTheme(
       {this.backgroundColor, this.iconColor, this.decoration});
 
   final Color? backgroundColor;

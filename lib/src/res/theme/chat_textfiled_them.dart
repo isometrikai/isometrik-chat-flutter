@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class IsmChatTextFiledThemData {
-  IsmChatTextFiledThemData({
+class IsmChatTextFiledTheme {
+  IsmChatTextFiledTheme({
     this.inputTextStyle,
     this.decoration,
     this.backgroundColor,

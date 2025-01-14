@@ -1944,15 +1944,15 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> deleteMessageForEveryone(
-    List<IsmChatMessageModel> messages,
+    IsmChatMessages messages,
   ) async {
-    var pendingMessges = List<IsmChatMessageModel>.from(messages);
+    var pendingMessges = IsmChatMessages.from(messages);
     await viewModel.deleteMessageForEveryone(messages);
     selectedMessage.clear();
-    pendingMessges.where((e) => e.messageId == '').toList();
+    pendingMessges.entries.where((e) => e.value.messageId == '');
     if (pendingMessges.isNotEmpty) {
-      await IsmChatConfig.dbWrapper!
-          .removePendingMessage(conversation!.conversationId!, pendingMessges);
+      await IsmChatConfig.dbWrapper?.removePendingMessage(
+          conversation?.conversationId ?? '', pendingMessges);
       await getMessagesFromDB(conversation!.conversationId!);
       selectedMessage.clear();
       isMessageSeleted = false;
@@ -1961,16 +1961,16 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> deleteMessageForMe(
-    List<IsmChatMessageModel> messages,
+    IsmChatMessages messages,
   ) async {
-    var pendingMessges = List<IsmChatMessageModel>.from(messages);
+    var pendingMessges = IsmChatMessages.from(messages);
     await viewModel.deleteMessageForMe(messages);
     selectedMessage.clear();
-    pendingMessges.where((e) => e.messageId == '').toList();
+    pendingMessges.entries.where((e) => e.value.messageId == '');
     if (pendingMessges.isNotEmpty) {
-      await IsmChatConfig.dbWrapper!
-          .removePendingMessage(conversation!.conversationId!, pendingMessges);
-      await getMessagesFromDB(conversation!.conversationId!);
+      await IsmChatConfig.dbWrapper?.removePendingMessage(
+          conversation?.conversationId ?? '', pendingMessges);
+      await getMessagesFromDB(conversation?.conversationId ?? '');
       selectedMessage.clear();
       isMessageSeleted = false;
     }

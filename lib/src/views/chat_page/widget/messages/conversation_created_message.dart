@@ -29,7 +29,7 @@ class IsmChatConversationCreatedMessage extends StatelessWidget {
     return Center(
       child: Container(
         decoration: BoxDecoration(
-          color: IsmChatConfig.chatTheme.chatPageTheme?.centerMessageThemData
+          color: IsmChatConfig.chatTheme.chatPageTheme?.centerMessageTheme
                   ?.backgroundColor ??
               IsmChatConfig.chatTheme.backgroundColor,
           borderRadius: BorderRadius.circular(IsmChatDimens.eight),
@@ -40,7 +40,7 @@ class IsmChatConversationCreatedMessage extends StatelessWidget {
               ? '${name.trim().isNotEmpty ? name : message.userName} created a group'
               : 'Messages are end to end encrypted. No one outside of this chat can read your messages.',
           style: IsmChatConfig
-                  .chatTheme.chatPageTheme?.centerMessageThemData?.textStyle ??
+                  .chatTheme.chatPageTheme?.centerMessageTheme?.textStyle ??
               IsmChatStyles.w500Black12.copyWith(
                 color: IsmChatConfig.chatTheme.primaryColor,
               ),

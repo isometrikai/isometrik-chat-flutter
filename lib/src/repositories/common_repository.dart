@@ -106,7 +106,7 @@ class IsmChatCommonRepository {
     }
   }
 
-  Future<IsmChatResponseModel?> sendPaidWalletMessage({
+  Future<(String, IsmChatResponseModel)?> sendPaidWalletMessage({
     required bool showInConversation,
     required int messageType,
     required bool encrypted,
@@ -150,7 +150,12 @@ class IsmChatCommonRepository {
         payload: payload,
         headers: headers,
       );
-      return response;
+      if (response.hasError) {
+        return null;
+      }
+      var data = jsonDecode(response.data);
+      var messageId = data['data']['messageId'] as String? ?? '';
+      return (messageId, response);
     } catch (e, st) {
       IsmChatLog.error('sendPaidWalletMessage $e', st);
       return null;

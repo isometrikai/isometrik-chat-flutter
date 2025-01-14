@@ -140,10 +140,10 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: IsmChatConfig.chatTheme.chatPageTheme
-                      ?.textFiledThemData?.textfieldInsets,
+                  padding: IsmChatConfig
+                      .chatTheme.chatPageTheme?.textFiledTheme?.textfieldInsets,
                   decoration: IsmChatConfig
-                      .chatTheme.chatPageTheme?.textFiledThemData?.decoration,
+                      .chatTheme.chatPageTheme?.textFiledTheme?.decoration,
                   child: const SafeArea(
                     child: IsmChatMessageField(),
                   ),

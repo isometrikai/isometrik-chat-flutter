@@ -83,7 +83,6 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                     IsmChatImage.profile(
                       controller.userDetails?.userProfileImageUrl ?? '',
                       name: controller.userDetails?.userName,
-                      dimensions: IsmChatDimens.appBarHeight * 0.8,
                     )
                   ],
                   Positioned(

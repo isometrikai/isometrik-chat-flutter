@@ -576,8 +576,12 @@ extension ModelConversion on IsmChatConversationModel {
       return lastMessageDetails?.messageId.isEmpty == true
           ? Icon(
               Icons.watch_later_outlined,
-              color: IsmChatConfig.chatTheme.chatPageTheme?.unreadCheckColor ??
+              color: IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme
+                      ?.unreadCheckColor ??
                   IsmChatColors.whiteColor,
+              size: IsmChatConfig
+                      .chatTheme.chatPageTheme?.messageStatusTheme?.checkSize ??
+                  IsmChatDimens.sixteen,
             )
           : IsmChatProperties.chatPageProperties.features.contains(
               IsmChatFeature.showMessageStatus,
@@ -585,12 +589,15 @@ extension ModelConversion on IsmChatConversationModel {
               ? Icon(
                   deliveredToAll ? Icons.done_all_rounded : Icons.done_rounded,
                   color: readByAll
-                      ? IsmChatConfig.chatTheme.chatPageTheme?.readCheckColor ??
+                      ? IsmChatConfig.chatTheme.chatPageTheme
+                              ?.messageStatusTheme?.readCheckColor ??
                           IsmChatColors.blueColor
-                      : IsmChatConfig
-                              .chatTheme.chatPageTheme?.unreadCheckColor ??
+                      : IsmChatConfig.chatTheme.chatPageTheme
+                              ?.messageStatusTheme?.unreadCheckColor ??
                           IsmChatColors.greyColor,
-                  size: IsmChatDimens.sixteen,
+                  size: IsmChatConfig.chatTheme.chatPageTheme
+                          ?.messageStatusTheme?.checkSize ??
+                      IsmChatDimens.sixteen,
                 )
               : IsmChatDimens.box0;
     } catch (e, st) {
@@ -851,10 +858,10 @@ extension MentionMessage on IsmChatMessageModel {
   TextStyle get style {
     var theme = IsmChatConfig.chatTheme.chatPageTheme;
     if (sentByMe) {
-      return theme?.selfMessageTheme?.textStyle ??
-          IsmChatStyles.w500White14.copyWith(
-            color: theme?.selfMessageTheme?.textColor,
-          );
+      return (theme?.selfMessageTheme?.textStyle ?? IsmChatStyles.w500White14)
+          .copyWith(
+        color: theme?.selfMessageTheme?.textColor,
+      );
     }
     return (theme?.opponentMessageTheme?.textStyle ?? IsmChatStyles.w500Black14)
         .copyWith(
