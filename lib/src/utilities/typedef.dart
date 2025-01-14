@@ -27,6 +27,7 @@ typedef UserDetailsWidgetCallback = Widget? Function(
 typedef WidgetCallback = Widget? Function(
   BuildContext,
   IsmChatConversationModel,
+  bool,
 );
 
 typedef PopupItemListCallback = List<IsmChatPopupMenuItem> Function(

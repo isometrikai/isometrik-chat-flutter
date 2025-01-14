@@ -499,7 +499,7 @@ class IsmChatConversationsController extends GetxController {
         );
       case IsRenderChatPageScreen.outSideView:
         return IsmChatProperties.conversationProperties.thirdColumnWidget
-                ?.call(Get.context!, currentConversation!) ??
+                ?.call(Get.context!, currentConversation!, false) ??
             const SizedBox.shrink();
     }
     return const SizedBox.shrink();
@@ -869,8 +869,13 @@ class IsmChatConversationsController extends GetxController {
         resetFooterState: true,
       );
     } else if (origin == ApiCallOrigin.loadMore) {
-      refreshController.loadComplete();
-      refreshControllerOnEmptyList.loadComplete();
+      if (chats.isEmpty) {
+        refreshController.loadNoData();
+        refreshControllerOnEmptyList.loadNoData();
+      } else {
+        refreshController.loadComplete();
+        refreshControllerOnEmptyList.loadComplete();
+      }
     }
 
     await getConversationsFromDB();

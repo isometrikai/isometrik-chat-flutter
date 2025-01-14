@@ -145,7 +145,8 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                               null) ...[
                             IsmChatProperties
                                     .chatPageProperties.header?.actionBuilder
-                                    ?.call(context, controller.conversation!) ??
+                                    ?.call(context, controller.conversation!,
+                                        false) ??
                                 const SizedBox.square()
                           ],
                           _PopupMenuWidget(
@@ -155,7 +156,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     IsmChatProperties.chatPageProperties.header?.bottom
-                            ?.call(context, controller.conversation!) ??
+                            ?.call(context, controller.conversation!, false) ??
                         const SizedBox.shrink(),
                   ],
                 ),
@@ -203,21 +204,15 @@ class _TitleSubTitleWidget extends StatelessWidget {
                       .chatPageProperties.header?.subtitleBuilder !=
                   null) ...[
                 Obx(
-                  () => controller.conversation?.isSomeoneTyping == true
-                      ? IsmChatProperties
-                              .chatPageProperties.header?.subtitleBuilder
-                              ?.call(
-                            context,
-                            controller.conversation!,
-                          ) ??
-                          IsmChatDimens.box0
-                      : IsmChatProperties
-                              .chatPageProperties.header?.subtitleBuilder
-                              ?.call(
-                            context,
-                            controller.conversation!,
-                          ) ??
-                          IsmChatDimens.box0,
+                  () =>
+                      IsmChatProperties
+                          .chatPageProperties.header?.subtitleBuilder
+                          ?.call(
+                        context,
+                        controller.conversation!,
+                        controller.conversation?.isSomeoneTyping == true,
+                      ) ??
+                      IsmChatDimens.box0,
                 )
               ] else ...[
                 (!(controller.conversation?.isChattingAllowed == true))
