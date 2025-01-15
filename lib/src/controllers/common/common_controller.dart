@@ -187,10 +187,10 @@ class IsmChatCommonController extends GetxController {
           config: conversation.config,
           metaData: conversation.metaData,
           conversationType: conversation.conversationType);
-      await IsmChatConfig.dbWrapper!
-          .createAndUpdateConversation(dbConversationModel);
-      // unawaited(
-      //     Get.find<IsmChatConversationsController>().getChatConversations());
+      await IsmChatConfig.dbWrapper
+          ?.createAndUpdateConversation(dbConversationModel);
+      await Get.find<IsmChatConversationsController>().getChatConversations();
+
       return conversation;
     }
     return null;
