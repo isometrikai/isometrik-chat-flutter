@@ -339,8 +339,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           ),
           unreadMessagesCount: 0,
         );
-        await IsmChatConfig.dbWrapper!
-            .saveConversation(conversation: conversation);
+        await IsmChatConfig.dbWrapper
+            ?.saveConversation(conversation: conversation);
         await conversationController.getConversationsFromDB();
       }
     } else {

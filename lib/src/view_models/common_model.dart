@@ -165,6 +165,7 @@ class IsmChatCommonViewModel {
                   conversationModel.lastMessageDetails?.copyWith(
                 reactionType: '',
                 messageId: pendingMessage.messageId,
+                action: '',
               ),
               messages: messages,
             );

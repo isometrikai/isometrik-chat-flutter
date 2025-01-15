@@ -336,8 +336,6 @@ class IsmChatConversationsController extends GetxController {
     _intilizedContrller.value = value;
   }
 
-  // SlidableController? slidableController;
-
   @override
   onInit() async {
     super.onInit();
@@ -1558,8 +1556,8 @@ class IsmChatConversationsController extends GetxController {
     String? caption,
     bool sendPushNotification = false,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
+    final chatConversationResponse = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: conversationId);
     if (chatConversationResponse == null) {
       final conversation = await _commonController.createConversation(
         conversation: currentConversation!,

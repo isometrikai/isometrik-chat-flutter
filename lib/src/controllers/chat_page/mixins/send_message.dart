@@ -237,7 +237,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       required String userId,
       WebMediaModel? webMediaModel,
       Duration? duration}) async {
-    conversationId = await createConversation(conversationId, userId: userId);
+    conversationId = await createConversation(
+      conversationId: conversationId,
+      userId: userId,
+    );
     IsmChatMessageModel? audioMessage;
     String? nameWithExtension;
     Uint8List? bytes;
@@ -363,7 +366,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     );
 
     if (result?.files.isNotEmpty ?? false) {
-      conversationId = await createConversation(conversationId, userId: userId);
+      conversationId = await createConversation(
+          conversationId: conversationId, userId: userId);
       final resultFiles = result?.files ?? [];
 
       for (var x in resultFiles) {
@@ -506,7 +510,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     WebMediaModel? webMediaModel,
     String? caption,
   }) async {
-    conversationId = await createConversation(conversationId, userId: userId);
+    conversationId = await createConversation(
+        conversationId: conversationId, userId: userId);
     IsmChatMessageModel? videoMessage;
     String? nameWithExtension;
     Uint8List? bytes;
@@ -646,7 +651,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     WebMediaModel? webMediaModel,
     String? caption,
   }) async {
-    conversationId = await createConversation(conversationId, userId: userId);
+    conversationId = await createConversation(
+        conversationId: conversationId, userId: userId);
     IsmChatMessageModel? imageMessage;
     String? nameWithExtension;
     Uint8List? bytes;
@@ -869,7 +875,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String conversationId,
     required String userId,
   }) async {
-    conversationId = await createConversation(conversationId, userId: userId);
+    conversationId = await createConversation(
+        conversationId: conversationId, userId: userId);
     var sentAt = DateTime.now().millisecondsSinceEpoch;
     var locationMessage = IsmChatMessageModel(
       body: IsmChatStrings.location,
@@ -960,7 +967,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String userId,
     required List<Contact> contacts,
   }) async {
-    conversationId = await createConversation(conversationId, userId: userId);
+    conversationId = await createConversation(
+        conversationId: conversationId, userId: userId);
     var sentAt = DateTime.now().millisecondsSinceEpoch;
     var contactMessage = IsmChatMessageModel(
       body: IsmChatStrings.contact,
@@ -1043,7 +1051,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String userId,
     bool pushNotifications = true,
   }) async {
-    conversationId = await createConversation(conversationId, userId: userId);
+    conversationId = await createConversation(
+        conversationId: conversationId, userId: userId);
     var sentAt = DateTime.now().millisecondsSinceEpoch;
     var textMessage = IsmChatMessageModel(
       body: _controller.chatInputController.text.trim(),
@@ -1426,8 +1435,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         searchableTags: searchableTags,
       );
 
-  Future<String> createConversation(String conversationId,
-      {String? userId}) async {
+  Future<String> createConversation({
+    required String conversationId,
+    String? userId,
+  }) async {
     final chatConversationResponse = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: conversationId);
     if (chatConversationResponse == null && _controller.isBroadcast == false) {
