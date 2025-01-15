@@ -1428,8 +1428,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
   Future<String> createConversation(String conversationId,
       {String? userId}) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
+    final chatConversationResponse = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: conversationId);
     if (chatConversationResponse == null && _controller.isBroadcast == false) {
       _controller.conversation =
           await _controller.commonController.createConversation(

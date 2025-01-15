@@ -274,6 +274,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         _controller.isActionAllowed = true;
       }
       _controller.isCoverationApiDetails = true;
+      _controller.conversationController.currentConversation =
+          _controller.conversation;
       return _controller.conversation;
     }
     return null;
@@ -286,8 +288,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
   void updateLastMessagOnCurrentTime(IsmChatMessageModel message) async {
     var conversationController = Get.find<IsmChatConversationsController>();
-    var conversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: message.conversationId);
+    var conversation = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversationId: message.conversationId);
 
     if (conversation == null) {
       return;
