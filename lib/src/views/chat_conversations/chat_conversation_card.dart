@@ -190,6 +190,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                           widget.conversation.lastMessageDetails?.body ?? '') ??
                       Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           if (widget.conversation.lastMessageDetails
                                   ?.reactionType?.isEmpty ==
