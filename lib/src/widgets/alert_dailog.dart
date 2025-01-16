@@ -57,7 +57,9 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                     onTap: onCancel ?? Get.back,
                     child: Text(
                       cancelLabel,
-                      style: IsmChatStyles.w400Black14,
+                      style:
+                          IsmChatConfig.chatTheme.dialogTheme?.titleTextStyle ??
+                              IsmChatStyles.w400Black14,
                     ),
                   ),
                   if (actionLabels != null) ...[
@@ -69,7 +71,9 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                       },
                       child: Text(
                         actionLabels?.first ?? '',
-                        style: IsmChatStyles.w400Black14,
+                        style: IsmChatConfig
+                                .chatTheme.dialogTheme?.titleTextStyle ??
+                            IsmChatStyles.w400Black14,
                       ),
                     ),
                   ],
@@ -78,7 +82,8 @@ class IsmChatAlertDialogBox extends StatelessWidget {
             : SimpleDialog(
                 title: Text(
                   title,
-                  style: IsmChatStyles.w600Black14,
+                  style: IsmChatConfig.chatTheme.dialogTheme?.titleTextStyle ??
+                      IsmChatStyles.w600Black14,
                 ),
                 children: [
                   Column(
