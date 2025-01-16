@@ -26,7 +26,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool isBroadcast = false,
     bool sendPushNotification = true,
   }) async {
-    if (IsmChatConfig.isPaidWalletMessage ?? false) {
+    if (IsmChatConfig.sendPaidWalletMessage
+            ?.call(Get.context!, _controller.conversation!) ??
+        false) {
       var messageMetaData = metaData?.toMap() ?? {};
       if (IsmChatConfig.paidWalletModel?.customType != null) {
         final customType = await IsmChatConfig.paidWalletModel?.customType

@@ -82,7 +82,7 @@ class IsmChat {
     List<String>? topics,
     List<String>? topicChannels,
     bool shouldPendingMessageSend = true,
-    bool isPaidWalletMessage = false,
+    ConversationCallback? sendPaidWalletMessage,
     IsmPaidWalletConfig? paidWalletConfig,
     ResponseCallback? paidWalletMessageApiResponse,
     SortingConversationCallback? sortingConversationWithIdentifier,
@@ -90,12 +90,12 @@ class IsmChat {
     ResponseCallback? chatInvalidate,
     bool? isMonthFirst,
   }) async {
-    if (isPaidWalletMessage) {
-      assert(isPaidWalletMessage && paidWalletConfig != null,
+    if (sendPaidWalletMessage != null) {
+      assert(paidWalletConfig != null,
           'isPadiWalletMessage = true, paidWalletConfig should be mandatory');
     }
     if (paidWalletMessageApiResponse != null) {
-      assert(isPaidWalletMessage && paidWalletConfig != null,
+      assert(sendPaidWalletMessage != null && paidWalletConfig != null,
           'isPadiWalletMessage = true, paidWalletConfig should be mandatory for isPaidWalletMessageApiResponse callback');
     }
 
@@ -109,7 +109,7 @@ class IsmChat {
       topics: topics,
       topicChannels: topicChannels,
       shouldPendingMessageSend: shouldPendingMessageSend,
-      isPaidWalletMessage: isPaidWalletMessage,
+      sendPaidWalletMessage: sendPaidWalletMessage,
       paidWalletConfig: paidWalletConfig,
       paidWalletMessageApiResponse: paidWalletMessageApiResponse,
       sortConversationWithIdentifier: sortingConversationWithIdentifier,

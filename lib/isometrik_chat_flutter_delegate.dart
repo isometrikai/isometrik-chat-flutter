@@ -30,7 +30,7 @@ class IsmChatDelegate {
     List<String>? topics,
     List<String>? topicChannels,
     bool shouldPendingMessageSend = true,
-    bool isPaidWalletMessage = false,
+    ConversationCallback? sendPaidWalletMessage,
     IsmPaidWalletConfig? paidWalletConfig,
     ResponseCallback? paidWalletMessageApiResponse,
     SortingConversationCallback? sortConversationWithIdentifier,
@@ -49,7 +49,7 @@ class IsmChatDelegate {
     IsmChatConfig.sortConversationWithIdentifier =
         sortConversationWithIdentifier;
     IsmChatConfig.shouldPendingMessageSend = shouldPendingMessageSend;
-    IsmChatConfig.isPaidWalletMessage = isPaidWalletMessage;
+    IsmChatConfig.sendPaidWalletMessage = sendPaidWalletMessage;
     IsmChatConfig.paidWalletModel = paidWalletConfig;
     IsmChatConfig.paidWalletMessageApiResponse = paidWalletMessageApiResponse;
     IsmChatConfig.chatInvalidate = chatInvalidate;
