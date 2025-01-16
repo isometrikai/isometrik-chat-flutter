@@ -10,6 +10,8 @@ class IsmChatMetaData {
     this.profilePic,
     this.lastName,
     this.firstName,
+    this.isPopularUser,
+    this.gender,
     this.contacts,
     this.customType,
     this.assetList,
@@ -37,6 +39,8 @@ class IsmChatMetaData {
       profilePic: map['profilePic'] as String? ?? '',
       firstName: map['firstName'] as String? ?? '',
       lastName: map['lastName'] as String? ?? '',
+      isPopularUser: map['isPopularUser'] as bool? ?? false,
+      gender: map['gender'] as String? ?? '',
       countryCode: map['countryCode'] as String? ?? '',
       phone: map['phone'] as String? ?? '',
       phoneIsoCode: map['phoneIsoCode'] as String? ?? '',
@@ -97,6 +101,8 @@ class IsmChatMetaData {
   final String? profilePic;
   final String? lastName;
   final String? firstName;
+  final bool? isPopularUser;
+  final String? gender;
   final List<IsmChatContactMetaDatModel>? contacts;
   final Map<String, dynamic>? customType;
   final List<Map<String, IsmChatBackgroundModel>>? assetList;
@@ -134,6 +140,8 @@ class IsmChatMetaData {
     AboutTextModel? aboutText,
     bool? isDownloaded,
     int? messageSentAt,
+    bool? isPopularUser,
+    String? gender,
   }) =>
       IsmChatMetaData(
         locationAddress: locationAddress ?? this.locationAddress,
@@ -141,6 +149,8 @@ class IsmChatMetaData {
         profilePic: profilePic ?? this.profilePic,
         lastName: lastName ?? this.lastName,
         firstName: firstName ?? this.firstName,
+        isPopularUser: isPopularUser ?? this.isPopularUser,
+        gender: gender ?? this.gender,
         contacts: contacts ?? this.contacts,
         customType: customType ?? this.customType,
         assetList: assetList ?? this.assetList,
@@ -162,6 +172,8 @@ class IsmChatMetaData {
         'profilePic': profilePic,
         'lastName': lastName,
         'firstName': firstName,
+        'gender': gender,
+        'isPopularUser': isPopularUser,
         'contacts': contacts?.map((x) => x.toMap()).toList(),
         'customType': customType,
         'assetList': assetList,
@@ -181,7 +193,7 @@ class IsmChatMetaData {
 
   @override
   String toString() =>
-      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo  phoneIsoCode : $phoneIsoCode, phone : $phone, countryCode : $countryCode,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt)';
+      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo  phoneIsoCode : $phoneIsoCode, phone : $phone, countryCode : $countryCode,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt,  gender : $gender, isPopularUser: $isPopularUser,)';
 
   @override
   bool operator ==(covariant IsmChatMetaData other) {
@@ -192,6 +204,8 @@ class IsmChatMetaData {
         other.profilePic == profilePic &&
         other.lastName == lastName &&
         other.firstName == firstName &&
+        other.gender == gender &&
+        other.isPopularUser == isPopularUser &&
         listEquals(other.contacts, contacts) &&
         mapEquals(other.customType, customType) &&
         listEquals(other.assetList, assetList) &&
@@ -214,6 +228,8 @@ class IsmChatMetaData {
       profilePic.hashCode ^
       lastName.hashCode ^
       firstName.hashCode ^
+      gender.hashCode ^
+      isPopularUser.hashCode ^
       contacts.hashCode ^
       customType.hashCode ^
       assetList.hashCode ^

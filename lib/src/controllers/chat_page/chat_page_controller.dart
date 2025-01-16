@@ -566,6 +566,7 @@ class IsmChatPageController extends GetxController
 
   _generateReactionList() async {
     reactions.clear();
+
     for (final emoji in IsmChatEmoji.values) {
       final emojiList = await EmojiPickerUtils().searchEmoji(
         emoji.emojiKeyword,

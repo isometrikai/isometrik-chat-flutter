@@ -17,6 +17,9 @@ class EmojiBoard extends StatelessWidget {
           height: IsmChatDimens.twoHundredFifty,
           child: EmojiPicker(
             textEditingController: controller.chatInputController,
+            onEmojiSelected: (category, emoji) {
+              IsmChatLog.error(emoji.toJson());
+            },
             config: Config(
               bottomActionBarConfig: BottomActionBarConfig(
                 showBackspaceButton: true,
