@@ -27,6 +27,7 @@ class IsmChatPageProperties {
     this.mentionUserProfileUrl,
     this.onMessageTap,
     this.isShowMediaMeessageBlure,
+    this.loggedInUser,
   });
 
   final Widget? placeholder;
@@ -124,4 +125,6 @@ class IsmChatPageProperties {
   final MessageFutureCallback? onMessageTap;
 
   final MessageCallback? isShowMediaMeessageBlure;
+
+  final Widget? loggedInUser;
 }

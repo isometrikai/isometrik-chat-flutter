@@ -230,11 +230,14 @@ class IsmChatMessageField extends StatelessWidget {
                                         prefixIcon:
                                             IsmChatResponsive.isWeb(context)
                                                 ? null
-                                                : _EmojiButton(IsmChatConfig
-                                                    .chatTheme
-                                                    .chatPageTheme
-                                                    ?.textFiledTheme
-                                                    ?.emojiColor),
+                                                : IsmChatProperties
+                                                        .chatPageProperties
+                                                        .loggedInUser ??
+                                                    _EmojiButton(IsmChatConfig
+                                                        .chatTheme
+                                                        .chatPageTheme
+                                                        ?.textFiledTheme
+                                                        ?.emojiColor),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(
                                               IsmChatDimens.twenty),
