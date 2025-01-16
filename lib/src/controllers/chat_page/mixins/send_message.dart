@@ -18,16 +18,18 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required int createdAt,
     required String notificationBody,
     required String notificationTitle,
+    required String customType,
     String? parentMessageId,
     IsmChatMetaData? metaData,
     List<Map<String, dynamic>>? mentionedUsers,
-    String? customType,
     List<Map<String, dynamic>>? attachments,
     bool isBroadcast = false,
     bool sendPushNotification = true,
   }) async {
-    if (IsmChatConfig.sendPaidWalletMessage
-            ?.call(Get.context!, _controller.conversation!) ??
+    if (IsmChatConfig.sendPaidWalletMessage?.call(
+            Get.context!,
+            _controller.conversation!,
+            IsmChatCustomMessageType.fromString(customType)) ??
         false) {
       var messageMetaData = metaData?.toMap() ?? {};
       if (IsmChatConfig.paidWalletModel?.customType != null) {
@@ -853,7 +855,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       metaData: imageMessage.metaData,
       deviceId: imageMessage.deviceId ?? '',
       body: imageMessage.body,
-      customType: imageMessage.customType?.value,
+      customType: imageMessage.customType?.value ?? '',
       createdAt: imageMessage.sentAt,
       conversationId: imageMessage.conversationId ?? '',
       messageType: imageMessage.messageType?.value ?? 0,
@@ -950,7 +952,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       metaData: locationMessage.metaData,
       deviceId: locationMessage.deviceId ?? '',
       body: locationMessage.body,
-      customType: locationMessage.customType?.value,
+      customType: locationMessage.customType?.value ?? '',
       createdAt: locationMessage.sentAt,
       conversationId: locationMessage.conversationId ?? '',
       messageType: locationMessage.messageType?.value ?? 0,
@@ -1037,7 +1039,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       metaData: contactMessage.metaData,
       deviceId: contactMessage.deviceId ?? '',
       body: contactMessage.body,
-      customType: contactMessage.customType?.value,
+      customType: contactMessage.customType?.value ?? '',
       createdAt: contactMessage.sentAt,
       conversationId: contactMessage.conversationId ?? '',
       messageType: contactMessage.messageType?.value ?? 0,
@@ -1128,7 +1130,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       metaData: textMessage.metaData,
       deviceId: textMessage.deviceId ?? '',
       body: textMessage.body,
-      customType: textMessage.customType?.value,
+      customType: textMessage.customType?.value ?? '',
       createdAt: sentAt,
       parentMessageId: textMessage.parentMessageId,
       conversationId: textMessage.conversationId ?? '',
@@ -1238,7 +1240,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           notificationBody: notificationBody,
           notificationTitle: notificationTitle,
           attachments: attachment,
-          customType: ismChatChatMessageModel.customType?.value,
+          customType: ismChatChatMessageModel.customType?.value ?? '',
           metaData: ismChatChatMessageModel.metaData,
           isBroadcast: _controller.isBroadcast,
           parentMessageId: ismChatChatMessageModel.parentMessageId,
@@ -1407,7 +1409,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       metaData: aboutTextMessage.metaData,
       deviceId: aboutTextMessage.deviceId ?? '',
       body: aboutTextMessage.body,
-      customType: aboutTextMessage.customType?.value,
+      customType: aboutTextMessage.customType?.value ?? '',
       createdAt: sentAt,
       parentMessageId: aboutTextMessage.parentMessageId,
       conversationId: aboutTextMessage.conversationId ?? '',

@@ -58,6 +58,7 @@ class IsmChatApp extends StatelessWidget {
   final Widget? loadingDialog;
 
   final IsmChatConversationProperties? conversationProperties;
+
   final IsmChatPageProperties? chatPageProperties;
 
   ///  It is showing you have no tap any converstaion

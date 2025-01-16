@@ -135,3 +135,9 @@ typedef SortingConversationCallback = String Function();
 typedef ConnectionStateCallback = void Function(
   IsmChatConnectionState,
 );
+
+typedef SendMessageCallback = bool Function(
+  BuildContext,
+  IsmChatConversationModel,
+  IsmChatCustomMessageType,
+);

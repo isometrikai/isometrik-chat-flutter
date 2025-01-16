@@ -30,7 +30,7 @@ class IsmChatDelegate {
     List<String>? topics,
     List<String>? topicChannels,
     bool shouldPendingMessageSend = true,
-    ConversationCallback? sendPaidWalletMessage,
+    SendMessageCallback? sendPaidWalletMessage,
     IsmPaidWalletConfig? paidWalletConfig,
     ResponseCallback? paidWalletMessageApiResponse,
     SortingConversationCallback? sortConversationWithIdentifier,

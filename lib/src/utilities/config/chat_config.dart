@@ -33,7 +33,7 @@ class IsmChatConfig {
   static String? fontFamily;
   static String? notificationIconPath;
   static BuildContext? context;
-  static ConversationCallback? sendPaidWalletMessage;
+  static SendMessageCallback? sendPaidWalletMessage;
   static IsmPaidWalletConfig? paidWalletModel;
   static ResponseCallback? paidWalletMessageApiResponse;
   static ResponseCallback? chatInvalidate;
