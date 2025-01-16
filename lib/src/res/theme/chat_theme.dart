@@ -4,7 +4,7 @@ import 'package:isometrik_chat_flutter/src/res/res.dart';
 
 class IsmChatThemeData with Diagnosticable {
   IsmChatThemeData({
-    IsmChatListThemeData? chatListTheme,
+    IsmChatListTheme? chatListTheme,
     Color? primaryColor,
     Color? verticalDividerColor,
     Color? backgroundColor,
@@ -12,7 +12,7 @@ class IsmChatThemeData with Diagnosticable {
     Color? notificationColor,
     FloatingActionButtonThemeData? floatingActionButtonTheme,
     IconThemeData? iconTheme,
-    DialogTheme? dialogTheme,
+    IsmChatDialogTheme? dialogTheme,
     this.chatPageHeaderTheme,
     this.chatPageTheme,
     this.chatListCardThemData,
@@ -33,9 +33,9 @@ class IsmChatThemeData with Diagnosticable {
   factory IsmChatThemeData.fallback() => IsmChatThemeData.light();
 
   factory IsmChatThemeData.light() => IsmChatThemeData(
-        chatPageTheme: IsmChatPageThemeData(),
-        chatPageHeaderTheme: IsmChatHeaderThemeData(),
-        chatListTheme: const IsmChatListThemeData.light(),
+        chatPageTheme: IsmChatPageTheme(),
+        chatPageHeaderTheme: IsmChatHeaderTheme(),
+        chatListTheme: const IsmChatListTheme.light(),
         primaryColor: IsmChatColors.primaryColorLight,
         backgroundColor: IsmChatColors.backgroundColorLight,
         mentionColor: IsmChatColors.primaryColorLight,
@@ -47,13 +47,13 @@ class IsmChatThemeData with Diagnosticable {
         iconTheme: const IconThemeData(
           color: IsmChatColors.primaryColorLight,
         ),
-        dialogTheme: const DialogTheme(),
+        dialogTheme: IsmChatDialogTheme(),
       );
 
   factory IsmChatThemeData.dark() => IsmChatThemeData(
-        chatPageTheme: IsmChatPageThemeData(),
-        chatPageHeaderTheme: IsmChatHeaderThemeData(),
-        chatListTheme: const IsmChatListThemeData.dark(),
+        chatPageTheme: IsmChatPageTheme(),
+        chatPageHeaderTheme: IsmChatHeaderTheme(),
+        chatListTheme: const IsmChatListTheme.dark(),
         primaryColor: IsmChatColors.primaryColorDark,
         mentionColor: IsmChatColors.primaryColorDark,
         notificationColor: IsmChatColors.whiteColor,
@@ -65,7 +65,7 @@ class IsmChatThemeData with Diagnosticable {
         iconTheme: const IconThemeData(
           color: IsmChatColors.primaryColorDark,
         ),
-        dialogTheme: const DialogTheme(),
+        dialogTheme: IsmChatDialogTheme(),
       );
 
   final Color? primaryColor;
@@ -80,19 +80,19 @@ class IsmChatThemeData with Diagnosticable {
 
   final Color? cardBackgroundColor;
 
-  final IsmChatListThemeData? chatListTheme;
+  final IsmChatListTheme? chatListTheme;
 
   final FloatingActionButtonThemeData? floatingActionButtonTheme;
 
   final IconThemeData? iconTheme;
 
-  final DialogTheme? dialogTheme;
+  final IsmChatDialogTheme? dialogTheme;
 
-  final IsmChatPageThemeData? chatPageTheme;
+  final IsmChatPageTheme? chatPageTheme;
 
-  final IsmChatHeaderThemeData? chatPageHeaderTheme;
+  final IsmChatHeaderTheme? chatPageHeaderTheme;
 
-  final IsmChatListCardThemData? chatListCardThemData;
+  final IsmChatListCardTheme? chatListCardThemData;
 
   lerp(IsmChatThemeData? theme, double t) {}
 }

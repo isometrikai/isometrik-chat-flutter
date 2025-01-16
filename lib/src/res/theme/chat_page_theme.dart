@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmChatPageThemeData {
-  IsmChatPageThemeData({
+class IsmChatPageTheme {
+  IsmChatPageTheme({
     this.profileImageSize,
     this.messageSelectionColor,
     this.selfMessageTheme,

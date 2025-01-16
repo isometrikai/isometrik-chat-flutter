@@ -57,9 +57,9 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                     onTap: onCancel ?? Get.back,
                     child: Text(
                       cancelLabel,
-                      style:
-                          IsmChatConfig.chatTheme.dialogTheme?.titleTextStyle ??
-                              IsmChatStyles.w400Black14,
+                      style: IsmChatConfig
+                              .chatTheme.dialogTheme?.actionTextStyle ??
+                          IsmChatStyles.w400Black14,
                     ),
                   ),
                   if (actionLabels != null) ...[
@@ -72,7 +72,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                       child: Text(
                         actionLabels?.first ?? '',
                         style: IsmChatConfig
-                                .chatTheme.dialogTheme?.titleTextStyle ??
+                                .chatTheme.dialogTheme?.actionTextStyle ??
                             IsmChatStyles.w400Black14,
                       ),
                     ),
@@ -98,14 +98,24 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                               Get.back();
                               action();
                             },
-                            child: Text(label),
+                            child: Text(
+                              label,
+                              style: IsmChatConfig
+                                      .chatTheme.dialogTheme?.actionTextStyle ??
+                                  IsmChatStyles.w400Black14,
+                            ),
                           ),
                         );
                       }),
                       SimpleDialogOption(
                         child: IsmChatTapHandler(
                           onTap: onCancel ?? Get.back,
-                          child: Text(cancelLabel),
+                          child: Text(
+                            cancelLabel,
+                            style: IsmChatConfig
+                                    .chatTheme.dialogTheme?.actionTextStyle ??
+                                IsmChatStyles.w400Black14,
+                          ),
                         ),
                       ),
                     ],

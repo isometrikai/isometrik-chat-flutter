@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/src/res/res.dart';
 
-class IsmChatListCardThemData {
-  const IsmChatListCardThemData({
+class IsmChatListCardTheme {
+  const IsmChatListCardTheme({
     this.trailingBackgroundColor,
     this.trailingTextStyle,
     this.subTitleTextStyle,
@@ -10,14 +10,14 @@ class IsmChatListCardThemData {
     this.titleTextStyle,
   });
 
-  IsmChatListCardThemData.light()
+  IsmChatListCardTheme.light()
       : trailingBackgroundColor = IsmChatColors.backgroundColorDark,
         subTitleColor = IsmChatColors.backgroundColorDark,
         trailingTextStyle = IsmChatStyles.w400Black10,
         subTitleTextStyle = IsmChatStyles.w400Black10,
         titleTextStyle = IsmChatStyles.w600Black12;
 
-  IsmChatListCardThemData.dark()
+  IsmChatListCardTheme.dark()
       : trailingBackgroundColor = IsmChatColors.backgroundColorLight,
         subTitleColor = IsmChatColors.backgroundColorLight,
         trailingTextStyle = IsmChatStyles.w400White10,

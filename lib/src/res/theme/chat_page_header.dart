@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmChatHeaderThemeData {
-  IsmChatHeaderThemeData({
+class IsmChatHeaderTheme {
+  IsmChatHeaderTheme({
     this.backgroundColor,
     this.iconColor,
     this.elevation,
@@ -18,7 +18,7 @@ class IsmChatHeaderThemeData {
     this.popupLableColor,
   });
 
-  IsmChatHeaderThemeData.light()
+  IsmChatHeaderTheme.light()
       : backgroundColor = IsmChatColors.backgroundColorLight,
         iconColor = IsmChatColors.primaryColorLight,
         elevation = _kelevation,
@@ -32,7 +32,7 @@ class IsmChatHeaderThemeData {
         popupLableStyle = null,
         popupLableColor = null;
 
-  IsmChatHeaderThemeData.dark()
+  IsmChatHeaderTheme.dark()
       : backgroundColor = IsmChatColors.backgroundColorDark,
         iconColor = IsmChatColors.primaryColorLight,
         elevation = _kelevation,

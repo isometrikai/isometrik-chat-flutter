@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/src/res/res.dart';
 
-class IsmChatListThemeData {
-  const IsmChatListThemeData({
+class IsmChatListTheme {
+  const IsmChatListTheme({
     this.tileColor,
     this.dividerColor,
     this.dividerThickness,
@@ -10,14 +10,14 @@ class IsmChatListThemeData {
     this.pushSnackBarBackGroundColor,
   });
 
-  const IsmChatListThemeData.light()
+  const IsmChatListTheme.light()
       : tileColor = IsmChatColors.backgroundColorLight,
         dividerColor = IsmChatColors.primaryColorLight,
         backGroundColor = IsmChatColors.whiteColor,
         pushSnackBarBackGroundColor = IsmChatColors.whiteColor,
         dividerThickness = _kDividerThickness;
 
-  const IsmChatListThemeData.dark()
+  const IsmChatListTheme.dark()
       : tileColor = IsmChatColors.backgroundColorDark,
         dividerColor = IsmChatColors.primaryColorDark,
         backGroundColor = IsmChatColors.whiteColor,
