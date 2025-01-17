@@ -1538,7 +1538,7 @@ class IsmChatPageController extends GetxController
 
   Future<bool> toggleCamera() async {
     areCamerasInitialized = false;
-    if (IsmChatResponsive.isMobile(Get.context!) && !kIsWeb) {
+    if (IsmChatResponsive.isMobile(Get.context!)) {
       isFrontCameraSelected = !isFrontCameraSelected;
     }
     if (isFrontCameraSelected) {
