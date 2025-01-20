@@ -251,7 +251,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                   FittedBox(
                     child: CircleAvatar(
                       radius: IsmChatConfig.chatTheme.chatListCardThemData
-                              ?.messageCountTheme?.messageCountPadding ??
+                              ?.messageCountTheme?.padding ??
                           IsmChatDimens.ten,
                       backgroundColor: IsmChatConfig.chatTheme
                               .chatListCardThemData?.trailingBackgroundColor ??
