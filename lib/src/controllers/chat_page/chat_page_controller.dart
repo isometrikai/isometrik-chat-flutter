@@ -566,15 +566,11 @@ class IsmChatPageController extends GetxController
 
   _generateReactionList() async {
     reactions.clear();
-
-    for (final emoji in IsmChatEmoji.values) {
-      final emojiList = await EmojiPickerUtils().searchEmoji(
-        emoji.emojiKeyword,
-        defaultEmojiSet,
-      );
-      if (emojiList.isEmpty) continue;
-      reactions.add(emojiList.first);
-    }
+    reactions.addAll(IsmChatEmoji.values
+        .expand((typesOfEmoji) => defaultEmojiSet.expand((categoryEmoji) =>
+            categoryEmoji.emoji
+                .where((emoji) => typesOfEmoji.emojiKeyword == emoji.name)))
+        .toList());
   }
 
   _getBackGroundAsset() {

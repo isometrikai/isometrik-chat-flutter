@@ -67,16 +67,10 @@ class IsmChatConversationModel {
             ? IsmChatUserOwnDetails.fromMap(
                 map['usersOwnDetails'] as Map<String, dynamic>)
             : null,
-        messages: map['messages'] != null
-            ? {
-                for (var entry in (map['messages'] as Map).entries)
-                  entry.key: IsmChatMessageModel.fromMap(
-                      entry.value as Map<String, dynamic>)
-              }
-            : {},
+        messages:
+            map['messages'] != null ? (map['messages'] as Map).messageMap : {},
         outSideMessage: map['outSideMessage'] != null
-            ? OutSideMessage.fromMap(
-                map['messageFromOutSide'] as Map<String, dynamic>)
+            ? OutSideMessage.fromMap(map['messageFromOutSide'] as Map<String, dynamic>)
             : null,
         isCreateGroupFromOutSide: map['isCreateGroupFromOutSide'] as bool? ?? false,
         customType: map['customType'] as String? ?? '',

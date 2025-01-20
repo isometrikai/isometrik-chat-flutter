@@ -8,6 +8,7 @@ class IsmChatListCardTheme {
     this.subTitleTextStyle,
     this.subTitleColor,
     this.titleTextStyle,
+    this.messageCountTheme,
   });
 
   IsmChatListCardTheme.light()
@@ -15,18 +16,21 @@ class IsmChatListCardTheme {
         subTitleColor = IsmChatColors.backgroundColorDark,
         trailingTextStyle = IsmChatStyles.w400Black10,
         subTitleTextStyle = IsmChatStyles.w400Black10,
-        titleTextStyle = IsmChatStyles.w600Black12;
+        titleTextStyle = IsmChatStyles.w600Black12,
+        messageCountTheme = const MessageCountTheme();
 
   IsmChatListCardTheme.dark()
       : trailingBackgroundColor = IsmChatColors.backgroundColorLight,
         subTitleColor = IsmChatColors.backgroundColorLight,
         trailingTextStyle = IsmChatStyles.w400White10,
         subTitleTextStyle = IsmChatStyles.w400Black10,
-        titleTextStyle = IsmChatStyles.w600Black12;
+        titleTextStyle = IsmChatStyles.w600Black12,
+        messageCountTheme = const MessageCountTheme();
 
   final Color? trailingBackgroundColor;
   final TextStyle? trailingTextStyle;
   final TextStyle? subTitleTextStyle;
   final TextStyle? titleTextStyle;
   final Color? subTitleColor;
+  final MessageCountTheme? messageCountTheme;
 }

@@ -247,11 +247,12 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                       IsmChatStyles.w400Black10,
                 ),
                 IsmChatDimens.boxHeight4,
-                if (widget.conversation.unreadMessagesCount != null &&
-                    widget.conversation.unreadMessagesCount != 0)
+                if (widget.conversation.unreadMessagesCount != 0) ...[
                   FittedBox(
                     child: CircleAvatar(
-                      radius: IsmChatDimens.ten,
+                      radius: IsmChatConfig.chatTheme.chatListCardThemData
+                              ?.messageCountTheme?.messageCountPadding ??
+                          IsmChatDimens.ten,
                       backgroundColor: IsmChatConfig.chatTheme
                               .chatListCardThemData?.trailingBackgroundColor ??
                           IsmChatConfig.chatTheme.primaryColor!,
@@ -260,13 +261,14 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                             ? widget.conversation.unreadMessagesCount.toString()
                             : '99+',
                         style: IsmChatConfig.chatTheme.chatListCardThemData
-                                ?.trailingTextStyle ??
+                                ?.messageCountTheme?.textStyle ??
                             IsmChatStyles.w700White10,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                       ),
                     ),
                   ),
+                ]
               ],
             ),
           ],

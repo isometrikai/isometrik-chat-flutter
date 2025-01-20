@@ -254,7 +254,7 @@ class MessageBubble extends StatelessWidget {
                     () => (controller.onMessageHoverIndex == index &&
                             IsmChatResponsive.isWeb(context))
                         ? Positioned(
-                            top: IsmChatDimens.four,
+                            top: IsmChatDimens.zero,
                             right: IsmChatDimens.five,
                             child: IsmChatTapHandler(
                                 onTap: () {
@@ -278,24 +278,9 @@ class MessageBubble extends StatelessWidget {
                                     }
                                   }
                                 },
-                                child: CircleAvatar(
-                                  maxRadius: 15,
-                                  backgroundColor: _message.sentByMe
-                                      ? IsmChatConfig.chatTheme.chatPageTheme
-                                              ?.selfMessageTheme?.hoverColor ??
-                                          IsmChatColors.whiteColor
-                                              .applyIsmOpacity(.5)
-                                      : IsmChatConfig
-                                              .chatTheme
-                                              .chatPageTheme
-                                              ?.opponentMessageTheme
-                                              ?.hoverColor ??
-                                          IsmChatColors.blackColor
-                                              .applyIsmOpacity(.5),
-                                  child: Icon(
-                                    Icons.expand_more_rounded,
-                                    color: _message.textColor,
-                                  ),
+                                child: Icon(
+                                  Icons.expand_more_rounded,
+                                  color: _message.textColor,
                                 )),
                           )
                         : IsmChatDimens.box0,

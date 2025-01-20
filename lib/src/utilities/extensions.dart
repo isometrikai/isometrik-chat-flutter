@@ -578,7 +578,7 @@ extension ModelConversion on IsmChatConversationModel {
               Icons.watch_later_outlined,
               color: IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme
                       ?.unreadCheckColor ??
-                  IsmChatColors.whiteColor,
+                  IsmChatColors.greyColor,
               size: IsmChatConfig.chatTheme.chatListCardThemData
                       ?.subTitleTextStyle?.fontSize ??
                   IsmChatDimens.sixteen,
@@ -1047,7 +1047,7 @@ extension ListMerging<T> on List<List<T>?> {
 
 // This extension is to remove any key value pair from the map
 // where the value is null
-extension OnMap on Map<String, dynamic> {
+extension OnMap on Map<dynamic, dynamic> {
   Map<String, dynamic> removeNullValues() {
     var result = <String, dynamic>{};
     forEach(
@@ -1111,4 +1111,13 @@ extension OnMap on Map<String, dynamic> {
   //   }
   //   return result;
   // }
+
+  IsmChatMessages get messageMap => {
+        for (var entry in entries)
+          if (entry.value is String)
+            entry.key: IsmChatMessageModel.fromJson(entry.value)
+          else
+            entry.key:
+                IsmChatMessageModel.fromMap(entry.value as Map<String, dynamic>)
+      };
 }

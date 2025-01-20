@@ -341,7 +341,7 @@ class IsmChatConversationsController extends GetxController {
     super.onInit();
     intilizedContrller = false;
     _isInterNetConnect();
-    await _generateReactionList();
+    _generateReactionList();
     var users = await IsmChatConfig.dbWrapper?.userDetailsBox
         .get(IsmChatStrings.userData);
     if (users != null) {
@@ -365,6 +365,7 @@ class IsmChatConversationsController extends GetxController {
     unawaited(getBlockUser());
     intilizedContrller = true;
     scrollListener();
+
     sendPendingMessgae();
   }
 
@@ -521,16 +522,13 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  Future<void> _generateReactionList() async {
+  void _generateReactionList() {
     reactions.clear();
-    for (final emoji in IsmChatEmoji.values) {
-      final emojiList = await EmojiPickerUtils().searchEmoji(
-        emoji.emojiKeyword,
-        defaultEmojiSet,
-      );
-      if (emojiList.isEmpty) continue;
-      reactions.add(emojiList.first);
-    }
+    reactions.addAll(IsmChatEmoji.values
+        .expand((typesOfEmoji) => defaultEmojiSet.expand((categoryEmoji) =>
+            categoryEmoji.emoji
+                .where((emoji) => typesOfEmoji.emojiKeyword == emoji.name)))
+        .toList());
   }
 
   /// This function will be used in [Forward Screen and New conversation screen] to Select or Unselect users
@@ -1163,6 +1161,7 @@ class IsmChatConversationsController extends GetxController {
 
   void sendPendingMessgae({String conversationId = ''}) async {
     var messages = IsmChatMessages.from({});
+
     if (conversationId.isEmpty) {
       var pendingMessages =
           await IsmChatConfig.dbWrapper?.getAllPendingMessages();

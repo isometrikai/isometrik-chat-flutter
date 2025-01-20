@@ -133,10 +133,8 @@ class IsmChatDBWrapper {
     final keys = await pendingMessageBox.getAllKeys();
     final pendingMessages = await pendingMessageBox.getAll(keys);
     if (pendingMessages.isEmpty) return {};
-    // final allPendingMessage = pendingMessages;
-    // TODO:
-    return {} as IsmChatMessages;
-    // allPendingMessage.map(IsmChatMessageModel.fromJson).toList();
+    if (pendingMessages.first == null) return {};
+    return pendingMessages.first?.messageMap ?? {};
   }
 
   Future<IsmChatConversationModel?> getConversation({
