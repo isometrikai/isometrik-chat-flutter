@@ -392,7 +392,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       var allMessages =
           await IsmChatConfig.dbWrapper?.getMessage(conversationId);
       if (allMessages == null) return;
-      var message = allMessages.entries
+      var message = allMessages.values
           .cast<IsmChatMessageModel?>()
           .firstWhere((e) => e?.messageId == messageId, orElse: () => null);
       if (message != null) {

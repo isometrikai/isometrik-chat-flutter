@@ -252,7 +252,9 @@ class MessageBubble extends StatelessWidget {
                   ),
                   Obx(
                     () => (controller.onMessageHoverIndex == index &&
-                            IsmChatResponsive.isWeb(context))
+                                IsmChatResponsive.isWeb(context)) &&
+                            _message.customType !=
+                                IsmChatCustomMessageType.deletedForEveryone
                         ? Positioned(
                             top: IsmChatDimens.zero,
                             right: IsmChatDimens.five,
