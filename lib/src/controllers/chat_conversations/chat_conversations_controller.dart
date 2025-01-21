@@ -764,20 +764,20 @@ class IsmChatConversationsController extends GetxController {
   Future<void> deleteChat(
     String? conversationId, {
     bool deleteFromServer = true,
+    bool shouldUpdateLocal = true,
   }) async {
-    if (conversationId == null || conversationId.isEmpty) {
-      return;
-    }
+    if (conversationId.isNullOrEmpty) return;
+
     if (deleteFromServer) {
-      var response = await _viewModel.deleteChat(conversationId);
-      if (response?.hasError ?? true) {
-        return;
+      var response = await _viewModel.deleteChat(conversationId ?? '');
+      if (response?.hasError ?? true) return;
+    }
+    if (shouldUpdateLocal) {
+      await IsmChatConfig.dbWrapper?.removeConversation(conversationId ?? '');
+      await getConversationsFromDB();
+      if (deleteFromServer) {
+        await getChatConversations();
       }
-    }
-    await IsmChatConfig.dbWrapper?.removeConversation(conversationId);
-    await getConversationsFromDB();
-    if (deleteFromServer) {
-      await getChatConversations();
     }
   }
 

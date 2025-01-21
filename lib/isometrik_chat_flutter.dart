@@ -580,14 +580,18 @@ class IsmChat {
   Future<void> deleteChat(
     String conversationId, {
     bool deleteFromServer = true,
+    bool shouldUpdateLocal = true,
   }) async {
     assert(
       conversationId.isNotEmpty,
       '''Input Error: Please make sure that required fields are filled out.
       conversationId cannot be empty.''',
     );
-    await _delegate.deleteChat(conversationId,
-        deleteFromServer: deleteFromServer);
+    await _delegate.deleteChat(
+      conversationId,
+      deleteFromServer: deleteFromServer,
+      shouldUpdateLocal: shouldUpdateLocal,
+    );
   }
 
   /// Deletes a chat from the database with the specified Isometrick chat ID.

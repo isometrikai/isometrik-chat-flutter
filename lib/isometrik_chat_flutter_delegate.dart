@@ -329,10 +329,12 @@ class IsmChatDelegate {
   Future<void> deleteChat(
     String conversationId, {
     bool deleteFromServer = true,
+    bool shouldUpdateLocal = true,
   }) async {
     await Get.find<IsmChatConversationsController>().deleteChat(
       conversationId,
       deleteFromServer: deleteFromServer,
+      shouldUpdateLocal: shouldUpdateLocal,
     );
   }
 
