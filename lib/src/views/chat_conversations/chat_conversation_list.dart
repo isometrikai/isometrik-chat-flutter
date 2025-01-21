@@ -25,7 +25,6 @@ class IsmChatConversationList extends StatelessWidget {
               enablePullUp: true,
               onRefresh: () {
                 controller.getChatConversations(
-                  skip: 0,
                   origin: ApiCallOrigin.referesh,
                 );
               },
@@ -52,7 +51,6 @@ class IsmChatConversationList extends StatelessWidget {
                     enablePullUp: true,
                     onRefresh: () {
                       controller.getChatConversations(
-                        skip: 0,
                         origin: ApiCallOrigin.referesh,
                       );
                       Get.find<IsmChatMqttController>()
@@ -60,7 +58,7 @@ class IsmChatConversationList extends StatelessWidget {
                     },
                     onLoading: () {
                       controller.getChatConversations(
-                        skip: controller.conversations.length.pagination(),
+                        skip: controller.conversationSkip,
                         origin: ApiCallOrigin.loadMore,
                       );
                     },

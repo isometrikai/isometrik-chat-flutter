@@ -336,6 +336,8 @@ class IsmChatConversationsController extends GetxController {
     _intilizedContrller.value = value;
   }
 
+  int conversationSkip = 0;
+
   @override
   onInit() async {
     super.onInit();
@@ -362,10 +364,10 @@ class IsmChatConversationsController extends GetxController {
             : userDetails?.userId ?? ''
       ],
     );
+    conversationSkip = conversations.length.pagination();
     unawaited(getBlockUser());
     intilizedContrller = true;
     scrollListener();
-
     sendPendingMessgae();
   }
 
@@ -412,7 +414,7 @@ class IsmChatConversationsController extends GetxController {
         if (conversationScrollController.offset.toInt() ==
             conversationScrollController.position.maxScrollExtent.toInt()) {
           await getChatConversations(
-            skip: conversations.length.pagination(),
+            skip: conversationSkip,
           );
         }
       },
@@ -832,15 +834,15 @@ class IsmChatConversationsController extends GetxController {
     return conversation;
   }
 
-  Future<void> getChatConversations(
-      {int skip = 0, ApiCallOrigin? origin, int chatLimit = 20}) async {
+  Future<void> getChatConversations({
+    int skip = 0,
+    ApiCallOrigin? origin,
+  }) async {
     if (conversations.isEmpty) {
       isConversationsLoading = true;
     }
-
     var chats = await _viewModel.getChatConversations(
       skip,
-      chatLimit: chatLimit,
     );
 
     if (IsmChatProperties.conversationModifier != null) {
@@ -873,8 +875,12 @@ class IsmChatConversationsController extends GetxController {
         refreshControllerOnEmptyList.loadComplete();
       }
     }
+    if (origin == ApiCallOrigin.loadMore) {
+      conversationSkip = conversationSkip + 20;
+    }
 
     await getConversationsFromDB();
+
     if (conversations.isEmpty) {
       isConversationsLoading = false;
     }

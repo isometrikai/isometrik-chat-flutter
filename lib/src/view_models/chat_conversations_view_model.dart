@@ -46,8 +46,8 @@ class IsmChatConversationsViewModel {
           membersCount: conversation.membersCount,
         );
 
-        await IsmChatConfig.dbWrapper!
-            .createAndUpdateConversation(conversation);
+        await IsmChatConfig.dbWrapper
+            ?.createAndUpdateConversation(conversation);
       }
     }
     return conversations;

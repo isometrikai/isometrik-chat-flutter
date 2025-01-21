@@ -72,53 +72,59 @@ class IsmChatConversationsRepository {
     String? searchTag,
     bool includeConversationStatusMessagesInUnreadMessagesCount = false,
   }) async {
+    var checkData = <IsmChatConversationModel>[];
     try {
-      String? url;
-      if (searchTag != null && searchTag.isNotEmpty) {
-        url =
-            '${IsmChatAPI.getChatConversations}?searchTag=$searchTag&skip=$skip&limit=$limit';
-      } else {
-        url =
-            '${IsmChatAPI.getChatConversations}?includeMembers=true&includeConversationStatusMessagesInUnreadMessagesCount=$includeConversationStatusMessagesInUnreadMessagesCount&skip=$skip&limit=$limit';
-      }
-      var response = await _apiWrapper.get(
-        url,
-        headers: IsmChatUtility.tokenCommonHeader(),
-      );
-      if (response.hasError) {
-        return null;
-      }
-      var data = jsonDecode(response.data);
-
-      var listData = (data['conversations'] as List<dynamic>)
-          .cast<Map<String, dynamic>>()
-          .map((e) {
-        final c = IsmChatConversationModel.fromMap(e);
-        final result = IsmChatConfig.conversationParser?.call(c, e);
-        final conversation = result?.$1 ?? c;
-        final updateServer = result?.$2 ?? false;
-        if (updateServer) {
-          if (conversation.metaData != null) {
-            unawaited(updateConversation(
-              conversationId: conversation.conversationId ?? '',
-              metaData: conversation.metaData!,
-            ));
-          }
-          // call update API unawaited
+      while (checkData.isEmpty) {
+        String? url;
+        if (searchTag != null && searchTag.isNotEmpty) {
+          url =
+              '${IsmChatAPI.getChatConversations}?searchTag=$searchTag&skip=$skip&limit=$limit';
+        } else {
+          url =
+              '${IsmChatAPI.getChatConversations}?includeMembers=true&includeConversationStatusMessagesInUnreadMessagesCount=$includeConversationStatusMessagesInUnreadMessagesCount&skip=$skip&limit=$limit';
         }
-        return conversation;
-      }).toList();
-      listData.sort(
-        (a, b) => a.lastMessageDetails!.sentAt
-            .compareTo(b.lastMessageDetails!.sentAt),
-      );
-      listData.removeWhere(
-        (e) =>
-            e.opponentDetails?.userId.isEmpty == true &&
-            e.opponentDetails?.userName.isEmpty == true &&
-            e.isGroup == false,
-      );
-      return listData;
+        var response = await _apiWrapper.get(
+          url,
+          headers: IsmChatUtility.tokenCommonHeader(),
+        );
+        if (response.hasError) {
+          return null;
+        }
+        var data = jsonDecode(response.data);
+
+        checkData = (data['conversations'] as List<dynamic>)
+            .cast<Map<String, dynamic>>()
+            .map((e) {
+          final c = IsmChatConversationModel.fromMap(e);
+          final result = IsmChatConfig.conversationParser?.call(c, e);
+          final conversation = result?.$1 ?? c;
+          final updateServer = result?.$2 ?? false;
+          if (updateServer) {
+            if (conversation.metaData != null) {
+              unawaited(updateConversation(
+                conversationId: conversation.conversationId ?? '',
+                metaData: conversation.metaData!,
+              ));
+            }
+            // call update API unawaited
+          }
+          return conversation;
+        }).toList();
+        checkData.sort(
+          (a, b) => a.lastMessageDetails!.sentAt
+              .compareTo(b.lastMessageDetails!.sentAt),
+        );
+        checkData.removeWhere(
+          (e) =>
+              e.opponentDetails?.userId.isEmpty == true &&
+              e.opponentDetails?.userName.isEmpty == true &&
+              e.isGroup == false,
+        );
+        if (response.errorCode == 404) break;
+        skip = skip + 20;
+      }
+
+      return checkData;
     } catch (e, st) {
       IsmChatLog.error('GetChatConversations error $e', st);
       return null;
