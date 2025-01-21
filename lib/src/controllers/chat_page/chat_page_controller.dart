@@ -511,7 +511,8 @@ class IsmChatPageController extends GetxController
 
       if (conversation?.conversationId?.isNotEmpty == true) {
         await callFunctionsWithConversationId(
-            conversation?.conversationId ?? '');
+          conversation?.conversationId ?? '',
+        );
       } else {
         await callFunctions();
       }

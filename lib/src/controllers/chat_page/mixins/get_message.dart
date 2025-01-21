@@ -227,10 +227,15 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
       if (data.data != null &&
           (_controller.conversation?.conversationId == conversationId)) {
-        _controller.conversation = data.data.copyWith(
+        final responeData = data.data as IsmChatConversationModel;
+        _controller.conversation = responeData.copyWith(
           conversationId: conversationId,
           metaData: _controller.conversation?.metaData,
           outSideMessage: _controller.conversation?.outSideMessage,
+          messages: {
+            for (var message in _controller.messages)
+              '${message.sentAt}': message
+          },
         );
         IsmChatProperties.chatPageProperties.onCoverstaionStatus
             ?.call(Get.context!, _controller.conversation!);
@@ -258,8 +263,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
                 ].contains(e.customType))
             .toList();
 
-        if (data.data.members != null) {
-          _controller.groupMembers = data.data.members!;
+        if (responeData.members != null) {
+          _controller.groupMembers = responeData.members ?? [];
           _controller.groupMembers.sort((a, b) =>
               a.userName.toLowerCase().compareTo(b.userName.toLowerCase()));
           _controller.groupMembers.removeWhere((e) => e.userId.isEmpty);
