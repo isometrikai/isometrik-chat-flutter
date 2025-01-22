@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class MessageAllowedConfig {
   MessageAllowedConfig({this.isShowTextfiledConfig, this.isMessgeAllowed});
-  Future<bool?>? Function(
-          BuildContext, IsmChatConversationModel, IsmChatCustomMessageType)?
-      isMessgeAllowed;
+  ConditionConversationCustomeTypeCallback? isMessgeAllowed;
   IsShowTextfiledConfig? isShowTextfiledConfig;
 }
 
@@ -15,8 +12,9 @@ class IsShowTextfiledConfig {
     this.shwoMessage,
     this.messageWidget,
   });
-  bool Function(BuildContext, IsmChatConversationModel) isShowMessageAllowed;
-  String Function(BuildContext, IsmChatConversationModel)? shwoMessage;
+  ConditionConversationCallback isShowMessageAllowed;
 
-  Widget Function(BuildContext, IsmChatConversationModel)? messageWidget;
+  StringConversationCallback? shwoMessage;
+
+  WidgetConversationCallback? messageWidget;
 }

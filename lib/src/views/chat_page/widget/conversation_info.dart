@@ -529,25 +529,29 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                 style: IsmChatStyles.w600red16,
                               ),
                             ),
-                            Divider(
-                              height: 0,
-                              thickness: 1,
-                              color: IsmChatColors.greyColorLight
-                                  .applyIsmOpacity(.3),
-                            ),
-                            TextButton.icon(
-                              onPressed: () async {
-                                await controller.handleBlockUnblock(true);
-                              },
-                              icon: const Icon(
-                                Icons.block_outlined,
-                                color: IsmChatColors.redColor,
+                            if (controller
+                                    .conversation?.isOpponentDetailsEmpty ==
+                                false) ...[
+                              Divider(
+                                height: 0,
+                                thickness: 1,
+                                color: IsmChatColors.greyColorLight
+                                    .applyIsmOpacity(.3),
                               ),
-                              label: Text(
-                                '${controller.conversation?.isBlockedByMe == true ? IsmChatStrings.unblock : IsmChatStrings.block} ${controller.conversation?.chatName ?? ''}',
-                                style: IsmChatStyles.w600red16,
-                              ),
-                            )
+                              TextButton.icon(
+                                onPressed: () async {
+                                  await controller.handleBlockUnblock(true);
+                                },
+                                icon: const Icon(
+                                  Icons.block_outlined,
+                                  color: IsmChatColors.redColor,
+                                ),
+                                label: Text(
+                                  '${controller.conversation?.isBlockedByMe == true ? IsmChatStrings.unblock : IsmChatStrings.block} ${controller.conversation?.chatName ?? ''}',
+                                  style: IsmChatStyles.w600red16,
+                                ),
+                              )
+                            ]
                           ],
                         ),
                       ),

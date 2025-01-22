@@ -15,7 +15,7 @@ typedef ConversationCardCallback = Widget Function(
 
 typedef ConversationWidgetCallback = Widget? Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   String,
 );
 
@@ -48,7 +48,7 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
 
 typedef ConversationStringCallback = String? Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   String,
 );
 
@@ -137,6 +137,25 @@ typedef ConnectionStateCallback = void Function(
 );
 
 typedef SendMessageCallback = bool Function(
+  BuildContext,
+  IsmChatConversationModel,
+  IsmChatCustomMessageType,
+);
+
+typedef ConditionConversationCallback = bool Function(
+  BuildContext,
+  IsmChatConversationModel?,
+);
+typedef StringConversationCallback = String Function(
+  BuildContext,
+  IsmChatConversationModel?,
+);
+typedef WidgetConversationCallback = Widget Function(
+  BuildContext,
+  IsmChatConversationModel?,
+);
+
+typedef ConditionConversationCustomeTypeCallback = Future<bool?>? Function(
   BuildContext,
   IsmChatConversationModel,
   IsmChatCustomMessageType,

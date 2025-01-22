@@ -58,7 +58,7 @@ class IsmChatConversationList extends StatelessWidget {
                     },
                     onLoading: () {
                       controller.getChatConversations(
-                        skip: controller.conversationSkip,
+                        skip: controller.conversations.length.pagination(),
                         origin: ApiCallOrigin.loadMore,
                       );
                     },

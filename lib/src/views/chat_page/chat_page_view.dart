@@ -337,84 +337,79 @@ class _IsmChatPageView extends StatelessWidget {
                                           ),
                                         ),
                                 ),
-                                controller.isActionAllowed == true &&
-                                        controller.conversation?.isGroup == true
-                                    ? const _MessgeNotAllowdWidget(
-                                        showMessage:
-                                            IsmChatStrings.removeGroupMessage,
-                                      )
-                                    : controller.isActionAllowed == false &&
-                                            controller.conversation?.isGroup ==
-                                                true &&
-                                            controller
-                                                    .conversation
-                                                    ?.lastMessageDetails
-                                                    ?.customType ==
-                                                IsmChatCustomMessageType
-                                                    .removeMember &&
-                                            controller
-                                                    .conversation
-                                                    ?.lastMessageDetails
-                                                    ?.userId ==
-                                                IsmChatConfig
-                                                    .communicationConfig
-                                                    .userConfig
-                                                    .userId
-                                        ? const _MessgeNotAllowdWidget(
-                                            showMessage: IsmChatStrings
-                                                .removeGroupMessage,
-                                          )
-                                        : IsmChatProperties
-                                                        .chatPageProperties
-                                                        .messageAllowedConfig
-                                                        ?.isShowTextfiledConfig !=
-                                                    null &&
-                                                !IsmChatProperties
-                                                    .chatPageProperties
-                                                    .messageAllowedConfig!
-                                                    .isShowTextfiledConfig!
-                                                    .isShowMessageAllowed
-                                                    .call(context,
-                                                        controller.conversation!)
-                                            ? _MessgeNotAllowdWidget(
-                                                showMessage: IsmChatProperties
-                                                        .chatPageProperties
-                                                        .messageAllowedConfig
-                                                        ?.isShowTextfiledConfig
-                                                        ?.shwoMessage
-                                                        ?.call(
-                                                            context,
-                                                            controller
-                                                                .conversation!) ??
-                                                    '',
-                                                messageWidget: IsmChatProperties
-                                                    .chatPageProperties
-                                                    .messageAllowedConfig
-                                                    ?.isShowTextfiledConfig
-                                                    ?.messageWidget
-                                                    ?.call(
-                                                        context,
-                                                        controller
-                                                            .conversation!),
-                                              )
-                                            : Container(
-                                                padding: IsmChatConfig
-                                                    .chatTheme
-                                                    .chatPageTheme
-                                                    ?.textFiledTheme
-                                                    ?.textfieldInsets,
-                                                decoration: IsmChatConfig
-                                                    .chatTheme
-                                                    .chatPageTheme
-                                                    ?.textFiledTheme
-                                                    ?.decoration,
-                                                child: SafeArea(
-                                                  bottom: !controller
-                                                      .showEmojiBoard,
-                                                  child:
-                                                      const IsmChatMessageField(),
-                                                ),
-                                              ),
+                                if (controller.isActionAllowed == true &&
+                                    controller.conversation?.isGroup ==
+                                        true) ...[
+                                  const _MessgeNotAllowdWidget(
+                                    showMessage:
+                                        IsmChatStrings.removeGroupMessage,
+                                  )
+                                ] else if (controller.isActionAllowed == false &&
+                                    controller.conversation?.isGroup == true &&
+                                    controller.conversation?.lastMessageDetails
+                                            ?.customType ==
+                                        IsmChatCustomMessageType.removeMember &&
+                                    controller.conversation?.lastMessageDetails?.userId ==
+                                        IsmChatConfig.communicationConfig
+                                            .userConfig.userId) ...[
+                                  const _MessgeNotAllowdWidget(
+                                    showMessage:
+                                        IsmChatStrings.removeGroupMessage,
+                                  )
+                                ] else if (IsmChatProperties
+                                            .chatPageProperties
+                                            .messageAllowedConfig
+                                            ?.isShowTextfiledConfig !=
+                                        null &&
+                                    !(IsmChatProperties
+                                            .chatPageProperties
+                                            .messageAllowedConfig
+                                            ?.isShowTextfiledConfig
+                                            ?.isShowMessageAllowed
+                                            .call(context,
+                                                controller.conversation) ==
+                                        true)) ...[
+                                  _MessgeNotAllowdWidget(
+                                    showMessage: IsmChatProperties
+                                            .chatPageProperties
+                                            .messageAllowedConfig
+                                            ?.isShowTextfiledConfig
+                                            ?.shwoMessage
+                                            ?.call(context,
+                                                controller.conversation) ??
+                                        '',
+                                    messageWidget: IsmChatProperties
+                                        .chatPageProperties
+                                        .messageAllowedConfig
+                                        ?.isShowTextfiledConfig
+                                        ?.messageWidget
+                                        ?.call(
+                                            context, controller.conversation),
+                                  )
+                                ] else if (controller.conversation?.isOpponentDetailsEmpty ==
+                                    true) ...[
+                                  const _MessgeNotAllowdWidget(
+                                    showMessage:
+                                        IsmChatStrings.userDeleteMessage,
+                                  )
+                                ] else ...[
+                                  Container(
+                                    padding: IsmChatConfig
+                                        .chatTheme
+                                        .chatPageTheme
+                                        ?.textFiledTheme
+                                        ?.textfieldInsets,
+                                    decoration: IsmChatConfig
+                                        .chatTheme
+                                        .chatPageTheme
+                                        ?.textFiledTheme
+                                        ?.decoration,
+                                    child: SafeArea(
+                                      bottom: !controller.showEmojiBoard,
+                                      child: const IsmChatMessageField(),
+                                    ),
+                                  ),
+                                ],
                                 Offstage(
                                   offstage: !controller.showEmojiBoard,
                                   child: const EmojiBoard(),
@@ -433,11 +428,12 @@ class _IsmChatPageView extends StatelessWidget {
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: IsmChatConfig
-                                              .chatTheme.backgroundColor!
-                                              .applyIsmOpacity(0.5),
+                                              .chatTheme.backgroundColor
+                                              ?.applyIsmOpacity(0.5),
                                           border: Border.all(
                                             color: IsmChatConfig
-                                                .chatTheme.primaryColor!,
+                                                    .chatTheme.primaryColor ??
+                                                IsmChatColors.primaryColorLight,
                                             width: 1.5,
                                           ),
                                           shape: BoxShape.circle,

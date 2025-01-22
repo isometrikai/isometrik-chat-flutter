@@ -336,8 +336,6 @@ class IsmChatConversationsController extends GetxController {
     _intilizedContrller.value = value;
   }
 
-  int conversationSkip = 0;
-
   @override
   onInit() async {
     super.onInit();
@@ -364,7 +362,7 @@ class IsmChatConversationsController extends GetxController {
             : userDetails?.userId ?? ''
       ],
     );
-    conversationSkip = conversations.length.pagination();
+
     unawaited(getBlockUser());
     intilizedContrller = true;
     scrollListener();
@@ -414,7 +412,7 @@ class IsmChatConversationsController extends GetxController {
         if (conversationScrollController.offset.toInt() ==
             conversationScrollController.position.maxScrollExtent.toInt()) {
           await getChatConversations(
-            skip: conversationSkip,
+            skip: conversations.length.pagination(),
           );
         }
       },
@@ -874,9 +872,6 @@ class IsmChatConversationsController extends GetxController {
         refreshController.loadComplete();
         refreshControllerOnEmptyList.loadComplete();
       }
-    }
-    if (origin == ApiCallOrigin.loadMore) {
-      conversationSkip = conversationSkip + 20;
     }
 
     await getConversationsFromDB();

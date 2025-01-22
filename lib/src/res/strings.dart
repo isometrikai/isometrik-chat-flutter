@@ -166,6 +166,9 @@ class IsmChatStrings {
   static const String removeGroupMessage =
       'You have been removed out of the group...!';
 
+  static const String userDeleteMessage =
+      'Not everyone can message this user...!';
+
   static const String gallery = 'Gallery';
   static const String camera = 'Camera';
   static const String message = 'Message';
@@ -215,4 +218,5 @@ class IsmChatStrings {
   static const String defaultString = 'Default';
   static const String recipients = 'Recipients :';
   static const String addrecipient = 'Add recipient';
+  static const String deletedUser = 'Deleted User';
 }

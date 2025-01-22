@@ -145,6 +145,9 @@ class IsmChatConversationModel {
 
   String get chatName {
     if (conversationTitle.isNullOrEmpty) {
+      if (isOpponentDetailsEmpty) {
+        return IsmChatStrings.deletedUser;
+      }
       return opponentDetails?.userName ?? '';
     }
     return conversationTitle ?? '';
@@ -152,10 +155,19 @@ class IsmChatConversationModel {
 
   String get profileUrl {
     if (conversationImageUrl.isNullOrEmpty) {
+      if (isOpponentDetailsEmpty) {
+        return IsmChatConstants.profileUrl;
+      }
       return opponentDetails?.profileUrl ?? '';
     }
     return conversationImageUrl ?? '';
   }
+
+  bool get isOpponentDetailsEmpty =>
+      isGroup == false &&
+      (opponentDetails?.userId ?? '').isEmpty &&
+      ((opponentDetails?.userName ?? '').isEmpty ||
+          (opponentDetails?.profileUrl ?? '').isEmpty);
 
   IsmChatConversationModel copyWith({
     int? updatedAt,

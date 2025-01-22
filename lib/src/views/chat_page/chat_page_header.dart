@@ -96,7 +96,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                     ?.profileImageBuilder
                                     ?.call(
                                         context,
-                                        controller.conversation!,
+                                        controller.conversation,
                                         controller.conversation?.profileUrl ??
                                             '') ??
                                 IsmChatImage.profile(
@@ -104,7 +104,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                           ?.profileImageUrl
                                           ?.call(
                                               context,
-                                              controller.conversation!,
+                                              controller.conversation,
                                               controller.conversation
                                                       ?.profileUrl ??
                                                   '') ??
@@ -114,7 +114,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                           .chatPageProperties.header?.title
                                           ?.call(
                                               context,
-                                              controller.conversation!,
+                                              controller.conversation,
                                               controller
                                                       .conversation?.chatName ??
                                                   '') ??
@@ -126,7 +126,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                               ?.profileImageUrl
                                               ?.call(
                                                   context,
-                                                  controller.conversation!,
+                                                  controller.conversation,
                                                   controller.conversation
                                                           ?.profileUrl ??
                                                       '') ??
@@ -363,7 +363,8 @@ class _PopupMenuWidget extends StatelessWidget {
               ),
             )
           ],
-          if (!(controller.conversation?.isGroup ?? false))
+          if ((!(controller.conversation?.isGroup ?? false)) &&
+              controller.conversation?.isOpponentDetailsEmpty == false)
             PopupMenuItem(
               value: 3,
               child: Row(
@@ -435,7 +436,7 @@ class _PopupMenuWidget extends StatelessWidget {
             ),
           ],
           if (IsmChatProperties.chatPageProperties.header != null &&
-              IsmChatProperties.chatPageProperties.header!.popupItems !=
+              IsmChatProperties.chatPageProperties.header?.popupItems !=
                   null) ...[
             ...IsmChatProperties.chatPageProperties.header!
                 .popupItems!(context, controller.conversation!)
