@@ -1098,8 +1098,10 @@ mixin IsmChatMqttEventMixin {
         senderIdsExclusive: senderIdsExclusive,
       );
 
-  Future<bool> deleteChatFormDB(String isometrickChatId,
-      {String conversationId = ''}) async {
+  Future<bool> deleteChatFormDB(
+    String isometrickChatId, {
+    String conversationId = '',
+  }) async {
     if (conversationId.isEmpty) {
       final conversations = await getAllConversationFromDB();
       if (conversations != null || conversations?.isNotEmpty == true) {
@@ -1122,4 +1124,18 @@ mixin IsmChatMqttEventMixin {
 
   Future<List<IsmChatConversationModel>?> getAllConversationFromDB() async =>
       await IsmChatConfig.dbWrapper?.getAllConversations();
+
+  Future<List<IsmChatConversationModel>> getChatConversationApi({
+    int skip = 0,
+    int limit = 20,
+    String? searchTag,
+    bool includeConversationStatusMessagesInUnreadMessagesCount = false,
+  }) async =>
+      await _controller.viewModel.getChatConversationApi(
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag ?? '',
+        includeConversationStatusMessagesInUnreadMessagesCount:
+            includeConversationStatusMessagesInUnreadMessagesCount,
+      );
 }

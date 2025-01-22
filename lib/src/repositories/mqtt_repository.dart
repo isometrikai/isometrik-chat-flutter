@@ -71,4 +71,43 @@ class IsmChatMqttRepository {
       return null;
     }
   }
+
+  Future<List<IsmChatConversationModel>?> getChatConversationApi({
+    required int skip,
+    required int limit,
+    required String searchTag,
+    required bool includeConversationStatusMessagesInUnreadMessagesCount,
+  }) async {
+    try {
+      String? url;
+      if (searchTag.isNotEmpty) {
+        url =
+            '${IsmChatAPI.getChatConversations}?searchTag=$searchTag&skip=$skip&limit=$limit';
+      } else {
+        url =
+            '${IsmChatAPI.getChatConversations}?includeMembers=true&includeConversationStatusMessagesInUnreadMessagesCount=$includeConversationStatusMessagesInUnreadMessagesCount&skip=$skip&limit=$limit';
+      }
+      final response = await _apiWrapper.get(
+        url,
+        headers: IsmChatUtility.tokenCommonHeader(),
+      );
+      if (response.hasError) {
+        return null;
+      }
+      final data = jsonDecode(response.data);
+
+      final listData = (data['conversations'] as List<dynamic>)
+          .cast<Map<String, dynamic>>()
+          .map(IsmChatConversationModel.fromMap)
+          .toList();
+      listData.sort(
+        (a, b) => (a.lastMessageDetails?.sentAt ?? 0)
+            .compareTo(b.lastMessageDetails?.sentAt ?? 0),
+      );
+      return listData;
+    } catch (e, st) {
+      IsmChatLog.error('GetChatConversations error $e', st);
+      return null;
+    }
+  }
 }

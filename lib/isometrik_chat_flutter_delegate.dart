@@ -232,6 +232,22 @@ class IsmChatDelegate {
     return int.tryParse(count) ?? 0;
   }
 
+  Future<List<IsmChatConversationModel>> getChatConversationApi({
+    int skip = 0,
+    int limit = 20,
+    String? searchTag,
+    bool includeConversationStatusMessagesInUnreadMessagesCount = false,
+  }) async {
+    if (!Get.isRegistered<IsmChatMqttController>()) return [];
+    return await Get.find<IsmChatMqttController>().getChatConversationApi(
+      skip: skip,
+      limit: limit,
+      searchTag: searchTag,
+      includeConversationStatusMessagesInUnreadMessagesCount:
+          includeConversationStatusMessagesInUnreadMessagesCount,
+    );
+  }
+
   Future<IsmChatConversationModel?> getConverstaionDetails({
     required bool isLoading,
   }) async {

@@ -48,4 +48,21 @@ class IsmChatMqttViewModel {
     }
     return response;
   }
+
+  Future<List<IsmChatConversationModel>> getChatConversationApi({
+    required int skip,
+    required int limit,
+    required String searchTag,
+    required bool includeConversationStatusMessagesInUnreadMessagesCount,
+  }) async {
+    final response = await _repository.getChatConversationApi(
+      skip: skip,
+      limit: limit,
+      searchTag: searchTag,
+      includeConversationStatusMessagesInUnreadMessagesCount:
+          includeConversationStatusMessagesInUnreadMessagesCount,
+    );
+    if (response == null) return [];
+    return response;
+  }
 }

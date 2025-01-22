@@ -929,4 +929,18 @@ class IsmChat {
       await _delegate.getBlockUser(isLoading: isLoading);
 
   Future<void> updateChatPage() async => await _delegate.updateChatPage();
+
+  Future<List<IsmChatConversationModel>> getChatConversationApi({
+    int skip = 0,
+    int limit = 20,
+    String? searchTag,
+    bool includeConversationStatusMessagesInUnreadMessagesCount = false,
+  }) async =>
+      await _delegate.getChatConversationApi(
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag,
+        includeConversationStatusMessagesInUnreadMessagesCount:
+            includeConversationStatusMessagesInUnreadMessagesCount,
+      );
 }
