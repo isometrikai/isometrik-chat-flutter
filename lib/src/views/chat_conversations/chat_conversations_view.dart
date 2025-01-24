@@ -99,9 +99,11 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
-                          if (IsmChatResponsive.isWeb(context) &&
-                              IsmChatProperties.conversationProperties
-                                  .shouldConversationSearchShow) ...[
+                          if (IsmChatResponsive.isWeb(context)
+                              // &&
+                              //     IsmChatProperties.conversationProperties
+                              //         .shouldConversationSearchShow
+                              ) ...[
                             IsmChatDimens.boxHeight10,
                             IsmChatInputField(
                               contentPadding: IsmChatDimens.edgeInsets20,
@@ -112,26 +114,39 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                               style: IsmChatStyles.w400White16,
                               hint: IsmChatStrings.searchConversation,
                               hintStyle: IsmChatStyles.w400White16,
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  controller.debounce.run(() async {
-                                    await controller.getChatConversations(
-                                      searchTag: value,
-                                    );
-                                  });
-                                } else {
-                                  IsmChatUtility.doLater(() async {
-                                    await controller.getConversationsFromDB();
-                                  });
-                                }
+                              onChanged: (value) async {
+                                controller.debounce.run(() async {
+                                  switch (value.trim().isNotEmpty) {
+                                    case true:
+                                      await controller.getChatConversations(
+                                        searchTag: value,
+                                      );
+                                      break;
+                                    default:
+                                      await controller.getConversationsFromDB();
+                                  }
+                                });
+                                controller.update();
                               },
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  controller.searchConversationTEC.clear();
-                                  controller.getConversationsFromDB();
-                                },
-                                icon: const Icon(Icons.close_outlined),
-                              ),
+                              suffixIcon: controller
+                                      .searchConversationTEC.text.isNotEmpty
+                                  ? IconButton(
+                                      highlightColor: IsmChatColors.transparent,
+                                      disabledColor: IsmChatColors.transparent,
+                                      hoverColor: IsmChatColors.transparent,
+                                      splashColor: IsmChatColors.transparent,
+                                      focusColor: IsmChatColors.transparent,
+                                      onPressed: () {
+                                        controller.searchConversationTEC
+                                            .clear();
+                                        controller.getConversationsFromDB();
+                                      },
+                                      icon: const Icon(
+                                        Icons.close_outlined,
+                                        color: IsmChatColors.whiteColor,
+                                      ),
+                                    )
+                                  : null,
                             ),
                           ],
                           const Expanded(child: IsmChatConversationList()),

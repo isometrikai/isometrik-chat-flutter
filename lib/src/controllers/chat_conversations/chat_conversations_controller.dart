@@ -800,13 +800,30 @@ class IsmChatConversationsController extends GetxController {
     }
     conversations.sort((a, b) => (b.lastMessageDetails?.sentAt ?? 0)
         .compareTo(a.lastMessageDetails?.sentAt ?? 0));
+    final opponentEmptyData = <IsmChatConversationModel>[];
+    final opponentData = <IsmChatConversationModel>[];
+    for (var x in conversations) {
+      if (x.isGroup == false && x.opponentDetails?.userId.isEmpty == true) {
+        opponentEmptyData.add(x);
+      } else {
+        opponentData.add(x);
+      }
+    }
+    opponentData.addAll(opponentEmptyData);
+    conversations = opponentData;
+
     if (searchTag?.isNotEmpty == true) {
       conversations = conversations
-          .where((e) => [
-                (e.opponentDetails?.userName ?? '').toLowerCase(),
-                (e.opponentDetails?.metaData?.firstName ?? '').toLowerCase(),
-                (e.opponentDetails?.metaData?.lastName ?? '').toLowerCase()
-              ].contains((searchTag ?? '').toLowerCase()))
+          .where((e) =>
+              (e.opponentDetails?.userName ?? '')
+                  .toLowerCase()
+                  .startsWith((searchTag ?? '').toLowerCase()) ||
+              (e.opponentDetails?.metaData?.firstName ?? '')
+                  .toLowerCase()
+                  .startsWith((searchTag ?? '').toLowerCase()) ||
+              (e.opponentDetails?.metaData?.lastName ?? '')
+                  .toLowerCase()
+                  .startsWith((searchTag ?? '').toLowerCase()))
           .toList();
     }
 
