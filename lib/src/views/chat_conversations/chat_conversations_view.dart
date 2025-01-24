@@ -99,9 +99,13 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
-                          if (IsmChatResponsive.isWeb(context)) ...[
+                          if (IsmChatResponsive.isWeb(context) &&
+                              IsmChatProperties.conversationProperties
+                                  .shouldConversationSearchShow) ...[
                             IsmChatDimens.boxHeight10,
                             IsmChatInputField(
+                              contentPadding: IsmChatDimens.edgeInsets20,
+                              autofocus: false,
                               fillColor: IsmChatConfig.chatTheme.primaryColor
                                   ?.applyIsmOpacity(.5),
                               controller: controller.searchConversationTEC,
@@ -116,9 +120,18 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                     );
                                   });
                                 } else {
-                                  controller.getConversationsFromDB();
+                                  IsmChatUtility.doLater(() async {
+                                    await controller.getConversationsFromDB();
+                                  });
                                 }
                               },
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  controller.searchConversationTEC.clear();
+                                  controller.getConversationsFromDB();
+                                },
+                                icon: const Icon(Icons.close_outlined),
+                              ),
                             ),
                           ],
                           const Expanded(child: IsmChatConversationList()),

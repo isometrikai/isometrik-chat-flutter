@@ -788,11 +788,11 @@ class IsmChatConversationsController extends GetxController {
     var dbConversations =
         await IsmChatConfig.dbWrapper?.getAllConversations() ?? [];
 
+    conversations.clear();
     if (dbConversations.isEmpty == true) {
-      conversations.clear();
       return;
     }
-    conversations.clear();
+
     conversations = dbConversations;
     isConversationsLoading = false;
     if (conversations.length <= 1) {
@@ -800,7 +800,7 @@ class IsmChatConversationsController extends GetxController {
     }
     conversations.sort((a, b) => (b.lastMessageDetails?.sentAt ?? 0)
         .compareTo(a.lastMessageDetails?.sentAt ?? 0));
-    if (searchTag?.isNullOrEmpty == false) {
+    if (searchTag?.isNotEmpty == true) {
       conversations = conversations
           .where((e) => [
                 (e.opponentDetails?.userName ?? '').toLowerCase(),

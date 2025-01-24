@@ -45,7 +45,7 @@ class IsmChatInputField extends StatelessWidget {
   final bool isShowBorderColor;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => Padding(
         padding: padding ?? IsmChatDimens.edgeInsets10_4,
         child: TextFormField(
           focusNode: focusNode,
