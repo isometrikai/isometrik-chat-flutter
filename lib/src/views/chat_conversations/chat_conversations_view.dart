@@ -99,11 +99,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
-                          if (IsmChatResponsive.isWeb(context)
-                              // &&
-                              //     IsmChatProperties.conversationProperties
-                              //         .shouldConversationSearchShow
-                              ) ...[
+                          if (IsmChatResponsive.isWeb(context) &&
+                              IsmChatProperties.conversationProperties
+                                  .shouldConversationSearchShow &&
+                              controller.conversations.isNotEmpty) ...[
                             IsmChatDimens.boxHeight10,
                             IsmChatInputField(
                               contentPadding: IsmChatDimens.edgeInsets20,
