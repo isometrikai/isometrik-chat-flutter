@@ -6,15 +6,18 @@ class IsmChatConversationsViewModel {
 
   final IsmChatConversationsRepository _repository;
 
-  Future<List<IsmChatConversationModel>> getChatConversations(
-    int skip, {
+  Future<List<IsmChatConversationModel>> getChatConversations({
+    int skip = 0,
     int chatLimit = 20,
     String? searchTag,
+    bool includeConversationStatusMessagesInUnreadMessagesCount = false,
   }) async {
     var conversations = await _repository.getChatConversations(
       skip: skip,
       limit: chatLimit,
-      searchTag: searchTag,
+      searchTag: searchTag ?? '',
+      includeConversationStatusMessagesInUnreadMessagesCount:
+          includeConversationStatusMessagesInUnreadMessagesCount,
     );
 
     if (conversations == null || conversations.isEmpty) {

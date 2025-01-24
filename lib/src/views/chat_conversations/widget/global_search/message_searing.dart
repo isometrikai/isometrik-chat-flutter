@@ -10,12 +10,13 @@ class IsmChatMessageSearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
-          initState: (state) {
-            IsmChatLog.error(state.controller?.callApiOrNot);
-          },
-          builder: (controller) => const Scaffold(
-                body: Center(
-                  child: Text('Message'),
-                ),
-              ));
+        initState: (state) {
+          IsmChatLog.error(state.controller?.callApiOrNot);
+        },
+        builder: (controller) => const Scaffold(
+          body: Center(
+            child: Text('Message'),
+          ),
+        ),
+      );
 }

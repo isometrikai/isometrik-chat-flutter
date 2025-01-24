@@ -35,6 +35,7 @@ class IsmChatConversationProperties {
     this.allowedConversations = const [IsmChatConversationType.private],
     this.conversationPosition = IsmChatConversationPosition.tabBar,
     this.opponentSubTitle,
+    this.conversationDivider,
   }) {
     assert(
       (showCreateChatIcon && onCreateTap != null) || !showCreateChatIcon,
@@ -225,4 +226,6 @@ class IsmChatConversationProperties {
   /// },
   /// ```
   final UserDetailsStringCallback? opponentSubTitle;
+
+  final Widget? conversationDivider;
 }

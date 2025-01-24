@@ -21,8 +21,16 @@ class IsmChatFileMessage extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-          width: context.width * 0.5,
-          height: kIsWeb ? context.height * 0.2 : null,
+          constraints: IsmChatConfig.chatTheme.chatPageTheme?.messageConstraints
+                  ?.fileConstraints ??
+              BoxConstraints(
+                maxWidth: (IsmChatResponsive.isWeb(context))
+                    ? context.width * .2
+                    : context.width * .5,
+                maxHeight: (IsmChatResponsive.isWeb(context))
+                    ? context.height * .35
+                    : context.height * .6,
+              ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(IsmChatDimens.ten),
           ),

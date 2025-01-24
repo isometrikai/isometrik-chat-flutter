@@ -27,9 +27,7 @@ class IsmChatListTheme {
   final Color? tileColor;
   final Color? dividerColor;
   final Color? backGroundColor;
-
   final double? dividerThickness;
   final Color? pushSnackBarBackGroundColor;
-
   static const double _kDividerThickness = 0.5;
 }

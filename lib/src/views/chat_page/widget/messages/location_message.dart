@@ -40,9 +40,17 @@ class IsmChatLocationMessage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              SizedBox(
-                height: IsmChatDimens.oneHundredFifty,
-                width: context.width * 0.8,
+              Container(
+                constraints: IsmChatConfig.chatTheme.chatPageTheme
+                        ?.messageConstraints?.locationConstraints ??
+                    BoxConstraints(
+                      maxWidth: (IsmChatResponsive.isWeb(context))
+                          ? context.width * .25
+                          : context.width * .6,
+                      maxHeight: (IsmChatResponsive.isWeb(context))
+                          ? context.height * .3
+                          : context.height * .2,
+                    ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(IsmChatDimens.ten),
                   child: IgnorePointer(

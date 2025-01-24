@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatVideoMessage extends StatelessWidget {
@@ -22,12 +23,17 @@ class IsmChatVideoMessage extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      SizedBox(
-                        height: IsmChatResponsive.isWeb(context)
-                            ? IsmChatDimens.percentHeight(.3)
-                            : kIsWeb
-                                ? IsmChatDimens.percentHeight(.3)
-                                : null,
+                      Container(
+                        constraints: IsmChatConfig.chatTheme.chatPageTheme
+                                ?.messageConstraints?.videoConstraints ??
+                            BoxConstraints(
+                              maxWidth: (IsmChatResponsive.isWeb(context))
+                                  ? context.width * .25
+                                  : context.width * .7,
+                              maxHeight: (IsmChatResponsive.isWeb(context))
+                                  ? context.height * .35
+                                  : context.height * .7,
+                            ),
                         child: kIsWeb
                             ? message.attachments?.first.thumbnailUrl
                                         ?.isValidUrl ==

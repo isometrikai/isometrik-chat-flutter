@@ -65,7 +65,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                     : null),
             body: SafeArea(
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -87,7 +87,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                 .conversationProperties.isHeaderAppBar &&
                             IsmChatProperties.conversationProperties.header !=
                                 null) ...[
-                          IsmChatProperties.conversationProperties.header!,
+                          IsmChatProperties.conversationProperties.header ??
+                              IsmChatDimens.box0,
                         ],
                         if (IsmChatProperties.conversationProperties
                                     .allowedConversations.length !=
@@ -98,6 +99,28 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
+                          if (IsmChatResponsive.isWeb(context)) ...[
+                            IsmChatDimens.boxHeight10,
+                            IsmChatInputField(
+                              fillColor: IsmChatConfig.chatTheme.primaryColor
+                                  ?.applyIsmOpacity(.5),
+                              controller: controller.searchConversationTEC,
+                              style: IsmChatStyles.w400White16,
+                              hint: IsmChatStrings.searchConversation,
+                              hintStyle: IsmChatStyles.w400White16,
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  controller.debounce.run(() async {
+                                    await controller.getChatConversations(
+                                      searchTag: value,
+                                    );
+                                  });
+                                } else {
+                                  controller.getConversationsFromDB();
+                                }
+                              },
+                            ),
+                          ],
                           const Expanded(child: IsmChatConversationList()),
                         ]
                       ],
@@ -130,7 +153,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                               () => controller.isRenderChatPageaScreen !=
                                       IsRenderChatPageScreen.none
                                   ? controller.isRenderChatScreenWidget()
-                                  : const SizedBox.shrink(),
+                                  : IsmChatDimens.box0,
                             )
                           ]
                         ],

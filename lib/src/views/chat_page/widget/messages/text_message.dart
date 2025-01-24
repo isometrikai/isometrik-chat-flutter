@@ -15,11 +15,24 @@ class IsmChatTextMessage extends StatelessWidget {
         color: Colors.transparent,
         child: IntrinsicWidth(
           child: Container(
+            constraints: IsmChatConfig.chatTheme.chatPageTheme
+                    ?.messageConstraints?.textConstraints ??
+                BoxConstraints(
+                  maxWidth: (IsmChatResponsive.isWeb(context))
+                      ? context.width * .3
+                      : context.width * .7,
+                  minWidth: IsmChatResponsive.isWeb(context)
+                      ? context.width * .05
+                      : context.width * .2,
+                  minHeight: (IsmChatResponsive.isWeb(context))
+                      ? context.height * .04
+                      : context.height * .05,
+                  // maxHeight: (IsmChatResponsive.isWeb(context))
+                  //     ? context.height * .3
+                  //     : context.height * .7,
+                ),
             alignment:
                 message.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
-            constraints: const BoxConstraints(
-              minHeight: 36,
-            ),
             padding: IsmChatDimens.edgeInsets4,
             child: RichText(
               text: TextSpan(
