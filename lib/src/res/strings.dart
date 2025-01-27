@@ -174,7 +174,7 @@ class IsmChatStrings {
   static const String message = 'Message';
   static const String signOut = 'Sign out';
   static const String searchUser = 'Search user...';
-  static const String searchConversation = 'Search conversation...';
+  static const String searchChat = 'Search chats...';
   static const String globalSearch = 'Search conversation, messages people..';
 
   static const String messages = 'Messages';

@@ -99,55 +99,72 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
-                          if (IsmChatResponsive.isWeb(context) &&
-                              IsmChatProperties.conversationProperties
-                                  .shouldConversationSearchShow &&
-                              controller.userConversations.isNotEmpty) ...[
-                            IsmChatDimens.boxHeight10,
-                            IsmChatInputField(
-                              contentPadding: IsmChatDimens.edgeInsets20,
-                              autofocus: false,
-                              fillColor: IsmChatConfig.chatTheme.primaryColor
-                                  ?.applyIsmOpacity(.5),
-                              controller: controller.searchConversationTEC,
-                              style: IsmChatStyles.w400White16,
-                              hint: IsmChatStrings.searchConversation,
-                              hintStyle: IsmChatStyles.w400White16,
-                              onChanged: (value) async {
-                                controller.debounce.run(() async {
-                                  switch (value.trim().isNotEmpty) {
-                                    case true:
-                                      await controller.getChatConversations(
-                                        searchTag: value,
-                                      );
-                                      break;
-                                    default:
-                                      await controller.getConversationsFromDB();
-                                  }
-                                });
-                                controller.update();
-                              },
-                              suffixIcon: controller
-                                      .searchConversationTEC.text.isNotEmpty
-                                  ? IconButton(
-                                      highlightColor: IsmChatColors.transparent,
-                                      disabledColor: IsmChatColors.transparent,
-                                      hoverColor: IsmChatColors.transparent,
-                                      splashColor: IsmChatColors.transparent,
-                                      focusColor: IsmChatColors.transparent,
-                                      onPressed: () {
-                                        controller.searchConversationTEC
-                                            .clear();
-                                        controller.getConversationsFromDB();
+                          Obx(() => controller.userConversations.isNotEmpty &&
+                                  IsmChatResponsive.isWeb(context) &&
+                                  IsmChatProperties.conversationProperties
+                                      .shouldConversationSearchShow
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    IsmChatDimens.boxHeight10,
+                                    IsmChatInputField(
+                                      isShowBorderColor: true,
+                                      contentPadding:
+                                          IsmChatDimens.edgeInsets20,
+                                      autofocus: false,
+                                      fillColor: IsmChatColors.whiteColor,
+                                      controller:
+                                          controller.searchConversationTEC,
+                                      style: IsmChatStyles.w400Black16,
+                                      hint: IsmChatStrings.searchChat,
+                                      hintStyle: IsmChatStyles.w400White16,
+                                      onChanged: (value) async {
+                                        controller.debounce.run(() async {
+                                          switch (value.trim().isNotEmpty) {
+                                            case true:
+                                              await controller
+                                                  .getChatConversations(
+                                                searchTag: value,
+                                              );
+                                              break;
+                                            default:
+                                              await controller
+                                                  .getConversationsFromDB();
+                                          }
+                                        });
+                                        controller.update();
                                       },
-                                      icon: const Icon(
-                                        Icons.close_outlined,
-                                        color: IsmChatColors.whiteColor,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          ],
+                                      suffixIcon: controller
+                                              .searchConversationTEC
+                                              .text
+                                              .isNotEmpty
+                                          ? IconButton(
+                                              highlightColor:
+                                                  IsmChatColors.transparent,
+                                              disabledColor:
+                                                  IsmChatColors.transparent,
+                                              hoverColor:
+                                                  IsmChatColors.transparent,
+                                              splashColor:
+                                                  IsmChatColors.transparent,
+                                              focusColor:
+                                                  IsmChatColors.transparent,
+                                              onPressed: () {
+                                                controller.searchConversationTEC
+                                                    .clear();
+                                                controller
+                                                    .getConversationsFromDB();
+                                              },
+                                              icon: const Icon(
+                                                Icons.close_outlined,
+                                                color: IsmChatColors.whiteColor,
+                                              ),
+                                            )
+                                          : null,
+                                    ),
+                                  ],
+                                )
+                              : IsmChatDimens.box0),
                           const Expanded(child: IsmChatConversationList()),
                         ]
                       ],
