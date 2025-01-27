@@ -13,15 +13,24 @@ class IsmChatLinkMessage extends StatelessWidget {
   final IsmChatMessageModel message;
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: context.width * 0.8,
-          maxHeight: context.height * 0.25,
-        ),
-        child: Material(
-          color: Colors.transparent,
+  Widget build(BuildContext context) => Material(
+        color: Colors.transparent,
+        child: Container(
+          constraints: IsmChatConfig.chatTheme.chatPageTheme?.messageConstraints
+                  ?.textConstraints ??
+              BoxConstraints(
+                maxWidth: (IsmChatResponsive.isWeb(context))
+                    ? context.width * .3
+                    : context.width * .7,
+                minWidth: IsmChatResponsive.isWeb(context)
+                    ? context.width * .05
+                    : context.width * .2,
+                minHeight: (IsmChatResponsive.isWeb(context))
+                    ? context.height * .04
+                    : context.height * .05,
+              ),
           child: _LinkPreview(
-            sentByMe: message.sentByMe,
+            message: message,
             link: message.body,
             child: AnyLinkPreview(
               previewHeight: IsmChatDimens.oneHundredFifty,
@@ -30,33 +39,28 @@ class IsmChatLinkMessage extends StatelessWidget {
               urlLaunchMode: LaunchMode.externalApplication,
               backgroundColor: Colors.transparent,
               removeElevation: true,
-              bodyStyle: (message.sentByMe
-                      ? IsmChatStyles.w400White12
-                      : IsmChatStyles.w400Black12)
-                  .copyWith(
-                color: message.style.color,
-              ),
+              bodyStyle: message.style,
               titleStyle: message.style,
               bodyTextOverflow: TextOverflow.ellipsis,
               cache: const Duration(minutes: 5),
+              errorBody: 'Unable to get link preview',
+              errorTitle: 'Error',
+              errorImage: 'https://google.com/',
               errorWidget: Text(
                 IsmChatStrings.errorLoadingPreview,
-                style: (message.sentByMe
-                        ? IsmChatStyles.w400White12
-                        : IsmChatStyles.w400Black12)
-                    .copyWith(
-                  color: message.style.color,
-                ),
+                style: message.style,
               ),
+              displayDirection: UIDirection.uiDirectionHorizontal,
+              showMultimedia: true,
               placeholderWidget: Text(
                 'Loading preview...',
-                style: (message.sentByMe
-                        ? IsmChatStyles.w400White12
-                        : IsmChatStyles.w400Black12)
-                    .copyWith(
-                  color: message.style.color,
-                ),
+                style: message.style,
               ),
+              // proxyUrl: 'https://corsproxy.io/?',
+              // headers: {
+              //   'Access-Control-Allow-Origin': '*',
+              //   'Access-Control-Allow-Methods': 'GET',
+              // },
             ),
           ),
         ),
@@ -66,12 +70,12 @@ class IsmChatLinkMessage extends StatelessWidget {
 class _LinkPreview extends StatelessWidget {
   const _LinkPreview({
     required this.child,
-    required this.sentByMe,
+    required this.message,
     required this.link,
   });
 
   final Widget child;
-  final bool sentByMe;
+  final IsmChatMessageModel message;
   final String link;
 
   @override
@@ -79,13 +83,14 @@ class _LinkPreview extends StatelessWidget {
         onTap: () => launchUrl(Uri.parse(link.convertToValidUrl)),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment:
-                sentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: message.sentByMe
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: (sentByMe
+                  color: (message.sentByMe
                           ? IsmChatColors.whiteColor
                           : IsmChatColors.greyColor)
                       .applyIsmOpacity(0.2),
@@ -96,23 +101,16 @@ class _LinkPreview extends StatelessWidget {
               ),
               IsmChatDimens.boxHeight4,
               Padding(
-                padding: IsmChatDimens.edgeInsets4_0,
-                child: FittedBox(
-                  child: Text(
-                    link,
-                    style: (sentByMe
-                            ? IsmChatStyles.w400White14
-                            : IsmChatStyles.w400Black14)
-                        .copyWith(
-                      decoration: TextDecoration.underline,
-                      decorationColor: sentByMe
-                          ? IsmChatColors.whiteColor
-                          : IsmChatColors.greyColor,
-                    ),
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
+                padding: IsmChatDimens.edgeInsets5,
+                child: Text(
+                  link,
+                  style: message.style.copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: message.style.color,
                   ),
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ),
             ],

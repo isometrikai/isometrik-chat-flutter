@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -22,8 +21,10 @@ class IsmChatVideoMessage extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
+                        margin: IsmChatDimens.edgeInsetsBottom4,
                         constraints: IsmChatConfig.chatTheme.chatPageTheme
                                 ?.messageConstraints?.videoConstraints ??
                             BoxConstraints(
@@ -34,29 +35,15 @@ class IsmChatVideoMessage extends StatelessWidget {
                                   ? context.height * .35
                                   : context.height * .7,
                             ),
-                        child: kIsWeb
-                            ? message.attachments?.first.thumbnailUrl
-                                        ?.isValidUrl ==
-                                    true
-                                ? IsmChatImage(
-                                    message.attachments?.first.thumbnailUrl ??
-                                        '',
-                                    isNetworkImage: message.attachments?.first
-                                            .mediaUrl?.isValidUrl ??
-                                        false,
-                                  )
-                                : Image.memory(
-                                    message.attachments?.first.thumbnailUrl!
-                                            .strigToUnit8List ??
-                                        Uint8List(0),
-                                    fit: BoxFit.cover,
-                                  )
-                            : IsmChatImage(
-                                message.attachments?.first.thumbnailUrl ?? '',
-                                isNetworkImage: message.attachments?.first
-                                        .mediaUrl?.isValidUrl ??
-                                    false,
-                              ),
+                        child: IsmChatImage(
+                          message.attachments?.first.thumbnailUrl ?? '',
+                          isNetworkImage: message.attachments?.first
+                                  .thumbnailUrl?.isValidUrl ??
+                              false,
+                          isBytes: !(message.attachments?.first.thumbnailUrl
+                                  ?.isValidUrl ??
+                              false),
+                        ),
                       ),
                       if (message.metaData?.caption?.isNotEmpty == true) ...[
                         Container(

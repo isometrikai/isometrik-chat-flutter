@@ -286,7 +286,7 @@ class IsmChatConversationsController extends GetxController {
   /// When you have scroll or you want get pagination then you have use it.
   var searchConversationScrollController = ScrollController();
 
-  /// This variable use for store filete conversation list
+  /// This variable use for store filter conversation list
   ///
   /// When user add conversaiton `IsmChatProperties.conversationProperties.conversationPredicate` in `IsmChatApp`
   /// get conversaton filter list on conditions `true` or `false`

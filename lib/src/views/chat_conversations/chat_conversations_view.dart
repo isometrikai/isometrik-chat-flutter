@@ -102,7 +102,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           if (IsmChatResponsive.isWeb(context) &&
                               IsmChatProperties.conversationProperties
                                   .shouldConversationSearchShow &&
-                              controller.conversations.isNotEmpty) ...[
+                              controller.userConversations.isNotEmpty) ...[
                             IsmChatDimens.boxHeight10,
                             IsmChatInputField(
                               contentPadding: IsmChatDimens.edgeInsets20,

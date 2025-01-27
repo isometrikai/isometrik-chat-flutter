@@ -37,8 +37,7 @@ class IsmChatLocationMessage extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 constraints: IsmChatConfig.chatTheme.chatPageTheme
