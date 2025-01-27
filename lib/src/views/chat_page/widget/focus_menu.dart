@@ -44,11 +44,15 @@ class IsmChatFocusMenu extends StatelessWidget {
                 _FocusAnimationBuilder(
                   animation: animation,
                   child: Container(
-                    width: IsmChatDimens.oneHundredSeventy,
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(IsmChatDimens.sixteen),
-                    ),
+                    width: IsmChatConfig.chatTheme.chatPageTheme
+                            ?.messgaeFocusedTheme?.width ??
+                        IsmChatDimens.oneHundredSeventy,
+                    decoration: IsmChatConfig.chatTheme.chatPageTheme
+                            ?.messgaeFocusedTheme?.decoration ??
+                        BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(IsmChatDimens.sixteen),
+                        ),
                     clipBehavior: Clip.antiAlias,
                     child: GetBuilder<IsmChatPageController>(
                         tag: IsmChat.i.tag,
@@ -67,7 +71,12 @@ class IsmChatFocusMenu extends StatelessWidget {
                                     );
                                   },
                                   child: Container(
-                                    height: IsmChatDimens.forty,
+                                    height: IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messgaeFocusedTheme
+                                            ?.hight ??
+                                        IsmChatDimens.forty,
                                     padding: IsmChatDimens.edgeInsets16_0,
                                     decoration: BoxDecoration(
                                       color: item == IsmChatFocusMenuType.delete
@@ -82,6 +91,11 @@ class IsmChatFocusMenu extends StatelessWidget {
                                           item.toString(),
                                           style: IsmChatStyles.w400Black12
                                               .copyWith(
+                                            fontSize: IsmChatConfig
+                                                .chatTheme
+                                                .chatPageTheme
+                                                ?.messgaeFocusedTheme
+                                                ?.fontSize,
                                             color: item ==
                                                     IsmChatFocusMenuType.delete
                                                 ? IsmChatColors.whiteColor
@@ -95,6 +109,11 @@ class IsmChatFocusMenu extends StatelessWidget {
                                                   IsmChatFocusMenuType.delete
                                               ? IsmChatColors.whiteColor
                                               : null,
+                                          size: IsmChatConfig
+                                              .chatTheme
+                                              .chatPageTheme
+                                              ?.messgaeFocusedTheme
+                                              ?.iconSize,
                                         ),
                                       ],
                                     ),

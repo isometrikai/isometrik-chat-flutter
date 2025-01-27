@@ -1,9 +1,10 @@
-export 'chat_center_messgae_them.dart';
+export 'chat_center_messgae_theme.dart';
 export 'chat_dialog_theme.dart';
 export 'chat_list_card_theme.dart';
 export 'chat_list_theme.dart';
 export 'chat_message_constraints.dart';
 export 'chat_message_count_theme.dart';
+export 'chat_message_focused_theme.dart';
 export 'chat_message_hover_theme.dart';
 export 'chat_message_status_them.dart';
 export 'chat_message_theme.dart';

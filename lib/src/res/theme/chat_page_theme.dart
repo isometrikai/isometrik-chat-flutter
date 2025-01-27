@@ -17,6 +17,7 @@ class IsmChatPageTheme {
     this.messageHoverTheme,
     this.messageConstraints,
     this.searchTextFiledTheme,
+    this.messgaeFocusedTheme,
   });
 
   final double? profileImageSize;
@@ -35,4 +36,5 @@ class IsmChatPageTheme {
   final IsmChatMessageStatusTheme? messageStatusTheme;
   final IsmChatMessageHoverTheme? messageHoverTheme;
   final IsmChatMessageConstraints? messageConstraints;
+  final IsmChatFocusedMessageTheme? messgaeFocusedTheme;
 }
