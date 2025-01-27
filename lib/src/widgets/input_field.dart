@@ -21,6 +21,7 @@ class IsmChatInputField extends StatelessWidget {
     this.readOnly = false,
     this.focusNode,
     this.contentPadding,
+    this.borderColor,
     this.isShowBorderColor = false,
     super.key,
   });
@@ -43,6 +44,7 @@ class IsmChatInputField extends StatelessWidget {
   final bool readOnly;
   final EdgeInsets? contentPadding;
   final bool isShowBorderColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -71,7 +73,8 @@ class IsmChatInputField extends StatelessWidget {
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
-                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
+                    ? borderColor ??
+                        IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
                             ?.borderColor ??
                         IsmChatConfig.chatTheme.primaryColor!
                     : IsmChatColors.transparent,
@@ -81,7 +84,8 @@ class IsmChatInputField extends StatelessWidget {
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
-                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
+                    ? borderColor ??
+                        IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
                             ?.borderColor ??
                         IsmChatConfig.chatTheme.primaryColor!
                     : IsmChatColors.transparent,
@@ -91,7 +95,8 @@ class IsmChatInputField extends StatelessWidget {
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
-                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
+                    ? borderColor ??
+                        IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
                             ?.borderColor ??
                         IsmChatConfig.chatTheme.primaryColor!
                     : IsmChatColors.transparent,
@@ -101,7 +106,8 @@ class IsmChatInputField extends StatelessWidget {
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
-                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
+                    ? borderColor ??
+                        IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
                             ?.borderColor ??
                         IsmChatConfig.chatTheme.primaryColor!
                     : IsmChatColors.transparent,
@@ -111,7 +117,8 @@ class IsmChatInputField extends StatelessWidget {
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
-                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
+                    ? borderColor ??
+                        IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
                             ?.borderColor ??
                         IsmChatConfig.chatTheme.primaryColor!
                     : IsmChatColors.transparent,
@@ -121,7 +128,8 @@ class IsmChatInputField extends StatelessWidget {
               borderRadius: BorderRadius.circular(IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
-                    ? IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
+                    ? borderColor ??
+                        IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme
                             ?.borderColor ??
                         IsmChatConfig.chatTheme.primaryColor!
                     : IsmChatColors.transparent,

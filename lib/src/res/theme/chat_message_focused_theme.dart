@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class IsmChatFocusedMessageTheme {
-  IsmChatFocusedMessageTheme(
+  IsmChatFocusedMessageTheme({
     this.fontSize,
     this.decoration,
     this.width,
     this.iconSize,
     this.hight,
-  );
+  });
 
   final double? fontSize;
 

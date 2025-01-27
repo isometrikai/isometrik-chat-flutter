@@ -115,9 +115,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                       fillColor: IsmChatColors.whiteColor,
                                       controller:
                                           controller.searchConversationTEC,
-                                      style: IsmChatStyles.w400Black16,
+                                      style: IsmChatStyles.w400Black18,
+                                      borderColor: IsmChatColors.greyColorLight,
                                       hint: IsmChatStrings.searchChat,
-                                      hintStyle: IsmChatStyles.w400Black16,
+                                      hintStyle: IsmChatStyles.w400Black18,
                                       onChanged: (value) async {
                                         controller.debounce.run(() async {
                                           switch (value.trim().isNotEmpty) {
