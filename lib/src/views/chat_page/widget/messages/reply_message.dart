@@ -17,7 +17,9 @@ class IsmChatReplyMessage extends StatelessWidget {
             IsmChatDimens.boxHeight5,
             ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: IsmChatDimens.twentyFour,
+                  minHeight: (IsmChatResponsive.isWeb(context))
+                      ? context.height * .04
+                      : context.height * .05,
                 ),
                 child: IsmChatMessageWrapperWithMetaData(message)),
           ],
@@ -45,22 +47,11 @@ class _ReplyMessage extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(IsmChatDimens.eight),
                 child: Container(
-                  constraints: IsmChatConfig.chatTheme.chatPageTheme
-                          ?.messageConstraints?.textConstraints ??
-                      BoxConstraints(
-                        maxWidth: (IsmChatResponsive.isWeb(context))
-                            ? context.width * .25
-                            : context.width * .7,
-                        minWidth: IsmChatResponsive.isWeb(context)
-                            ? context.width * .05
-                            : context.width * .2,
-                        minHeight: (IsmChatResponsive.isWeb(context))
-                            ? context.height * .04
-                            : context.height * .05,
-                        // maxHeight: (IsmChatResponsive.isWeb(context))
-                        //     ? context.height * .3
-                        //     : context.height * .7,
-                      ),
+                  constraints: BoxConstraints(
+                    minHeight: (IsmChatResponsive.isWeb(context))
+                        ? context.height * .04
+                        : context.height * .05,
+                  ),
                   decoration: BoxDecoration(
                     color: (message.sentByMe
                             ? IsmChatColors.whiteColor

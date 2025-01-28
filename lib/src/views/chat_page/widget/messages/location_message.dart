@@ -38,18 +38,14 @@ class IsmChatLocationMessage extends StatelessWidget {
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                constraints: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.messageConstraints?.locationConstraints ??
-                    BoxConstraints(
-                      maxWidth: (IsmChatResponsive.isWeb(context))
-                          ? context.width * .25
-                          : context.width * .6,
-                      maxHeight: (IsmChatResponsive.isWeb(context))
-                          ? context.height * .3
-                          : context.height * .2,
-                    ),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: (IsmChatResponsive.isWeb(context))
+                      ? context.height * .3
+                      : context.height * .2,
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(IsmChatDimens.ten),
                   child: IgnorePointer(
@@ -93,6 +89,7 @@ class IsmChatLocationMessage extends StatelessWidget {
                             ? message.metaData?.locationAddress ?? ''
                             : message.attachments?.first.title ?? '',
                         style: message.style,
+                        textAlign: TextAlign.start,
                       ),
                       Text(
                         message.body.isValidUrl
@@ -100,6 +97,7 @@ class IsmChatLocationMessage extends StatelessWidget {
                             : message.attachments?.first.address ?? '',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
+                        textAlign: TextAlign.start,
                         style: (message.sentByMe
                                 ? IsmChatStyles.w400White12
                                 : IsmChatStyles.w400Black12)

@@ -16,19 +16,11 @@ class IsmChatLinkMessage extends StatelessWidget {
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
         child: Container(
-          constraints: IsmChatConfig.chatTheme.chatPageTheme?.messageConstraints
-                  ?.textConstraints ??
-              BoxConstraints(
-                maxWidth: (IsmChatResponsive.isWeb(context))
-                    ? context.width * .25
-                    : context.width * .7,
-                minWidth: IsmChatResponsive.isWeb(context)
-                    ? context.width * .05
-                    : context.width * .2,
-                minHeight: (IsmChatResponsive.isWeb(context))
-                    ? context.height * .04
-                    : context.height * .05,
-              ),
+          constraints: BoxConstraints(
+            minHeight: (IsmChatResponsive.isWeb(context))
+                ? context.height * .04
+                : context.height * .05,
+          ),
           child: _LinkPreview(
             message: message,
             link: message.body,

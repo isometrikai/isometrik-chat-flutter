@@ -23,17 +23,12 @@ class IsmChatImageMessage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
+                    constraints: BoxConstraints(
+                      maxHeight: (IsmChatResponsive.isWeb(context))
+                          ? context.height * .35
+                          : context.height * .7,
+                    ),
                     margin: IsmChatDimens.edgeInsetsBottom4,
-                    constraints: IsmChatConfig.chatTheme.chatPageTheme
-                            ?.messageConstraints?.imageConstraints ??
-                        BoxConstraints(
-                          maxWidth: (IsmChatResponsive.isWeb(context))
-                              ? context.width * .25
-                              : context.width * .7,
-                          maxHeight: (IsmChatResponsive.isWeb(context))
-                              ? context.height * .35
-                              : context.height * .7,
-                        ),
                     child: IsmChatImage(
                       message.attachments?.first.mediaUrl ?? '',
                       isNetworkImage:

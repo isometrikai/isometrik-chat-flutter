@@ -53,17 +53,16 @@ class MessageBubble extends StatelessWidget {
                       maxWidth: context.width * .8,
                       minWidth: context.width * .1,
                     )
-                  : null,
-
-              //  IsmChatConfig.chatTheme.chatPageTheme?.constraints ??
-              //     BoxConstraints(
-              //       maxWidth: (IsmChatResponsive.isWeb(context))
-              //           ? context.width * .3
-              //           : context.width * .7,
-              //       minWidth: IsmChatResponsive.isWeb(context)
-              //           ? IsmChatDimens.hundred
-              //           : context.width * .25,
-              //     ),
+                  :
+                  // IsmChatConfig.chatTheme.chatPageTheme?.constraints ??
+                  BoxConstraints(
+                      maxWidth: (IsmChatResponsive.isWeb(context))
+                          ? context.width * .25
+                          : context.width * .7,
+                      minWidth: IsmChatResponsive.isWeb(context)
+                          ? context.width * .05
+                          : context.width * .25,
+                    ),
               decoration: showMessageInCenter
                   ? null
                   : BoxDecoration(

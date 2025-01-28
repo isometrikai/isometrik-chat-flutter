@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatContactMessage extends StatelessWidget {
@@ -17,16 +16,6 @@ class IsmChatContactMessage extends StatelessWidget {
           width: message.contacts.length == 1
               ? IsmChatDimens.oneHundredSeventy
               : null,
-          constraints: IsmChatConfig.chatTheme.chatPageTheme?.messageConstraints
-                  ?.contactConstraints ??
-              BoxConstraints(
-                maxWidth: (IsmChatResponsive.isWeb(context))
-                    ? context.width * .25
-                    : context.width * .7,
-                maxHeight: (IsmChatResponsive.isWeb(context))
-                    ? context.height * .35
-                    : context.height * .5,
-              ),
           decoration: BoxDecoration(
             color: IsmChatConfig.chatTheme.backgroundColor,
             borderRadius: BorderRadius.circular(IsmChatDimens.eight),
