@@ -22,6 +22,7 @@ class IsmChatVideoMessage extends StatelessWidget {
                 children: [
                   Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         margin: IsmChatDimens.edgeInsetsBottom4,
@@ -46,14 +47,14 @@ class IsmChatVideoMessage extends StatelessWidget {
                         ),
                       ),
                       if (message.metaData?.caption?.isNotEmpty == true) ...[
-                        Container(
+                        Padding(
                           padding: IsmChatDimens.edgeInsetsTop5,
-                          width: IsmChatDimens.percentWidth(.6),
                           child: Text(
                             message.metaData?.caption ?? '',
                             style: message.style.copyWith(
                               fontSize: IsmChatDimens.tharteen,
                             ),
+                            textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 3,
                           ),

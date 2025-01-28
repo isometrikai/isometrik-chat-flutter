@@ -73,37 +73,33 @@ class IsmChatMessageInfo extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: IsmChatConfig.chatTheme.chatPageTheme
                                 ?.centerMessageTheme?.backgroundColor ??
-                            IsmChatConfig.chatTheme.primaryColor,
+                            IsmChatConfig.chatTheme.backgroundColor,
                         borderRadius:
                             BorderRadius.circular(IsmChatDimens.eight),
                       ),
                       padding: IsmChatDimens.edgeInsets8_4,
                       child: Text(
                         _message?.sentAt.toMessageDateString() ?? '',
-                        style: IsmChatStyles.w500Black12.copyWith(
-                          color: IsmChatConfig.chatTheme.chatPageTheme
-                              ?.centerMessageTheme?.textColor,
-                        ),
+                        style: IsmChatConfig.chatTheme.chatPageTheme
+                                ?.centerMessageTheme?.textStyle ??
+                            IsmChatStyles.w500Black12.copyWith(
+                              color: IsmChatConfig.chatTheme.primaryColor,
+                            ),
                       ),
                     ),
                   ),
                   IsmChatDimens.boxHeight16,
-                  UnconstrainedBox(
-                    alignment: _message?.sentByMe ?? false
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: _message?.sentByMe ?? false
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
-                      children: [
-                        MessageBubble(
-                          message: _message,
-                          showMessageInCenter: false,
-                        )
-                      ],
-                    ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: _message?.sentByMe ?? false
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      MessageBubble(
+                        message: _message,
+                        showMessageInCenter: false,
+                      )
+                    ],
                   ),
                   IsmChatDimens.boxHeight16,
                   _isGroup ?? false

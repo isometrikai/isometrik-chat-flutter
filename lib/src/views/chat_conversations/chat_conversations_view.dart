@@ -99,8 +99,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
-                          Obx(() => controller.userConversations.isNotEmpty &&
-                                  IsmChatResponsive.isWeb(context) &&
+                          Obx(() => IsmChatResponsive.isWeb(context) &&
                                   IsmChatProperties.conversationProperties
                                       .shouldConversationSearchShow
                               ? Column(
@@ -115,10 +114,16 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                       fillColor: IsmChatColors.whiteColor,
                                       controller:
                                           controller.searchConversationTEC,
-                                      style: IsmChatStyles.w400Black18,
-                                      borderColor: IsmChatColors.greyColorLight,
+                                      style: IsmChatStyles.w400Black18.copyWith(
+                                          fontSize: IsmChatDimens.twenty),
+                                      borderColor:
+                                          IsmChatConfig.chatTheme.borderColor ??
+                                              IsmChatColors.greyColor
+                                                  .applyIsmOpacity(.5),
                                       hint: IsmChatStrings.searchChat,
-                                      hintStyle: IsmChatStyles.w400Black18,
+                                      hintStyle: IsmChatStyles.w400Black18
+                                          .copyWith(
+                                              fontSize: IsmChatDimens.twenty),
                                       onChanged: (value) async {
                                         controller.debounce.run(() async {
                                           switch (value.trim().isNotEmpty) {
@@ -223,7 +228,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                     IsmChatDimens.percentWidth(.3),
                                 child: controller.isRenderChatScreenWidget(),
                               )
-                            : const SizedBox.shrink(),
+                            : IsmChatDimens.box0,
                       )
                     ]
                   ]

@@ -19,7 +19,7 @@ class IsmChatTextMessage extends StatelessWidget {
                     ?.messageConstraints?.textConstraints ??
                 BoxConstraints(
                   maxWidth: (IsmChatResponsive.isWeb(context))
-                      ? context.width * .3
+                      ? context.width * .25
                       : context.width * .7,
                   minWidth: IsmChatResponsive.isWeb(context)
                       ? context.width * .05

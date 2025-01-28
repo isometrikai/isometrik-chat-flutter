@@ -96,6 +96,11 @@ class _MessageCardState extends State<MessageCard>
               child: InkWell(
                 splashColor: IsmChatColors.transparent,
                 onHover: (value) {
+                  if (controller
+                          .conversationController.isRenderChatPageaScreen !=
+                      IsRenderChatPageScreen.none) {
+                    return;
+                  }
                   if (value) {
                     controller.onMessageHoverIndex = widget.index;
                   } else {
