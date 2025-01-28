@@ -51,9 +51,7 @@ class IsmChatVideoMessage extends StatelessWidget {
                           padding: IsmChatDimens.edgeInsetsTop5,
                           child: Text(
                             message.metaData?.caption ?? '',
-                            style: message.style.copyWith(
-                              fontSize: IsmChatDimens.tharteen,
-                            ),
+                            style: message.style,
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 3,
