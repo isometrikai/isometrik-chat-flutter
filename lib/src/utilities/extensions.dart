@@ -754,7 +754,7 @@ extension LastMessageBody on LastMessageDetails {
     if (iconData != null) {
       return Icon(
         iconData,
-        size: IsmChatDimens.fifteen,
+        size: IsmChatConfig.chatTheme.chatListCardThemData?.iconSize,
         color: IsmChatConfig.chatTheme.chatListCardThemData?.subTitleColor ??
             IsmChatColors.blackColor,
       );
