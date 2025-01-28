@@ -89,11 +89,13 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         ),
         enableLogging: true,
         secure: false,
+        autoReconnect: false,
         webSocketConfig: WebSocketConfig(
           useWebsocket: mqttConfig?.useWebSocket ?? false,
           websocketProtocols: mqttConfig?.websocketProtocols ?? [],
         ),
       ),
+
       callbacks: MqttCallbacks(
         onConnected: _onConnected,
         onDisconnected: _onDisconnected,
@@ -103,6 +105,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         pongCallback: _pong,
       ),
       autoSubscribe: true,
+
       topics: subscribedTopics,
       subscribedTopicsCallback: (topics) {
         subscribedTopics = topics;

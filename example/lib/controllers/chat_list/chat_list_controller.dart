@@ -53,7 +53,7 @@ class ChatListController extends GetxController {
           deviceId: deviceConfig.deviceId ?? '',
         ),
       ),
-      shouldSetupMqtt: true,
+      shouldSetupMqtt: false,
       showNotification: (title, body, conversataionId) {
         LocalNoticeService().showFlutterNotification(
           title,

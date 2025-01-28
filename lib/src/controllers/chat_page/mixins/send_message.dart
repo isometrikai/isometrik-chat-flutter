@@ -576,7 +576,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             name: nameWithExtension,
             mimeType: extension,
             mediaUrl: webMediaModel != null
-                ? webMediaModel.platformFile.path
+                ? webMediaModel.platformFile.bytes.toString()
                 : videoCopress?.file?.path,
             mediaId: mediaId,
             extension: extension,
@@ -700,11 +700,12 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           attachmentType: IsmChatMediaType.image,
           thumbnailUrl:
               kIsWeb ? webMediaModel?.platformFile.path : compressedFile?.path,
-          size: kIsWeb ? webMediaModel?.platformFile.size : bytes!.length,
+          size: kIsWeb ? webMediaModel?.platformFile.size : bytes?.length,
           name: nameWithExtension,
           mimeType: extension,
-          mediaUrl:
-              kIsWeb ? webMediaModel?.platformFile.path : compressedFile?.path,
+          mediaUrl: kIsWeb
+              ? webMediaModel?.platformFile.bytes.toString()
+              : compressedFile?.path,
           mediaId: mediaId,
           extension: extension,
         )

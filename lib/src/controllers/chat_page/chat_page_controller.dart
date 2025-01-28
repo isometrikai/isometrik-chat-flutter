@@ -942,49 +942,47 @@ class IsmChatPageController extends GetxController
     if (result.isEmpty) {
       return;
     }
-    if (result.isNotEmpty) {
-      IsmChatUtility.showLoader();
-      for (var x in result) {
-        var bytes = await x?.readAsBytes();
-        // var bytes = await IsmChatUtility.fetchBytesFromBlobUrl(x?.path ?? '')
-        // as Uint8List;
-        var extension = x?.mimeType?.split('/').last;
-        var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
-        var platformFile = IsmchPlatformFile(
-          name: x?.name ?? '',
-          size: bytes?.length,
-          bytes: bytes,
-          path: x?.path,
-          extension: extension,
-        );
-        if (IsmChatConstants.videoExtensions.contains(extension)) {
-          var thumbnailBytes =
-              await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
-          if (thumbnailBytes != null) {
-            webMedia.add(
-              WebMediaModel(
-                isVideo: IsmChatConstants.videoExtensions.contains(extension),
-                platformFile: platformFile,
-                thumbnailBytes: thumbnailBytes,
-                dataSize: dataSize,
-              ),
-            );
-          }
-        } else {
+
+    IsmChatUtility.showLoader();
+    for (var x in result) {
+      var bytes = await x?.readAsBytes();
+
+      var extension = x?.mimeType?.split('/').last;
+      var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+      var platformFile = IsmchPlatformFile(
+        name: x?.name ?? '',
+        size: bytes?.length,
+        bytes: bytes,
+        path: x?.path,
+        extension: extension,
+      );
+      if (IsmChatConstants.videoExtensions.contains(extension)) {
+        var thumbnailBytes =
+            await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
+        if (thumbnailBytes != null) {
           webMedia.add(
             WebMediaModel(
               isVideo: IsmChatConstants.videoExtensions.contains(extension),
               platformFile: platformFile,
-              thumbnailBytes: Uint8List(0),
+              thumbnailBytes: thumbnailBytes,
               dataSize: dataSize,
             ),
           );
         }
+      } else {
+        webMedia.add(
+          WebMediaModel(
+            isVideo: IsmChatConstants.videoExtensions.contains(extension),
+            platformFile: platformFile,
+            thumbnailBytes: Uint8List(0),
+            dataSize: dataSize,
+          ),
+        );
       }
-      IsmChatUtility.closeLoader();
-      if (IsmChatResponsive.isMobile(Get.context!)) {
-        IsmChatRouteManagement.goToWebMediaPreview();
-      }
+    }
+    IsmChatUtility.closeLoader();
+    if (IsmChatResponsive.isMobile(Get.context!)) {
+      IsmChatRouteManagement.goToWebMediaPreview();
     }
   }
 
@@ -1263,7 +1261,7 @@ class IsmChatPageController extends GetxController
       await fabAnimationController?.reverse();
       if (fabAnimationController?.isDismissed == true &&
           attchmentOverlayEntry != null) {
-        attchmentOverlayEntry?.remove();
+        // attchmentOverlayEntry?.remove();
         attchmentOverlayEntry = null;
         showAttachment = !showAttachment;
       }

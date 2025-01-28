@@ -364,20 +364,23 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                               Radius.circular(IsmChatDimens.ten),
                             ),
                             child: isVideo
-                                ? media?.first.thumbnailUrl?.isValidUrl == true
-                                    ? Image.network(
-                                        media?.first.thumbnailUrl ?? '',
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.memory(
-                                        media?.first.thumbnailUrl!
-                                                .strigToUnit8List ??
-                                            Uint8List(0),
-                                        fit: BoxFit.cover,
-                                      )
-                                : Image.network(
+                                ? IsmChatImage(
+                                    media?.first.thumbnailUrl ?? '',
+                                    isNetworkImage:
+                                        media?.first.thumbnailUrl?.isValidUrl ??
+                                            false,
+                                    isBytes: !(media
+                                            ?.first.thumbnailUrl?.isValidUrl ??
+                                        false),
+                                  )
+                                : IsmChatImage(
                                     media?.first.mediaUrl ?? '',
-                                    fit: BoxFit.cover,
+                                    isNetworkImage:
+                                        media?.first.mediaUrl?.isValidUrl ??
+                                            false,
+                                    isBytes:
+                                        !(media?.first.mediaUrl?.isValidUrl ??
+                                            false),
                                   ),
                           ),
                         ),
