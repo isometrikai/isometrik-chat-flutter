@@ -1043,7 +1043,7 @@ mixin IsmChatMqttEventMixin {
 
   void _handleDeletChatFromLocal(IsmChatMqttActionModel actionModel) async {
     if (IsmChatProperties.chatPageProperties.isAllowedDeleteChatFromLocal) {
-      final deleteChat = await deleteChatFormDB('',
+      final deleteChat = await _controller.deleteChatFormDB('',
           conversationId: actionModel.conversationId ?? '');
 
       if (deleteChat && Get.isRegistered<IsmChatConversationsController>()) {
@@ -1075,67 +1075,4 @@ mixin IsmChatMqttEventMixin {
       await Get.find<IsmChatConversationsController>().getChatConversations();
     }
   }
-
-  Future<String> getChatConversationsCount({
-    bool isLoading = false,
-  }) async =>
-      await _controller.viewModel.getChatConversationsCount(
-        isLoading: isLoading,
-      );
-
-  Future<String> getChatConversationsMessageCount({
-    bool isLoading = false,
-    required String converationId,
-    required List<String> senderIds,
-    bool senderIdsExclusive = false,
-    int lastMessageTimestamp = 0,
-  }) async =>
-      await _controller.viewModel.getChatConversationsMessageCount(
-        conversationId: converationId,
-        senderIds: senderIds,
-        isLoading: isLoading,
-        lastMessageTimestamp: lastMessageTimestamp,
-        senderIdsExclusive: senderIdsExclusive,
-      );
-
-  Future<bool> deleteChatFormDB(
-    String isometrickChatId, {
-    String conversationId = '',
-  }) async {
-    if (conversationId.isEmpty) {
-      final conversations = await getAllConversationFromDB();
-      if (conversations != null || conversations?.isNotEmpty == true) {
-        var conversation = conversations?.firstWhere(
-            (element) => element.opponentDetails?.userId == isometrickChatId,
-            orElse: IsmChatConversationModel.new);
-
-        if (conversation?.conversationId != null) {
-          await IsmChatConfig.dbWrapper
-              ?.removeConversation(conversation?.conversationId ?? '');
-          return true;
-        }
-      }
-    } else {
-      await IsmChatConfig.dbWrapper?.removeConversation(conversationId);
-      return true;
-    }
-    return false;
-  }
-
-  Future<List<IsmChatConversationModel>?> getAllConversationFromDB() async =>
-      await IsmChatConfig.dbWrapper?.getAllConversations();
-
-  Future<List<IsmChatConversationModel>> getChatConversationApi({
-    int skip = 0,
-    int limit = 20,
-    String? searchTag,
-    bool includeConversationStatusMessagesInUnreadMessagesCount = false,
-  }) async =>
-      await _controller.viewModel.getChatConversationApi(
-        skip: skip,
-        limit: limit,
-        searchTag: searchTag ?? '',
-        includeConversationStatusMessagesInUnreadMessagesCount:
-            includeConversationStatusMessagesInUnreadMessagesCount,
-      );
 }

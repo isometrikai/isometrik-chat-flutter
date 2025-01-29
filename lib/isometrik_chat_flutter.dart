@@ -59,7 +59,7 @@ class IsmChat {
   }
 
   /// Gets the unread conversation messages.
-  String get unReadConversationMessages => _delegate.unReadConversationMessages;
+  String get unReadConversationCount => _delegate.unReadConversationCount;
 
   Future<String?> getPlatformVersion() =>
       IsometrikChatFlutterPlatform.instance.getPlatformVersion();

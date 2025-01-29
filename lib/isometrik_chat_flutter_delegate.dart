@@ -11,10 +11,10 @@ class IsmChatDelegate {
 
   IsmChatConfig? get ismChatConfig => _ismChatConfig;
 
-  static final RxString _unReadConversationMessages = ''.obs;
-  String get unReadConversationMessages => _unReadConversationMessages.value;
-  set unReadConversationMessages(String value) =>
-      _unReadConversationMessages.value = value;
+  static final RxString _unReadConversationCount = ''.obs;
+  String get unReadConversationCount => _unReadConversationCount.value;
+  set unReadConversationCount(String value) =>
+      _unReadConversationCount.value = value;
 
   static final Rx<String?> _tag = Rx<String?>(null);
   String? get tag => _tag.value;
