@@ -333,10 +333,9 @@ class _ReplyMessage extends StatelessWidget {
                         ? IsmChatStrings.you
                         : IsmChatProperties.chatPageProperties.header?.title
                                 ?.call(context, controller.conversation!,
-                                    controller.conversation!.chatName) ??
+                                    controller.conversation?.chatName ?? '') ??
                             controller.conversation?.chatName.capitalizeFirst ??
                             '',
-                    style: IsmChatStyles.w600White14,
                   ),
                   Text(
                     messageBody,

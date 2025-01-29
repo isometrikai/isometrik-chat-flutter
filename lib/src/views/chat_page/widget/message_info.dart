@@ -158,7 +158,11 @@ class IsmChatMessageInfo extends StatelessWidget {
                                           IsmChatDimens.boxWidth8,
                                           Text(
                                             'Delivered',
-                                            style: IsmChatStyles.w400Black12,
+                                            style: IsmChatStyles.w400Black12
+                                                .copyWith(
+                                              fontSize:
+                                                  _message?.style.fontSize,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -170,11 +174,16 @@ class IsmChatMessageInfo extends StatelessWidget {
                                             )
                                           : Text(
                                               chatController
-                                                  .deliverdMessageMembers
-                                                  .first
-                                                  .timestamp!
-                                                  .deliverTime,
-                                              style: IsmChatStyles.w400Black12,
+                                                      .deliverdMessageMembers
+                                                      .first
+                                                      .timestamp
+                                                      ?.deliverTime ??
+                                                  '',
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize:
+                                                    _message?.style.fontSize,
+                                              ),
                                             )
                                     ],
                                   ),
@@ -200,7 +209,11 @@ class IsmChatMessageInfo extends StatelessWidget {
                                           ),
                                           IsmChatDimens.boxWidth14,
                                           Text('Read',
-                                              style: IsmChatStyles.w400Black12)
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize:
+                                                    _message?.style.fontSize,
+                                              ))
                                         ],
                                       ),
                                       chatController.readMessageMembers.isEmpty
@@ -209,9 +222,17 @@ class IsmChatMessageInfo extends StatelessWidget {
                                               size: IsmChatDimens.twenty,
                                             )
                                           : Text(
-                                              chatController.readMessageMembers
-                                                  .first.timestamp!.deliverTime,
-                                              style: IsmChatStyles.w400Black12,
+                                              chatController
+                                                      .readMessageMembers
+                                                      .first
+                                                      .timestamp
+                                                      ?.deliverTime ??
+                                                  '',
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize:
+                                                    _message?.style.fontSize,
+                                              ),
                                             ),
                                     ],
                                   ),
