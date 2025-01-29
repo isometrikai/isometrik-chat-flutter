@@ -943,4 +943,9 @@ class IsmChat {
         includeConversationStatusMessagesInUnreadMessagesCount:
             includeConversationStatusMessagesInUnreadMessagesCount,
       );
+
+  Future<void> getChatConversationsUnreadCount({
+    bool isLoading = false,
+  }) async =>
+      await _delegate.getChatConversationsUnreadCount(isLoading: isLoading);
 }

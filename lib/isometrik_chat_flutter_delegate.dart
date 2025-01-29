@@ -213,6 +213,15 @@ class IsmChatDelegate {
     return int.tryParse(count) ?? 0;
   }
 
+  Future<void> getChatConversationsUnreadCount({
+    bool isLoading = false,
+  }) async {
+    if (!Get.isRegistered<IsmChatMqttController>()) return;
+    await Get.find<IsmChatMqttController>().getChatConversationsUnreadCount(
+      isLoading: isLoading,
+    );
+  }
+
   Future<int> getChatConversationsMessageCount({
     required isLoading,
     required String converationId,
