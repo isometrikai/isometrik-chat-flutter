@@ -1261,9 +1261,11 @@ class IsmChatPageController extends GetxController
       await fabAnimationController?.reverse();
       if (fabAnimationController?.isDismissed == true &&
           attchmentOverlayEntry != null) {
-        // attchmentOverlayEntry?.remove();
-        attchmentOverlayEntry = null;
-        showAttachment = !showAttachment;
+        try {
+          attchmentOverlayEntry?.remove();
+          attchmentOverlayEntry = null;
+          showAttachment = !showAttachment;
+        } catch (_) {}
       }
     }
   }
@@ -1886,15 +1888,20 @@ class IsmChatPageController extends GetxController
     IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
     await Future.wait([
       conversationController.getBlockUser(),
-      if (fromUser == false) ...[getConverstaionDetails(), getMessagesFromAPI()]
+      if (fromUser == false) ...[
+        getConverstaionDetails(),
+        getMessagesFromAPI(),
+        conversationController.getChatConversations()
+      ]
     ]);
   }
 
-  Future<void> unblockUser(
-      {required String opponentId,
-      bool isLoading = false,
-      bool fromUser = false,
-      required bool userBlockOrNot}) async {
+  Future<void> unblockUser({
+    required String opponentId,
+    bool isLoading = false,
+    bool fromUser = false,
+    required bool userBlockOrNot,
+  }) async {
     bool isUnblockUser;
     if (IsmChatProperties.chatPageProperties.onCallBlockUnblock != null) {
       isUnblockUser =
@@ -1915,10 +1922,13 @@ class IsmChatPageController extends GetxController
       return;
     }
     chatInputController.clear();
-    await Future.wait([
-      getConverstaionDetails(),
-      getMessagesFromAPI(),
-    ]);
+    if (fromUser == false) {
+      await Future.wait([
+        getConverstaionDetails(),
+        getMessagesFromAPI(),
+        conversationController.getChatConversations()
+      ]);
+    }
   }
 
   Future<void> readSingleMessage({
