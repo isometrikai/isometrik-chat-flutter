@@ -80,7 +80,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         ),
         enableLogging: true,
         secure: false,
-        autoReconnect: false,
+        autoReconnect: true,
         webSocketConfig: WebSocketConfig(
           useWebsocket: mqttConfig?.useWebSocket ?? false,
           websocketProtocols: mqttConfig?.websocketProtocols ?? [],
