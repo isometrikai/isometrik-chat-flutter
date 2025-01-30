@@ -706,6 +706,7 @@ class IsmChat {
     required String name,
     required userIdentifier,
     required String userId,
+    required bool online,
     IsmChatMetaData? metaData,
     void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
     Duration duration = const Duration(milliseconds: 500),
@@ -723,6 +724,7 @@ class IsmChat {
     await _delegate.chatFromOutside(
       name: name,
       userIdentifier: userIdentifier,
+      online: online,
       userId: userId,
       duration: duration,
       isCreateGroupFromOutSide: isCreateGroupFromOutSide,

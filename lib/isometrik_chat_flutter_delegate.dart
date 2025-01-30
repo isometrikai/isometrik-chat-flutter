@@ -396,6 +396,7 @@ class IsmChatDelegate {
     required String name,
     required userIdentifier,
     required String userId,
+    required bool online,
     IsmChatMetaData? metaData,
     void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
     Duration duration = const Duration(milliseconds: 500),
@@ -412,14 +413,15 @@ class IsmChatDelegate {
 
     IsmChatUtility.showLoader();
 
-    await Future.delayed(duration);
-
-    IsmChatUtility.closeLoader();
-
     if (!Get.isRegistered<IsmChatConversationsController>()) {
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
+
+    await Future.delayed(duration);
+
+    IsmChatUtility.closeLoader();
+
     var controller = Get.find<IsmChatConversationsController>();
     var conversationId = controller.getConversationId(userId);
     IsmChatConversationModel? conversation;
@@ -429,7 +431,7 @@ class IsmChatDelegate {
         userName: name,
         userIdentifier: userIdentifier,
         userId: userId,
-        online: false,
+        online: online,
         lastSeen: 0,
         metaData: IsmChatMetaData(
           profilePic: profileImageUrl,
