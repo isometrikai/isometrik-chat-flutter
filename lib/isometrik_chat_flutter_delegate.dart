@@ -426,6 +426,7 @@ class IsmChatDelegate {
     var conversationId = controller.getConversationId(userId);
     IsmChatConversationModel? conversation;
     if (conversationId.isEmpty) {
+      final nameData = name.split(' ');
       var userDetails = UserDetails(
         userProfileImageUrl: profileImageUrl,
         userName: name,
@@ -435,8 +436,8 @@ class IsmChatDelegate {
         lastSeen: 0,
         metaData: IsmChatMetaData(
           profilePic: profileImageUrl,
-          firstName: name.split(' ').first,
-          lastName: name.split(' ').last,
+          firstName: nameData.first,
+          lastName: nameData.length > 1 ? nameData.last : '',
         ),
       );
       conversation = IsmChatConversationModel(
