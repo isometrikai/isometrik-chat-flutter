@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:isometrik_chat_flutter/src/res/res.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatListCardTheme {
   const IsmChatListCardTheme({
@@ -10,6 +10,7 @@ class IsmChatListCardTheme {
     this.titleTextStyle,
     this.messageCountTheme,
     this.iconSize,
+    this.backgroundColor,
   });
 
   IsmChatListCardTheme.light()
@@ -19,6 +20,8 @@ class IsmChatListCardTheme {
         subTitleTextStyle = IsmChatStyles.w400Black10,
         titleTextStyle = IsmChatStyles.w600Black12,
         iconSize = 16,
+        backgroundColor =
+            IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2),
         messageCountTheme = const MessageCountTheme();
 
   IsmChatListCardTheme.dark()
@@ -28,6 +31,8 @@ class IsmChatListCardTheme {
         subTitleTextStyle = IsmChatStyles.w400Black10,
         titleTextStyle = IsmChatStyles.w600Black12,
         iconSize = 16,
+        backgroundColor =
+            IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2),
         messageCountTheme = const MessageCountTheme();
 
   final Color? trailingBackgroundColor;
@@ -37,4 +42,5 @@ class IsmChatListCardTheme {
   final Color? subTitleColor;
   final MessageCountTheme? messageCountTheme;
   final double? iconSize;
+  final Color? backgroundColor;
 }
