@@ -107,6 +107,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                               isShowBorderColor: true,
                               contentPadding: IsmChatDimens.edgeInsets20,
                               autofocus: false,
+                              cursorColor: IsmChatColors.blackColor,
                               fillColor: IsmChatColors.whiteColor,
                               controller: controller.searchConversationTEC,
                               style: IsmChatStyles.w400Black18

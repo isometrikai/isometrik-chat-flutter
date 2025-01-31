@@ -105,11 +105,15 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 initiated
                     ? IsmChatStrings.you
                     : widget._mediaUserName.toString(),
-                style: IsmChatStyles.w400Black16,
+                style:
+                    IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
+                        IsmChatStyles.w400Black16,
               ),
               Text(
                 mediaTime,
-                style: IsmChatStyles.w400Black14,
+                style:
+                    IsmChatConfig.chatTheme.chatPageHeaderTheme?.subtileStyle ??
+                        IsmChatStyles.w400Black14,
               )
             ],
           ),

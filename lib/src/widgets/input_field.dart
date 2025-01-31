@@ -29,7 +29,7 @@ class IsmChatInputField extends StatelessWidget {
   final TextEditingController? controller;
   final Widget? suffixIcon;
   final String? hint;
-  final EdgeInsets? padding;
+  final EdgeInsetsGeometry? padding;
   final Function(String)? onChanged;
   final Color? fillColor;
   final Color? cursorColor;
