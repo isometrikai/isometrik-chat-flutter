@@ -26,18 +26,18 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   Future<void> setup({
     IsmChatCommunicationConfig? config,
-    List<String>? topics,
-    List<String>? topicChannels,
-    required bool shouldSetupMqtt,
+    required IsmMqttProperties mqttProperties,
   }) async {
     _config = config ?? IsmChat.i.config;
     projectConfig = _config?.projectConfig;
     mqttConfig = _config?.mqttConfig;
     userConfig = _config?.userConfig;
-    if (!shouldSetupMqtt) {
+    if (mqttProperties.shouldSetupMqtt) {
       await setupIsmMqttConnection(
-        topics: topics,
-        topicChannels: topicChannels,
+        topics: mqttProperties.topics,
+        topicChannels: mqttProperties.topicChannels,
+        autoReconnect: mqttProperties.autoReconnect,
+        enableLogging: mqttProperties.enableLogging,
       );
     }
 
@@ -47,6 +47,8 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   Future<void> setupIsmMqttConnection({
     List<String>? topics,
     List<String>? topicChannels,
+    bool autoReconnect = true,
+    bool enableLogging = true,
   }) async {
     final topicPrefix =
         '/${projectConfig?.accountId ?? ''}/${projectConfig?.projectId ?? ''}';
@@ -78,9 +80,9 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
           hostName: mqttConfig?.hostName ?? '',
           port: mqttConfig?.port ?? 0,
         ),
-        enableLogging: true,
+        enableLogging: enableLogging,
         secure: false,
-        autoReconnect: true,
+        autoReconnect: autoReconnect,
         webSocketConfig: WebSocketConfig(
           useWebsocket: mqttConfig?.useWebSocket ?? false,
           websocketProtocols: mqttConfig?.websocketProtocols ?? [],

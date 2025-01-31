@@ -26,9 +26,6 @@ class IsmChatDelegate {
     NotificaitonCallback? showNotification,
     BuildContext? context,
     String databaseName = IsmChatStrings.dbname,
-    bool shouldSetupMqtt = false,
-    List<String>? topics,
-    List<String>? topicChannels,
     bool shouldPendingMessageSend = true,
     SendMessageCallback? sendPaidWalletMessage,
     IsmPaidWalletConfig? paidWalletConfig,
@@ -36,6 +33,7 @@ class IsmChatDelegate {
     SortingConversationCallback? sortConversationWithIdentifier,
     ConnectionStateCallback? mqttConnectionStatus,
     ResponseCallback? chatInvalidate,
+    IsmMqttProperties? mqttProperties,
     bool? isMonthFirst,
   }) async {
     _config = config;
@@ -43,7 +41,6 @@ class IsmChatDelegate {
     IsmChatConfig.dbName = databaseName;
     IsmChatConfig.useDatabase = !kIsWeb && useDatabase;
     IsmChatConfig.communicationConfig = config;
-    IsmChatConfig.shouldSetupMqtt = shouldSetupMqtt;
     IsmChatConfig.showNotification = showNotification;
     IsmChatConfig.mqttConnectionStatus = mqttConnectionStatus;
     IsmChatConfig.sortConversationWithIdentifier =
@@ -58,26 +55,21 @@ class IsmChatDelegate {
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
     await _initializeMqtt(
       config: _config,
-      shouldSetupMqtt: shouldSetupMqtt,
-      topics: topics,
-      topicChannels: topicChannels,
+      mqttProperties: mqttProperties ?? IsmMqttProperties(),
     );
   }
 
   Future<void> _initializeMqtt({
     IsmChatCommunicationConfig? config,
-    required bool shouldSetupMqtt,
-    List<String>? topics,
-    List<String>? topicChannels,
+    required IsmMqttProperties mqttProperties,
   }) async {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatMqttBinding().dependencies();
     }
+    IsmChatConfig.shouldSetupMqtt = mqttProperties.shouldSetupMqtt;
     await Get.find<IsmChatMqttController>().setup(
-      shouldSetupMqtt: shouldSetupMqtt,
       config: config,
-      topics: topics,
-      topicChannels: topicChannels,
+      mqttProperties: mqttProperties,
     );
   }
 

@@ -71,16 +71,13 @@ class IsmChat {
   /// [databaseName] is the name of the database. Defaults to `IsmChatStrings.dbname`.
   /// [showNotification] is the callback for showing notifications.
   /// [context] is the build context.
-  /// [shouldSetupMqtt] is whether to set up MQTT. Defaults to `false`.
+  /// [mqttProperties] is whether to set up MQTT. Defaults to `true`.
   Future<void> initialize(
     IsmChatCommunicationConfig communicationConfig, {
     bool useDatabase = true,
     String databaseName = IsmChatStrings.dbname,
     NotificaitonCallback? showNotification,
     BuildContext? context,
-    bool shouldSetupMqtt = false,
-    List<String>? topics,
-    List<String>? topicChannels,
     bool shouldPendingMessageSend = true,
     SendMessageCallback? sendPaidWalletMessage,
     IsmPaidWalletConfig? paidWalletConfig,
@@ -88,6 +85,7 @@ class IsmChat {
     SortingConversationCallback? sortingConversationWithIdentifier,
     ConnectionStateCallback? mqttConnectionStatus,
     ResponseCallback? chatInvalidate,
+    IsmMqttProperties? mqttProperties,
     bool? isMonthFirst,
   }) async {
     if (sendPaidWalletMessage != null) {
@@ -105,9 +103,6 @@ class IsmChat {
       showNotification: showNotification,
       context: context,
       databaseName: databaseName,
-      shouldSetupMqtt: shouldSetupMqtt,
-      topics: topics,
-      topicChannels: topicChannels,
       shouldPendingMessageSend: shouldPendingMessageSend,
       sendPaidWalletMessage: sendPaidWalletMessage,
       paidWalletConfig: paidWalletConfig,
@@ -115,6 +110,7 @@ class IsmChat {
       sortConversationWithIdentifier: sortingConversationWithIdentifier,
       mqttConnectionStatus: mqttConnectionStatus,
       chatInvalidate: chatInvalidate,
+      mqttProperties: mqttProperties,
       isMonthFirst: isMonthFirst,
     );
     _initialized = true;
