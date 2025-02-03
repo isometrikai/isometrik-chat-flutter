@@ -19,14 +19,22 @@ class IsmChatCameraView extends StatefulWidget {
 }
 
 class _CameraScreenViewState extends State<IsmChatCameraView> {
+  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+
   @override
   void dispose() {
     if (IsmChatResponsive.isWeb(Get.context!)) {
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-          .cameraController
-          .dispose();
+      controller.cameraController.dispose();
     }
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    if (!controller.isFrontCameraSelected) {
+      controller.toggleCamera();
+    }
+    super.initState();
   }
 
   @override
@@ -88,6 +96,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                         onPressed: () {
                           if (IsmChatResponsive.isWeb(context)) {
                             controller.isCameraView = false;
+                            controller.cameraController.dispose();
                           } else {
                             Get.back();
                           }

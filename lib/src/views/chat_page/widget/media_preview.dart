@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -188,6 +189,7 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
             itemBuilder: (BuildContext context, int index) {
               var url =
                   widget._messageData?[index].attachments?.first.mediaUrl ?? '';
+
               var customType = (widget._messageData?[index].messageType ==
                       IsmChatMessageType.normal)
                   ? widget._messageData![index].customType
@@ -197,7 +199,10 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
                   ? PhotoView(
                       imageProvider: url.isValidUrl
                           ? NetworkImage(url) as ImageProvider
-                          : FileImage(File(url)),
+                          : kIsWeb
+                              ? MemoryImage(url.strigToUnit8List)
+                                  as ImageProvider
+                              : FileImage(File(url)) as ImageProvider,
                       loadingBuilder: (context, event) =>
                           const IsmChatLoadingDialog(),
                       wantKeepAlive: true,

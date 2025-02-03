@@ -62,7 +62,7 @@ class IsmChatImage extends StatelessWidget {
                       imageUrl: imageUrl,
                       name: _name,
                     )
-                  : _AssetImage(
+                  : _FileImage(
                       backgroundColor: backgroundColor,
                       imageUrl: imageUrl,
                       name: _name,
@@ -71,8 +71,8 @@ class IsmChatImage extends StatelessWidget {
       );
 }
 
-class _AssetImage extends StatelessWidget {
-  const _AssetImage(
+class _FileImage extends StatelessWidget {
+  const _FileImage(
       {required this.imageUrl, required this.name, this.backgroundColor});
   final String imageUrl;
   final String name;

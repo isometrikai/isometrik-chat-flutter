@@ -19,8 +19,8 @@ class _IsmChatPdfViewState extends State<IsmChatPdfView> {
   void initState() {
     super.initState();
     if (kIsWeb) {
-      final isNetowrk = widget.filePath!.contains('http');
-      if (isNetowrk) {
+      final isNetowrk = widget.filePath?.contains('http');
+      if (isNetowrk ?? false) {
         _pdfController = PdfController(
           document: PdfDocument.openData(
             IsmChatUtility.getUint8ListFromUrl(

@@ -201,7 +201,7 @@ class IsmChatPageController extends GetxController
   bool get areCamerasInitialized => _areCamerasInitialized.value;
   set areCamerasInitialized(bool value) => _areCamerasInitialized.value = value;
 
-  final RxBool _isFrontCameraSelected = true.obs;
+  final RxBool _isFrontCameraSelected = false.obs;
   bool get isFrontCameraSelected => _isFrontCameraSelected.value;
   set isFrontCameraSelected(bool value) => _isFrontCameraSelected.value = value;
 
@@ -874,7 +874,7 @@ class IsmChatPageController extends GetxController
       case IsmChatAttachmentType.camera:
         final initialize = await initializeCamera();
         if (initialize) {
-          IsmChatResponsive.isWeb(Get.context!)
+          IsmChatResponsive.isWeb(Get.context!) && kIsWeb
               ? isCameraView = true
               : IsmChatRouteManagement.goToCameraView();
         }
@@ -1342,7 +1342,6 @@ class IsmChatPageController extends GetxController
     if (_cameras.isNotEmpty) {
       return toggleCamera();
     }
-
     return true;
   }
 
@@ -1535,22 +1534,29 @@ class IsmChatPageController extends GetxController
 
   Future<bool> toggleCamera() async {
     areCamerasInitialized = false;
-    if (IsmChatResponsive.isMobile(Get.context!)) {
-      isFrontCameraSelected = !isFrontCameraSelected;
+
+    if (!IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb) {
+        isFrontCameraSelected = false;
+      } else {
+        isFrontCameraSelected = !isFrontCameraSelected;
+      }
     }
+
     if (isFrontCameraSelected) {
       _frontCameraController = CameraController(
-        _cameras[0],
+        _cameras[1],
         ResolutionPreset.high,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
     } else {
       _backCameraController = CameraController(
-        _cameras[1],
+        _cameras[0],
         ResolutionPreset.high,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
     }
+
     try {
       await cameraController.initialize();
     } on CameraException catch (e) {
@@ -2172,6 +2178,18 @@ class IsmChatPageController extends GetxController
       await recordVoice.pause();
       isRecordPlay = false;
       forRecordTimer?.cancel();
+    }
+  }
+
+  void showCloseLoaderForMoble({bool showLoader = true}) {
+    if (showLoader) {
+      if (!IsmChatResponsive.isMobile(Get.context!)) {
+        IsmChatUtility.showLoader();
+      }
+    } else {
+      if (!IsmChatResponsive.isMobile(Get.context!)) {
+        IsmChatUtility.closeLoader();
+      }
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -207,7 +209,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                                   : kIsWeb
                                       ? MemoryImage(url.strigToUnit8List)
                                           as ImageProvider
-                                      : AssetImage(url),
+                                      : FileImage(File(url)),
                               loadingBuilder: (context, event) =>
                                   const IsmChatLoadingDialog(),
                               wantKeepAlive: true,

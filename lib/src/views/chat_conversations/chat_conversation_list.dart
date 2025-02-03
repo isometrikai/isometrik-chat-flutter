@@ -205,7 +205,10 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                           flex: 1,
                           backgroundColor: IsmChatColors.redColor,
                           foregroundColor: IsmChatColors.whiteColor,
-                          icon: Icons.delete_rounded,
+                          icon: const Icon(
+                            Icons.delete_rounded,
+                            color: IsmChatColors.whiteColor,
+                          ).icon,
                           label: IsmChatStrings.delete,
                         ),
                     ],

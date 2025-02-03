@@ -146,7 +146,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
   void sendMediaWeb() async {
     var isMaxSize = false;
-    IsmChatUtility.showLoader();
+    _controller.showCloseLoaderForMoble();
+
     for (var x in _controller.webMedia) {
       if (!x.dataSize.size()) {
         isMaxSize = true;
@@ -154,7 +155,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
     if (isMaxSize == false) {
-      IsmChatUtility.closeLoader();
+      _controller.showCloseLoaderForMoble(showLoader: false);
       Get.back<void>();
       sendPhotoAndVideoForWeb();
     } else {
@@ -170,7 +171,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
   void sendPhotoAndVideoForWeb() async {
     if (_controller.webMedia.isNotEmpty) {
-      IsmChatUtility.showLoader();
+      _controller.showCloseLoaderForMoble();
+
       for (var media in _controller.webMedia) {
         if (IsmChatConstants.imageExtensions
             .contains(media.platformFile.extension)) {
@@ -190,7 +192,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           );
         }
       }
-      IsmChatUtility.closeLoader();
+      _controller.showCloseLoaderForMoble(showLoader: false);
       _controller.isCameraView = false;
       _controller.webMedia.clear();
     }
