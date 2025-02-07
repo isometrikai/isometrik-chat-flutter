@@ -9,19 +9,19 @@ environment:
   flutter: ">=3.16.0"
 
 dependencies:
-  any_link_preview: ^3.0.2
-  app_settings: ^5.1.1
-  audioplayers: ^6.1.0
+  any_link_preview: ^3.0.3
+  app_settings: ^5.2.0
+  audioplayers: ^6.1.1
   azlistview: ^2.0.0
   cached_network_image: ^3.4.1
-  camera: ^0.11.0+2
+  camera: ^0.11.1
   collection: ^1.19.1
-  connectivity_plus: ^6.1.1
+  connectivity_plus: ^6.1.2
   device_info_plus: ^11.2.2
-  dio: ^5.7.0
+  dio: ^5.8.0+1
   elegant_notification: ^2.4.1
-  emoji_picker_flutter: ^4.2.0
-  file_picker: ^8.1.7
+  emoji_picker_flutter: ^4.3.0
+  file_picker: ^8.3.1
   flutter:
     sdk: flutter
   flutter_contacts: ^1.1.9+2
@@ -31,22 +31,21 @@ dependencies:
   flutter_svg: ^2.0.17
   flutter_web_plugins:
     sdk: flutter
-  fluttertoast: ^8.2.10
+  fluttertoast: ^8.2.11
   gal: ^2.3.1
   geocoding: ^3.0.0
   geolocator: ^13.0.2
   get: ^4.6.6
   google_maps_flutter: ^2.10.0
   hive: ^2.2.3
-  http: ^1.2.2
+  http: ^1.3.0
   image: ^4.5.2
   image_cropper: ^9.0.0
   image_painter: ^0.7.1
   image_picker: ^1.1.2
-  intl: ^0.20.1
-  just_audio: ^0.9.42
-  meta: ^1.16.0
-  mqtt_client: ^10.6.3
+  intl: ^0.20.2
+  just_audio: ^0.9.46
+  mqtt_client: ^10.7.0
   mqtt_helper:
     git:
       url: https://github.com/rahulsaryam285/mqtt_helper.git
@@ -59,10 +58,9 @@ dependencies:
   photo_view: ^0.15.0
   plugin_platform_interface: ^2.1.8
   pull_to_refresh: ^2.0.0
-  readmore: ^3.0.0
   record: ^5.2.0
   scroll_to_index: ^3.0.1
-  share_plus: ^10.1.3
+  share_plus: ^10.1.4
   timezone: ^0.10.0
   url_launcher: ^6.3.1
   video_compress: ^3.1.3
@@ -70,16 +68,16 @@ dependencies:
   video_trimmer: ^4.0.2
   visibility_detector: ^0.4.0+2
 
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+
 dependency_overrides:
   collection: ^1.19.1
   device_info_plus: ^11.2.2
   meta: ^1.16.0
   path: ^1.9.1
-
-dev_dependencies:
-  flutter_lints: ^5.0.0
-  flutter_test:
-    sdk: flutter
 
 flutter:
   plugin:
