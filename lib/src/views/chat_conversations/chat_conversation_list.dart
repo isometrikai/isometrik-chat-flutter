@@ -82,13 +82,9 @@ class _ConversationList extends StatelessWidget {
         shrinkWrap: true,
         itemCount: controller.userConversations.length,
         controller: controller.conversationScrollController,
-        separatorBuilder: (_, __) => IsmChatDimens.boxHeight10
-        // Divider(
-        //   color: IsmChatConfig.chatTheme.chatListTheme?.dividerColor,
-        //   thickness:
-        //       IsmChatConfig.chatTheme.chatListTheme?.dividerThickness,
-        // ) ??
-        ,
+        separatorBuilder: (_, __) =>
+            IsmChatProperties.conversationProperties.conversationDivider ??
+            IsmChatDimens.boxHeight10,
         addAutomaticKeepAlives: true,
         itemBuilder: (_, index) {
           var conversation = controller.userConversations[index];
@@ -209,7 +205,10 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                           flex: 1,
                           backgroundColor: IsmChatColors.redColor,
                           foregroundColor: IsmChatColors.whiteColor,
-                          icon: Icons.delete_rounded,
+                          icon: const Icon(
+                            Icons.delete_rounded,
+                            color: IsmChatColors.whiteColor,
+                          ).icon,
                           label: IsmChatStrings.delete,
                         ),
                     ],

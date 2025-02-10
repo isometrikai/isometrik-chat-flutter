@@ -60,6 +60,7 @@ class IsmChatStyles {
       fontSize: IsmChatDimens.forteen,
       fontWeight: FontWeight.w400,
       fontFamily: IsmChatConfig.fontFamily);
+
   static TextStyle w400Black16 = TextStyle(
     color: IsmChatColors.blackColor,
     fontSize: IsmChatDimens.sixteen,

@@ -20,13 +20,10 @@ class IsmChatFileMessage extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Container(
-          width: context.width * 0.5,
-          height: kIsWeb ? context.height * 0.2 : null,
+        DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(IsmChatDimens.ten),
           ),
-          clipBehavior: Clip.antiAlias,
           child: kIsWeb
               ? Stack(
                   alignment: Alignment.bottomCenter,

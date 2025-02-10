@@ -11,10 +11,10 @@ class IsmChatDelegate {
 
   IsmChatConfig? get ismChatConfig => _ismChatConfig;
 
-  static final RxString _unReadConversationMessages = ''.obs;
-  String get unReadConversationMessages => _unReadConversationMessages.value;
-  set unReadConversationMessages(String value) =>
-      _unReadConversationMessages.value = value;
+  static final RxString _unReadConversationCount = ''.obs;
+  String get unReadConversationCount => _unReadConversationCount.value;
+  set unReadConversationCount(String value) =>
+      _unReadConversationCount.value = value;
 
   static final Rx<String?> _tag = Rx<String?>(null);
   String? get tag => _tag.value;
@@ -26,9 +26,6 @@ class IsmChatDelegate {
     NotificaitonCallback? showNotification,
     BuildContext? context,
     String databaseName = IsmChatStrings.dbname,
-    bool shouldSetupMqtt = false,
-    List<String>? topics,
-    List<String>? topicChannels,
     bool shouldPendingMessageSend = true,
     SendMessageCallback? sendPaidWalletMessage,
     IsmPaidWalletConfig? paidWalletConfig,
@@ -36,6 +33,7 @@ class IsmChatDelegate {
     SortingConversationCallback? sortConversationWithIdentifier,
     ConnectionStateCallback? mqttConnectionStatus,
     ResponseCallback? chatInvalidate,
+    IsmMqttProperties? mqttProperties,
     bool? isMonthFirst,
   }) async {
     _config = config;
@@ -43,7 +41,6 @@ class IsmChatDelegate {
     IsmChatConfig.dbName = databaseName;
     IsmChatConfig.useDatabase = !kIsWeb && useDatabase;
     IsmChatConfig.communicationConfig = config;
-    IsmChatConfig.shouldSetupMqtt = shouldSetupMqtt;
     IsmChatConfig.showNotification = showNotification;
     IsmChatConfig.mqttConnectionStatus = mqttConnectionStatus;
     IsmChatConfig.sortConversationWithIdentifier =
@@ -58,26 +55,21 @@ class IsmChatDelegate {
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
     await _initializeMqtt(
       config: _config,
-      shouldSetupMqtt: shouldSetupMqtt,
-      topics: topics,
-      topicChannels: topicChannels,
+      mqttProperties: mqttProperties ?? IsmMqttProperties(),
     );
   }
 
   Future<void> _initializeMqtt({
     IsmChatCommunicationConfig? config,
-    required bool shouldSetupMqtt,
-    List<String>? topics,
-    List<String>? topicChannels,
+    required IsmMqttProperties mqttProperties,
   }) async {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatMqttBinding().dependencies();
     }
+    IsmChatConfig.shouldSetupMqtt = mqttProperties.shouldSetupMqtt;
     await Get.find<IsmChatMqttController>().setup(
-      shouldSetupMqtt: shouldSetupMqtt,
       config: config,
-      topics: topics,
-      topicChannels: topicChannels,
+      mqttProperties: mqttProperties,
     );
   }
 
@@ -211,6 +203,15 @@ class IsmChatDelegate {
     final count = await Get.find<IsmChatMqttController>()
         .getChatConversationsCount(isLoading: isLoading);
     return int.tryParse(count) ?? 0;
+  }
+
+  Future<void> getChatConversationsUnreadCount({
+    bool isLoading = false,
+  }) async {
+    if (!Get.isRegistered<IsmChatMqttController>()) return;
+    await Get.find<IsmChatMqttController>().getChatConversationsUnreadCount(
+      isLoading: isLoading,
+    );
   }
 
   Future<int> getChatConversationsMessageCount({
@@ -387,6 +388,7 @@ class IsmChatDelegate {
     required String name,
     required userIdentifier,
     required String userId,
+    required bool online,
     IsmChatMetaData? metaData,
     void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
     Duration duration = const Duration(milliseconds: 500),
@@ -403,29 +405,31 @@ class IsmChatDelegate {
 
     IsmChatUtility.showLoader();
 
-    await Future.delayed(duration);
-
-    IsmChatUtility.closeLoader();
-
     if (!Get.isRegistered<IsmChatConversationsController>()) {
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
+
+    await Future.delayed(duration);
+
+    IsmChatUtility.closeLoader();
+
     var controller = Get.find<IsmChatConversationsController>();
     var conversationId = controller.getConversationId(userId);
     IsmChatConversationModel? conversation;
     if (conversationId.isEmpty) {
+      final nameData = name.split(' ');
       var userDetails = UserDetails(
         userProfileImageUrl: profileImageUrl,
         userName: name,
         userIdentifier: userIdentifier,
         userId: userId,
-        online: false,
+        online: online,
         lastSeen: 0,
         metaData: IsmChatMetaData(
           profilePic: profileImageUrl,
-          firstName: name.split(' ').first,
-          lastName: name.split(' ').last,
+          firstName: nameData.first,
+          lastName: nameData.length > 1 ? nameData.last : '',
         ),
       );
       conversation = IsmChatConversationModel(

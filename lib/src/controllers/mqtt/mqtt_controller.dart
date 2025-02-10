@@ -26,36 +26,29 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
 
   Future<void> setup({
     IsmChatCommunicationConfig? config,
-    List<String>? topics,
-    List<String>? topicChannels,
-    required bool shouldSetupMqtt,
+    required IsmMqttProperties mqttProperties,
   }) async {
     _config = config ?? IsmChat.i.config;
     projectConfig = _config?.projectConfig;
     mqttConfig = _config?.mqttConfig;
     userConfig = _config?.userConfig;
-    if (!shouldSetupMqtt) {
+    if (mqttProperties.shouldSetupMqtt) {
       await setupIsmMqttConnection(
-        topics: topics,
-        topicChannels: topicChannels,
+        topics: mqttProperties.topics,
+        topicChannels: mqttProperties.topicChannels,
+        autoReconnect: mqttProperties.autoReconnect,
+        enableLogging: mqttProperties.enableLogging,
       );
     }
 
     unawaited(getChatConversationsUnreadCount());
   }
 
-  Future<void> getChatConversationsUnreadCount({
-    bool isLoading = false,
-  }) async {
-    var response = await viewModel.getChatConversationsUnreadCount(
-      isLoading: isLoading,
-    );
-    chatDelegate.unReadConversationMessages = response;
-  }
-
   Future<void> setupIsmMqttConnection({
     List<String>? topics,
     List<String>? topicChannels,
+    bool autoReconnect = true,
+    bool enableLogging = true,
   }) async {
     final topicPrefix =
         '/${projectConfig?.accountId ?? ''}/${projectConfig?.projectId ?? ''}';
@@ -87,13 +80,15 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
           hostName: mqttConfig?.hostName ?? '',
           port: mqttConfig?.port ?? 0,
         ),
-        enableLogging: true,
+        enableLogging: enableLogging,
         secure: false,
+        autoReconnect: autoReconnect,
         webSocketConfig: WebSocketConfig(
           useWebsocket: mqttConfig?.useWebSocket ?? false,
           websocketProtocols: mqttConfig?.websocketProtocols ?? [],
         ),
       ),
+
       callbacks: MqttCallbacks(
         onConnected: _onConnected,
         onDisconnected: _onDisconnected,
@@ -103,6 +98,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         pongCallback: _pong,
       ),
       autoSubscribe: true,
+
       topics: subscribedTopics,
       subscribedTopicsCallback: (topics) {
         subscribedTopics = topics;
@@ -172,4 +168,76 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       mqttHelper.unsubscribeTopics(topic);
     }
   }
+
+  Future<void> getChatConversationsUnreadCount({
+    bool isLoading = false,
+  }) async {
+    var response = await viewModel.getChatConversationsUnreadCount(
+      isLoading: isLoading,
+    );
+    chatDelegate.unReadConversationCount = response;
+  }
+
+  Future<String> getChatConversationsCount({
+    bool isLoading = false,
+  }) async =>
+      await viewModel.getChatConversationsCount(
+        isLoading: isLoading,
+      );
+
+  Future<String> getChatConversationsMessageCount({
+    bool isLoading = false,
+    required String converationId,
+    required List<String> senderIds,
+    bool senderIdsExclusive = false,
+    int lastMessageTimestamp = 0,
+  }) async =>
+      await viewModel.getChatConversationsMessageCount(
+        conversationId: converationId,
+        senderIds: senderIds,
+        isLoading: isLoading,
+        lastMessageTimestamp: lastMessageTimestamp,
+        senderIdsExclusive: senderIdsExclusive,
+      );
+
+  Future<bool> deleteChatFormDB(
+    String isometrickChatId, {
+    String conversationId = '',
+  }) async {
+    if (conversationId.isEmpty) {
+      final conversations = await getAllConversationFromDB();
+      if (conversations != null || conversations?.isNotEmpty == true) {
+        var conversation = conversations?.firstWhere(
+            (element) => element.opponentDetails?.userId == isometrickChatId,
+            orElse: IsmChatConversationModel.new);
+
+        if (conversation?.conversationId != null) {
+          await IsmChatConfig.dbWrapper
+              ?.removeConversation(conversation?.conversationId ?? '');
+          return true;
+        }
+      }
+    } else {
+      await IsmChatConfig.dbWrapper?.removeConversation(conversationId);
+      return true;
+    }
+    return false;
+  }
+
+  Future<List<IsmChatConversationModel>?> getAllConversationFromDB() async =>
+      await IsmChatConfig.dbWrapper?.getAllConversations();
+
+  Future<List<IsmChatConversationModel>> getChatConversationApi({
+    int skip = 0,
+    int limit = 20,
+    String? searchTag,
+    bool includeConversationStatusMessagesInUnreadMessagesCount = false,
+  }) async =>
+      await viewModel.getChatConversationApi(
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag ?? '',
+        includeConversationStatusMessagesInUnreadMessagesCount:
+            includeConversationStatusMessagesInUnreadMessagesCount,
+      );
 }

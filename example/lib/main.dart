@@ -84,7 +84,9 @@ class _MyAppState extends State<MyApp> {
         // ],
         supportedLocales: const [Locale('en', 'US')],
         theme: ThemeData.light(useMaterial3: true).copyWith(
-            primaryColor: AppColors.primaryColorLight, extensions: []),
+          primaryColor: AppColors.whiteColor,
+          extensions: [],
+        ),
         // darkTheme: ThemeData.dark(useMaterial3: true)
         //     .copyWith(primaryColor: AppColors.primaryColorDark),
         // darkTheme: ThemeData.dark(useMaterial3: true)

@@ -82,10 +82,10 @@ Path: `android` > `app` > `main` > `AndroidMenifest.xml`
           android:value="YOUR_MAPS_API_KEY"/>
 
        <!--For Image cropping provider-->
-       <activity
-           android:name="com.yalantis.ucrop.UCropActivity"
-           android:screenOrientation="portrait"
-           android:theme="@style/Ucrop.CropTheme"/>
+      <activity
+        android:name="com.yalantis.ucrop.UCropActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
        <meta-data
            android:name="flutterEmbedding"
            android:value="2" />

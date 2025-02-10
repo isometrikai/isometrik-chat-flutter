@@ -65,7 +65,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                     : null),
             body: SafeArea(
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -87,7 +87,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                 .conversationProperties.isHeaderAppBar &&
                             IsmChatProperties.conversationProperties.header !=
                                 null) ...[
-                          IsmChatProperties.conversationProperties.header!,
+                          IsmChatProperties.conversationProperties.header ??
+                              IsmChatDimens.box0,
                         ],
                         if (IsmChatProperties.conversationProperties
                                     .allowedConversations.length !=
@@ -98,6 +99,60 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
+                          if (IsmChatResponsive.isWeb(context) &&
+                              IsmChatProperties.conversationProperties
+                                  .shouldConversationSearchShow) ...[
+                            IsmChatDimens.boxHeight10,
+                            IsmChatInputField(
+                              isShowBorderColor: true,
+                              contentPadding: IsmChatDimens.edgeInsets20,
+                              autofocus: false,
+                              cursorColor: IsmChatColors.blackColor,
+                              fillColor: IsmChatColors.whiteColor,
+                              controller: controller.searchConversationTEC,
+                              style: IsmChatStyles.w400Black18
+                                  .copyWith(fontSize: IsmChatDimens.twenty),
+                              borderColor: IsmChatConfig
+                                      .chatTheme.borderColor ??
+                                  IsmChatColors.greyColor.applyIsmOpacity(.5),
+                              hint: IsmChatStrings.searchChat,
+                              hintStyle: IsmChatStyles.w400Black18
+                                  .copyWith(fontSize: IsmChatDimens.twenty),
+                              onChanged: (value) async {
+                                controller.debounce.run(() async {
+                                  switch (value.trim().isNotEmpty) {
+                                    case true:
+                                      await controller.getChatConversations(
+                                        searchTag: value,
+                                      );
+                                      break;
+                                    default:
+                                      await controller.getConversationsFromDB();
+                                  }
+                                });
+                                controller.update();
+                              },
+                              suffixIcon: controller
+                                      .searchConversationTEC.text.isNotEmpty
+                                  ? IconButton(
+                                      highlightColor: IsmChatColors.transparent,
+                                      disabledColor: IsmChatColors.transparent,
+                                      hoverColor: IsmChatColors.transparent,
+                                      splashColor: IsmChatColors.transparent,
+                                      focusColor: IsmChatColors.transparent,
+                                      onPressed: () {
+                                        controller.searchConversationTEC
+                                            .clear();
+                                        controller.getConversationsFromDB();
+                                      },
+                                      icon: const Icon(
+                                        Icons.close_outlined,
+                                        color: IsmChatColors.whiteColor,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          ],
                           const Expanded(child: IsmChatConversationList()),
                         ]
                       ],
@@ -130,7 +185,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                               () => controller.isRenderChatPageaScreen !=
                                       IsRenderChatPageScreen.none
                                   ? controller.isRenderChatScreenWidget()
-                                  : const SizedBox.shrink(),
+                                  : IsmChatDimens.box0,
                             )
                           ]
                         ],
@@ -155,7 +210,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                     IsmChatDimens.percentWidth(.3),
                                 child: controller.isRenderChatScreenWidget(),
                               )
-                            : const SizedBox.shrink(),
+                            : IsmChatDimens.box0,
                       )
                     ]
                   ]

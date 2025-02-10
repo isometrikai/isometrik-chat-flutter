@@ -37,12 +37,15 @@ class IsmChatLocationMessage extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         children: [
           Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
             children: [
-              SizedBox(
-                height: IsmChatDimens.oneHundredFifty,
-                width: context.width * 0.8,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: (IsmChatResponsive.isWeb(context))
+                      ? context.height * .3
+                      : context.height * .2,
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(IsmChatDimens.ten),
                   child: IgnorePointer(
@@ -86,6 +89,7 @@ class IsmChatLocationMessage extends StatelessWidget {
                             ? message.metaData?.locationAddress ?? ''
                             : message.attachments?.first.title ?? '',
                         style: message.style,
+                        textAlign: TextAlign.start,
                       ),
                       Text(
                         message.body.isValidUrl
@@ -93,6 +97,7 @@ class IsmChatLocationMessage extends StatelessWidget {
                             : message.attachments?.first.address ?? '',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
+                        textAlign: TextAlign.start,
                         style: (message.sentByMe
                                 ? IsmChatStyles.w400White12
                                 : IsmChatStyles.w400Black12)

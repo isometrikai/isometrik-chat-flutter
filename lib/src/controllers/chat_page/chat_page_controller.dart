@@ -201,7 +201,7 @@ class IsmChatPageController extends GetxController
   bool get areCamerasInitialized => _areCamerasInitialized.value;
   set areCamerasInitialized(bool value) => _areCamerasInitialized.value = value;
 
-  final RxBool _isFrontCameraSelected = true.obs;
+  final RxBool _isFrontCameraSelected = false.obs;
   bool get isFrontCameraSelected => _isFrontCameraSelected.value;
   set isFrontCameraSelected(bool value) => _isFrontCameraSelected.value = value;
 
@@ -874,7 +874,7 @@ class IsmChatPageController extends GetxController
       case IsmChatAttachmentType.camera:
         final initialize = await initializeCamera();
         if (initialize) {
-          IsmChatResponsive.isWeb(Get.context!)
+          IsmChatResponsive.isWeb(Get.context!) && kIsWeb
               ? isCameraView = true
               : IsmChatRouteManagement.goToCameraView();
         }
@@ -942,49 +942,47 @@ class IsmChatPageController extends GetxController
     if (result.isEmpty) {
       return;
     }
-    if (result.isNotEmpty) {
-      IsmChatUtility.showLoader();
-      for (var x in result) {
-        var bytes = await x?.readAsBytes();
-        // var bytes = await IsmChatUtility.fetchBytesFromBlobUrl(x?.path ?? '')
-        // as Uint8List;
-        var extension = x?.mimeType?.split('/').last;
-        var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
-        var platformFile = IsmchPlatformFile(
-          name: x?.name ?? '',
-          size: bytes?.length,
-          bytes: bytes,
-          path: x?.path,
-          extension: extension,
-        );
-        if (IsmChatConstants.videoExtensions.contains(extension)) {
-          var thumbnailBytes =
-              await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
-          if (thumbnailBytes != null) {
-            webMedia.add(
-              WebMediaModel(
-                isVideo: IsmChatConstants.videoExtensions.contains(extension),
-                platformFile: platformFile,
-                thumbnailBytes: thumbnailBytes,
-                dataSize: dataSize,
-              ),
-            );
-          }
-        } else {
+
+    IsmChatUtility.showLoader();
+    for (var x in result) {
+      var bytes = await x?.readAsBytes();
+
+      var extension = x?.mimeType?.split('/').last;
+      var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+      var platformFile = IsmchPlatformFile(
+        name: x?.name ?? '',
+        size: bytes?.length,
+        bytes: bytes,
+        path: x?.path,
+        extension: extension,
+      );
+      if (IsmChatConstants.videoExtensions.contains(extension)) {
+        var thumbnailBytes =
+            await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
+        if (thumbnailBytes != null) {
           webMedia.add(
             WebMediaModel(
               isVideo: IsmChatConstants.videoExtensions.contains(extension),
               platformFile: platformFile,
-              thumbnailBytes: Uint8List(0),
+              thumbnailBytes: thumbnailBytes,
               dataSize: dataSize,
             ),
           );
         }
+      } else {
+        webMedia.add(
+          WebMediaModel(
+            isVideo: IsmChatConstants.videoExtensions.contains(extension),
+            platformFile: platformFile,
+            thumbnailBytes: Uint8List(0),
+            dataSize: dataSize,
+          ),
+        );
       }
-      IsmChatUtility.closeLoader();
-      if (IsmChatResponsive.isMobile(Get.context!)) {
-        IsmChatRouteManagement.goToWebMediaPreview();
-      }
+    }
+    IsmChatUtility.closeLoader();
+    if (IsmChatResponsive.isMobile(Get.context!)) {
+      IsmChatRouteManagement.goToWebMediaPreview();
     }
   }
 
@@ -1263,9 +1261,11 @@ class IsmChatPageController extends GetxController
       await fabAnimationController?.reverse();
       if (fabAnimationController?.isDismissed == true &&
           attchmentOverlayEntry != null) {
-        attchmentOverlayEntry?.remove();
-        attchmentOverlayEntry = null;
-        showAttachment = !showAttachment;
+        try {
+          attchmentOverlayEntry?.remove();
+          attchmentOverlayEntry = null;
+          showAttachment = !showAttachment;
+        } catch (_) {}
       }
     }
   }
@@ -1342,7 +1342,6 @@ class IsmChatPageController extends GetxController
     if (_cameras.isNotEmpty) {
       return toggleCamera();
     }
-
     return true;
   }
 
@@ -1535,22 +1534,29 @@ class IsmChatPageController extends GetxController
 
   Future<bool> toggleCamera() async {
     areCamerasInitialized = false;
-    if (IsmChatResponsive.isMobile(Get.context!)) {
-      isFrontCameraSelected = !isFrontCameraSelected;
+
+    if (!IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb) {
+        isFrontCameraSelected = false;
+      } else {
+        isFrontCameraSelected = !isFrontCameraSelected;
+      }
     }
+
     if (isFrontCameraSelected) {
       _frontCameraController = CameraController(
-        _cameras[0],
+        _cameras[1],
         ResolutionPreset.high,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
     } else {
       _backCameraController = CameraController(
-        _cameras[1],
+        _cameras[0],
         ResolutionPreset.high,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
     }
+
     try {
       await cameraController.initialize();
     } on CameraException catch (e) {
@@ -1888,15 +1894,20 @@ class IsmChatPageController extends GetxController
     IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
     await Future.wait([
       conversationController.getBlockUser(),
-      if (fromUser == false) ...[getConverstaionDetails(), getMessagesFromAPI()]
+      if (fromUser == false) ...[
+        getConverstaionDetails(),
+        getMessagesFromAPI(),
+        conversationController.getChatConversations()
+      ]
     ]);
   }
 
-  Future<void> unblockUser(
-      {required String opponentId,
-      bool isLoading = false,
-      bool fromUser = false,
-      required bool userBlockOrNot}) async {
+  Future<void> unblockUser({
+    required String opponentId,
+    bool isLoading = false,
+    bool fromUser = false,
+    required bool userBlockOrNot,
+  }) async {
     bool isUnblockUser;
     if (IsmChatProperties.chatPageProperties.onCallBlockUnblock != null) {
       isUnblockUser =
@@ -1917,10 +1928,13 @@ class IsmChatPageController extends GetxController
       return;
     }
     chatInputController.clear();
-    await Future.wait([
-      getConverstaionDetails(),
-      getMessagesFromAPI(),
-    ]);
+    if (fromUser == false) {
+      await Future.wait([
+        getConverstaionDetails(),
+        getMessagesFromAPI(),
+        conversationController.getChatConversations()
+      ]);
+    }
   }
 
   Future<void> readSingleMessage({
@@ -2164,6 +2178,18 @@ class IsmChatPageController extends GetxController
       await recordVoice.pause();
       isRecordPlay = false;
       forRecordTimer?.cancel();
+    }
+  }
+
+  void showCloseLoaderForMoble({bool showLoader = true}) {
+    if (showLoader) {
+      if (!IsmChatResponsive.isMobile(Get.context!)) {
+        IsmChatUtility.showLoader();
+      }
+    } else {
+      if (!IsmChatResponsive.isMobile(Get.context!)) {
+        IsmChatUtility.closeLoader();
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmOneToOneCallMessage extends StatelessWidget {
@@ -11,12 +12,14 @@ class IsmOneToOneCallMessage extends StatelessWidget {
         color: Colors.transparent,
         child: IntrinsicWidth(
           child: Container(
+              constraints: BoxConstraints(
+                minHeight: (IsmChatResponsive.isWeb(context))
+                    ? context.height * .04
+                    : context.height * .05,
+              ),
               alignment: message.sentByMe
                   ? Alignment.centerRight
                   : Alignment.centerLeft,
-              constraints: const BoxConstraints(
-                minHeight: 40,
-              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(IsmChatDimens.ten),
                 color: message.textColor?.applyIsmOpacity(.2),

@@ -22,10 +22,10 @@ class IsmChatConversationsController extends GetxController {
   /// This variable use for type group name of group chat
   TextEditingController addGrouNameController = TextEditingController();
 
-  /// This variable use for type user name for searcing feature
+  /// This variable use for type user name for searching feature
   TextEditingController userSearchNameController = TextEditingController();
 
-  /// This variable use for type global for searcing feature
+  /// This variable use for type global for searching feature
   TextEditingController globalSearchController = TextEditingController();
 
   /// This variable use for store login user name
@@ -33,6 +33,9 @@ class IsmChatConversationsController extends GetxController {
 
   /// This variable use for store login user email
   TextEditingController userEmailController = TextEditingController();
+
+  /// This variable use for store  for searching feature
+  TextEditingController searchConversationTEC = TextEditingController();
 
   /// This variable use for get all method and varibles from IsmChatCommonController
   IsmChatCommonController get _commonController =>
@@ -283,7 +286,7 @@ class IsmChatConversationsController extends GetxController {
   /// When you have scroll or you want get pagination then you have use it.
   var searchConversationScrollController = ScrollController();
 
-  /// This variable use for store filete conversation list
+  /// This variable use for store filter conversation list
   ///
   /// When user add conversaiton `IsmChatProperties.conversationProperties.conversationPredicate` in `IsmChatApp`
   /// get conversaton filter list on conditions `true` or `false`
@@ -779,15 +782,17 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  Future<void> getConversationsFromDB() async {
+  Future<void> getConversationsFromDB({
+    String? searchTag,
+  }) async {
     var dbConversations =
         await IsmChatConfig.dbWrapper?.getAllConversations() ?? [];
 
+    conversations.clear();
     if (dbConversations.isEmpty == true) {
-      conversations.clear();
       return;
     }
-    conversations.clear();
+
     conversations = dbConversations;
     isConversationsLoading = false;
     if (conversations.length <= 1) {
@@ -795,6 +800,32 @@ class IsmChatConversationsController extends GetxController {
     }
     conversations.sort((a, b) => (b.lastMessageDetails?.sentAt ?? 0)
         .compareTo(a.lastMessageDetails?.sentAt ?? 0));
+    final opponentEmptyData = <IsmChatConversationModel>[];
+    final opponentData = <IsmChatConversationModel>[];
+    for (var x in conversations) {
+      if (x.isGroup == false && x.opponentDetails?.userId.isEmpty == true) {
+        opponentEmptyData.add(x);
+      } else {
+        opponentData.add(x);
+      }
+    }
+    opponentData.addAll(opponentEmptyData);
+    conversations = opponentData;
+
+    if (searchTag?.isNotEmpty == true) {
+      conversations = conversations
+          .where((e) =>
+              (e.opponentDetails?.userName ?? '')
+                  .toLowerCase()
+                  .startsWith((searchTag ?? '').toLowerCase()) ||
+              (e.opponentDetails?.metaData?.firstName ?? '')
+                  .toLowerCase()
+                  .startsWith((searchTag ?? '').toLowerCase()) ||
+              (e.opponentDetails?.metaData?.lastName ?? '')
+                  .toLowerCase()
+                  .startsWith((searchTag ?? '').toLowerCase()))
+          .toList();
+    }
 
     if (IsmChatConfig.sortConversationWithIdentifier != null) {
       var target = IsmChatConfig.sortConversationWithIdentifier?.call();
@@ -835,12 +866,14 @@ class IsmChatConversationsController extends GetxController {
   Future<void> getChatConversations({
     int skip = 0,
     ApiCallOrigin? origin,
+    String? searchTag,
   }) async {
     if (conversations.isEmpty) {
       isConversationsLoading = true;
     }
     var chats = await _viewModel.getChatConversations(
-      skip,
+      skip: skip,
+      searchTag: searchTag,
     );
 
     if (IsmChatProperties.conversationModifier != null) {
@@ -874,7 +907,9 @@ class IsmChatConversationsController extends GetxController {
       }
     }
 
-    await getConversationsFromDB();
+    await getConversationsFromDB(
+      searchTag: searchTag,
+    );
 
     if (conversations.isEmpty) {
       isConversationsLoading = false;
@@ -891,7 +926,7 @@ class IsmChatConversationsController extends GetxController {
     }
 
     var response = await _viewModel.getChatConversations(
-      skip,
+      skip: skip,
       chatLimit: chatLimit,
     );
 

@@ -17,8 +17,10 @@ class IsmChatTextMessage extends StatelessWidget {
           child: Container(
             alignment:
                 message.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
-            constraints: const BoxConstraints(
-              minHeight: 36,
+            constraints: BoxConstraints(
+              minHeight: (IsmChatResponsive.isWeb(context))
+                  ? context.height * .04
+                  : context.height * .05,
             ),
             padding: IsmChatDimens.edgeInsets4,
             child: RichText(

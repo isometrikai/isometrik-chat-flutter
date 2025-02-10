@@ -73,37 +73,33 @@ class IsmChatMessageInfo extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: IsmChatConfig.chatTheme.chatPageTheme
                                 ?.centerMessageTheme?.backgroundColor ??
-                            IsmChatConfig.chatTheme.primaryColor,
+                            IsmChatConfig.chatTheme.backgroundColor,
                         borderRadius:
                             BorderRadius.circular(IsmChatDimens.eight),
                       ),
                       padding: IsmChatDimens.edgeInsets8_4,
                       child: Text(
                         _message?.sentAt.toMessageDateString() ?? '',
-                        style: IsmChatStyles.w500Black12.copyWith(
-                          color: IsmChatConfig.chatTheme.chatPageTheme
-                              ?.centerMessageTheme?.textColor,
-                        ),
+                        style: IsmChatConfig.chatTheme.chatPageTheme
+                                ?.centerMessageTheme?.textStyle ??
+                            IsmChatStyles.w500Black12.copyWith(
+                              color: IsmChatConfig.chatTheme.primaryColor,
+                            ),
                       ),
                     ),
                   ),
                   IsmChatDimens.boxHeight16,
-                  UnconstrainedBox(
-                    alignment: _message?.sentByMe ?? false
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: _message?.sentByMe ?? false
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
-                      children: [
-                        MessageBubble(
-                          message: _message,
-                          showMessageInCenter: false,
-                        )
-                      ],
-                    ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: _message?.sentByMe ?? false
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      MessageBubble(
+                        message: _message,
+                        showMessageInCenter: false,
+                      )
+                    ],
                   ),
                   IsmChatDimens.boxHeight16,
                   _isGroup ?? false
@@ -162,7 +158,11 @@ class IsmChatMessageInfo extends StatelessWidget {
                                           IsmChatDimens.boxWidth8,
                                           Text(
                                             'Delivered',
-                                            style: IsmChatStyles.w400Black12,
+                                            style: IsmChatStyles.w400Black12
+                                                .copyWith(
+                                              fontSize:
+                                                  _message?.style.fontSize,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -174,11 +174,16 @@ class IsmChatMessageInfo extends StatelessWidget {
                                             )
                                           : Text(
                                               chatController
-                                                  .deliverdMessageMembers
-                                                  .first
-                                                  .timestamp!
-                                                  .deliverTime,
-                                              style: IsmChatStyles.w400Black12,
+                                                      .deliverdMessageMembers
+                                                      .first
+                                                      .timestamp
+                                                      ?.deliverTime ??
+                                                  '',
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize:
+                                                    _message?.style.fontSize,
+                                              ),
                                             )
                                     ],
                                   ),
@@ -204,7 +209,11 @@ class IsmChatMessageInfo extends StatelessWidget {
                                           ),
                                           IsmChatDimens.boxWidth14,
                                           Text('Read',
-                                              style: IsmChatStyles.w400Black12)
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize:
+                                                    _message?.style.fontSize,
+                                              ))
                                         ],
                                       ),
                                       chatController.readMessageMembers.isEmpty
@@ -213,9 +222,17 @@ class IsmChatMessageInfo extends StatelessWidget {
                                               size: IsmChatDimens.twenty,
                                             )
                                           : Text(
-                                              chatController.readMessageMembers
-                                                  .first.timestamp!.deliverTime,
-                                              style: IsmChatStyles.w400Black12,
+                                              chatController
+                                                      .readMessageMembers
+                                                      .first
+                                                      .timestamp
+                                                      ?.deliverTime ??
+                                                  '',
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize:
+                                                    _message?.style.fontSize,
+                                              ),
                                             ),
                                     ],
                                   ),

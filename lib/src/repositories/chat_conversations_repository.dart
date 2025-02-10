@@ -69,12 +69,12 @@ class IsmChatConversationsRepository {
   Future<List<IsmChatConversationModel>?> getChatConversations({
     required int skip,
     required int limit,
-    String? searchTag,
-    bool includeConversationStatusMessagesInUnreadMessagesCount = false,
+    required String searchTag,
+    required bool includeConversationStatusMessagesInUnreadMessagesCount,
   }) async {
     try {
       String? url;
-      if (searchTag != null && searchTag.isNotEmpty) {
+      if (searchTag.isNotEmpty) {
         url =
             '${IsmChatAPI.getChatConversations}?searchTag=$searchTag&skip=$skip&limit=$limit';
       } else {

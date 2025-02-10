@@ -474,7 +474,9 @@ class _MessgeNotAllowdWidget extends StatelessWidget {
               child: messageWidget ??
                   Text(
                     showMessage,
-                    style: IsmChatStyles.w600Black12,
+                    style: IsmChatResponsive.isWeb(context)
+                        ? IsmChatStyles.w600Black20
+                        : IsmChatStyles.w600Black12,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     maxLines: 2,

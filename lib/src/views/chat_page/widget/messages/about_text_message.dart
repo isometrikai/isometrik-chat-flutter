@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatAboutTextMessage extends StatelessWidget {
@@ -17,7 +18,11 @@ class IsmChatAboutTextMessage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: IsmChatDimens.percentWidth(.6),
+                  constraints: BoxConstraints(
+                    minHeight: (IsmChatResponsive.isWeb(context))
+                        ? context.height * .04
+                        : context.height * .05,
+                  ),
                   padding: IsmChatDimens.edgeInsets10,
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,

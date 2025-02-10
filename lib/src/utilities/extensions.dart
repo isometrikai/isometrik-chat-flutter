@@ -579,8 +579,7 @@ extension ModelConversion on IsmChatConversationModel {
               color: IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme
                       ?.unreadCheckColor ??
                   IsmChatColors.greyColor,
-              size: IsmChatConfig.chatTheme.chatListCardThemData
-                      ?.subTitleTextStyle?.fontSize ??
+              size: IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
                   IsmChatDimens.sixteen,
             )
           : IsmChatProperties.chatPageProperties.features.contains(
@@ -595,9 +594,9 @@ extension ModelConversion on IsmChatConversationModel {
                       : IsmChatConfig.chatTheme.chatPageTheme
                               ?.messageStatusTheme?.unreadCheckColor ??
                           IsmChatColors.greyColor,
-                  size: IsmChatConfig.chatTheme.chatListCardThemData
-                          ?.subTitleTextStyle?.fontSize ??
-                      IsmChatDimens.sixteen,
+                  size:
+                      IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
+                          IsmChatDimens.sixteen,
                 )
               : IsmChatDimens.box0;
     } catch (e, st) {
@@ -755,7 +754,7 @@ extension LastMessageBody on LastMessageDetails {
     if (iconData != null) {
       return Icon(
         iconData,
-        size: IsmChatDimens.fifteen,
+        size: IsmChatConfig.chatTheme.chatListCardThemData?.iconSize,
         color: IsmChatConfig.chatTheme.chatListCardThemData?.subTitleColor ??
             IsmChatColors.blackColor,
       );

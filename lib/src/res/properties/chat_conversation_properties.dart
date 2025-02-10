@@ -18,6 +18,7 @@ class IsmChatConversationProperties {
     this.createChatIcon,
     this.enableGroupChat = false,
     this.allowDelete = false,
+    this.shouldConversationSearchShow = false,
     this.actions,
     this.endActions,
     this.isSlidableEnable,
@@ -35,6 +36,7 @@ class IsmChatConversationProperties {
     this.allowedConversations = const [IsmChatConversationType.private],
     this.conversationPosition = IsmChatConversationPosition.tabBar,
     this.opponentSubTitle,
+    this.conversationDivider,
   }) {
     assert(
       (showCreateChatIcon && onCreateTap != null) || !showCreateChatIcon,
@@ -225,4 +227,8 @@ class IsmChatConversationProperties {
   /// },
   /// ```
   final UserDetailsStringCallback? opponentSubTitle;
+
+  final Widget? conversationDivider;
+
+  final bool shouldConversationSearchShow;
 }

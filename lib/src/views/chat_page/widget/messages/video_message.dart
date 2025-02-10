@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatVideoMessage extends StatelessWidget {
@@ -21,46 +21,33 @@ class IsmChatVideoMessage extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: IsmChatResponsive.isWeb(context)
-                            ? IsmChatDimens.percentHeight(.3)
-                            : kIsWeb
-                                ? IsmChatDimens.percentHeight(.3)
-                                : null,
-                        child: kIsWeb
-                            ? message.attachments?.first.thumbnailUrl
-                                        ?.isValidUrl ==
-                                    true
-                                ? IsmChatImage(
-                                    message.attachments?.first.thumbnailUrl ??
-                                        '',
-                                    isNetworkImage: message.attachments?.first
-                                            .mediaUrl?.isValidUrl ??
-                                        false,
-                                  )
-                                : Image.memory(
-                                    message.attachments?.first.thumbnailUrl!
-                                            .strigToUnit8List ??
-                                        Uint8List(0),
-                                    fit: BoxFit.cover,
-                                  )
-                            : IsmChatImage(
-                                message.attachments?.first.thumbnailUrl ?? '',
-                                isNetworkImage: message.attachments?.first
-                                        .mediaUrl?.isValidUrl ??
-                                    false,
-                              ),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: (IsmChatResponsive.isWeb(context))
+                              ? context.height * .35
+                              : context.height * .7,
+                        ),
+                        margin: IsmChatDimens.edgeInsetsBottom4,
+                        child: IsmChatImage(
+                          message.attachments?.first.thumbnailUrl ?? '',
+                          isNetworkImage: message.attachments?.first
+                                  .thumbnailUrl?.isValidUrl ??
+                              false,
+                          isBytes: !(message.attachments?.first.thumbnailUrl
+                                  ?.isValidUrl ??
+                              false),
+                        ),
                       ),
                       if (message.metaData?.caption?.isNotEmpty == true) ...[
-                        Container(
+                        Padding(
                           padding: IsmChatDimens.edgeInsetsTop5,
-                          width: IsmChatDimens.percentWidth(.6),
                           child: Text(
                             message.metaData?.caption ?? '',
-                            style: message.style.copyWith(
-                              fontSize: IsmChatDimens.tharteen,
-                            ),
+                            style: message.style,
+                            textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 3,
                           ),

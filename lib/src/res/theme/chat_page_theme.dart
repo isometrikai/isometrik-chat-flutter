@@ -7,7 +7,6 @@ class IsmChatPageTheme {
     this.messageSelectionColor,
     this.selfMessageTheme,
     this.opponentMessageTheme,
-    this.constraints,
     this.pageDecoration,
     this.backgroundColor,
     this.sendButtonTheme,
@@ -15,20 +14,27 @@ class IsmChatPageTheme {
     this.centerMessageTheme,
     this.replyMessageTheme,
     this.messageStatusTheme,
+    this.messageHoverTheme,
+    this.messageConstraints,
+    this.searchTextFiledTheme,
+    this.messgaeFocusedTheme,
   });
 
   final double? profileImageSize;
   final Color? messageSelectionColor;
   final IsmChatMessageTheme? selfMessageTheme;
   final IsmChatMessageTheme? opponentMessageTheme;
-  final BoxConstraints? constraints;
 
   final Decoration? pageDecoration;
   final Color? backgroundColor;
 
   final IsmChatSendButtonTheme? sendButtonTheme;
   final IsmChatTextFiledTheme? textFiledTheme;
+  final IsmChatTextFiledTheme? searchTextFiledTheme;
   final IsmChatCenterMessageTheme? centerMessageTheme;
   final IsmChatReplyMessageTheme? replyMessageTheme;
   final IsmChatMessageStatusTheme? messageStatusTheme;
+  final IsmChatMessageHoverTheme? messageHoverTheme;
+  final IsmChatMessageConstraints? messageConstraints;
+  final IsmChatFocusedMessageTheme? messgaeFocusedTheme;
 }

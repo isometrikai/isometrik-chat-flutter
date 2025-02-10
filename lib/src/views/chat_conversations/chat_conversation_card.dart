@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -53,11 +52,13 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
     return IsmChatTapHandler(
       onTap: widget.onTap,
       child: Container(
-        color: kIsWeb && IsmChatResponsive.isWeb(context)
+        color: IsmChatResponsive.isWeb(context)
             ? Get.find<IsmChatConversationsController>()
                         .currentConversationId ==
                     widget.conversation.conversationId
-                ? IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2)
+                ? IsmChatConfig
+                        .chatTheme.chatListCardThemData?.backgroundColor ??
+                    IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2)
                 : null
             : null,
         padding:

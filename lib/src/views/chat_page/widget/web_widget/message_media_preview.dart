@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -105,11 +107,15 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 initiated
                     ? IsmChatStrings.you
                     : widget._mediaUserName.toString(),
-                style: IsmChatStyles.w400Black16,
+                style:
+                    IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
+                        IsmChatStyles.w400Black16,
               ),
               Text(
                 mediaTime,
-                style: IsmChatStyles.w400Black14,
+                style:
+                    IsmChatConfig.chatTheme.chatPageHeaderTheme?.subtileStyle ??
+                        IsmChatStyles.w400Black14,
               )
             ],
           ),
@@ -203,7 +209,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                                   : kIsWeb
                                       ? MemoryImage(url.strigToUnit8List)
                                           as ImageProvider
-                                      : AssetImage(url),
+                                      : FileImage(File(url)),
                               loadingBuilder: (context, event) =>
                                   const IsmChatLoadingDialog(),
                               wantKeepAlive: true,
@@ -364,20 +370,23 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                               Radius.circular(IsmChatDimens.ten),
                             ),
                             child: isVideo
-                                ? media?.first.thumbnailUrl?.isValidUrl == true
-                                    ? Image.network(
-                                        media?.first.thumbnailUrl ?? '',
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.memory(
-                                        media?.first.thumbnailUrl!
-                                                .strigToUnit8List ??
-                                            Uint8List(0),
-                                        fit: BoxFit.cover,
-                                      )
-                                : Image.network(
+                                ? IsmChatImage(
+                                    media?.first.thumbnailUrl ?? '',
+                                    isNetworkImage:
+                                        media?.first.thumbnailUrl?.isValidUrl ??
+                                            false,
+                                    isBytes: !(media
+                                            ?.first.thumbnailUrl?.isValidUrl ??
+                                        false),
+                                  )
+                                : IsmChatImage(
                                     media?.first.mediaUrl ?? '',
-                                    fit: BoxFit.cover,
+                                    isNetworkImage:
+                                        media?.first.mediaUrl?.isValidUrl ??
+                                            false,
+                                    isBytes:
+                                        !(media?.first.mediaUrl?.isValidUrl ??
+                                            false),
                                   ),
                           ),
                         ),
