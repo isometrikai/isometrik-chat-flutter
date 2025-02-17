@@ -60,7 +60,9 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                   .conversationProperties.headerHeight ??
                               IsmChatDimens.sixty,
                         ),
-                        child: IsmChatProperties.conversationProperties.header!,
+                        child:
+                            IsmChatProperties.conversationProperties.header ??
+                                IsmChatDimens.box0,
                       )
                     : null),
             body: SafeArea(
@@ -72,7 +74,9 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                       border: IsmChatResponsive.isWeb(context)
                           ? Border(
                               right: BorderSide(
-                                  color: IsmChatConfig.chatTheme.dividerColor!),
+                                color: IsmChatConfig.chatTheme.dividerColor ??
+                                    IsmChatColors.whiteColor,
+                              ),
                             )
                           : null,
                     ),
@@ -202,8 +206,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                 decoration: BoxDecoration(
                                   border: Border(
                                     left: BorderSide(
-                                        color: IsmChatConfig
-                                            .chatTheme.dividerColor!),
+                                      color: IsmChatConfig
+                                              .chatTheme.dividerColor ??
+                                          IsmChatColors.whiteColor,
+                                    ),
                                   ),
                                 ),
                                 width: IsmChatProperties.sideWidgetWidth ??

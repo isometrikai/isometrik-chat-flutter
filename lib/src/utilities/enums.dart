@@ -683,7 +683,10 @@ enum IsmChatFeature {
   // mediaDownload,
   showMessageStatus,
   mentionMember,
-  clearChat;
+  clearChat,
+  deleteMessage,
+  copyMessage,
+  selectMessage;
 }
 
 enum IsmChatDbBox { main, pending }

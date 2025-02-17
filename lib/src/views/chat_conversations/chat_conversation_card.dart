@@ -256,7 +256,8 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                           IsmChatDimens.ten,
                       backgroundColor: IsmChatConfig.chatTheme
                               .chatListCardThemData?.trailingBackgroundColor ??
-                          IsmChatConfig.chatTheme.primaryColor!,
+                          IsmChatConfig.chatTheme.primaryColor ??
+                          IsmChatColors.whiteColor,
                       child: Text(
                         (widget.conversation.unreadMessagesCount ?? 0) < 99
                             ? widget.conversation.unreadMessagesCount.toString()

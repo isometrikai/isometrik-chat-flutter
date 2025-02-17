@@ -851,6 +851,19 @@ extension MentionMessage on IsmChatMessageModel {
             IsmChatFocusMenuType.selectMessage
           ].contains(e));
     }
+    if (!IsmChatProperties.chatPageProperties.features
+        .contains(IsmChatFeature.copyMessage)) {
+      menu.remove(IsmChatFocusMenuType.copy);
+    }
+    if (!IsmChatProperties.chatPageProperties.features
+        .contains(IsmChatFeature.selectMessage)) {
+      menu.remove(IsmChatFocusMenuType.selectMessage);
+    }
+    if (!IsmChatProperties.chatPageProperties.features
+        .contains(IsmChatFeature.deleteMessage)) {
+      menu.remove(IsmChatFocusMenuType.delete);
+    }
+
     return menu;
   }
 
