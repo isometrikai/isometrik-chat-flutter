@@ -167,7 +167,7 @@ class IsmChatStrings {
       'You have been removed out of the group...!';
 
   static const String userDeleteMessage =
-      'Not everyone can message this user...!';
+      'This user is currently unavailable for messaging...!';
 
   static const String gallery = 'Gallery';
   static const String camera = 'Camera';
