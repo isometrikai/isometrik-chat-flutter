@@ -79,6 +79,68 @@ class IsmChatConversationModel {
         IsmChatActionEvents.conversationCreated.name) {
       return model.copyWith(unreadMessagesCount: 0);
     }
+    if (model.messages?.isNotEmpty == true &&
+        model.lastMessageDetails?.action ==
+            IsmChatActionEvents.conversationDetailsUpdated.name) {
+      final message = model.messages?.values.toList().first;
+      model = model.copyWith(
+        lastMessageDetails: model.lastMessageDetails?.copyWith(
+          body: message?.body,
+          audioOnly: message?.audioOnly,
+          meetingId: message?.meetingId,
+          meetingType: message?.meetingType,
+          callDurations: message?.callDurations,
+          sentByMe: message?.sentByMe,
+          showInConversation: true,
+          senderId: message?.senderInfo?.userId ?? '',
+          sentAt: message?.sentAt,
+          senderName: [
+            IsmChatCustomMessageType.removeAdmin,
+            IsmChatCustomMessageType.addAdmin,
+            IsmChatCustomMessageType.memberJoin,
+            IsmChatCustomMessageType.memberLeave,
+          ].contains(message?.customType)
+              ? message?.userName?.isNotEmpty == true
+                  ? message?.userName
+                  : message?.initiatorName ?? ''
+              : model.isGroup ?? false
+                  ? message?.senderInfo?.userName
+                  : message?.chatName,
+          messageType: message?.messageType?.value ?? 0,
+          messageId: message?.messageId ?? '',
+          conversationId: message?.conversationId ?? '',
+          action: message?.action,
+          customType: message?.customType,
+          readCount: message?.messageId?.isNotEmpty == true
+              ? model.isGroup ?? false
+                  ? message?.readByAll ?? false
+                      ? model.membersCount
+                      : message?.lastReadAt?.length
+                  : message?.readByAll ?? false
+                      ? 1
+                      : 0
+              : 0,
+          deliveredTo: message?.messageId?.isNotEmpty == true
+              ? message?.deliveredTo
+              : [],
+          readBy: message?.messageId?.isNotEmpty == true ? message?.readBy : [],
+          deliverCount: message?.messageId?.isNotEmpty == true
+              ? model.isGroup ?? false
+                  ? message?.deliveredToAll ?? false
+                      ? model.membersCount
+                      : 0
+                  : message?.deliveredToAll ?? false
+                      ? 1
+                      : 0
+              : 0,
+          members:
+              message?.members?.map((e) => e.memberName ?? '').toList() ?? [],
+          initiatorId: message?.initiatorId,
+          metaData: message?.metaData,
+        ),
+      );
+      return model;
+    }
 
     return model;
   }
