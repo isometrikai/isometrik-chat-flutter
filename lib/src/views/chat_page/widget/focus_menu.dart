@@ -50,77 +50,87 @@ class IsmChatFocusMenu extends StatelessWidget {
                     decoration: IsmChatConfig.chatTheme.chatPageTheme
                             ?.messgaeFocusedTheme?.decoration ??
                         BoxDecoration(
+                          border: Border.all(
+                            color: IsmChatColors.blackColor,
+                          ),
                           borderRadius:
                               BorderRadius.circular(IsmChatDimens.sixteen),
                         ),
-                    clipBehavior: Clip.antiAlias,
-                    child: GetBuilder<IsmChatPageController>(
-                        tag: IsmChat.i.tag,
-                        builder: (controller) => ListView.builder(
-                              itemCount: message.focusMenuList.length,
-                              shrinkWrap: true,
-                              itemBuilder: (_, index) {
-                                var item = message.focusMenuList[index];
-                                return IsmChatTapHandler(
-                                  onTap: () {
-                                    Get.back();
-                                    controller.closeOverlay();
-                                    controller.onMenuItemSelected(
-                                      item,
-                                      message,
-                                    );
-                                  },
-                                  child: Container(
-                                    height: IsmChatConfig
-                                            .chatTheme
-                                            .chatPageTheme
-                                            ?.messgaeFocusedTheme
-                                            ?.hight ??
-                                        IsmChatDimens.forty,
-                                    padding: IsmChatDimens.edgeInsets16_0,
-                                    decoration: BoxDecoration(
-                                      color: item == IsmChatFocusMenuType.delete
-                                          ? IsmChatColors.redColor
-                                          : IsmChatConfig
-                                              .chatTheme.backgroundColor,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          item.toString(),
-                                          style: IsmChatStyles.w400Black12
-                                              .copyWith(
-                                            fontSize: IsmChatConfig
-                                                .chatTheme
-                                                .chatPageTheme
-                                                ?.messgaeFocusedTheme
-                                                ?.fontSize,
+                    child: ClipRRect(
+                      borderRadius: IsmChatConfig.chatTheme.chatPageTheme
+                              ?.messgaeFocusedTheme?.decoration?.borderRadius ??
+                          BorderRadius.circular(IsmChatDimens.sixteen),
+                      clipBehavior: Clip.antiAlias,
+                      child: GetBuilder<IsmChatPageController>(
+                          tag: IsmChat.i.tag,
+                          builder: (controller) => ListView.builder(
+                                itemCount: message.focusMenuList.length,
+                                shrinkWrap: true,
+                                itemBuilder: (_, index) {
+                                  var item = message.focusMenuList[index];
+                                  return IsmChatTapHandler(
+                                    onTap: () {
+                                      Get.back();
+                                      controller.closeOverlay();
+                                      controller.onMenuItemSelected(
+                                        item,
+                                        message,
+                                      );
+                                    },
+                                    child: Container(
+                                      height: IsmChatConfig
+                                              .chatTheme
+                                              .chatPageTheme
+                                              ?.messgaeFocusedTheme
+                                              ?.hight ??
+                                          IsmChatDimens.forty,
+                                      padding: IsmChatDimens.edgeInsets16_0,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            item == IsmChatFocusMenuType.delete
+                                                ? IsmChatColors.redColor
+                                                : IsmChatConfig
+                                                    .chatTheme.backgroundColor,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            item.toString(),
+                                            style: IsmChatStyles.w400Black12
+                                                .copyWith(
+                                              fontSize: IsmChatConfig
+                                                  .chatTheme
+                                                  .chatPageTheme
+                                                  ?.messgaeFocusedTheme
+                                                  ?.fontSize,
+                                              color: item ==
+                                                      IsmChatFocusMenuType
+                                                          .delete
+                                                  ? IsmChatColors.whiteColor
+                                                  : null,
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          Icon(
+                                            item.icon,
                                             color: item ==
                                                     IsmChatFocusMenuType.delete
                                                 ? IsmChatColors.whiteColor
                                                 : null,
+                                            size: IsmChatConfig
+                                                .chatTheme
+                                                .chatPageTheme
+                                                ?.messgaeFocusedTheme
+                                                ?.iconSize,
                                           ),
-                                        ),
-                                        const Spacer(),
-                                        Icon(
-                                          item.icon,
-                                          color: item ==
-                                                  IsmChatFocusMenuType.delete
-                                              ? IsmChatColors.whiteColor
-                                              : null,
-                                          size: IsmChatConfig
-                                              .chatTheme
-                                              .chatPageTheme
-                                              ?.messgaeFocusedTheme
-                                              ?.iconSize,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            )),
+                                  );
+                                },
+                              )),
+                    ),
                   ),
                 ),
               ],

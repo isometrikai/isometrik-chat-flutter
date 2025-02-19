@@ -42,6 +42,7 @@ class ChatList extends StatelessWidget {
                   //   isPostionBottom: false,
                   // ),
                 ),
+
                 opponentMessageTheme: IsmChatMessageTheme(
                   borderColor: AppColors.primaryColorLight,
 
@@ -104,8 +105,8 @@ class ChatList extends StatelessWidget {
                 if (!kIsWeb) IsmChatAttachmentType.contact,
               ],
               // features: [
-              // IsmChatFeature.reply,
-              // IsmChatFeature.showMessageStatus,
+              //   IsmChatFeature.reply,
+              //   IsmChatFeature.showMessageStatus,
               // ],
             ),
 
