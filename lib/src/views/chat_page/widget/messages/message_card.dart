@@ -178,10 +178,12 @@ class _MessageCardState extends State<MessageCard>
                           if (IsmChatProperties.chatPageProperties.messageStatus
                                   ?.shouldShowMessageTime ??
                               false) ...[
-                            Text(
-                              widget.message.sentAt.toTimeString(),
-                              style: IsmChatStyles.w400Black10,
-                            )
+                            Text(widget.message.sentAt.toTimeString(),
+                                style: widget.message.style.copyWith(
+                                    color: IsmChatColors.blackColor,
+                                    fontSize:
+                                        (widget.message.style.fontSize ?? 0) -
+                                            5))
                           ],
                           if ((IsmChatProperties.chatPageProperties
                                       .messageStatus?.shouldShowMessgaeStatus ??
