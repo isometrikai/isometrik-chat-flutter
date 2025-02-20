@@ -28,7 +28,6 @@ class IsmChatImageMessage extends StatelessWidget {
                           ? context.height * .35
                           : context.height * .7,
                     ),
-                    margin: IsmChatDimens.edgeInsetsBottom4,
                     child: IsmChatImage(
                       message.attachments?.first.mediaUrl ?? '',
                       isNetworkImage:

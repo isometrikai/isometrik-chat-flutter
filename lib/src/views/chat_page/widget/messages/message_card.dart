@@ -72,93 +72,175 @@ class _MessageCardState extends State<MessageCard>
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-      tag: IsmChat.i.tag,
-      builder: (controller) => GestureDetector(
-            onHorizontalDragUpdate: widget.showMessageInCenter
-                ? null
-                : widget.message.customType ==
-                        IsmChatCustomMessageType.deletedForEveryone
-                    ? null
-                    : (details) {
-                        if (details.delta.dx > 1) {
-                          _runAnimation(
-                            onRight: true,
-                          );
-                        }
-                        if (details.delta.dx < -1) {
-                          _runAnimation(
-                            onRight: false,
-                          );
-                        }
-                      },
-            child: SlideTransition(
-              position: animation!,
-              child: InkWell(
-                splashColor: IsmChatColors.transparent,
-                onHover: (value) {
-                  if (controller
-                          .conversationController.isRenderChatPageaScreen !=
-                      IsRenderChatPageScreen.none) {
-                    return;
-                  }
-                  if (value) {
-                    controller.onMessageHoverIndex = widget.index;
-                  } else {
-                    controller.onMessageHoverIndex = -1;
-                  }
-                },
-                borderRadius: BorderRadius.zero,
-                hoverColor: IsmChatColors.transparent,
-                focusColor: IsmChatColors.transparent,
-                highlightColor: IsmChatColors.transparent,
-                onTap: () {
-                  controller.onMessageTap(
-                    context: context,
-                    message: widget.message,
-                  );
-                },
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    AutoScrollTag(
-                      controller: controller.messagesScrollController,
-                      index: widget.index,
-                      key: Key('scroll-${widget.message.messageId}'),
-                      child: kIsWeb
-                          ? MessageBubble(
-                              message: widget.message,
-                              showMessageInCenter: widget.showMessageInCenter,
-                              index: widget.index,
-                            )
-                          : Hero(
-                              tag: widget.message,
-                              child: IsmChatProperties
-                                      .chatPageProperties.messageBuilder
-                                      ?.call(
-                                          context,
-                                          widget.message,
-                                          widget.message.customType!,
-                                          widget.showMessageInCenter) ??
-                                  MessageBubble(
-                                    message: widget.message,
-                                    showMessageInCenter:
-                                        widget.showMessageInCenter,
-                                    index: widget.index,
-                                  ),
-                            ),
-                    ),
-                    if (widget.message.reactions?.isNotEmpty == true)
-                      Positioned(
-                        right: widget.message.sentByMe ? 0 : null,
-                        left: widget.message.sentByMe ? null : 0,
-                        bottom: IsmChatDimens.six,
-                        child: ImsChatReaction(
-                          message: widget.message,
-                        ),
+        tag: IsmChat.i.tag,
+        builder: (controller) => GestureDetector(
+          onHorizontalDragUpdate: widget.showMessageInCenter
+              ? null
+              : widget.message.customType ==
+                      IsmChatCustomMessageType.deletedForEveryone
+                  ? null
+                  : (details) {
+                      if (details.delta.dx > 1) {
+                        _runAnimation(
+                          onRight: true,
+                        );
+                      }
+                      if (details.delta.dx < -1) {
+                        _runAnimation(
+                          onRight: false,
+                        );
+                      }
+                    },
+          child: SlideTransition(
+            position: animation!,
+            child: InkWell(
+              splashColor: IsmChatColors.transparent,
+              onHover: (value) {
+                if (controller.conversationController.isRenderChatPageaScreen !=
+                    IsRenderChatPageScreen.none) {
+                  return;
+                }
+                if (value) {
+                  controller.onMessageHoverIndex = widget.index;
+                } else {
+                  controller.onMessageHoverIndex = -1;
+                }
+              },
+              borderRadius: BorderRadius.zero,
+              hoverColor: IsmChatColors.transparent,
+              focusColor: IsmChatColors.transparent,
+              highlightColor: IsmChatColors.transparent,
+              onTap: () {
+                controller.onMessageTap(
+                  context: context,
+                  message: widget.message,
+                );
+              },
+              child: Column(
+                crossAxisAlignment: widget.message.sentByMe
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      AutoScrollTag(
+                        controller: controller.messagesScrollController,
+                        index: widget.index,
+                        key: Key('scroll-${widget.message.messageId}'),
+                        child: kIsWeb
+                            ? MessageBubble(
+                                message: widget.message,
+                                showMessageInCenter: widget.showMessageInCenter,
+                                index: widget.index,
+                              )
+                            : Hero(
+                                tag: widget.message,
+                                child: IsmChatProperties
+                                        .chatPageProperties.messageBuilder
+                                        ?.call(
+                                            context,
+                                            widget.message,
+                                            widget.message.customType!,
+                                            widget.showMessageInCenter) ??
+                                    MessageBubble(
+                                      message: widget.message,
+                                      showMessageInCenter:
+                                          widget.showMessageInCenter,
+                                      index: widget.index,
+                                    ),
+                              ),
                       ),
-                  ],
-                ),
+                      if (widget.message.reactions?.isNotEmpty == true)
+                        Positioned(
+                          right: widget.message.sentByMe ? 0 : null,
+                          left: widget.message.sentByMe ? null : 0,
+                          bottom: IsmChatDimens.six,
+                          child: ImsChatReaction(
+                            message: widget.message,
+                          ),
+                        ),
+                    ],
+                  ),
+                  if (!widget.showMessageInCenter &&
+                      (IsmChatProperties.chatPageProperties.messageStatus
+                              ?.shouldShowTimeStatusOuter ??
+                          false)) ...[
+                    IsmChatDimens.boxHeight5,
+                    Material(
+                      color: Colors.transparent,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: widget.message.sentByMe
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                        children: [
+                          if (IsmChatProperties.chatPageProperties.messageStatus
+                                  ?.shouldShowMessageTime ??
+                              false) ...[
+                            Text(
+                              widget.message.sentAt.toTimeString(),
+                              style: IsmChatStyles.w400Black10,
+                            )
+                          ],
+                          if ((IsmChatProperties.chatPageProperties
+                                      .messageStatus?.shouldShowMessgaeStatus ??
+                                  false) &&
+                              widget.message.sentByMe &&
+                              widget.message.customType !=
+                                  IsmChatCustomMessageType
+                                      .deletedForEveryone) ...[
+                            if (widget.message.messageId?.isEmpty == true) ...[
+                              IsmChatDimens.boxWidth2,
+                              Icon(
+                                Icons.watch_later_outlined,
+                                color: IsmChatConfig
+                                        .chatTheme
+                                        .chatPageTheme
+                                        ?.messageStatusTheme
+                                        ?.unreadCheckColor ??
+                                    Colors.black,
+                                size: IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.messageStatusTheme?.checkSize ??
+                                    IsmChatDimens.forteen,
+                              ),
+                            ] else if (IsmChatProperties
+                                .chatPageProperties.features
+                                .contains(
+                              IsmChatFeature.showMessageStatus,
+                            )) ...[
+                              IsmChatDimens.boxWidth2,
+                              Icon(
+                                widget.message.deliveredToAll ?? false
+                                    ? Icons.done_all_rounded
+                                    : Icons.done_rounded,
+                                color: widget.message.readByAll ?? false
+                                    ? IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
+                                            ?.readCheckColor ??
+                                        Colors.blue
+                                    : IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
+                                            ?.unreadCheckColor ??
+                                        Colors.black,
+                                size: IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.messageStatusTheme?.checkSize ??
+                                    IsmChatDimens.forteen,
+                              ),
+                            ]
+                          ],
+                        ],
+                      ),
+                    ),
+                  ]
+                ],
               ),
             ),
-          ));
+          ),
+        ),
+      );
 }

@@ -87,119 +87,122 @@ class MessageBubble extends StatelessWidget {
                     ),
               child: Stack(
                 children: [
-                  Padding(
+                  SingleChildScrollView(
                     padding: !showMessageInCenter
-                        ? IsmChatDimens.edgeInsets5_5_5_20
+                        ? (IsmChatProperties.chatPageProperties.messageStatus
+                                    ?.shouldShowTimeStatusInner ??
+                                true)
+                            ? IsmChatDimens.edgeInsets5_5_5_20
+                            : IsmChatDimens.edgeInsets5
                         : IsmChatDimens.edgeInsets0,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: _message.sentByMe
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
-                            children: [
-                              if (!showMessageInCenter &&
-                                  (controller.conversation?.isGroup ?? false) &&
-                                  !_message.sentByMe) ...[
-                                Padding(
-                                  padding: IsmChatDimens.edgeInsetsL2,
-                                  child: FittedBox(
-                                    child: Builder(builder: (context) {
-                                      var name = '';
-                                      if (IsmChatProperties.chatPageProperties
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: _message.sentByMe
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            if (!showMessageInCenter &&
+                                (controller.conversation?.isGroup ?? false) &&
+                                !_message.sentByMe) ...[
+                              Padding(
+                                padding: IsmChatDimens.edgeInsetsL2,
+                                child: FittedBox(
+                                  child: Builder(builder: (context) {
+                                    var name = '';
+                                    if (IsmChatProperties.chatPageProperties
+                                            .messageSenderName
+                                            ?.call(
+                                          context,
+                                          _message,
+                                          controller.conversation!,
+                                        ) !=
+                                        null) {
+                                      name = IsmChatProperties
+                                              .chatPageProperties
                                               .messageSenderName
                                               ?.call(
                                             context,
                                             _message,
                                             controller.conversation!,
-                                          ) !=
-                                          null) {
-                                        name = IsmChatProperties
-                                                .chatPageProperties
-                                                .messageSenderName
-                                                ?.call(
-                                              context,
-                                              _message,
-                                              controller.conversation!,
-                                            ) ??
-                                            '';
-                                      } else {
-                                        name =
-                                            '${_message.senderInfo?.metaData?.firstName ?? ''} ${_message.senderInfo?.metaData?.lastName ?? ''}';
-                                      }
-                                      return IsmChatProperties
-                                              .chatPageProperties
-                                              .messageSenderNameBuilder
-                                              ?.call(
-                                            context,
-                                            _message,
-                                            controller.conversation!,
                                           ) ??
-                                          Text(
-                                            name.trim().isNotEmpty
-                                                ? name
-                                                : _message
-                                                        .senderInfo?.userName ??
-                                                    '',
-                                            style: IsmChatStyles.w400Black10,
-                                            softWrap: true,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: _message.sentByMe
-                                                ? TextAlign.end
-                                                : TextAlign.start,
-                                            maxLines: 1,
-                                          );
-                                    }),
-                                  ),
+                                          '';
+                                    } else {
+                                      name =
+                                          '${_message.senderInfo?.metaData?.firstName ?? ''} ${_message.senderInfo?.metaData?.lastName ?? ''}';
+                                    }
+                                    return IsmChatProperties.chatPageProperties
+                                            .messageSenderNameBuilder
+                                            ?.call(
+                                          context,
+                                          _message,
+                                          controller.conversation!,
+                                        ) ??
+                                        Text(
+                                          name.trim().isNotEmpty
+                                              ? name
+                                              : _message.senderInfo?.userName ??
+                                                  '',
+                                          style: IsmChatStyles.w400Black10,
+                                          softWrap: true,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: _message.sentByMe
+                                              ? TextAlign.end
+                                              : TextAlign.start,
+                                          maxLines: 1,
+                                        );
+                                  }),
                                 ),
-                              ],
-                              if (_message.messageType ==
-                                  IsmChatMessageType.forward) ...[
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.shortcut_outlined,
-                                      color: IsmChatColors.whiteColor,
-                                      size: IsmChatDimens.fifteen,
-                                    ),
-                                    Text(
-                                      IsmChatStrings.forwarded,
-                                      style: _message.sentByMe
-                                          ? IsmChatStyles.w400White12.copyWith(
-                                              color: IsmChatConfig
-                                                      .chatTheme
-                                                      .chatPageTheme
-                                                      ?.selfMessageTheme
-                                                      ?.textColor ??
-                                                  IsmChatColors.whiteColor,
-                                            )
-                                          : IsmChatStyles.w400Black12.copyWith(
-                                              color: IsmChatConfig
-                                                      .chatTheme
-                                                      .chatPageTheme
-                                                      ?.selfMessageTheme
-                                                      ?.textColor ??
-                                                  IsmChatColors.blackColor,
-                                            ),
-                                    ),
-                                  ],
-                                )
-                              ],
+                              ),
                             ],
-                          ),
-                          IsmChatMessageWrapper(_message)
-                        ],
-                      ),
+                            if (_message.messageType ==
+                                IsmChatMessageType.forward) ...[
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.shortcut_outlined,
+                                    color: IsmChatColors.whiteColor,
+                                    size: IsmChatDimens.fifteen,
+                                  ),
+                                  Text(
+                                    IsmChatStrings.forwarded,
+                                    style: _message.sentByMe
+                                        ? IsmChatStyles.w400White12.copyWith(
+                                            color: IsmChatConfig
+                                                    .chatTheme
+                                                    .chatPageTheme
+                                                    ?.selfMessageTheme
+                                                    ?.textColor ??
+                                                IsmChatColors.whiteColor,
+                                          )
+                                        : IsmChatStyles.w400Black12.copyWith(
+                                            color: IsmChatConfig
+                                                    .chatTheme
+                                                    .chatPageTheme
+                                                    ?.selfMessageTheme
+                                                    ?.textColor ??
+                                                IsmChatColors.blackColor,
+                                          ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ],
+                        ),
+                        IsmChatMessageWrapper(_message)
+                      ],
                     ),
                   ),
-                  if (!showMessageInCenter) ...[
+                  if (!showMessageInCenter &&
+                      (IsmChatProperties.chatPageProperties.messageStatus
+                              ?.shouldShowTimeStatusInner ??
+                          true)) ...[
                     Positioned(
                       bottom: IsmChatDimens.four,
                       right: IsmChatDimens.ten,
@@ -211,12 +214,22 @@ class MessageBubble extends StatelessWidget {
                               ? MainAxisAlignment.end
                               : MainAxisAlignment.start,
                           children: [
-                            Text(
-                              _message.sentAt.toTimeString(),
-                              style: _message.style.copyWith(
-                                  fontSize: (_message.style.fontSize ?? 0) - 5),
-                            ),
-                            if (_message.sentByMe &&
+                            if (IsmChatProperties.chatPageProperties
+                                    .messageStatus?.shouldShowMessageTime ??
+                                true) ...[
+                              Text(
+                                _message.sentAt.toTimeString(),
+                                style: _message.style.copyWith(
+                                    fontSize:
+                                        (_message.style.fontSize ?? 0) - 5),
+                              )
+                            ],
+                            if ((IsmChatProperties
+                                        .chatPageProperties
+                                        .messageStatus
+                                        ?.shouldShowMessgaeStatus ??
+                                    true) &&
+                                _message.sentByMe &&
                                 _message.customType !=
                                     IsmChatCustomMessageType
                                         .deletedForEveryone) ...[
