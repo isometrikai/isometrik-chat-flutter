@@ -82,37 +82,23 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   }
 
   @override
-  Widget build(BuildContext context) => Stack(
-        alignment: Alignment.center,
-        children: [
-          WillPopScope(
-            onWillPop: () async {
-              if (!GetPlatform.isAndroid) return false;
-              return IsmChat.i.tag == null ? await navigateBack() : false;
-            },
-            child: GetPlatform.isIOS
-                ? GestureDetector(
-                    onHorizontalDragEnd: IsmChat.i.tag == null
-                        ? (details) {
-                            if (details.velocity.pixelsPerSecond.dx > 50) {
-                              navigateBack();
-                            }
-                          }
-                        : null,
-                    child: const _IsmChatPageView(),
-                  )
-                : const _IsmChatPageView(),
-          ),
-          if (IsmChatProperties.chatPageProperties.stackWidget != null) ...[
-            Material(
-              color: IsmChatColors.transparent,
-              child: IsmChatProperties.chatPageProperties.stackWidget?.call(
-                context,
-                controller.conversation,
-              ),
-            )
-          ]
-        ],
+  Widget build(BuildContext context) => WillPopScope(
+        onWillPop: () async {
+          if (!GetPlatform.isAndroid) return false;
+          return IsmChat.i.tag == null ? await navigateBack() : false;
+        },
+        child: GetPlatform.isIOS
+            ? GestureDetector(
+                onHorizontalDragEnd: IsmChat.i.tag == null
+                    ? (details) {
+                        if (details.velocity.pixelsPerSecond.dx > 50) {
+                          navigateBack();
+                        }
+                      }
+                    : null,
+                child: const _IsmChatPageView(),
+              )
+            : const _IsmChatPageView(),
       );
 }
 
