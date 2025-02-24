@@ -103,7 +103,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
           onTap: showMessageInCenter
               ? null
               : () {
-                  IsmChatUtility.dismissKeyBoard();
+                  IsmChatUtility.hideKeyboard();
                   controller.onMessageSelect(widget._message!);
                   if (controller.showEmojiBoard) {
                     controller.toggleEmojiBoard(false, false);

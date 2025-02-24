@@ -29,6 +29,7 @@ class IsmChatPageProperties {
     this.isShowMediaMeessageBlure,
     this.loggedInUser,
     this.messageStatus,
+    this.stackWidget,
   });
 
   final Widget? placeholder;
@@ -130,4 +131,6 @@ class IsmChatPageProperties {
   final Widget? loggedInUser;
 
   final IsmChatMessgaeStatusProperties? messageStatus;
+
+  final WidgetConversationCallback? stackWidget;
 }

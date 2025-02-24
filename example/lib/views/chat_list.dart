@@ -55,6 +55,11 @@ class ChatList extends StatelessWidget {
             ),
 
             chatPageProperties: IsmChatPageProperties(
+              // stackWidget: Container(
+              //   alignment: Alignment.center,
+              //   color: IsmChatColors.greenColor,
+              //   child: const Text('Stack '),
+              // ),
               // isShowMediaMeessageBlure: (p0, p1) => true,
               // isAllowedDeleteChatFromLocal: true,
               // onCoverstaionStatus: (p0, conversation) {

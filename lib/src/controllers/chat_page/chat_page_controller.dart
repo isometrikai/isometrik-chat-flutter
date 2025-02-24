@@ -825,7 +825,7 @@ class IsmChatPageController extends GetxController
         messageFieldFocusNode.requestFocus();
       }
     } else {
-      IsmChatUtility.dismissKeyBoard();
+      IsmChatUtility.hideKeyboard();
     }
     showEmojiBoard = showEmoji ?? !showEmojiBoard;
   }

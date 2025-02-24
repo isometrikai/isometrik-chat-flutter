@@ -25,9 +25,10 @@ import 'package:url_launcher/url_launcher.dart';
 class IsmChatUtility {
   const IsmChatUtility._();
 
-  static void dismissKeyBoard() {
-    FocusScope.of(Get.context!).unfocus();
-  }
+  static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
+
+  static void openKeyboard() =>
+      FocusManager.instance.primaryFocus?.requestFocus();
 
   /// Method for Do Work After Frame Call Back
   static void doLater(VoidCallback? work) {

@@ -72,30 +72,33 @@ class _MyAppState extends State<MyApp> {
               : const Size(375, 745),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (_, child) => child!,
-      child: GetMaterialApp(
-        key: const Key('ChatApp'),
+      builder: (_, child) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: IsmChatUtility.hideKeyboard,
+        child: GetMaterialApp(
+          key: const Key('ChatApp'),
 
-        title: 'Isomterik flutter web chat',
-        locale: const Locale('en', 'US'),
-        // localizationsDelegates:  [
-        //   ...GlobalMaterialLocalizations.delegates,
-        //   GlobalWidgetsLocalizations.delegate,
-        // ],
-        supportedLocales: const [Locale('en', 'US')],
-        theme: ThemeData.light(useMaterial3: true).copyWith(
-          primaryColor: AppColors.whiteColor,
-          extensions: [],
+          title: 'Isomterik flutter web chat',
+          locale: const Locale('en', 'US'),
+          // localizationsDelegates:  [
+          //   ...GlobalMaterialLocalizations.delegates,
+          //   GlobalWidgetsLocalizations.delegate,
+          // ],
+          supportedLocales: const [Locale('en', 'US')],
+          theme: ThemeData.light(useMaterial3: true).copyWith(
+            primaryColor: AppColors.whiteColor,
+            extensions: [],
+          ),
+          // darkTheme: ThemeData.dark(useMaterial3: true)
+          //     .copyWith(primaryColor: AppColors.primaryColorDark),
+          // darkTheme: ThemeData.dark(useMaterial3: true)
+          //     .copyWith(primaryColor: AppColors.primaryColorDark),
+          debugShowCheckedModeBanner: false,
+          translations: AppTranslations(),
+          initialRoute:
+              AppConfig.userDetail != null ? ChatList.route : LoginView.route,
+          getPages: AppPages.pages,
         ),
-        // darkTheme: ThemeData.dark(useMaterial3: true)
-        //     .copyWith(primaryColor: AppColors.primaryColorDark),
-        // darkTheme: ThemeData.dark(useMaterial3: true)
-        //     .copyWith(primaryColor: AppColors.primaryColorDark),
-        debugShowCheckedModeBanner: false,
-        translations: AppTranslations(),
-        initialRoute:
-            AppConfig.userDetail != null ? ChatList.route : LoginView.route,
-        getPages: AppPages.pages,
       ),
     );
   }
