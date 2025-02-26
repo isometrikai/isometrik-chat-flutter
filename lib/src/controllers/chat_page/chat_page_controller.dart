@@ -1143,7 +1143,8 @@ class IsmChatPageController extends GetxController
                 .contains(IsmChatFeature.reaction)
             ? IsmChatDimens.percentHeight(.1)
             : 0);
-    var isOverFlowing = (overlayHeight + offset.dy) > Get.height;
+
+    var isOverFlowing = (overlayHeight + offset.dy) > (Get.height);
     var topPosition = offset.dy;
     if (isOverFlowing) {
       topPosition = (Get.height - overlayHeight) - IsmChatDimens.twenty;
@@ -1154,7 +1155,13 @@ class IsmChatPageController extends GetxController
       builder: (context) => Positioned(
         left: message.sentByMe ? null : offset.dx + size.width - 5,
         right: message.sentByMe ? 0 + size.width + 5 : null,
-        top: topPosition,
+        top: topPosition.isNegative
+            ? IsmChatProperties.chatPageProperties.header?.height?.call(
+                    Get.context!,
+                    Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                        .conversation!) ??
+                IsmChatDimens.appBarHeight
+            : topPosition,
         child: Material(
           color: Colors.transparent,
           child: AnimatedBuilder(
