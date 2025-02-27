@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -170,34 +171,47 @@ class WebMediaPreview extends StatelessWidget {
                         child: Row(
                           children: [
                             Expanded(
-                              child: IsmChatInputField(
-                                isShowBorderColor: true,
-                                // fillColor:
-                                //     IsmChatColors.greyColor.applyIsmOpacity(.5),
-                                autofocus: false,
-                                padding: IsmChatConfig.chatTheme.chatPageTheme
-                                    ?.textFiledTheme?.textfieldInsets,
-                                contentPadding: IsmChatDimens.edgeInsets20,
-                                hint: IsmChatStrings.addCaption,
-                                hintStyle: IsmChatConfig.chatTheme.chatPageTheme
-                                        ?.textFiledTheme?.hintTextStyle ??
-                                    IsmChatStyles.w400Black16,
-                                cursorColor: IsmChatColors.blackColor,
-                                style: IsmChatConfig.chatTheme.chatPageTheme
-                                        ?.textFiledTheme?.inputTextStyle ??
-                                    IsmChatStyles.w400Black16,
-                                controller: controller.textEditingController,
-                                onChanged: (value) {
-                                  controller.webMedia[controller.assetsIndex] =
-                                      controller
-                                          .webMedia[controller.assetsIndex]
-                                          .copyWith(caption: value);
+                              child: KeyboardListener(
+                                focusNode: controller.mediaFocusNode,
+                                onKeyEvent: (event) async {
+                                  if (event.logicalKey ==
+                                      LogicalKeyboardKey.enter) {
+                                    controller.sendMediaWeb();
+                                  }
                                 },
+                                child: IsmChatInputField(
+                                  isShowBorderColor: true,
+                                  // fillColor:
+                                  //     IsmChatColors.greyColor.applyIsmOpacity(.5),
+                                  autofocus: true,
+                                  padding: IsmChatConfig.chatTheme.chatPageTheme
+                                      ?.textFiledTheme?.textfieldInsets,
+                                  contentPadding: IsmChatDimens.edgeInsets20,
+                                  hint: IsmChatStrings.addCaption,
+                                  hintStyle: IsmChatConfig
+                                          .chatTheme
+                                          .chatPageTheme
+                                          ?.textFiledTheme
+                                          ?.hintTextStyle ??
+                                      IsmChatStyles.w400Black16,
+                                  cursorColor: IsmChatColors.blackColor,
+                                  style: IsmChatConfig.chatTheme.chatPageTheme
+                                          ?.textFiledTheme?.inputTextStyle ??
+                                      IsmChatStyles.w400Black16,
+                                  controller: controller.textEditingController,
+                                  onChanged: (value) {
+                                    controller
+                                            .webMedia[controller.assetsIndex] =
+                                        controller
+                                            .webMedia[controller.assetsIndex]
+                                            .copyWith(caption: value);
+                                  },
+                                ),
                               ),
                             ),
                             IsmChatDimens.boxWidth20,
                             IsmChatStartChatFAB(
-                              onTap: () async {
+                              onTap: () {
                                 controller.sendMediaWeb();
                               },
                               icon: const Icon(

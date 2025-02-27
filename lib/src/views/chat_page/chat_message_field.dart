@@ -193,8 +193,7 @@ class IsmChatMessageField extends StatelessWidget {
                                           ?.inputTextStyle,
                                       maxLines: 4,
                                       minLines: 1,
-                                      focusNode:
-                                          controller.messageFieldFocusNode,
+                                      focusNode: controller.messageFocusNode,
                                       controller:
                                           controller.chatInputController,
                                       cursorColor: IsmChatConfig

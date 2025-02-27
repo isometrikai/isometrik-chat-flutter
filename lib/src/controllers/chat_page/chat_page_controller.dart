@@ -47,7 +47,9 @@ class IsmChatPageController extends GetxController
   IsmChatPageController(this.viewModel);
   final IsmChatPageViewModel viewModel;
 
-  var messageFieldFocusNode = FocusNode();
+  var messageFocusNode = FocusNode();
+
+  var mediaFocusNode = FocusNode();
 
   var chatInputController = TextEditingController();
 
@@ -822,7 +824,7 @@ class IsmChatPageController extends GetxController
   ]) {
     if (showEmoji ?? showEmojiBoard) {
       if (focusKeyboard) {
-        messageFieldFocusNode.requestFocus();
+        messageFocusNode.requestFocus();
       }
     } else {
       IsmChatUtility.hideKeyboard();
@@ -1039,7 +1041,7 @@ class IsmChatPageController extends GetxController
   void onReplyTap(IsmChatMessageModel message) {
     isreplying = true;
     replayMessage = message;
-    messageFieldFocusNode.requestFocus();
+    messageFocusNode.requestFocus();
   }
 
   void onMenuItemSelected(
@@ -1230,13 +1232,13 @@ class IsmChatPageController extends GetxController
     chatInputController.addListener(() {
       showSendButton = chatInputController.text.isNotEmpty;
     });
-    messageFieldFocusNode.addListener(
+    messageFocusNode.addListener(
       () {
-        if (messageFieldFocusNode.hasFocus) {
+        if (messageFocusNode.hasFocus) {
           showEmojiBoard = false;
         }
         IsmChatProperties.chatPageProperties.meessageFieldFocusNode
-            ?.call(Get.context!, conversation!, messageFieldFocusNode.hasFocus);
+            ?.call(Get.context!, conversation!, messageFocusNode.hasFocus);
       },
     );
   }
