@@ -419,9 +419,11 @@ class _IsmChatPageView extends StatelessWidget {
                           ),
                           Obx(
                             () => !controller.showDownSideButton
-                                ? const SizedBox.shrink()
+                                ? IsmChatDimens.box0
                                 : Positioned(
-                                    bottom: IsmChatDimens.ninty,
+                                    bottom: IsmChatResponsive.isMobile(context)
+                                        ? IsmChatDimens.ninty
+                                        : IsmChatDimens.oneHundredFifty,
                                     right: IsmChatDimens.eight,
                                     child: IsmChatTapHandler(
                                       onTap: controller.scrollDown,

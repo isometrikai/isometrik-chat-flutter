@@ -109,7 +109,6 @@ class IsmChatMessageField extends StatelessWidget {
                     shortcuts: {
                       LogicalKeySet(
                         LogicalKeyboardKey.enter,
-                        // LogicalKeyboardKey.newKey,
                       ): const SendMessageIntent(),
                     },
                     child: Actions(
@@ -317,7 +316,7 @@ class _ReplyMessage extends StatelessWidget {
           borderRadius: BorderRadius.circular(
             IsmChatDimens.sixteen,
           ),
-          color: IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(.5),
+          color: IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.3),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

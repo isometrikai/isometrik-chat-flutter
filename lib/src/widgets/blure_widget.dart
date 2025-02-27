@@ -7,17 +7,17 @@ class BlurFilter extends StatelessWidget {
   const BlurFilter({
     super.key,
     required this.child,
-    this.isNotBlured = true,
+    this.isBlured = false,
     this.sigmaX = 10,
     this.sigmaY = 10,
   });
   final Widget child;
-  final bool isNotBlured;
+  final bool isBlured;
   final double sigmaX;
   final double sigmaY;
 
   @override
-  Widget build(BuildContext context) => isNotBlured
+  Widget build(BuildContext context) => !isBlured
       ? child
       : Stack(
           alignment: Alignment.center,

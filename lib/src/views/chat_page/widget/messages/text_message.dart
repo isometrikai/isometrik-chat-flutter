@@ -33,7 +33,6 @@ class IsmChatTextMessage extends StatelessWidget {
                         text: e.text,
                         style: message.style.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: IsmChatDimens.fifteen,
                           color: IsmChatConfig.chatTheme.mentionColor,
                         ),
                         recognizer: TapGestureRecognizer()

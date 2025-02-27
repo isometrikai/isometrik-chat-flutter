@@ -54,8 +54,8 @@ class ChatListController extends GetxController {
         ),
       ),
       mqttProperties: IsmMqttProperties(
-        shouldSetupMqtt: false,
-        autoReconnect: false,
+        shouldSetupMqtt: kIsWeb && kDebugMode ? false : true,
+        autoReconnect: kIsWeb && kDebugMode ? false : true,
       ),
       showNotification: (title, body, conversataionId) {
         LocalNoticeService().showFlutterNotification(

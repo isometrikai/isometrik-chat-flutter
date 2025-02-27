@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 class IsmChatReplyMessageTheme {
   IsmChatReplyMessageTheme({
-    required this.selfReplayMessage,
-    required this.opponentReplayMessage,
+    required this.selfMessage,
+    required this.opponentMessage,
+    required this.fontSizeMessage,
   });
-  final Color selfReplayMessage;
-  final Color opponentReplayMessage;
+  final Color selfMessage;
+  final Color opponentMessage;
+  final double fontSizeMessage;
 }
