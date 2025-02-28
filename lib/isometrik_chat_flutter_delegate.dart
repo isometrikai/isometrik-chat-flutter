@@ -609,4 +609,12 @@ class IsmChatDelegate {
       await controller.getMessagesFromAPI();
     }
   }
+
+  List<IsmChatMessageModel> currentConversatonMessages() {
+    if (Get.isRegistered<IsmChatPageController>()) {
+      final controller = Get.find<IsmChatPageController>();
+      return controller.messages;
+    }
+    return [];
+  }
 }

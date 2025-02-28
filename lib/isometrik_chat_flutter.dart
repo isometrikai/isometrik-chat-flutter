@@ -928,6 +928,9 @@ class IsmChat {
 
   Future<void> updateChatPage() async => await _delegate.updateChatPage();
 
+  List<IsmChatMessageModel> currentConversatonMessages() =>
+      _delegate.currentConversatonMessages();
+
   Future<List<IsmChatConversationModel>> getChatConversationApi({
     int skip = 0,
     int limit = 20,
