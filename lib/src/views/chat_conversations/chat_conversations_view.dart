@@ -22,6 +22,24 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
     startInit();
   }
 
+  @override
+  void dispose() {
+    closeOverlay();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    closeOverlay();
+    super.deactivate();
+  }
+
+  void closeOverlay() {
+    if (Get.isRegistered<IsmChatPageController>()) {
+      Get.find<IsmChatPageController>().closeOverlay();
+    }
+  }
+
   startInit() {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatLog.info(
