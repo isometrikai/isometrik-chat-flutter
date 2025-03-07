@@ -65,7 +65,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           await conversationController.getConversationsFromDB();
         }
       }
-      IsmChatConfig.paidWalletMessageApiResponse?.call(response.$2);
+      IsmChatConfig.paidWalletMessageApiResponse?.call(
+        response.$2,
+        IsmChatConfig.paidWalletModel?.apiUrl ?? '',
+      );
     } else if (_controller.conversation?.customType !=
         IsmChatStrings.broadcast) {
       var isMessageSent = await _controller.commonController.sendMessage(

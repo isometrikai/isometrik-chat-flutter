@@ -35,17 +35,14 @@ class IsmChatApiWrapper {
     }
     try {
       final response = await http
-          .get(
-            uri,
-            headers: headers,
-          )
+          .get(uri, headers: headers)
           .timeout(const Duration(seconds: 60));
 
       if (showLoader) {
         IsmChatUtility.closeLoader();
       }
 
-      return _processResponse(response);
+      return _processResponse(response: response, apiUrl: uri.toString());
     } on TimeoutException catch (_) {
       if (showLoader) {
         IsmChatUtility.closeLoader();
@@ -75,18 +72,13 @@ class IsmChatApiWrapper {
     }
     try {
       final response = await http
-          .post(
-            uri,
-            body: jsonEncode(payload),
-            headers: headers,
-          )
+          .post(uri, body: jsonEncode(payload), headers: headers)
           .timeout(const Duration(seconds: 60));
 
       if (showLoader) {
         IsmChatUtility.closeLoader();
       }
-
-      return _processResponse(response);
+      return _processResponse(response: response, apiUrl: uri.toString());
     } on TimeoutException catch (_) {
       if (showLoader) {
         IsmChatUtility.closeLoader();
@@ -122,15 +114,13 @@ class IsmChatApiWrapper {
             body: forAwsUpload ? payload : jsonEncode(payload),
             headers: headers,
           )
-          .timeout(
-            const Duration(seconds: 60),
-          );
+          .timeout(const Duration(seconds: 60));
 
       if (showLoader) {
         IsmChatUtility.closeLoader();
       }
 
-      return _processResponse(response);
+      return _processResponse(response: response, apiUrl: uri.toString());
     } on TimeoutException catch (_) {
       if (showLoader) {
         IsmChatUtility.closeLoader();
@@ -171,7 +161,7 @@ class IsmChatApiWrapper {
         IsmChatUtility.closeLoader();
       }
 
-      return _processResponse(response);
+      return _processResponse(response: response, apiUrl: uri.toString());
     } on TimeoutException catch (_) {
       if (showLoader) {
         IsmChatUtility.closeLoader();
@@ -212,7 +202,7 @@ class IsmChatApiWrapper {
         IsmChatUtility.closeLoader();
       }
 
-      return _processResponse(response);
+      return _processResponse(response: response, apiUrl: uri.toString());
     } on TimeoutException catch (_) {
       if (showLoader) {
         IsmChatUtility.closeLoader();
@@ -225,9 +215,13 @@ class IsmChatApiWrapper {
     }
   }
 
-  IsmChatResponseModel _processResponse(http.Response response) {
+  IsmChatResponseModel _processResponse({
+    required http.Response response,
+    required String apiUrl,
+  }) {
     IsmChatLog.info(
-        'Response - ${response.request?.method} ${response.statusCode} ${response.request?.url}\n${response.body}');
+      'Response - ${response.request?.method} ${response.statusCode} ${response.request?.url}\n${response.body}',
+    );
     switch (response.statusCode) {
       case 204:
         return IsmChatResponseModel(
@@ -261,7 +255,7 @@ class IsmChatApiWrapper {
           hasError: true,
           errorCode: response.statusCode,
         );
-        IsmChatConfig.chatInvalidate?.call(res);
+        IsmChatConfig.chatInvalidate?.call(res, apiUrl);
         return res;
     }
   }
