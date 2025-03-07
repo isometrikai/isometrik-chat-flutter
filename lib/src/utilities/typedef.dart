@@ -128,6 +128,7 @@ typedef ConversationCallback = bool Function(
 
 typedef ResponseCallback = void Function(
   IsmChatResponseModel?,
+  String,
 );
 
 typedef SortingConversationCallback = String Function();
