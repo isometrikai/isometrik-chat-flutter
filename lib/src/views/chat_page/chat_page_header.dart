@@ -42,11 +42,13 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                   statusBarColor: IsmChatConfig.chatTheme.primaryColor ??
                       IsmChatColors.primaryColorLight,
                 ),
-            child: ColoredBox(
-              color: IsmChatConfig
-                      .chatTheme.chatPageHeaderTheme?.backgroundColor ??
-                  IsmChatConfig.chatTheme.primaryColor ??
-                  IsmChatColors.primaryColorLight,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: IsmChatConfig
+                        .chatTheme.chatPageHeaderTheme?.backgroundColor ??
+                    IsmChatConfig.chatTheme.primaryColor ??
+                    IsmChatColors.primaryColorLight,
+              ),
               child: SafeArea(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,

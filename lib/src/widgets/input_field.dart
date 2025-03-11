@@ -22,6 +22,7 @@ class IsmChatInputField extends StatelessWidget {
     this.focusNode,
     this.contentPadding,
     this.borderColor,
+    this.borderRadius,
     this.isShowBorderColor = false,
     super.key,
   });
@@ -45,6 +46,7 @@ class IsmChatInputField extends StatelessWidget {
   final EdgeInsets? contentPadding;
   final bool isShowBorderColor;
   final Color? borderColor;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -70,7 +72,8 @@ class IsmChatInputField extends StatelessWidget {
             filled: true,
             fillColor: fillColor ?? IsmChatConfig.chatTheme.backgroundColor,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
                     ? borderColor ??
@@ -81,7 +84,8 @@ class IsmChatInputField extends StatelessWidget {
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
                     ? borderColor ??
@@ -103,7 +107,8 @@ class IsmChatInputField extends StatelessWidget {
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
                     ? borderColor ??
@@ -114,7 +119,8 @@ class IsmChatInputField extends StatelessWidget {
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
                     ? borderColor ??
@@ -125,7 +131,8 @@ class IsmChatInputField extends StatelessWidget {
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? IsmChatDimens.ten),
               borderSide: BorderSide(
                 color: isShowBorderColor
                     ? borderColor ??
