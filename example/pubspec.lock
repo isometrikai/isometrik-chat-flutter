@@ -301,10 +301,10 @@ packages:
     dependency: transitive
     description:
       name: elegant_notification
-      sha256: c640df49f572b7882d440fa4eec072de1d3a86c90d74f31dba587b2b0276386e
+      sha256: "10a58458b90905d5d715dfe72ba243ea6308722770d5df9b63729a28abc985f5"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2"
+    version: "2.4.3"
   emoji_picker_flutter:
     dependency: transitive
     description:
@@ -756,10 +756,10 @@ packages:
     dependency: transitive
     description:
       name: google_maps_flutter_web
-      sha256: a9fd5356d46f54744ced1ebedbbf212f3d2cb71e95d79b1d08690c1ec33dc584
+      sha256: bbeb93807a34bfeebdb7ace506bd2bc400a3915dc96736254fea721eb264caa0
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.10+1"
+    version: "0.5.11"
   hive:
     dependency: "direct main"
     description:

@@ -11,6 +11,8 @@ class IsmChatListCardTheme {
     this.messageCountTheme,
     this.iconSize,
     this.backgroundColor,
+    this.dividerColor,
+    this.dividerThickness,
   });
 
   IsmChatListCardTheme.light()
@@ -19,6 +21,8 @@ class IsmChatListCardTheme {
         trailingTextStyle = IsmChatStyles.w400Black10,
         subTitleTextStyle = IsmChatStyles.w400Black10,
         titleTextStyle = IsmChatStyles.w600Black12,
+        dividerThickness = _kDividerThickness,
+        dividerColor = IsmChatColors.primaryColorLight,
         iconSize = 16,
         backgroundColor =
             IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2),
@@ -30,6 +34,8 @@ class IsmChatListCardTheme {
         trailingTextStyle = IsmChatStyles.w400White10,
         subTitleTextStyle = IsmChatStyles.w400Black10,
         titleTextStyle = IsmChatStyles.w600Black12,
+        dividerColor = IsmChatColors.primaryColorDark,
+        dividerThickness = _kDividerThickness,
         iconSize = 16,
         backgroundColor =
             IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2),
@@ -43,4 +49,8 @@ class IsmChatListCardTheme {
   final MessageCountTheme? messageCountTheme;
   final double? iconSize;
   final Color? backgroundColor;
+  final double? dividerThickness;
+  final Color? dividerColor;
+
+  static const double _kDividerThickness = 0.5;
 }

@@ -52,15 +52,26 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
     return IsmChatTapHandler(
       onTap: widget.onTap,
       child: Container(
-        color: IsmChatResponsive.isWeb(context)
-            ? Get.find<IsmChatConversationsController>()
-                        .currentConversationId ==
-                    widget.conversation.conversationId
-                ? IsmChatConfig
-                        .chatTheme.chatListCardThemData?.backgroundColor ??
-                    IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2)
-                : null
-            : null,
+        decoration: BoxDecoration(
+          color: IsmChatResponsive.isWeb(context)
+              ? Get.find<IsmChatConversationsController>()
+                          .currentConversationId ==
+                      widget.conversation.conversationId
+                  ? IsmChatConfig
+                          .chatTheme.chatListCardThemData?.backgroundColor ??
+                      IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2)
+                  : null
+              : null,
+          border: Border(
+            bottom: BorderSide(
+                color: IsmChatConfig
+                        .chatTheme.chatListCardThemData?.dividerColor ??
+                    IsmChatColors.transparent,
+                width: IsmChatConfig
+                        .chatTheme.chatListCardThemData?.dividerThickness ??
+                    0.5),
+          ),
+        ),
         padding:
             IsmChatDimens.edgeInsets10_05.copyWith(left: IsmChatDimens.two),
         width: IsmChatDimens.percentWidth(1),
