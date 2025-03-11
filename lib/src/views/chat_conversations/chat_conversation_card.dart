@@ -48,7 +48,6 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     return IsmChatTapHandler(
       onTap: widget.onTap,
       child: Container(
@@ -62,23 +61,12 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                       IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2)
                   : null
               : null,
-          border: Border(
-            bottom: BorderSide(
-                color: IsmChatConfig
-                        .chatTheme.chatListCardThemData?.dividerColor ??
-                    IsmChatColors.transparent,
-                width: IsmChatConfig
-                        .chatTheme.chatListCardThemData?.dividerThickness ??
-                    0.5),
-          ),
         ),
-        padding:
-            IsmChatDimens.edgeInsets10_05.copyWith(left: IsmChatDimens.two),
+        padding: IsmChatDimens.edgeInsets15,
         width: IsmChatDimens.percentWidth(1),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IsmChatDimens.boxWidth14,
             Container(
               alignment: widget.conversation.conversationType ==
                       IsmChatConversationType.open

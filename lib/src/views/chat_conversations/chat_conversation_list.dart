@@ -84,7 +84,7 @@ class _ConversationList extends StatelessWidget {
         controller: controller.conversationScrollController,
         separatorBuilder: (_, __) =>
             IsmChatProperties.conversationProperties.conversationDivider ??
-            IsmChatDimens.boxHeight10,
+            IsmChatDimens.boxHeight2,
         addAutomaticKeepAlives: true,
         itemBuilder: (_, index) {
           var conversation = controller.userConversations[index];
