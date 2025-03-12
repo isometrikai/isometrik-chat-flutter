@@ -137,7 +137,8 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
             widget.url,
             style: widget.message.style.copyWith(
               decoration: TextDecoration.underline,
-              decorationColor: IsmChatColors.blueColor,
+              decorationColor: IsmChatColors.pureBlue,
+              color: IsmChatColors.pureBlue,
             ),
             softWrap: true,
             overflow: TextOverflow.ellipsis,
