@@ -1,8 +1,6 @@
-import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// IsmMedia class is for showing the conversation media
 class IsmLinksView extends StatefulWidget {
@@ -66,46 +64,20 @@ class _IsmLinksViewState extends State<IsmLinksView>
                         addAutomaticKeepAlives: true,
                         shrinkWrap: true,
                         itemCount: value.length,
-                        itemBuilder: (context, valueIndex) {
-                          if (AnyLinkPreview.isValidLink(
-                              value[valueIndex].body)) {
-                            return IsmChatTapHandler(
-                              child: Container(
-                                padding: IsmChatDimens.edgeInsets10,
-                                width: context.width * 0.8,
-                                decoration: BoxDecoration(
-                                  color: IsmChatConfig.chatTheme.primaryColor,
-                                  borderRadius: BorderRadius.circular(
-                                    IsmChatDimens.ten,
-                                  ),
-                                ),
-                                child: AnyLinkPreview(
-                                  displayDirection:
-                                      UIDirection.uiDirectionHorizontal,
-                                  bodyMaxLines: 4,
-                                  urlLaunchMode: LaunchMode.externalApplication,
-                                  removeElevation: true,
-                                  bodyTextOverflow: TextOverflow.ellipsis,
-                                  cache: const Duration(minutes: 5),
-                                  link: value[valueIndex].body,
-                                  backgroundColor: Colors.transparent,
-                                  titleStyle: IsmChatStyles.w500Black16,
-                                  errorWidget: Text(
-                                      IsmChatStrings.errorLoadingPreview,
-                                      style: IsmChatStyles.w400White12),
-                                  placeholderWidget: Text('Loading preview...',
-                                      style: IsmChatStyles.w400White12),
-                                  errorBody: 'Preview not available',
-                                  errorTitle: 'Google',
-                                  showMultimedia: false,
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Text('Invalid Url',
-                                style: IsmChatStyles.w400White12);
-                          }
-                        },
+                        itemBuilder: (context, valueIndex) => Container(
+                          padding: IsmChatDimens.edgeInsets10,
+                          width: context.width * 0.8,
+                          decoration: BoxDecoration(
+                            color: IsmChatConfig.chatTheme.primaryColor,
+                            borderRadius: BorderRadius.circular(
+                              IsmChatDimens.ten,
+                            ),
+                          ),
+                          child: LinkPreviewView(
+                            url: value[valueIndex].body.convertToValidUrl,
+                            message: value[valueIndex],
+                          ),
+                        ),
                         separatorBuilder: (_, index) =>
                             IsmChatDimens.boxHeight10,
                       ),

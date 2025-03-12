@@ -9,6 +9,7 @@ export 'custom_snackbar.dart';
 export 'file_widget.dart';
 export 'icon_and_text.dart';
 export 'input_field.dart';
+export 'link_preview/link_preview.dart';
 export 'loading_dialog.dart';
 export 'no_message.dart';
 export 'page_dailog.dart';

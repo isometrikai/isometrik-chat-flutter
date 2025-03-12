@@ -7,6 +7,8 @@ class IsmChatColors {
 
   static const Color transparent = Colors.transparent;
 
+  static const Color pureBlue = Colors.blue;
+
   static const Color backgroundColorLight = Color(0xFFF4EFFB);
 
   static const Color yellowColor = Color(0xFFFFB638);

@@ -26,6 +26,8 @@ class IsmChatStrings {
 
   static const String errorLoadingPreview = 'Error loading link preview';
 
+  static const String fetchingPreview = 'Fetching link preview';
+
   static const String errorLoadingImage = 'Error loading image';
 
   static const String typing = 'Typing...';

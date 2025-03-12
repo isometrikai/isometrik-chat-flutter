@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-// ignore: deprecated_member_use
-import 'dart:html' as html;
 
 import 'package:flutter/services.dart';
+import 'package:universal_html/html.dart' as html;
 
 class IsmChatBlob {
   /// call function for create blob url with bytes
