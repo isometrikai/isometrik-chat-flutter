@@ -80,6 +80,11 @@ class IsmChatMessageField extends StatelessWidget {
                 ),
               ] else ...[
                 if (IsmChatResponsive.isWeb(context)) ...[
+                  if (IsmChatProperties.chatPageProperties.textFieldActions !=
+                      null) ...[
+                    IsmChatProperties.chatPageProperties.textFieldActions ??
+                        IsmChatDimens.box0,
+                  ],
                   IsmChatDimens.boxWidth8,
                   Container(
                     margin: IsmChatDimens.edgeInsetsBottom4,
