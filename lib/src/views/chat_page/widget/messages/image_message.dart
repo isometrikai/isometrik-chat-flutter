@@ -34,8 +34,7 @@ class IsmChatImageMessage extends StatelessWidget {
                           message.attachments?.first.mediaUrl?.isValidUrl ??
                               false,
                       isBytes:
-                          !(message.attachments?.first.mediaUrl?.isValidUrl ??
-                              false),
+                          (IsmChatResponsive.isWeb(context)) ? true : false,
                     ),
                   ),
                   if (message.metaData?.caption?.isNotEmpty == true) ...[
