@@ -65,7 +65,7 @@ extension MessagePagination on int {
       return endValue;
     }
     endValue = endValue + increaseValue;
-    return pagination(endValue: endValue);
+    return pagination(endValue: endValue, increaseValue: increaseValue);
   }
 
   // int limitPagination({
