@@ -1170,6 +1170,9 @@ class IsmChatConversationsController extends GetxController {
           Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       chatPagecontroller.startInit();
       chatPagecontroller.closeOverlay();
+      if (chatPagecontroller.showEmojiBoard) {
+        chatPagecontroller.toggleEmojiBoard(false, false);
+      }
     } else {
       IsmChatRouteManagement.goToChatPage();
     }
