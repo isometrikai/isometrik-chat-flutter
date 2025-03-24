@@ -24,12 +24,14 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
+
     _controller.messages = _controller.commonController
         .sortMessages(filterMessages(messages.values.toList()));
 
     if (_controller.messages.isEmpty) {
       return;
     }
+
     _controller.isMessagesLoading = false;
     _controller._generateIndexedMessageList();
   }
@@ -96,6 +98,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = false;
       }
+
       if (data.isNotEmpty && !_controller.isBroadcast) {
         await getMessagesFromDB(conversationID);
       } else {

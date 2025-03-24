@@ -41,16 +41,19 @@ class IsmChatPageViewModel {
         messages.removeWhere(
             (e) => e.messageId == controller.messages.last.messageId);
       }
+
       if (!isBroadcast) {
         var conversation = await IsmChatConfig.dbWrapper
             ?.getConversation(conversationId: conversationId);
 
         if (conversation != null) {
-          conversation.messages?.addAll({
-            for (var message in messages)
-              '${message.metaData?.messageSentAt ?? DateTime.now().millisecondsSinceEpoch}':
-                  message
-          });
+          var data = <String, IsmChatMessageModel>{};
+          for (var message in messages) {
+            final key = message.metaData?.messageSentAt ?? message.sentAt;
+            final entriesData = {'${key != 0 ? key : message.sentAt}': message};
+            data.addEntries(entriesData.entries);
+          }
+          conversation.messages?.addAll(data);
           await IsmChatConfig.dbWrapper
               ?.saveConversation(conversation: conversation);
         }
@@ -60,7 +63,7 @@ class IsmChatPageViewModel {
     } else {
       messages = messages;
     }
-    IsmChatLog.error('messages Count ${messages.length}');
+
     return messages;
   }
 
