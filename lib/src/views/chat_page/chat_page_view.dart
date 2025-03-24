@@ -422,7 +422,9 @@ class _IsmChatPageView extends StatelessWidget {
                                 ? IsmChatDimens.box0
                                 : Positioned(
                                     bottom: IsmChatResponsive.isMobile(context)
-                                        ? IsmChatDimens.ninty
+                                        ? controller.isreplying
+                                            ? IsmChatDimens.oneHundredThirty
+                                            : IsmChatDimens.ninty
                                         : IsmChatDimens.oneHundredFifty,
                                     right: IsmChatDimens.eight,
                                     child: IsmChatTapHandler(
