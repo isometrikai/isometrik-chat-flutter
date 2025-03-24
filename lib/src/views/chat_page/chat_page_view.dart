@@ -467,7 +467,7 @@ class _MessgeNotAllowdWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         color: IsmChatConfig.chatTheme.backgroundColor,
-        height: IsmChatDimens.sixty,
+        // height: IsmChatDimens.sixty,
         width: double.maxFinite,
         child: SafeArea(
           child: Center(
