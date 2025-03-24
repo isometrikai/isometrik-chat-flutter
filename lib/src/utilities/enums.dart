@@ -222,7 +222,7 @@ enum IsmChatCustomMessageType {
         return IsmChatCustomMessageType.observerLeave;
 
       default:
-        return null;
+        return IsmChatCustomMessageType.text;
     }
   }
 

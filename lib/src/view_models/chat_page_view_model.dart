@@ -42,8 +42,8 @@ class IsmChatPageViewModel {
             (e) => e.messageId == controller.messages.last.messageId);
       }
       if (!isBroadcast) {
-        var conversation = await IsmChatConfig.dbWrapper!
-            .getConversation(conversationId: conversationId);
+        var conversation = await IsmChatConfig.dbWrapper
+            ?.getConversation(conversationId: conversationId);
 
         if (conversation != null) {
           conversation.messages?.addAll({
@@ -51,8 +51,8 @@ class IsmChatPageViewModel {
               '${message.metaData?.messageSentAt ?? DateTime.now().millisecondsSinceEpoch}':
                   message
           });
-          await IsmChatConfig.dbWrapper!
-              .saveConversation(conversation: conversation);
+          await IsmChatConfig.dbWrapper
+              ?.saveConversation(conversation: conversation);
         }
       } else {
         messages = messages;
@@ -60,6 +60,7 @@ class IsmChatPageViewModel {
     } else {
       messages = messages;
     }
+    IsmChatLog.error('messages Count ${messages.length}');
     return messages;
   }
 
