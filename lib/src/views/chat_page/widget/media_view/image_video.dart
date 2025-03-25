@@ -24,7 +24,8 @@ class _IsmMediaViewState extends State<IsmMediaView>
     super.initState();
     IsmChatUtility.doLater(
       () {
-        var storeSortMedia = chatPageController.sortMessages(widget.mediaList);
+        var storeSortMedia =
+            chatPageController.commonController.sortMessages(widget.mediaList);
         storeWidgetMediaList =
             chatPageController.sortMediaList(storeSortMedia).reversed.toList();
         setState(() {});

@@ -25,8 +25,8 @@ class _IsmDocsViewState extends State<IsmDocsView>
     super.initState();
     IsmChatUtility.doLater(
       () {
-        var storeSortDocs =
-            chatPageController.sortMessages(widget.mediaListDocs);
+        var storeSortDocs = chatPageController.commonController
+            .sortMessages(widget.mediaListDocs);
         storeWidgetDocsList =
             chatPageController.sortMediaList(storeSortDocs).reversed.toList();
       },

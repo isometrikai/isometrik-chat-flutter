@@ -292,6 +292,9 @@ class IsmChatCommonViewModel {
         }
       }
     }
+    if (result.isEmpty && list1.isNotEmpty) {
+      result.add([...list1]);
+    }
 
     for (var message in result) {
       allMessages.add(

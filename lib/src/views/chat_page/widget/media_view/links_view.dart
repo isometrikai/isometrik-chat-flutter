@@ -23,8 +23,8 @@ class _IsmLinksViewState extends State<IsmLinksView>
   void initState() {
     super.initState();
     IsmChatUtility.doLater(() {
-      var storeSortLinks =
-          chatPageController.sortMessages(widget.mediaListLinks);
+      var storeSortLinks = chatPageController.commonController
+          .sortMessages(widget.mediaListLinks);
       storeWidgetLinksList =
           chatPageController.sortMediaList(storeSortLinks).reversed.toList();
       setState(() {});
