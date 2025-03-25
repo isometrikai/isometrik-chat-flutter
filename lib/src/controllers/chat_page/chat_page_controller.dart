@@ -215,14 +215,6 @@ class IsmChatPageController extends GetxController
   FlashMode get flashMode => _flashMode.value;
   set flashMode(FlashMode value) => _flashMode.value = value;
 
-  final Rx<File?> _imagePath = Rx<File?>(null);
-  File? get imagePath => _imagePath.value;
-  set imagePath(File? value) => _imagePath.value = value;
-
-  final RxString _fileSize = ''.obs;
-  String get fileSize => _fileSize.value;
-  set fileSize(String value) => _fileSize.value = value;
-
   final RxString _backgroundImage = ''.obs;
   String get backgroundImage => _backgroundImage.value;
   set backgroundImage(String value) => _backgroundImage.value = value;
@@ -946,7 +938,7 @@ class IsmChatPageController extends GetxController
     }
     IsmChatUtility.closeLoader();
     if (IsmChatResponsive.isMobile(Get.context!)) {
-      IsmChatRouteManagement.goToWebMediaPreview();
+      IsmChatRouteManagement.goToMediaEditView();
     }
   }
 
@@ -1691,9 +1683,9 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  Future<void> cropImage(File file) async {
+  Future<void> cropImage(String url) async {
     final croppedFile = await ImageCropper().cropImage(
-      sourcePath: file.path,
+      sourcePath: url,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 100,
       uiSettings: [
@@ -1710,58 +1702,76 @@ class IsmChatPageController extends GetxController
       ],
     );
     if (croppedFile != null) {
-      imagePath = File(croppedFile.path);
-      fileSize = await IsmChatUtility.fileToSize(imagePath!);
-      IsmChatLog.success('Image cropped ${imagePath?.path}');
+      await updateImage(File(croppedFile.path));
     }
+  }
+
+  Future<void> paintImage(String url) async {
+    final file = await IsmChatRouteManagement.goToImagePaintView(File(url));
+    await updateImage(file);
   }
 
   void takePhoto() async {
     var file = await cameraController.takePicture();
+    File? mainFile;
 
-    if (kIsWeb) {
-      Get.back();
-      var bytes = await file.readAsBytes();
-      var fileSize = IsmChatUtility.formatBytes(
-        int.parse(bytes.length.toString()),
+    Get.back();
+    if (cameraController.description.lensDirection ==
+        CameraLensDirection.front) {
+      var imageBytes = await file.readAsBytes();
+      var file2 = File(file.path);
+      var originalImage = img.decodeImage(imageBytes);
+      var fixedImage = img.flipHorizontal(originalImage!);
+      var fixedFile = await file2.writeAsBytes(
+        img.encodeJpg(fixedImage),
+        flush: true,
       );
-      webMedia.add(
-        WebMediaModel(
-          dataSize: fileSize,
-          isVideo: false,
-          platformFile: IsmchPlatformFile(
-            name: '${DateTime.now().millisecondsSinceEpoch}.png',
-            bytes: bytes,
-            path: file.path,
-            size: bytes.length,
-            extension: 'png',
-          ),
-          thumbnailBytes: Uint8List(0),
-        ),
+      mainFile = File(
+        fixedFile.path,
       );
-      if (IsmChatResponsive.isMobile(Get.context!)) {
-        IsmChatRouteManagement.goToWebMediaPreview();
-      }
     } else {
-      if (cameraController.description.lensDirection ==
-          CameraLensDirection.front) {
-        var imageBytes = await file.readAsBytes();
-        var file2 = File(file.path);
+      mainFile = File(file.path);
+    }
 
-        var originalImage = img.decodeImage(imageBytes);
-        var fixedImage = img.flipHorizontal(originalImage!);
-        var fixedFile = await file2.writeAsBytes(
-          img.encodeJpg(fixedImage),
-          flush: true,
-        );
-        imagePath = File(fixedFile.path);
-      } else {
-        imagePath = File(file.path);
-      }
-
-      fileSize = await IsmChatUtility.fileToSize(imagePath ?? File(''));
+    await updateImage(mainFile);
+    if (IsmChatResponsive.isMobile(Get.context!)) {
       IsmChatRouteManagement.goToMediaEditView();
     }
+  }
+
+  Future<void> updateImage(File file) async {
+    // IsmChatUtility.showLoader();
+    var bytes = await file.readAsBytes();
+    bytes = await FlutterImageCompress.compressWithList(
+      bytes,
+      quality: 60,
+    );
+    final fileSize = IsmChatUtility.formatBytes(
+      int.parse(bytes.length.toString()),
+    );
+    var name = '';
+    if (kIsWeb) {
+      name = '${DateTime.now().millisecondsSinceEpoch}.png';
+    } else {
+      name = file.path.split('/').last;
+    }
+    final extension = name.split('.').last;
+    webMedia.clear();
+    webMedia.add(
+      WebMediaModel(
+        dataSize: fileSize,
+        isVideo: false,
+        platformFile: IsmchPlatformFile(
+          name: name,
+          bytes: bytes,
+          path: file.path,
+          size: bytes.length,
+          extension: extension,
+        ),
+        thumbnailBytes: Uint8List(0),
+      ),
+    );
+    // IsmChatUtility.closeLoader();
   }
 
   Future<void> readMessage({

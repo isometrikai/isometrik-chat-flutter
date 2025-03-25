@@ -6,8 +6,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class WebMediaPreview extends StatelessWidget {
   const WebMediaPreview({super.key});
 
-  static const String route = IsmPageRoutes.webMediaPreivew;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.tag,

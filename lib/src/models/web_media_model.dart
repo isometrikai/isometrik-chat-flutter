@@ -4,11 +4,11 @@ import 'dart:typed_data';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class WebMediaModel {
-  final IsmchPlatformFile platformFile;
-  final bool isVideo;
-  final Uint8List thumbnailBytes;
-  final String dataSize;
-  final String? caption;
+  IsmchPlatformFile platformFile;
+  bool isVideo;
+  Uint8List thumbnailBytes;
+  String dataSize;
+  String? caption;
   Duration? duration;
   WebMediaModel({
     required this.platformFile,

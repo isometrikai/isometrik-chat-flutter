@@ -172,12 +172,6 @@ class IsmChatRouteManagement {
     });
   }
 
-  static void goToWebMediaPreview() {
-    Get.toNamed(
-      WebMediaPreview.route,
-    );
-  }
-
   static void goToCameraView() {
     Get.toNamed(
       IsmChatCameraView.route,
@@ -217,6 +211,11 @@ class IsmChatRouteManagement {
       'fileList': fileList,
     });
   }
+
+  static Future<File> goToImagePaintView(File file) async =>
+      await Get.toNamed(IsmChatImagePaintView.route, arguments: {
+        'file': file,
+      });
 
   static void goToProfilePicView(UserDetails user) {
     Get.toNamed(IsmChatProfilePicView.route, arguments: {'user': user});

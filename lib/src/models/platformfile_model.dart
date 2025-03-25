@@ -11,15 +11,15 @@ class IsmchPlatformFile {
     this.size,
     this.extension,
   });
-  final String? path;
+  String? path;
 
-  final String? name;
+  String? name;
 
-  final Uint8List? bytes;
+  Uint8List? bytes;
 
-  final int? size;
+  int? size;
 
-  final String? extension;
+  String? extension;
 
   IsmchPlatformFile copyWith({
     String? path,

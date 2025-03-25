@@ -216,14 +216,13 @@ mixin IsmChatPageSendMessageMixin on GetxController {
                         : IsmChatCustomMessageType.video) ??
             true) {
           if (media.attachmentModel.attachmentType == IsmChatMediaType.image) {
-            await sendImage(
-              conversationId: _controller.conversation?.conversationId ?? '',
-              userId: _controller.conversation?.opponentDetails?.userId ?? '',
-              imagePath: File(
-                media.attachmentModel.mediaUrl ?? '',
-              ),
-              caption: media.caption,
-            );
+            // Todo will uncommet this code
+            // await sendImage(
+            //   conversationId: _controller.conversation?.conversationId ?? '',
+            //   userId: _controller.conversation?.opponentDetails?.userId ?? '',
+
+            //   caption: media.caption,
+            // );
           } else {
             await sendVideo(
               caption: media.caption,
@@ -656,43 +655,17 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   Future<void> sendImage({
     required String conversationId,
     required String userId,
-    File? imagePath,
-    WebMediaModel? webMediaModel,
+    required WebMediaModel webMediaModel,
     String? caption,
   }) async {
     conversationId = await createConversation(
         conversationId: conversationId, userId: userId);
     IsmChatMessageModel? imageMessage;
-    String? nameWithExtension;
-    Uint8List? bytes;
-    String? mediaId;
-    String? extension;
-    File? compressedFile;
     var sentAt = DateTime.now().millisecondsSinceEpoch;
-    if (webMediaModel == null) {
-      IsmChatUtility.showLoader();
-      final targetFile =
-          await IsmChatUtility.convertToJpeg(imagePath ?? File(''));
-      IsmChatUtility.closeLoader();
-      final xFile = await FlutterImageCompress.compressAndGetFile(
-        imagePath?.path ?? '',
-        targetFile.path,
-        quality: 60,
-      );
-      if (xFile != null && xFile.path.isNotEmpty) {
-        compressedFile = File(xFile.path);
-        bytes = compressedFile.readAsBytesSync();
-        nameWithExtension = compressedFile.path.split('/').last;
-        mediaId = nameWithExtension.replaceAll(RegExp(r'[^0-9]'), '');
-        extension = nameWithExtension.split('.').last;
-      }
-    } else {
-      bytes = webMediaModel.platformFile.bytes;
-      nameWithExtension = webMediaModel.platformFile.name;
-      mediaId = sentAt.toString();
-      extension = webMediaModel.platformFile.extension;
-    }
-
+    final bytes = webMediaModel.platformFile.bytes;
+    final nameWithExtension = webMediaModel.platformFile.name;
+    final mediaId = sentAt.toString();
+    final extension = webMediaModel.platformFile.extension;
     imageMessage = IsmChatMessageModel(
       body: IsmChatStrings.image,
       conversationId: conversationId,
@@ -703,15 +676,13 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       attachments: [
         AttachmentModel(
           attachmentType: IsmChatMediaType.image,
-          thumbnailUrl:
-              kIsWeb ? webMediaModel?.platformFile.path : compressedFile?.path,
-          size: kIsWeb ? webMediaModel?.platformFile.size : bytes?.length,
+          thumbnailUrl: webMediaModel.platformFile.path,
+          size: webMediaModel.platformFile.size,
           name: nameWithExtension,
           mimeType: extension,
-          mediaUrl: kIsWeb
-              ? webMediaModel?.platformFile.bytes.toString()
-              : compressedFile?.path,
+          mediaUrl: webMediaModel.platformFile.path,
           mediaId: mediaId,
+          bytes: webMediaModel.platformFile.bytes,
           extension: extension,
         )
       ],
@@ -768,7 +739,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       bytes: bytes ?? Uint8List(0),
       createdAt: sentAt,
       ismChatChatMessageModel: imageMessage,
-      mediaId: mediaId ?? '',
+      mediaId: mediaId,
       mediaType: IsmChatMediaType.image.value,
       nameWithExtension: nameWithExtension ?? '',
       notificationBody: IsmChatStrings.sentImage,
