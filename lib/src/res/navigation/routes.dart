@@ -25,11 +25,11 @@ class IsmPageRoutes {
   static const String wallpaperPreview = '/wallpaperPreview';
   static const String media = '/media';
   static const String location = '/location';
-  static const String webMediaPreivew = '/webMediaPreivew';
   static const String eidtMedia = '/eidtMedia';
   static const String messageMediaPreivew = '/messageMediaPreivew';
   static const String cameraView = '/cameraView';
   static const String alleryAssetsView = '/galleryAssetsView';
+  static const String imagePaint = '/imagePaint';
   static const String videoView = '/videoView';
   static const String searchMessage = '/searchMessage';
   static const String conversationSearch = '/conversationSearch';

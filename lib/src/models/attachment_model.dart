@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
 
 class AttachmentModel {
@@ -16,6 +17,7 @@ class AttachmentModel {
     this.title,
     this.address,
     this.attachmentType,
+    this.bytes,
   });
 
   factory AttachmentModel.fromMap(Map<String, dynamic> map) => AttachmentModel(
@@ -34,6 +36,7 @@ class AttachmentModel {
         longitude: map['longitude'] as double? ?? 0,
         title: map['title'] as String? ?? '',
         address: map['address'] as String? ?? '',
+        bytes: (map['bytes'] as String? ?? '[]').strigToUnit8List,
         attachmentType: map['attachmentType'] == null
             ? IsmChatMediaType.image
             : IsmChatMediaType.fromMap(map['attachmentType'] as int),
@@ -52,6 +55,7 @@ class AttachmentModel {
   double? longitude;
   String? title;
   String? address;
+  Uint8List? bytes;
   final IsmChatMediaType? attachmentType;
 
   AttachmentModel copyWith({
@@ -66,6 +70,7 @@ class AttachmentModel {
     double? longitude,
     String? title,
     String? address,
+    Uint8List? bytes,
     IsmChatMediaType? attachmentType,
   }) =>
       AttachmentModel(
@@ -81,6 +86,7 @@ class AttachmentModel {
         title: title ?? this.title,
         address: address ?? this.address,
         attachmentType: attachmentType ?? this.attachmentType,
+        bytes: bytes ?? this.bytes,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -95,6 +101,7 @@ class AttachmentModel {
         'longitude': longitude,
         'title': title,
         'address': address,
+        'bytes': bytes.toString(),
         'attachmentType': attachmentType?.value,
       }.removeNullValues();
 
@@ -102,7 +109,7 @@ class AttachmentModel {
 
   @override
   String toString() =>
-      'AttachmentModel(thumbnailUrl: $thumbnailUrl, size: $size, name: $name, mimeType: $mimeType, mediaUrl: $mediaUrl, mediaId: $mediaId, extension: $extension, latitude: $latitude, longitude: $longitude, title: $title, address: $address, attachmentType: $attachmentType)';
+      'AttachmentModel(thumbnailUrl: $thumbnailUrl, size: $size, name: $name, mimeType: $mimeType, mediaUrl: $mediaUrl, mediaId: $mediaId, extension: $extension, latitude: $latitude, longitude: $longitude, title: $title, address: $address, attachmentType: $attachmentType, bytes: $bytes)';
 
   @override
   bool operator ==(covariant AttachmentModel other) {
@@ -119,6 +126,7 @@ class AttachmentModel {
         other.longitude == longitude &&
         other.title == title &&
         other.address == address &&
+        other.bytes == bytes &&
         other.attachmentType == attachmentType;
   }
 
@@ -135,5 +143,6 @@ class AttachmentModel {
       longitude.hashCode ^
       title.hashCode ^
       address.hashCode ^
+      bytes.hashCode ^
       attachmentType.hashCode;
 }

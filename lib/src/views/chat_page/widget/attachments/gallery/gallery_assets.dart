@@ -59,33 +59,34 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                           children: [
                             InkWell(
                               onTap: () async {
-                                await controller.cropImage(File(controller
-                                        .listOfAssetsPath[
-                                            controller.assetsIndex]
-                                        .attachmentModel
-                                        .mediaUrl ??
-                                    ''));
-                                controller.listOfAssetsPath[
-                                    controller
-                                        .assetsIndex] = controller
-                                    .listOfAssetsPath[controller.assetsIndex]
-                                    .copyWith(
-                                  attachmentModel: controller
-                                      .listOfAssetsPath[controller.assetsIndex]
-                                      .attachmentModel
-                                      .copyWith(
-                                          mediaUrl: controller.imagePath?.path),
-                                );
+                                // Todo uncommet this code
+                                // await controller.cropImage(controller
+                                //         .listOfAssetsPath[
+                                //             controller.assetsIndex]
+                                //         .attachmentModel
+                                //         .mediaUrl ??
+                                //     '');
+                                // controller.listOfAssetsPath[
+                                //     controller
+                                //         .assetsIndex] = controller
+                                //     .listOfAssetsPath[controller.assetsIndex]
+                                //     .copyWith(
+                                //   attachmentModel: controller
+                                //       .listOfAssetsPath[controller.assetsIndex]
+                                //       .attachmentModel
+                                //       .copyWith(
+                                //           mediaUrl: controller.imagePath?.path),
+                                // );
 
-                                controller.dataSize =
-                                    await IsmChatUtility.fileToSize(
-                                  File(controller
-                                          .listOfAssetsPath[
-                                              controller.assetsIndex]
-                                          .attachmentModel
-                                          .mediaUrl ??
-                                      ''),
-                                );
+                                // controller.dataSize =
+                                //     await IsmChatUtility.fileToSize(
+                                //   File(controller
+                                //           .listOfAssetsPath[
+                                //               controller.assetsIndex]
+                                //           .attachmentModel
+                                //           .mediaUrl ??
+                                //       ''),
+                                // );
                               },
                               child: Icon(
                                 Icons.crop,
@@ -97,37 +98,38 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             IsmChatDimens.boxWidth16,
                             InkWell(
                               onTap: () async {
-                                var mediaFile = await Get.to<File>(
-                                  IsmChatImagePainterWidget(
-                                    file: File(
-                                      controller
-                                              .listOfAssetsPath[
-                                                  controller.assetsIndex]
-                                              .attachmentModel
-                                              .mediaUrl ??
-                                          '',
-                                    ),
-                                  ),
-                                );
-                                controller.listOfAssetsPath[
-                                    controller
-                                        .assetsIndex] = controller
-                                    .listOfAssetsPath[controller.assetsIndex]
-                                    .copyWith(
-                                  attachmentModel: controller
-                                      .listOfAssetsPath[controller.assetsIndex]
-                                      .attachmentModel
-                                      .copyWith(mediaUrl: mediaFile?.path),
-                                );
-                                controller.dataSize =
-                                    await IsmChatUtility.fileToSize(
-                                  File(controller
-                                          .listOfAssetsPath[
-                                              controller.assetsIndex]
-                                          .attachmentModel
-                                          .mediaUrl ??
-                                      ''),
-                                );
+                                //Todo will uncommet all code
+                                // var mediaFile = await Get.to<File>(
+                                //   IsmChatImagePainterWidget(
+                                //     file: File(
+                                //       controller
+                                //               .listOfAssetsPath[
+                                //                   controller.assetsIndex]
+                                //               .attachmentModel
+                                //               .mediaUrl ??
+                                //           '',
+                                //     ),
+                                //   ),
+                                // );
+                                // controller.listOfAssetsPath[
+                                //     controller
+                                //         .assetsIndex] = controller
+                                //     .listOfAssetsPath[controller.assetsIndex]
+                                //     .copyWith(
+                                //   attachmentModel: controller
+                                //       .listOfAssetsPath[controller.assetsIndex]
+                                //       .attachmentModel
+                                //       .copyWith(mediaUrl: mediaFile?.path),
+                                // );
+                                // controller.dataSize =
+                                //     await IsmChatUtility.fileToSize(
+                                //   File(controller
+                                //           .listOfAssetsPath[
+                                //               controller.assetsIndex]
+                                //           .attachmentModel
+                                //           .mediaUrl ??
+                                //       ''),
+                                // );
                               },
                               child: Icon(
                                 Icons.edit,

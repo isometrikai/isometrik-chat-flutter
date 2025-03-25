@@ -161,11 +161,14 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                 if (kIsWeb) {
                                   var bytes = await file.readAsBytes();
                                   var fileSize = IsmChatUtility.formatBytes(
-                                    int.parse(bytes.length.toString()),
+                                    int.parse(
+                                      bytes.length.toString(),
+                                    ),
                                   );
                                   var thumbnailBytes =
                                       await IsmChatBlob.getVideoThumbnailBytes(
-                                          bytes);
+                                    bytes,
+                                  );
                                   controller.webMedia.add(
                                     WebMediaModel(
                                       dataSize: fileSize,
