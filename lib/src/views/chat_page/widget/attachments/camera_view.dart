@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -93,10 +91,10 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                     child: Padding(
                       padding: IsmChatDimens.edgeInsetsTop20.copyWith(top: 40),
                       child: IconButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (IsmChatResponsive.isWeb(context)) {
                             controller.isCameraView = false;
-                            controller.cameraController.dispose();
+                            await controller.cameraController.dispose();
                           } else {
                             Get.back();
                           }
@@ -178,15 +176,15 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                             '${DateTime.now().millisecondsSinceEpoch}.mp4',
                                         bytes: bytes,
                                         path: file.path,
-                                        size: 0,
+                                        size: bytes.length,
                                         extension: 'mp4',
+                                        thumbnailBytes: thumbnailBytes,
                                       ),
-                                      thumbnailBytes: thumbnailBytes!,
                                     ),
                                   );
                                 } else {
                                   IsmChatRouteManagement.goToVideView(
-                                      file: File(file.path));
+                                      file: file);
                                 }
                               },
                               onTap: controller.isRecording

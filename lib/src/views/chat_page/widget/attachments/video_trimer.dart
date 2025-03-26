@@ -1,21 +1,15 @@
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-// import 'package:video_trimmer/video_trimmer.dart';
+import 'package:video_trimmer/video_trimmer.dart';
 
+// Todo refactor code
 class IsmVideoTrimmerView extends StatefulWidget {
-  const IsmVideoTrimmerView({
-    super.key,
-    required this.file,
-    required this.durationInSeconds,
-    this.index,
-  });
-  final File file;
-  final double durationInSeconds;
-  final int? index;
+  const IsmVideoTrimmerView({super.key});
+
+  static const String route = IsmPageRoutes.videoTrimView;
 
   @override
   State<IsmVideoTrimmerView> createState() => _VideoTrimmerViewState();

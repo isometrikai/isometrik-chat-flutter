@@ -449,7 +449,6 @@ class _MicOrSendButton extends StatelessWidget {
                           extension: 'mp3',
                         ),
                         isVideo: false,
-                        thumbnailBytes: Uint8List(0),
                         dataSize: sizeMedia,
                         duration: Duration(
                           seconds: controller.seconds,
