@@ -192,7 +192,7 @@ class _NetworkImage extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(color: IsmChatColors.whiteColor),
             color: backgroundColor ??
-                IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(0.2),
+                IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(0.2),
             shape: _isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: _isProfileImage

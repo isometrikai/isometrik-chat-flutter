@@ -10,6 +10,7 @@ class IsmchPlatformFile {
     this.bytes,
     this.size,
     this.extension,
+    this.thumbnailBytes,
   });
   String? path;
 
@@ -21,12 +22,15 @@ class IsmchPlatformFile {
 
   String? extension;
 
+  Uint8List? thumbnailBytes;
+
   IsmchPlatformFile copyWith({
     String? path,
     String? name,
     Uint8List? bytes,
     int? size,
     String? extension,
+    Uint8List? thumbnailBytes,
   }) =>
       IsmchPlatformFile(
         path: path ?? this.path,
@@ -34,6 +38,7 @@ class IsmchPlatformFile {
         bytes: bytes ?? this.bytes,
         size: size ?? this.size,
         extension: extension ?? this.extension,
+        thumbnailBytes: thumbnailBytes ?? this.thumbnailBytes,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -42,13 +47,14 @@ class IsmchPlatformFile {
         'bytes': bytes,
         'size': size,
         'extension': extension,
+        'thumbnailBytes': thumbnailBytes,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmchPlatformFile(path: $path, name: $name, bytes: $bytes, size: $size, extension: $extension)';
+      'IsmchPlatformFile(path: $path, name: $name, bytes: $bytes, size: $size, extension: $extension, thumbnailBytes: $thumbnailBytes)';
 
   @override
   bool operator ==(covariant IsmchPlatformFile other) {
@@ -58,6 +64,7 @@ class IsmchPlatformFile {
         other.name == name &&
         other.bytes == bytes &&
         other.size == size &&
+        other.thumbnailBytes == thumbnailBytes &&
         other.extension == extension;
   }
 
@@ -67,5 +74,6 @@ class IsmchPlatformFile {
       name.hashCode ^
       bytes.hashCode ^
       size.hashCode ^
+      thumbnailBytes.hashCode ^
       extension.hashCode;
 }

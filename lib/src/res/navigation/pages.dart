@@ -184,5 +184,10 @@ class IsmChatPages {
       page: IsmChatVideoView.new,
       binding: IsmChatPageBinding(),
     ),
+    GetPage(
+      name: IsmVideoTrimmerView.route,
+      page: IsmVideoTrimmerView.new,
+      binding: IsmChatPageBinding(),
+    ),
   ];
 }

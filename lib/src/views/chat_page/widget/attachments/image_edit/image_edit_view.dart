@@ -7,7 +7,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatImageEditView extends StatelessWidget {
   const IsmChatImageEditView({super.key});
 
-  static const String route = IsmPageRoutes.eidtMedia;
+  static const String route = IsmPageRoutes.edittMedia;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
@@ -28,7 +28,8 @@ class IsmChatImageEditView extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   controller.cropImage(
-                      controller.webMedia.first.platformFile.path ?? '');
+                    url: controller.webMedia.first.platformFile.path ?? '',
+                  );
                 },
                 icon: Icon(
                   Icons.crop,
@@ -39,7 +40,8 @@ class IsmChatImageEditView extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   controller.paintImage(
-                      controller.webMedia.first.platformFile.path ?? '');
+                    url: controller.webMedia.first.platformFile.path ?? '',
+                  );
                 },
                 icon: Icon(
                   Icons.edit,
@@ -82,7 +84,9 @@ class IsmChatImageEditView extends StatelessWidget {
                     cursorColor: IsmChatColors.whiteColor,
                     style: IsmChatStyles.w400White16,
                     controller: controller.textEditingController,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      controller.webMedia.first.caption = value;
+                    },
                   ),
                 ),
                 IsmChatDimens.boxWidth8,
@@ -91,7 +95,6 @@ class IsmChatImageEditView extends StatelessWidget {
                   onPressed: () async {
                     if (controller.webMedia.first.dataSize.size()) {
                       Get.back<void>();
-
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
                               ?.call(
@@ -102,7 +105,6 @@ class IsmChatImageEditView extends StatelessWidget {
                                   IsmChatCustomMessageType.image) ??
                           true) {
                         await controller.sendImage(
-                          caption: controller.textEditingController.text,
                           conversationId:
                               controller.conversation?.conversationId ?? '',
                           userId: controller

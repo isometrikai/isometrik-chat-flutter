@@ -103,7 +103,7 @@ class AttachmentModel {
         'longitude': longitude,
         'title': title,
         'address': address,
-        'bytes': bytes.toString(),
+        'bytes': bytes.isNullOrEmpty == true ? '' : bytes.toString(),
         'attachmentType': attachmentType?.value,
       }.removeNullValues();
 

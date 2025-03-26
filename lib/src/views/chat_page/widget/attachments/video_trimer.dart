@@ -1,21 +1,15 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 
-// Todo refactor code
 class IsmVideoTrimmerView extends StatefulWidget {
-  const IsmVideoTrimmerView({
-    super.key,
-    required this.file,
-    required this.durationInSeconds,
-    this.index,
-  });
-  final File file;
-  final double durationInSeconds;
-  final int? index;
+  const IsmVideoTrimmerView({super.key});
+
+  static const String route = IsmPageRoutes.videoTrimView;
 
   @override
   State<IsmVideoTrimmerView> createState() => _VideoTrimmerViewState();
@@ -25,20 +19,24 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
   final Trimmer trimmer = Trimmer();
   var startValue = 0.0.obs;
   var endValue = 0.0.obs;
+  var durationInSeconds = 0.0;
   var isPlaying = false.obs;
   var playPausedAction = true;
   var descriptionTEC = TextEditingController();
+  final arguments = Get.arguments as Map<String, dynamic>? ?? {};
+  var file = XFile('');
 
   @override
   void initState() {
     super.initState();
-    endValue = widget.durationInSeconds.obs;
-
-    loadVideo();
+    endValue = (arguments['durationInSeconds'] as double? ?? 0).obs;
+    durationInSeconds = endValue.value;
+    file = arguments['file'] as XFile? ?? XFile('');
+    loadVideo(file.path);
   }
 
-  loadVideo() async {
-    await trimmer.loadVideo(videoFile: widget.file);
+  loadVideo(String url) async {
+    await trimmer.loadVideo(videoFile: File(url));
     trimmer.videoPlayerController?.addListener(checkVideo);
   }
 
@@ -56,7 +54,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
       endValue: endValue,
       onSave: (value) {
         if (value != null) {
-          Get.back<File>(result: File(value));
+          Get.back<XFile>(result: XFile(value));
         }
       },
     );
@@ -69,7 +67,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              Get.back<File>(result: widget.file);
+              Get.back<XFile>(result: file);
             },
             icon: const Icon(
               Icons.arrow_back_rounded,
@@ -150,7 +148,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
                     trimmer: trimmer,
                     viewerWidth: IsmChatDimens.percentWidth(.95),
                     maxVideoLength:
-                        Duration(seconds: widget.durationInSeconds.toInt()),
+                        Duration(seconds: durationInSeconds.toInt()),
                     onChangeStart: (value) {
                       startValue.value = value;
                     },

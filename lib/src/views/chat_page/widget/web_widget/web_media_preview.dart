@@ -135,7 +135,9 @@ class WebMediaPreview extends StatelessWidget {
                                             ),
                                             child: Image.memory(
                                               isVideo
-                                                  ? media.thumbnailBytes
+                                                  ? media.platformFile
+                                                          .thumbnailBytes ??
+                                                      Uint8List(0)
                                                   : media.platformFile.bytes!,
                                               fit: BoxFit.cover,
                                             ),

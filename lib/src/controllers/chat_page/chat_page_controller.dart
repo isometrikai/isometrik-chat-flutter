@@ -223,19 +223,9 @@ class IsmChatPageController extends GetxController
   String get backgroundColor => _backgroundColor.value;
   set backgroundColor(String value) => _backgroundColor.value = value;
 
-  final RxList<AttachmentCaptionModel> _listOfAssetsPath =
-      <AttachmentCaptionModel>[].obs;
-  List<AttachmentCaptionModel> get listOfAssetsPath => _listOfAssetsPath;
-  set listOfAssetsPath(List<AttachmentCaptionModel> value) =>
-      _listOfAssetsPath.value = value;
-
   final RxInt _assetsIndex = 0.obs;
   int get assetsIndex => _assetsIndex.value;
   set assetsIndex(int value) => _assetsIndex.value = value;
-
-  final RxString _dataSize = ''.obs;
-  String get dataSize => _dataSize.value;
-  set dataSize(String value) => _dataSize.value = value;
 
   final RxBool _isEnableRecordingAudio = false.obs;
   bool get isEnableRecordingAudio => _isEnableRecordingAudio.value;
@@ -837,7 +827,7 @@ class IsmChatPageController extends GetxController
 
         break;
       case IsmChatAttachmentType.gallery:
-        listOfAssetsPath.clear();
+        webMedia.clear();
         kIsWeb ? getMediaWithWeb() : getMedia();
         break;
       case IsmChatAttachmentType.document:
@@ -894,51 +884,47 @@ class IsmChatPageController extends GetxController
       ImageSource.gallery,
       isVideoAndImage: true,
     );
+    if (result.isEmpty) return;
+    if (IsmChatResponsive.isWeb(Get.context!)) {
+      IsmChatUtility.showLoader();
+      for (var x in result) {
+        var bytes = await x?.readAsBytes();
+        var extension = x?.mimeType?.split('/').last;
+        var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+        var platformFile = IsmchPlatformFile(
+          name: x?.name ?? '',
+          size: bytes?.length,
+          bytes: bytes,
+          path: x?.path,
+          extension: extension,
+        );
 
-    if (result.isEmpty) {
-      return;
-    }
-
-    IsmChatUtility.showLoader();
-    for (var x in result) {
-      var bytes = await x?.readAsBytes();
-
-      var extension = x?.mimeType?.split('/').last;
-      var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
-      var platformFile = IsmchPlatformFile(
-        name: x?.name ?? '',
-        size: bytes?.length,
-        bytes: bytes,
-        path: x?.path,
-        extension: extension,
-      );
-      if (IsmChatConstants.videoExtensions.contains(extension)) {
-        var thumbnailBytes =
-            await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
-        if (thumbnailBytes != null) {
+        if (IsmChatConstants.videoExtensions.contains(extension)) {
+          var thumbnailBytes =
+              await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
+          if (thumbnailBytes != null) {
+            platformFile.thumbnailBytes = thumbnailBytes;
+            webMedia.add(
+              WebMediaModel(
+                isVideo: IsmChatConstants.videoExtensions.contains(extension),
+                platformFile: platformFile,
+                dataSize: dataSize,
+              ),
+            );
+          }
+        } else {
           webMedia.add(
             WebMediaModel(
               isVideo: IsmChatConstants.videoExtensions.contains(extension),
               platformFile: platformFile,
-              thumbnailBytes: thumbnailBytes,
               dataSize: dataSize,
             ),
           );
         }
-      } else {
-        webMedia.add(
-          WebMediaModel(
-            isVideo: IsmChatConstants.videoExtensions.contains(extension),
-            platformFile: platformFile,
-            thumbnailBytes: Uint8List(0),
-            dataSize: dataSize,
-          ),
-        );
       }
-    }
-    IsmChatUtility.closeLoader();
-    if (IsmChatResponsive.isMobile(Get.context!)) {
-      IsmChatRouteManagement.goToMediaEditView();
+      IsmChatUtility.closeLoader();
+    } else if (IsmChatResponsive.isMobile(Get.context!)) {
+      IsmChatRouteManagement.goToGalleryAssetsView(result);
     }
   }
 
@@ -948,48 +934,94 @@ class IsmChatPageController extends GetxController
       isVideoAndImage: true,
     );
 
-    if (result.isEmpty) {
-      return;
-    }
+    if (result.isEmpty) return;
     IsmChatRouteManagement.goToGalleryAssetsView(result);
   }
 
   Future<void> selectAssets(List<XFile?> assetList) async {
+    textEditingController.clear();
+    webMedia.clear();
     assetsIndex = 0;
+
     for (var file in assetList) {
-      if (IsmChatConstants.imageExtensions
-          .contains(file?.path.split('.').last)) {
-        listOfAssetsPath.add(
-          AttachmentCaptionModel(
-            caption: '',
-            attachmentModel: AttachmentModel(
-              mediaUrl: file?.path,
-              attachmentType: IsmChatMediaType.image,
-            ),
+      var bytes = await file?.readAsBytes();
+      var name = '';
+      if (kIsWeb) {
+        name = '${DateTime.now().millisecondsSinceEpoch}.png';
+      } else {
+        name = (file?.path ?? '').split('/').last;
+      }
+      final extension = name.split('.').last;
+      var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+      var platformFile = IsmchPlatformFile(
+        name: file?.name ?? '',
+        size: bytes?.length,
+        bytes: bytes,
+        path: file?.path,
+        extension: extension,
+      );
+      if (IsmChatConstants.videoExtensions.contains(extension)) {
+        var thumbnailBytes = Uint8List(0);
+        if (kIsWeb) {
+          thumbnailBytes =
+              await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0)) ??
+                  Uint8List(0);
+        } else {
+          thumbnailBytes = await VideoCompress.getByteThumbnail(
+                file?.path ?? '',
+                quality: 50,
+                position: -1,
+              ) ??
+              Uint8List(0);
+        }
+        platformFile.thumbnailBytes = thumbnailBytes;
+        webMedia.add(
+          WebMediaModel(
+            isVideo: true,
+            platformFile: platformFile,
+            dataSize: dataSize,
           ),
         );
       } else {
-        var thumbTempPath = await VideoCompress.getFileThumbnail(
-          file?.path ?? '',
-          quality: 50,
-          position: -1,
-        );
-
-        listOfAssetsPath.add(
-          AttachmentCaptionModel(
-            caption: '',
-            attachmentModel: AttachmentModel(
-              thumbnailUrl: thumbTempPath.path,
-              mediaUrl: file?.path ?? '',
-              attachmentType: IsmChatMediaType.video,
-            ),
+        webMedia.add(
+          WebMediaModel(
+            isVideo: false,
+            platformFile: platformFile,
+            dataSize: dataSize,
           ),
         );
       }
+
+      // if (IsmChatConstants.imageExtensions
+      //     .contains(file?.path.split('.').last)) {
+      //   listOfAssetsPath.add(
+      //     AttachmentCaptionModel(
+      //       caption: '',
+      //       attachmentModel: AttachmentModel(
+      //         mediaUrl: file?.path,
+      //         attachmentType: IsmChatMediaType.image,
+      //       ),
+      //     ),
+      //   );
+      // } else {
+      //   var thumbTempPath = await VideoCompress.getFileThumbnail(
+      //     file?.path ?? '',
+      //     quality: 50,
+      //     position: -1,
+      //   );
+
+      //   listOfAssetsPath.add(
+      //     AttachmentCaptionModel(
+      //       caption: '',
+      //       attachmentModel: AttachmentModel(
+      //         thumbnailUrl: thumbTempPath.path,
+      //         mediaUrl: file?.path ?? '',
+      //         attachmentType: IsmChatMediaType.video,
+      //       ),
+      //     ),
+      //   );
+      // }
     }
-    dataSize = await IsmChatUtility.fileToSize(
-      File(listOfAssetsPath[assetsIndex].attachmentModel.mediaUrl ?? ''),
-    );
   }
 
   void onReplyTap(IsmChatMessageModel message) {
@@ -1683,7 +1715,41 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  Future<void> cropImage(String url) async {
+  Future<void> updateGalleryImage({
+    required XFile file,
+    required int selectedIndex,
+  }) async {
+    IsmChatUtility.showLoader();
+    var bytes = await file.readAsBytes();
+    final fileSize = IsmChatUtility.formatBytes(
+      int.parse(bytes.length.toString()),
+    );
+    var name = '';
+    if (kIsWeb) {
+      name = '${DateTime.now().millisecondsSinceEpoch}.png';
+    } else {
+      name = file.path.split('/').last;
+    }
+    final extension = name.split('.').last;
+    webMedia[selectedIndex] = WebMediaModel(
+      dataSize: fileSize,
+      isVideo: false,
+      platformFile: IsmchPlatformFile(
+        name: name,
+        bytes: bytes,
+        path: file.path,
+        size: bytes.length,
+        extension: extension,
+      ),
+    );
+    IsmChatUtility.closeLoader();
+  }
+
+  Future<void> cropImage({
+    required String url,
+    bool forGalllery = false,
+    int selectedIndex = 0,
+  }) async {
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: url,
       compressFormat: ImageCompressFormat.jpg,
@@ -1702,18 +1768,32 @@ class IsmChatPageController extends GetxController
       ],
     );
     if (croppedFile != null) {
-      await updateImage(File(croppedFile.path));
+      if (forGalllery) {
+        await updateGalleryImage(
+            file: XFile(croppedFile.path), selectedIndex: selectedIndex);
+      } else {
+        await updateImage(XFile(croppedFile.path));
+      }
     }
   }
 
-  Future<void> paintImage(String url) async {
-    final file = await IsmChatRouteManagement.goToImagePaintView(File(url));
-    await updateImage(file);
+  Future<void> paintImage({
+    required String url,
+    bool forGalllery = false,
+    int selectedIndex = 0,
+  }) async {
+    final file = await IsmChatRouteManagement.goToImagePaintView(XFile(url));
+    if (forGalllery) {
+      await updateGalleryImage(
+          file: XFile(file.path), selectedIndex: selectedIndex);
+    } else {
+      await updateImage(XFile(file.path));
+    }
   }
 
   void takePhoto() async {
     var file = await cameraController.takePicture();
-    File? mainFile;
+    XFile? mainFile;
     if (IsmChatResponsive.isMobile(Get.context!)) {
       Get.back();
     }
@@ -1728,11 +1808,11 @@ class IsmChatPageController extends GetxController
         img.encodeJpg(fixedImage),
         flush: true,
       );
-      mainFile = File(
+      mainFile = XFile(
         fixedFile.path,
       );
     } else {
-      mainFile = File(file.path);
+      mainFile = XFile(file.path);
     }
 
     await updateImage(mainFile);
@@ -1741,8 +1821,8 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  Future<void> updateImage(File file) async {
-    // IsmChatUtility.showLoader();
+  Future<void> updateImage(XFile file) async {
+    IsmChatUtility.showLoader();
     var bytes = await file.readAsBytes();
     bytes = await FlutterImageCompress.compressWithList(
       bytes,
@@ -1770,10 +1850,9 @@ class IsmChatPageController extends GetxController
           size: bytes.length,
           extension: extension,
         ),
-        thumbnailBytes: Uint8List(0),
       ),
     );
-    // IsmChatUtility.closeLoader();
+    IsmChatUtility.closeLoader();
   }
 
   Future<void> readMessage({

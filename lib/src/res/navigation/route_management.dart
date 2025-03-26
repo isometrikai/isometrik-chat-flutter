@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -178,7 +176,7 @@ class IsmChatRouteManagement {
     );
   }
 
-  static void goToVideView({required File file}) {
+  static void goToVideView({required XFile file}) {
     Get.toNamed(IsmChatVideoView.route, arguments: {'file': file});
   }
 
@@ -212,9 +210,20 @@ class IsmChatRouteManagement {
     });
   }
 
-  static Future<File> goToImagePaintView(File file) async =>
+  static Future<XFile> goToImagePaintView(XFile file) async =>
       await Get.toNamed(IsmChatImagePaintView.route, arguments: {
         'file': file,
+      });
+
+  static Future<XFile> goToVideoTrimeView({
+    required XFile file,
+    required double durationInSeconds,
+    required int index,
+  }) async =>
+      await Get.toNamed(IsmVideoTrimmerView.route, arguments: {
+        'file': file,
+        'durationInSeconds': durationInSeconds,
+        'index': index
       });
 
   static void goToProfilePicView(UserDetails user) {
