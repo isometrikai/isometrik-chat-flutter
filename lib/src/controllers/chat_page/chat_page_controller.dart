@@ -1714,8 +1714,10 @@ class IsmChatPageController extends GetxController
   void takePhoto() async {
     var file = await cameraController.takePicture();
     File? mainFile;
+    if (IsmChatResponsive.isMobile(Get.context!)) {
+      Get.back();
+    }
 
-    Get.back();
     if (cameraController.description.lensDirection ==
         CameraLensDirection.front) {
       var imageBytes = await file.readAsBytes();

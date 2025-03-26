@@ -36,7 +36,9 @@ class AttachmentModel {
         longitude: map['longitude'] as double? ?? 0,
         title: map['title'] as String? ?? '',
         address: map['address'] as String? ?? '',
-        bytes: (map['bytes'] as String? ?? '[]').strigToUnit8List,
+        bytes: map['bytes'].runtimeType is String && map['bytes'] != 'null'
+            ? (map['bytes'] as String? ?? '[]').strigToUnit8List
+            : Uint8List(0),
         attachmentType: map['attachmentType'] == null
             ? IsmChatMediaType.image
             : IsmChatMediaType.fromMap(map['attachmentType'] as int),
