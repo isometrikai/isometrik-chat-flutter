@@ -121,19 +121,15 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
   void sendMedia() async {
     var isMaxSize = false;
-
     for (var media in _controller.webMedia) {
-      var sizeMedia =
-          await IsmChatUtility.fileToSize(File(media.platformFile.path ?? ''));
-      if (sizeMedia.split(' ').last == 'KB') {
+      if (media.dataSize.split(' ').last == 'KB') {
         continue;
       }
-      if (!sizeMedia.size()) {
+      if (!media.dataSize.size()) {
         isMaxSize = true;
         break;
       }
     }
-
     if (isMaxSize == false) {
       Get.back<void>();
       sendPhotoAndVideo();
@@ -511,7 +507,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     IsmChatMessageModel? videoMessage;
     Uint8List? bytes;
     var sentAt = DateTime.now().millisecondsSinceEpoch;
-    if (IsmChatResponsive.isMobile(Get.context!)) {
+    if (IsmChatResponsive.isMobile(Get.context!) & !kIsWeb) {
       final videoCopress = await VideoCompress.compressVideo(
           webMediaModel.platformFile.path ?? '',
           quality: VideoQuality.MediumQuality,

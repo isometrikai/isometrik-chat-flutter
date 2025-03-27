@@ -906,7 +906,7 @@ class IsmChatPageController extends GetxController
             platformFile.thumbnailBytes = thumbnailBytes;
             webMedia.add(
               WebMediaModel(
-                isVideo: IsmChatConstants.videoExtensions.contains(extension),
+                isVideo: true,
                 platformFile: platformFile,
                 dataSize: dataSize,
               ),
@@ -915,7 +915,7 @@ class IsmChatPageController extends GetxController
         } else {
           webMedia.add(
             WebMediaModel(
-              isVideo: IsmChatConstants.videoExtensions.contains(extension),
+              isVideo: false,
               platformFile: platformFile,
               dataSize: dataSize,
             ),
@@ -947,14 +947,14 @@ class IsmChatPageController extends GetxController
       var bytes = await file?.readAsBytes();
       var name = '';
       if (kIsWeb) {
-        name = '${DateTime.now().millisecondsSinceEpoch}.png';
+        name = file?.name ?? '';
       } else {
         name = (file?.path ?? '').split('/').last;
       }
       final extension = name.split('.').last;
       var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
       var platformFile = IsmchPlatformFile(
-        name: file?.name ?? '',
+        name: name,
         size: bytes?.length,
         bytes: bytes,
         path: file?.path,
