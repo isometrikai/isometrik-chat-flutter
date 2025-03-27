@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -261,14 +262,19 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                               width: IsmChatDimens.two)
                                           : null),
                                   width: IsmChatDimens.sixty,
-                                  child: IsmChatImage(
-                                    media.isVideo
-                                        ? media.platformFile.thumbnailBytes
-                                            .toString()
-                                        : media.platformFile.path ?? '',
-                                    isNetworkImage: false,
-                                    isBytes: media.isVideo,
-                                  ),
+                                  child: Builder(
+                                      builder: (context) => IsmChatImage(
+                                            media.isVideo
+                                                ? media
+                                                    .platformFile.thumbnailBytes
+                                                    .toString()
+                                                : media.platformFile.path ?? '',
+                                            isNetworkImage:
+                                                kIsWeb && media.isVideo
+                                                    ? false
+                                                    : kIsWeb,
+                                            isBytes: media.isVideo,
+                                          )),
                                 ),
                                 if (media.isVideo)
                                   Container(
