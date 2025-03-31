@@ -15,26 +15,21 @@ class IsmChatAPI {
   static String allUsers = '$baseUrl/chat/users';
   static String updateUsers = user;
   static String authenticate = '$allUsers/authenticate';
-
   static String chatConversation = '$baseUrl/chat/conversation';
-
   static String chatConversationClear = '$chatConversation/clear';
   static String chatConversationDelete = '$chatConversation/local';
   static String getChatConversations = '$baseUrl/chat/conversations';
   static String conversationDetails = '$chatConversation/details';
   static String conversationSetting = '$chatConversation/settings';
-
   static String getPublicAndOpenConversation =
       '${chatConversation}s/publicoropen';
   static String observer = '$chatConversation/observer';
   static String joinObserver = '$observer/join';
   static String leaveObserver = '$observer/leave';
   static String getObserver = '${observer}s';
-
   static String conversationUnreadCount = '${chatConversation}s/unread/count';
-
+  static String conversationUnreadCountBulk = '$conversationUnreadCount/bulk';
   static String conversationCount = '${chatConversation}s/count';
-
   static String conversationMembers = '$chatConversation/members';
   static String eligibleMembers = '$chatConversation/eligible/members';
   static String leaveConversation = '$chatConversation/leave';
@@ -42,32 +37,26 @@ class IsmChatAPI {
   static String conversationAdmin = '$chatConversation/admin';
   static String conversationTitle = '$chatConversation/title';
   static String conversationImage = '$chatConversation/image';
-
   static String blockUser = '$user/block';
   static String unblockUser = '$user/unblock';
   static String nonBlockUser = '$user/nonblock';
-
   static final String _profilePic = '$user/presignedurl';
   static String updateProfilePic = '$_profilePic/update';
   static String createProfilePic = '$_profilePic/create';
-
   static String sendMessage = '$baseUrl/chat/message';
   // static String sendBroadcastMessage = '$baseUrl/chat/message/broadcast';
   static String sendForwardMessage = '$baseUrl/chat/message/forward';
-
   static String chatStatus = '$sendMessage/status';
   static String readStatus = '$chatStatus/read';
   static String deliverStatus = '$chatStatus/delivery';
   static String chatMessages = '$baseUrl/chat/messages';
   static String chatMessagesCount = '$chatMessages/count';
   static String userchatMessages = '$chatMessages/user';
-
   static String readAllMessages = '$chatMessages/read';
   static String deleteMessagesForMe = '$chatMessages/self';
   static String deleteMessages = '$chatMessages/everyone';
   static String createPresignedurl = '$user/presignedurl/create';
   static String presignedUrls = '$chatMessages/presignedurls';
-
   static String chatIndicator = '$baseUrl/chat/indicator';
   static String typingIndicator = '$chatIndicator/typing';
   static String deliveredIndicator = '$chatIndicator/delivered';
