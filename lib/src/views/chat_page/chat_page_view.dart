@@ -255,19 +255,11 @@ class _IsmChatPageView extends StatelessWidget {
                                   child: controller.isMessagesLoading
                                       ? const IsmChatLoadingDialog()
                                       : GestureDetector(
-                                          onTap: controller
-                                                      .messageHoldOverlayEntry !=
-                                                  null
-                                              ? () {
-                                                  controller.closeOverlay();
-                                                }
+                                          onTap: controller.hasOverlay
+                                              ? controller.closeOverlay
                                               : null,
                                           child: AbsorbPointer(
-                                            absorbing: controller
-                                                        .messageHoldOverlayEntry !=
-                                                    null
-                                                ? true
-                                                : false,
+                                            absorbing: controller.hasOverlay,
                                             child: Stack(
                                               alignment: Alignment.bottomLeft,
                                               children: [

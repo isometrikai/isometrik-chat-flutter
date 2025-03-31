@@ -411,6 +411,9 @@ class IsmChatPageController extends GetxController
 
   UserDetails? currentUser;
 
+  bool get hasOverlay =>
+      messageHoldOverlayEntry != null || attchmentOverlayEntry != null;
+
   bool get controllerIsRegister =>
       Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag);
 
