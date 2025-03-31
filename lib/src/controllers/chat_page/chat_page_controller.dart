@@ -465,6 +465,21 @@ class IsmChatPageController extends GetxController
       await sendWithOutSideMessage();
       unawaited(updateUnreadMessgaeCount());
     }
+
+    IsmChatLog.error('step0');
+    if (Get.isRegistered<IsmChatMqttController>()) {
+      final userIds = conversationController.conversations
+          .map((e) => e.opponentDetails?.userId ?? '')
+          .toList();
+
+      userIds.removeWhere((e) => e.isEmpty);
+      IsmChatLog.error('step1 $userIds');
+      if (userIds.isNotEmpty) {
+        IsmChatLog.error('step2');
+        unawaited(Get.find<IsmChatMqttController>()
+            .getChatConversationsUnreadCountBulk(userIds: userIds));
+      }
+    }
   }
 
   @override

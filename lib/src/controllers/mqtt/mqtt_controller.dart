@@ -178,6 +178,17 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
     chatDelegate.unReadConversationCount = response;
   }
 
+  Future<void> getChatConversationsUnreadCountBulk({
+    required List<String> userIds,
+    bool isLoading = false,
+  }) async {
+    IsmChatLog.error('step3');
+    var response = await viewModel.getChatConversationsUnreadCountBulk(
+      isLoading: isLoading,
+      userIds: userIds,
+    );
+  }
+
   Future<String> getChatConversationsCount({
     bool isLoading = false,
   }) async =>
