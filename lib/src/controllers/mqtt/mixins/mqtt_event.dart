@@ -352,8 +352,8 @@ mixin IsmChatMqttEventMixin {
       var chatController = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
       if (chatController.conversation?.conversationId ==
           message.conversationId) {
-        conversation.messages?.addEntries(
-            {'${message.metaData?.messageSentAt}': message}.entries);
+        conversation.messages
+            ?.addEntries({'${message.sentAt}': message}.entries);
       }
     }
 
