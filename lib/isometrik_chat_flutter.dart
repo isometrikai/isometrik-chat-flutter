@@ -66,12 +66,12 @@ class IsmChat {
 
   /// Initializes the MQTT controller.
   ///
-  /// [communicationConfig] is the configuration for the MQTT communication.
-  /// [useDatabase] is whether to use a database. Defaults to `true`.
-  /// [databaseName] is the name of the database. Defaults to `IsmChatStrings.dbname`.
-  /// [showNotification] is the callback for showing notifications.
-  /// [context] is the build context.
-  /// [mqttProperties] is whether to set up MQTT. Defaults to `true`.
+  /// `communicationConfig` is the configuration for the MQTT communication.
+  /// `useDatabase` is whether to use a database. Defaults to `true`.
+  /// `databaseName` is the name of the database. Defaults to `IsmChatStrings.dbname`.
+  /// `showNotification` is the callback for showing notifications.
+  /// `context` is the build context.
+  /// `mqttProperties` is whether to set up MQTT. Defaults to `true`.
   Future<void> initialize(
     IsmChatCommunicationConfig communicationConfig, {
     bool useDatabase = true,
@@ -119,7 +119,7 @@ class IsmChat {
   /// Listens for MQTT events.
   ///
   /// data is the data to listen for.
-  /// [showNotification] is the callback for showing notifications.
+  /// `showNotification` is the callback for showing notifications.
   ///,
   /// Throws an [AssertionError] if the MQTT controller has not been initialized.
   Future<void> listenMqttEvent(
@@ -138,7 +138,7 @@ class IsmChat {
   /// Adds a listener for MQTT events with a specific event model.
   ///
   /// This function must be called after initializing the MQTT controller using
-  /// [initialize]. The listener will be called with an [EventModel] object
+  /// `initialize`. The listener will be called with an `EventModel` object
   /// containing the event data.
   ///
   /// Example:
@@ -158,8 +158,8 @@ class IsmChat {
   /// Removes a listener for MQTT events with a specific event model.
   ///
   /// This function must be called after initializing the MQTT controller using
-  /// [initialize]. The listener to be removed must be the same instance that was
-  /// added using [addEventListener].
+  /// `initialize`. The listener to be removed must be the same instance that was
+  /// added using `addEventListener`.
   ///
   /// Example:
   /// ```dart
@@ -483,7 +483,7 @@ class IsmChat {
 
   /// Blocks a user with the specified ID.
   ///
-  /// This method delegates the blocking operation to the [_delegate].
+  /// This method delegates the blocking operation to the `_delegate`.
   ///
   /// * `opponentId`: The ID of the user to block.
   /// * `includeMembers`: Whether to include members of the blocked user in the blocking operation.
@@ -592,7 +592,7 @@ class IsmChat {
 
   /// Deletes a chat from the database with the specified Isometrick chat ID.
   ///
-  /// This method delegates the deletion operation to the [_delegate].
+  /// This method delegates the deletion operation to the `_delegate`.
   ///
   /// * `isometrickChatId`: The ID of the Isometrick chat to delete.
   /// * `conversationId`: The ID of the conversation to delete. Defaults to an empty string.
@@ -923,14 +923,84 @@ class IsmChat {
     _delegate.unSubscribeTopics(topic);
   }
 
+  /// Retrieves a list of blocked users for the current user.
+  ///
+  /// This method fetches the list of users that have been blocked by the current user.
+  ///
+  /// Parameters:
+  /// - `isLoading` : Optional boolean parameter to control whether to show a loading indicator
+  ///   during the API call. Defaults to false.
+  ///
+  /// Returns:
+  /// - Future<List<UserDetails>> : A Future that resolves to a list of UserDetails objects
+  ///   representing the blocked users. Returns an empty list if no blocked users are found
+  ///   or if there's an error.
+  ///
+  /// Example:
+  /// ```dart
+  /// final blockedUsers = await IsmChat.i.getBlockUser(isLoading: true);
+  /// ```
   Future<List<UserDetails>> getBlockUser({bool isLoading = false}) async =>
       await _delegate.getBlockUser(isLoading: isLoading);
 
+  /// Updates the current chat page by refreshing conversation details and messages.
+  ///
+  /// This method performs two main operations:
+  /// 1. Retrieves the latest conversation details
+  /// 2. Fetches the latest messages for the current conversation
+  ///
+  /// The method will only execute if there is a registered ChatPageController.
+  ///
+  /// Returns:
+  /// - Future<void> : A Future that completes when both operations are finished.
+  ///
+  /// Example:
+  /// ```dart
+  /// await IsmChat.i.updateChatPage();
+  /// ```
   Future<void> updateChatPage() async => await _delegate.updateChatPage();
 
+  /// Retrieves the current list of messages in the active conversation.
+  ///
+  /// This method returns the messages from the currently active chat conversation.
+  /// If there is no active ChatPageController or no active conversation,
+  /// it returns an empty list.
+  ///
+  /// Returns:
+  /// - List<IsmChatMessageModel> : A list of chat messages in the current conversation.
+  ///   Returns an empty list if no messages exist or if there's no active conversation.
+  ///
+  /// Example:
+  /// ```dart
+  /// final messages = IsmChat.i.currentConversatonMessages();
+  /// ```
   List<IsmChatMessageModel> currentConversatonMessages() =>
       _delegate.currentConversatonMessages();
 
+  /// Fetches a list of chat conversations from the API.
+  ///
+  /// This method retrieves conversations with pagination support and search capabilities.
+  ///
+  /// Parameters:
+  /// - skip : Number of conversations to skip (for pagination). Defaults to 0.
+  /// - limit : Maximum number of conversations to retrieve. Defaults to 20.
+  /// - searchTag : Optional search string to filter conversations.
+  /// - includeConversationStatusMessagesInUnreadMessagesCount : Boolean flag to determine
+  ///   whether to include status messages in unread count. Defaults to false.
+  ///
+  /// Returns:
+  /// - Future<List<IsmChatConversationModel>> : A Future that resolves to a list of
+  ///   conversation models.
+  ///
+  /// Example:
+  /// ```dart
+  /// final conversations = await IsmChat.i.getChatConversationApi(
+  ///   skip: 0,
+  ///   limit: 20,
+  ///   searchTag: "John",
+  ///   includeConversationStatusMessagesInUnreadMessagesCount: false,
+  /// );
+  /// ```
   Future<List<IsmChatConversationModel>> getChatConversationApi({
     int skip = 0,
     int limit = 20,
@@ -945,6 +1015,23 @@ class IsmChat {
             includeConversationStatusMessagesInUnreadMessagesCount,
       );
 
+  /// Retrieves the count of unread messages across all conversations.
+  ///
+  /// This method fetches the total number of conversations that have unread messages
+  /// for the current user.
+  ///
+  /// Parameters:
+  /// - `isLoading` : Optional boolean parameter to control whether to show a loading indicator
+  ///   during the API call. Defaults to false.
+  ///
+  /// Returns:
+  /// - Future<void> : A Future that completes when the unread count has been retrieved
+  ///   and updated in the system.
+  ///
+  /// Example:
+  /// ```dart
+  /// await  IsmChat.i.getChatConversationsUnreadCount(isLoading: true);
+  /// ```
   Future<void> getChatConversationsUnreadCount({
     bool isLoading = false,
   }) async =>
