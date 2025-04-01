@@ -1,8 +1,28 @@
 # Isometrik Chat Flutter SDK
 
-`Isometrik Chat Flutter SDK` is a package to support chat functionality for flutter projects
+## Introduction
 
-## Setup
+`Isometrik Chat Flutter SDK` is a powerful package that provides comprehensive chat functionality for Flutter projects. It offers real-time messaging capabilities using MQTT protocol, extensive customization options, and robust user management features.
+
+## Installation
+
+Add this to your package's `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  isometrik_chat_flutter:
+    git:
+      url: https://github.com/isometrikai/isometrik-chat-flutter.git
+      ref: main
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+## Platform Setup
 
 For detailed setup instructions, please refer to the platform-specific guides and you need to add your project level platforms:
 
@@ -12,12 +32,32 @@ For detailed setup instructions, please refer to the platform-specific guides an
 
 - [Web](./README_web.md)
 
-## Usage
+## Basic Configuration
+
+The Isometrik Chat Flutter SDK requires initial configuration for:
+
+1. Account Configuration
+
+   - Account ID
+   - Project ID
+   - Keyset ID
+   - License key
+   - App secret
+   - User secret
+   - MQTT host and port
+
+2. Feature Configuration
+   - Attachment types (image, video, location, contact, voice)
+   - UI customization
+   - Chat themes
+   - Message bubble types
+
+## Chat SDK Usage
 
 The Isometrik Chat Flutter SDK supports various use cases to enhance your chat functionality:
 
 1. Configuration : Set the configuration for account ID, project ID, keyset ID, license key, app secret, user secret, MQTT host, and port.
-2. Attachments and Features: Specify the types of attachments and features you need in the chat.(e.g., image, video, location, contat, voice)
+2. Attachments and Features: Specify the types of attachments and features you need in the chat.(e.g., image, video, location, contact, voice)
 3. Customization: Customize the chat UI by setting the chat theme, chat bubble color, and message bubble type
 4. User Management: Manage users by setting the user ID, user name, and user avatar.
 5. Chat History: Retrieve chat history from local database of device with conversationId and opponentUserId.
@@ -62,6 +102,8 @@ IsmChatApp(
 - `conversationParser`: A callback to parse conversation data from the API.
 - `conversationModifier`: A callback to modify conversation data.
 
+## Core Methods Documentation
+
 9. Initialize Chat and MQTT: The initialize method sets up the necessary configurations for using the `Isometrik Chat Flutter SDK` in your Flutter project. This method must be called before using any other features of the Isometrik Chat Flutter SDK.And Manually initializes the MQTT (Message Queuing Telemetry Transport) protocol for real-time messaging. .
 
 ```dart
@@ -71,7 +113,6 @@ IsmChatApp(
         String databaseName = IsmChatStrings.dbname,
         NotificaitonCallback? showNotification,
         BuildContext? context,
-        bool shouldSetupMqtt = false,
     })
 ```
 
@@ -323,3 +364,88 @@ await IsmChat.i.deleteChat(conversationId);
 ```dart
     await IsmChat.i.logout();
 ```
+
+40. Retrieves a specific conversation by its ID.
+
+```dart
+final conversation = await IsmChat.i.getConversation(conversationId: 'conversation-123');
+```
+
+41. Subscribe to multiple MQTT topics for receiving messages.
+
+```dart
+IsmChat.i.subscribeTopics(['sports', 'politics', 'technology']);
+```
+
+42. Unsubscribe from MQTT topics to stop receiving messages.
+
+```dart
+IsmChat.i.unSubscribeTopics(['sports', 'politics', 'technology']);
+```
+
+43. Retrieves a list of users blocked by the current user.
+
+```dart
+final blockedUsers = await IsmChat.i.getBlockUser(isLoading: true);
+```
+
+44. Refreshes the current chat page by updating conversation details and messages.
+
+```dart
+await IsmChat.i.updateChatPage();
+```
+
+45. Retrieves the list of messages in the currently active conversation.
+
+```dart
+final messages = IsmChat.i.currentConversatonMessages();
+```
+
+46. Fetches a paginated list of chat conversations with search capabilities.
+
+```dart
+final conversations = await IsmChat.i.getChatConversationApi(
+  skip: 0,
+  limit: 20,
+  searchTag: "John",
+  includeConversationStatusMessagesInUnreadMessagesCount: false,
+);
+```
+
+47. Retrieves the count of conversations with unread messages.
+
+```dart
+await IsmChat.i.getChatConversationsUnreadCount(isLoading: true);
+```
+
+48. Get or set a tag associated with the chat instance.
+
+```dart
+// Get current tag
+print(IsmChat.i.tag);
+
+// Set new tag
+IsmChat.i.tag = 'new-tag';
+```
+
+<!-- ## Contributing
+
+We welcome contributions to the Isometrik Chat Flutter SDK! Please follow these steps:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+
+## License
+
+This project is licensed under the [LICENSE NAME] - see the LICENSE file for details.
+
+## Support
+
+For support:
+- Email: support@isometrik.com
+- Documentation: [Link to documentation]
+- Issue Tracker: [Link to issue tracker] -->
