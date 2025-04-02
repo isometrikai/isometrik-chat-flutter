@@ -7,35 +7,50 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Mixin that handles MQTT events and message processing for the chat system.
 mixin IsmChatMqttEventMixin {
   IsmChatMqttController get _controller => Get.find<IsmChatMqttController>();
 
+  /// Queue for storing incoming chat messages that need to be processed.
   final Queue<IsmChatMessageModel> _eventQueue = Queue();
 
+  /// Flag indicating whether event processing is currently in progress.
   var _isEventProcessing = false;
 
+  /// Stores the ID of the last processed message to prevent duplicates.
   String messageId = '';
 
+  /// List of actions related to message delivery status.
   List<IsmChatMqttActionModel> deliverdActions = [];
 
+  /// List of actions related to message read status.
   List<IsmChatMqttActionModel> readActions = [];
 
+  /// Debouncer for handling rapid MQTT actions.
   final ismChatActionDebounce = IsmChatActionDebounce();
 
+  /// Stream controller for broadcasting MQTT events.
   var eventStreamController = StreamController<EventModel>.broadcast();
 
+  /// List of event listener callbacks.
   var eventListeners = <Function(EventModel)>[];
 
+  /// Observable list of users currently typing.
   final RxList<IsmChatTypingModel> _typingUsers = <IsmChatTypingModel>[].obs;
   List<IsmChatTypingModel> get typingUsers => _typingUsers;
   set typingUsers(List<IsmChatTypingModel> value) => _typingUsers.value = value;
 
+  /// Observable flag indicating if the app is in background.
   final RxBool _isAppBackground = false.obs;
   bool get isAppInBackground => _isAppBackground.value;
   set isAppInBackground(bool value) => _isAppBackground.value = value;
 
+  /// Stores messages pending to be processed.
   IsmChatConversationModel? chatPendingMessages;
 
+  /// Handles incoming MQTT events and routes them to appropriate handlers.
+  ///
+  /// - `event`: The MQTT event to process
   void onMqttEvent({required EventModel event}) async {
     _controller.eventStreamController.add(event);
     final payload = event.payload;

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:azlistview/azlistview.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -212,4 +213,33 @@ class IsmChatCommonController extends GetxController {
         searchText: searchText,
         isLoading: isLoading,
       );
+
+  /// Handles sorting and indexing of member list for UI display.
+  ///
+  /// - `list`: List of selected members to process
+  void handleSorSelectedMembers({
+    required List<SelectedMembers> list,
+    required Function(List<SelectedMembers>) aZsortCallback,
+  }) {
+    if (list.isEmpty) return;
+    for (var i = 0, length = list.length; i < length; i++) {
+      var tag = list[i].userDetails.userName[0].toUpperCase();
+      var isLocal = list[i].localContacts ?? false;
+      if (RegExp('[A-Z]').hasMatch(tag) && isLocal == false) {
+        list[i].tagIndex = tag;
+      } else {
+        if (isLocal == true) {
+          list[i].tagIndex = '#';
+        }
+      }
+    }
+
+    // A-Z sort.
+    SuspensionUtil.sortListBySuspensionTag(list);
+
+    // show sus tag.
+    SuspensionUtil.setShowSuspensionStatus(list);
+
+    aZsortCallback.call(list);
+  }
 }

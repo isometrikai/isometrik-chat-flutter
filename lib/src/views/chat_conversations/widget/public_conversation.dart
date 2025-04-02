@@ -151,7 +151,8 @@ class _IsmChatPublicConversationViewState
                                   ),
                                   IsmChatDimens.boxWidth4,
                                   Text(
-                                    data.createdAt!.toLastMessageTimeString(),
+                                    data.createdAt?.toLastMessageTimeString ??
+                                        '',
                                     style: IsmChatStyles.w400Black12,
                                   )
                                 ],

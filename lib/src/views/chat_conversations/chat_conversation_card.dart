@@ -240,7 +240,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
               children: [
                 Text(
                   widget.conversation.lastMessageDetails?.sentAt
-                          .toLastMessageTimeString() ??
+                          .toLastMessageTimeString ??
                       '',
                   style: IsmChatConfig
                           .chatTheme.chatListCardThemData?.trailingTextStyle ??

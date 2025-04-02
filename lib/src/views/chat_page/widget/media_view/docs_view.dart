@@ -83,7 +83,8 @@ class _IsmDocsViewState extends State<IsmDocsView>
                             overflow: TextOverflow.ellipsis,
                           ),
                           trailing: Text(
-                              value[index].sentAt.toLastMessageTimeString()),
+                            value[index].sentAt.toLastMessageTimeString,
+                          ),
                           leading: SvgPicture.asset(
                             IsmChatAssets.pdfSvg,
                             height: IsmChatDimens.thirtyTwo,
