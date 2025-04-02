@@ -21,7 +21,7 @@ class IsmChatMqttViewModel {
     required List<String> userIds,
     bool isLoading = false,
   }) async {
-    var response = await _repository.getChatConversationsUnreadCountBulk(
+    await _repository.getChatConversationsUnreadCountBulk(
       isLoading: isLoading,
       userIds: userIds,
     );

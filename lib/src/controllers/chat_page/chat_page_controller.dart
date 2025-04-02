@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:azlistview/azlistview.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -46,6 +45,12 @@ class IsmChatPageController extends GetxController
         GetTickerProviderStateMixin {
   IsmChatPageController(this.viewModel);
   final IsmChatPageViewModel viewModel;
+
+  IsmChatConversationsController get conversationController =>
+      Get.find<IsmChatConversationsController>();
+
+  IsmChatCommonController get commonController =>
+      Get.find<IsmChatCommonController>();
 
   var messageFocusNode = FocusNode();
 
@@ -537,24 +542,6 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  void handleList(List<SelectedContact> list) {
-    if (list.isEmpty) return;
-    for (var i = 0, length = list.length; i < length; i++) {
-      var tag = list[i].contact.displayName[0].toUpperCase();
-
-      if (RegExp('[A-Z]').hasMatch(tag)) {
-        list[i].tagIndex = tag;
-      } else {
-        list[i].tagIndex = '#';
-      }
-    }
-    // A-Z sort.
-    SuspensionUtil.sortListBySuspensionTag(contactList);
-
-    // show sus tag.
-    SuspensionUtil.setShowSuspensionStatus(contactList);
-  }
-
   Future<void> callFunctionsWithConversationId(String conversationId) async {
     _getBackGroundAsset();
     if (!isBroadcast) {
@@ -650,7 +637,8 @@ class IsmChatPageController extends GetxController
         isLoadingContact = true;
       }
     }
-    handleList(contactList);
+
+    commonController.handleSorSelectedContact(contactList);
   }
 
   void showMentionsUserList(String value) async {
@@ -873,7 +861,7 @@ class IsmChatPageController extends GetxController
           if (contactList.isEmpty) {
             isLoadingContact = true;
           }
-          handleList(contactList);
+          commonController.handleSorSelectedContact(contactList);
         }
 
         break;

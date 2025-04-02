@@ -4,12 +4,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   IsmChatPageController get _controller =>
       Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
-  IsmChatConversationsController get conversationController =>
-      Get.find<IsmChatConversationsController>();
-
-  IsmChatCommonController get commonController =>
-      Get.find<IsmChatCommonController>();
-
   void sendMessage({
     required int messageType,
     required String deviceId,
@@ -62,7 +56,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         _controller.didReactedLast = false;
         await _controller.getMessagesFromDB(conversationId);
         if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
-          await conversationController.getConversationsFromDB();
+          await _controller.conversationController.getConversationsFromDB();
         }
       }
       IsmChatConfig.paidWalletMessageApiResponse?.call(
@@ -96,7 +90,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         _controller.didReactedLast = false;
         await _controller.getMessagesFromDB(conversationId);
         if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
-          await conversationController.getConversationsFromDB();
+          await _controller.conversationController.getConversationsFromDB();
         }
       }
     } else {
@@ -325,7 +319,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
     await ismPostMediaUrl(
       imageAndFile: true,
@@ -355,7 +349,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['pdf'],
-      allowCompression: true,
       withData: true,
     );
 
@@ -466,7 +459,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
       var notificationTitle =
           IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
+              _controller.conversationController.userDetails?.userName ??
               '';
       if (await IsmChatProperties
               .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
@@ -595,14 +588,14 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
     await ismPostMediaUrl(
       imageAndFile: false,
       bytes: bytes ?? Uint8List(0),
       createdAt: sentAt,
       ismChatChatMessageModel: videoMessage,
-      mediaId: mediaId ?? '',
+      mediaId: mediaId,
       mediaType: IsmChatMediaType.video.value,
       nameWithExtension: nameWithExtension ?? '',
       notificationBody: IsmChatStrings.video,
@@ -694,7 +687,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
     await ismPostMediaUrl(
       bytes: bytes ?? Uint8List(0),
@@ -726,7 +719,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         metaData: _controller.conversation?.metaData,
         searchableTags: [
           IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
+              _controller.conversationController.userDetails?.userName ??
               '',
           _controller.conversation?.chatName ?? ''
         ],
@@ -787,7 +780,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     }
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
     sendMessage(
       metaData: imageMessage.metaData,
@@ -884,7 +877,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
     sendMessage(
       metaData: locationMessage.metaData,
@@ -971,7 +964,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
     sendMessage(
       metaData: contactMessage.metaData,
@@ -1060,7 +1053,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
 
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
 
     sendMessage(
@@ -1109,7 +1102,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           bytes: bytes,
         );
       } else {
-        presignedUrlModel = await commonController.postMediaUrl(
+        presignedUrlModel = await _controller.commonController.postMediaUrl(
           conversationId: ismChatChatMessageModel.conversationId ?? '',
           nameWithExtension: nameWithExtension,
           mediaType: mediaType,
@@ -1120,11 +1113,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
       var mediaUrlPath = '';
       var thumbnailUrlPath = '';
-      if (presignedUrlModel != null) {
-        mediaUrlPath = presignedUrlModel.mediaUrl ?? '';
-        mediaId =
-            _controller.isBroadcast ? mediaId : presignedUrlModel.mediaId ?? '';
-      }
+      mediaUrlPath = presignedUrlModel?.mediaUrl ?? '';
+      mediaId =
+          _controller.isBroadcast ? mediaId : presignedUrlModel?.mediaId ?? '';
       if (!(imageAndFile ?? false)) {
         PresignedUrlModel? presignedUrlModel;
         if (_controller.isBroadcast) {
@@ -1137,7 +1128,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             bytes: bytes,
           );
         } else {
-          presignedUrlModel = await commonController.postMediaUrl(
+          presignedUrlModel = await _controller.commonController.postMediaUrl(
             conversationId: ismChatChatMessageModel.conversationId ?? '',
             nameWithExtension: thumbnailNameWithExtension ?? '',
             mediaType: thumbanilMediaType ?? 0,
@@ -1147,11 +1138,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             isUpdateThumbnail: true,
           );
         }
-        if (presignedUrlModel != null) {
-          thumbnailUrlPath = _controller.isBroadcast
-              ? presignedUrlModel.mediaUrl ?? ''
-              : presignedUrlModel.thumbnailUrl ?? '';
-        }
+        thumbnailUrlPath = _controller.isBroadcast
+            ? presignedUrlModel?.mediaUrl ?? ''
+            : presignedUrlModel?.thumbnailUrl ?? '';
       }
       if (mediaUrlPath.isNotEmpty) {
         var attachment = [
@@ -1281,7 +1270,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         metaData: _controller.conversation?.metaData,
         searchableTags: [
           IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
+              _controller.conversationController.userDetails?.userName ??
               '',
           _controller.conversation?.chatName ?? ''
         ],
@@ -1341,7 +1330,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     }
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
-            conversationController.userDetails?.userName ??
+            _controller.conversationController.userDetails?.userName ??
             '';
     sendMessage(
       isBroadcast: _controller.isBroadcast,
@@ -1393,7 +1382,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         metaData: _controller.conversation?.metaData,
         searchableTags: [
           IsmChatConfig.communicationConfig.userConfig.userName ??
-              conversationController.userDetails?.userName ??
+              _controller.conversationController.userDetails?.userName ??
               '',
           _controller.conversation?.chatName ?? ''
         ],
@@ -1423,7 +1412,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             },
             searchableTags: [
               IsmChatConfig.communicationConfig.userConfig.userName ??
-                  conversationController.userDetails?.userName ??
+                  _controller.conversationController.userDetails?.userName ??
                   '',
               _controller.conversation?.chatName ?? ''
             ],

@@ -40,7 +40,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
     }
     var bytes = await file.readAsBytes();
     final extension = name.split('.').last;
-    var dataSize = IsmChatUtility.formatBytes(bytes.length ?? 0);
+    var dataSize = IsmChatUtility.formatBytes(bytes.length);
     var platformFile = IsmchPlatformFile(
       name: name,
       size: bytes.length,
