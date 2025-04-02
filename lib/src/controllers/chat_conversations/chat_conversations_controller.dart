@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:azlistview/azlistview.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -38,7 +37,7 @@ class IsmChatConversationsController extends GetxController {
   TextEditingController searchConversationTEC = TextEditingController();
 
   /// This variable use for get all method and varibles from IsmChatCommonController
-  IsmChatCommonController get _commonController =>
+  IsmChatCommonController get commonController =>
       Get.find<IsmChatCommonController>();
 
   // /// This variable use for get all method and varibles from IsmChatDeviceConfig
@@ -662,7 +661,7 @@ class IsmChatConversationsController extends GetxController {
     Uint8List bytes, [
     bool isLoading = false,
   ]) async {
-    var response = await _commonController.getPresignedUrl(
+    var response = await commonController.getPresignedUrl(
         isLoading: true,
         userIdentifier: userDetails?.userIdentifier ?? '',
         mediaExtension: mediaExtension,
@@ -671,7 +670,7 @@ class IsmChatConversationsController extends GetxController {
     if (response == null) {
       return '';
     }
-    var responseCode = await _commonController.updatePresignedUrl(
+    var responseCode = await commonController.updatePresignedUrl(
       presignedUrl: response.presignedUrl,
       bytes: bytes,
       isLoading: isLoading,
@@ -757,7 +756,9 @@ class IsmChatConversationsController extends GetxController {
     }
 
     if (response != null) {
-      handleList(forwardedList);
+      commonController.handleSorSelectedMembers(
+        forwardedList,
+      );
     }
 
     if (response == null && searchTag.isEmpty && isGroupConversation == false) {
@@ -767,30 +768,6 @@ class IsmChatConversationsController extends GetxController {
     }
     callApiOrNot = true;
     return forwardedList;
-  }
-
-  /// Handles the list of selected members for display and sorting.
-  ///
-  /// `list`: The list of selected members to handle.
-  void handleList(List<SelectedMembers> list) {
-    if (list.isEmpty) return;
-    for (var i = 0, length = list.length; i < length; i++) {
-      var tag = list[i].userDetails.userName[0].toUpperCase();
-      var isLocal = list[i].localContacts ?? false;
-      if (RegExp('[A-Z]').hasMatch(tag) && isLocal == false) {
-        list[i].tagIndex = tag;
-      } else {
-        if (isLocal == true) {
-          list[i].tagIndex = '#';
-        }
-      }
-    }
-
-    // A-Z sort.
-    SuspensionUtil.sortListBySuspensionTag(forwardedList);
-
-    // show sus tag.
-    SuspensionUtil.setShowSuspensionStatus(forwardedList);
   }
 
   /// Clears all messages in a conversation.
@@ -1373,7 +1350,7 @@ class IsmChatConversationsController extends GetxController {
         var attachment = x.attachments?.first;
         var bytes = File(attachment?.mediaUrl ?? '').readAsBytesSync();
         PresignedUrlModel? presignedUrlModel;
-        presignedUrlModel = await _commonController.postMediaUrl(
+        presignedUrlModel = await commonController.postMediaUrl(
           conversationId: x.conversationId ?? '',
           nameWithExtension: attachment?.name ?? '',
           mediaType: attachment?.attachmentType?.value ?? 0,
@@ -1384,7 +1361,7 @@ class IsmChatConversationsController extends GetxController {
 
         var mediaUrlPath = '';
         if (presignedUrlModel != null) {
-          var response = await _commonController.updatePresignedUrl(
+          var response = await commonController.updatePresignedUrl(
             presignedUrl: presignedUrlModel.mediaPresignedUrl,
             bytes: bytes,
             isLoading: false,
@@ -1398,7 +1375,7 @@ class IsmChatConversationsController extends GetxController {
           PresignedUrlModel? presignedUrlModel;
           var nameWithExtension = attachment?.thumbnailUrl?.split('/').last;
           var bytes = File(attachment?.thumbnailUrl ?? '').readAsBytesSync();
-          presignedUrlModel = await _commonController.postMediaUrl(
+          presignedUrlModel = await commonController.postMediaUrl(
             conversationId: x.conversationId ?? '',
             nameWithExtension: nameWithExtension ?? '',
             mediaType: 0,
@@ -1407,7 +1384,7 @@ class IsmChatConversationsController extends GetxController {
             bytes: bytes,
           );
           if (presignedUrlModel != null) {
-            var response = await _commonController.updatePresignedUrl(
+            var response = await commonController.updatePresignedUrl(
               presignedUrl: presignedUrlModel.thumbnailPresignedUrl,
               bytes: bytes,
               isLoading: false,
@@ -1434,7 +1411,7 @@ class IsmChatConversationsController extends GetxController {
           ];
         }
       }
-      var isMessageSent = await _commonController.sendMessage(
+      var isMessageSent = await commonController.sendMessage(
         showInConversation: true,
         encrypted: true,
         events: {'updateUnreadCount': true, 'sendPushNotification': true},
@@ -1697,7 +1674,10 @@ class IsmChatConversationsController extends GetxController {
         }
         forwardedList.addAll(forwardedListLocalList);
       }
-      handleList(forwardedList);
+      commonController.handleSorSelectedMembers(
+        forwardedList,
+      );
+
       update();
     }
   }
@@ -1732,7 +1712,9 @@ class IsmChatConversationsController extends GetxController {
         ),
       ),
     );
-    handleList(forwardedList);
+    commonController.handleSorSelectedMembers(
+      forwardedList,
+    );
   }
 
   /// Navigates to the contact synchronization page.
@@ -1781,7 +1763,7 @@ class IsmChatConversationsController extends GetxController {
     final chatConversationResponse = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: conversationId);
     if (chatConversationResponse == null) {
-      final conversation = await _commonController.createConversation(
+      final conversation = await commonController.createConversation(
         conversation: currentConversation!,
         userId: [userDetails.userId],
         metaData: currentConversation?.metaData,
@@ -1842,7 +1824,7 @@ class IsmChatConversationsController extends GetxController {
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             userDetails.userName;
-    await _commonController.sendMessage(
+    await commonController.sendMessage(
       showInConversation: true,
       encrypted: true,
       events: {

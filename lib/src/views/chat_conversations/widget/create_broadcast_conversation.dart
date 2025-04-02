@@ -55,7 +55,9 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                                       tagIndex: e.tagIndex,
                                     ))
                                 .toList();
-                        controller.handleList(controller.forwardedList);
+                        controller.commonController.handleSorSelectedMembers(
+                          controller.forwardedList,
+                        );
                       }
                     },
                   )
@@ -81,7 +83,10 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                               tagIndex: e.tagIndex),
                         )
                         .toList();
-                    controller.handleList(controller.forwardedList);
+
+                    controller.commonController.handleSorSelectedMembers(
+                      controller.forwardedList,
+                    );
                   }
                   if (controller.isLoadResponse) {
                     controller.isLoadResponse = false;

@@ -217,10 +217,7 @@ class IsmChatCommonController extends GetxController {
   /// Handles sorting and indexing of member list for UI display.
   ///
   /// - `list`: List of selected members to process
-  void handleSorSelectedMembers({
-    required List<SelectedMembers> list,
-    required Function(List<SelectedMembers>) aZsortCallback,
-  }) {
+  void handleSorSelectedMembers(List<SelectedMembers> list) {
     if (list.isEmpty) return;
     for (var i = 0, length = list.length; i < length; i++) {
       var tag = list[i].userDetails.userName[0].toUpperCase();
@@ -233,13 +230,30 @@ class IsmChatCommonController extends GetxController {
         }
       }
     }
+    _suspensionFilter(list);
+  }
 
+  /// Handles sorting and indexing of contact list for UI display.
+  ///
+  /// - `list`: List of selected members to process
+  void handleSorSelectedContact(List<SelectedContact> list) {
+    if (list.isEmpty) return;
+    for (var i = 0, length = list.length; i < length; i++) {
+      var tag = list[i].contact.displayName[0].toUpperCase();
+      if (RegExp('[A-Z]').hasMatch(tag)) {
+        list[i].tagIndex = tag;
+      } else {
+        list[i].tagIndex = '#';
+      }
+    }
+    _suspensionFilter(list);
+  }
+
+  void _suspensionFilter(List<ISuspensionBean>? list) {
     // A-Z sort.
     SuspensionUtil.sortListBySuspensionTag(list);
 
     // show sus tag.
     SuspensionUtil.setShowSuspensionStatus(list);
-
-    aZsortCallback.call(list);
   }
 }

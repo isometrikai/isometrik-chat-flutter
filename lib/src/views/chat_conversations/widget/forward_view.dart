@@ -83,7 +83,9 @@ class IsmChatForwardView extends StatelessWidget {
                                       tagIndex: e.tagIndex,
                                     ))
                                 .toList();
-                        controller.handleList(controller.forwardedList);
+                        controller.commonController.handleSorSelectedMembers(
+                          controller.forwardedList,
+                        );
                         return;
                       }
                       controller.debounce.run(() {
@@ -119,7 +121,9 @@ class IsmChatForwardView extends StatelessWidget {
                               tagIndex: e.tagIndex),
                         )
                         .toList();
-                    controller.handleList(controller.forwardedList);
+                    controller.commonController.handleSorSelectedMembers(
+                      controller.forwardedList,
+                    );
                   }
                   if (controller.isLoadResponse) {
                     controller.isLoadResponse = false;

@@ -54,7 +54,9 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                       tagIndex: e.tagIndex,
                                     ))
                                 .toList();
-                        controller.handleList(controller.forwardedList);
+                        controller.commonController.handleSorSelectedMembers(
+                          controller.forwardedList,
+                        );
                         return;
                       }
                       controller.debounce.run(() async {
@@ -93,7 +95,9 @@ class IsmChatCreateConversationView extends StatelessWidget {
                             isBlocked: e.isBlocked,
                             tagIndex: e.tagIndex))
                         .toList();
-                    controller.handleList(controller.forwardedList);
+                    controller.commonController.handleSorSelectedMembers(
+                      controller.forwardedList,
+                    );
                     controller.addContact(isLoading: false);
                   }
                   if (controller.isLoadResponse) {
