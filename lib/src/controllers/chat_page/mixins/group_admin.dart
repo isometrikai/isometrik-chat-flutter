@@ -135,7 +135,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
     SuspensionUtil.setShowSuspensionStatus(_controller.groupEligibleUser);
   }
 
-  ///Remove members from conversation
+  /// Remove members from conversation
   Future<bool> leaveConversation(String conversationId) async {
     var response =
         await _controller.viewModel.leaveConversation(conversationId, true);

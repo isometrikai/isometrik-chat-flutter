@@ -161,17 +161,17 @@ extension FlashIcon on FlashMode {
 }
 
 extension DateConvertor on int {
-  DateTime toDate() => DateTime.fromMillisecondsSinceEpoch(this);
+  DateTime toDate() => DateTime.fromMillisecondsSinceEpoch(this).toLocal();
 
-  String toTimeString() =>
-      DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(this));
+  String toTimeString() => DateFormat.jm()
+      .format(DateTime.fromMillisecondsSinceEpoch(this).toLocal());
 
   String toCurrentTimeStirng() {
     if (this == 0 || this == -1) {
       return IsmChatStrings.tapInfo;
     }
     final timeStamp = toDate().removeTime();
-    final now = DateTime.now().removeTime();
+    final now = DateTime.now().toLocal().removeTime();
 
     if (now.day == timeStamp.day) {
       return '${IsmChatStrings.lastSeen} ${IsmChatStrings.today} ${IsmChatStrings.at} ${DateFormat.jm().format(toDate())}';
@@ -185,7 +185,7 @@ extension DateConvertor on int {
     return '${IsmChatStrings.lastSeen} ${IsmChatStrings.on} ${DateFormat('MMM d, yyyy h:mm a').format(toDate())}';
   }
 
-  String toLastMessageTimeString() {
+  String get toLastMessageTimeString {
     if (this == 0 || this == -1) {
       return '';
     }
@@ -222,7 +222,7 @@ extension DateConvertor on int {
     if (this == 0 || this == -1) {
       return '';
     }
-    var now = DateTime.now();
+    var now = DateTime.now().toLocal();
     var date = toDate();
     if (now.isSameDay(date)) {
       return 'Today';
@@ -243,7 +243,7 @@ extension DateConvertor on int {
     if (this == 0 || this == -1) {
       return '';
     }
-    var now = DateTime.now();
+    var now = DateTime.now().toLocal();
     var date = toDate();
 
     if (now.isSameDay(date)) {
@@ -258,7 +258,7 @@ extension DateConvertor on int {
     if (this == 0 || this == -1) {
       return '';
     }
-    var now = DateTime.now();
+    var now = DateTime.now().toLocal();
     var timestamp = toDate();
     late DateFormat dateFormat;
     if (now.difference(timestamp) > const Duration(days: 365)) {
@@ -273,7 +273,7 @@ extension DateConvertor on int {
   }
 
   String get getTime {
-    final timeStamp = DateTime.fromMillisecondsSinceEpoch(this);
+    final timeStamp = DateTime.fromMillisecondsSinceEpoch(this).toLocal();
     final time = DateFormat.jm().format(timeStamp);
     final monthDay = DateFormat.MMMd().format(timeStamp);
     return '$monthDay, $time';
@@ -290,7 +290,7 @@ extension DateFormats on DateTime {
 
   String toDateString() => DateFormat('dd MMM yyyy').format(this);
 
-  DateTime removeTime() => DateTime(year, month, day);
+  DateTime removeTime() => DateTime(year, month, day).toLocal();
 }
 
 extension ChildWidget on IsmChatCustomMessageType {
