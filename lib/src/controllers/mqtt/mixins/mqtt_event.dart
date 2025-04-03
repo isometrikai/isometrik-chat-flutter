@@ -76,6 +76,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Processes the event queue.
+  ///
+  /// This method is called when the event queue is not empty and event processing is not in progress.
   void _eventProcessQueue() async {
     if (_isEventProcessing) return;
     _isEventProcessing = true;
@@ -92,6 +95,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles an MQTT action.
+  ///
+  /// * `actionModel`: The MQTT action model to handle
   void _handleAction(IsmChatMqttActionModel actionModel) async {
     switch (actionModel.action) {
       case IsmChatActionEvents.typingEvent:
@@ -174,6 +180,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles an observer join and leave event.
+  ///
+  /// * `actionModel`: The observer join and leave event model to handle
   void _handleObserverJoinAndLeave(IsmChatMqttActionModel actionModel) async {
     if (actionModel.senderId == _controller.userConfig?.userId) {
       return;
@@ -217,6 +226,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a broadcast event.
+  ///
+  /// * `actionModel`: The broadcast event model to handle
   void _handleBroadcast(IsmChatMqttActionModel actionModel) async {
     await Future.delayed(const Duration(milliseconds: 100));
     if (actionModel.senderId == _controller.userConfig?.userId) {
@@ -303,6 +315,9 @@ mixin IsmChatMqttEventMixin {
     );
   }
 
+  /// Handles a message.
+  ///
+  /// * `message`: The message to handle
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     await Future.delayed(const Duration(milliseconds: 100));
@@ -394,6 +409,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a local notification.
+  ///
+  /// * `message`: The message to handle
   void _handleLocalNotification(IsmChatMessageModel message) {
     if (message.senderInfo?.userId == _controller.userConfig?.userId) {
       return;
@@ -505,6 +523,11 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Shows a push notification.
+  ///
+  /// * `title`: The title of the notification.
+  /// * `body`: The body of the notification.
+  /// * `conversationId`: The conversation ID.
   void showPushNotification({
     required String title,
     required String body,
@@ -519,6 +542,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a typing event.
+  ///
+  /// * `actionModel`: The typing event model to handle
   void _handleTypingEvent(IsmChatMqttActionModel actionModel) {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -536,6 +562,9 @@ mixin IsmChatMqttEventMixin {
     );
   }
 
+  /// Handles a message delivered event.
+  ///
+  /// * `actionModel`: The message delivered event model to handle
   void _handleMessageDelivered(IsmChatMqttActionModel actionModel) async {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -590,6 +619,9 @@ mixin IsmChatMqttEventMixin {
     });
   }
 
+// Handles a message read event.
+  ///
+  /// * `actionModel`: The message read event model to handle
   void _handleMessageRead(IsmChatMqttActionModel actionModel) async {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -646,6 +678,9 @@ mixin IsmChatMqttEventMixin {
     });
   }
 
+  /// Handles a multiple message read event.
+  ///
+  /// * `actionModel`: The multiple message read event model to handle
   void _handleMultipleMessageRead(IsmChatMqttActionModel actionModel) async {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -734,6 +769,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a message delete for everyone event.
+  ///
+  /// * `actionModel`: The message delete for everyone event model to handle
   void _handleMessageDelelteForEveryOne(
       IsmChatMqttActionModel actionModel) async {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
@@ -773,6 +811,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a block user or unblock event.
+  ///
+  /// * `actionModel`: The block user or unblock event model to handle
   void _handleBlockUserOrUnBlock(IsmChatMqttActionModel actionModel) async {
     if (actionModel.initiatorDetails?.userId ==
         _controller.userConfig?.userId) {
@@ -796,6 +837,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a one to one call event.
+  ///
+  /// * `actionModel`: The one to one call event model to handle
   void _handleOneToOneCall(IsmChatMqttActionModel actionModel) async {
     if (messageId == actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
@@ -814,6 +858,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a group remove and add user event.
+  ///
+  /// * `actionModel`: The group remove and add user event model to handle
   void _handleGroupRemoveAndAddUser(IsmChatMqttActionModel actionModel) async {
     if (messageId == actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
@@ -912,6 +959,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles a member join and leave event.
+  ///
+  /// * `actionModel`: The member join and leave event model to handle
   void _handleMemberJoinAndLeave(IsmChatMqttActionModel actionModel) async {
     if (messageId == actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
@@ -934,6 +984,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+// Handles an admin remove and add event.
+  ///
+  /// * `actionModel`: The admin remove and add event model to handle
   void _handleAdminRemoveAndAdd(IsmChatMqttActionModel actionModel) async {
     if (messageId == actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
@@ -979,6 +1032,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  // Handles an add and remove reaction event.
+  ///
+  /// * `actionModel`: The add and remove reaction event model to handle
   void _handleAddAndRemoveReaction(IsmChatMqttActionModel actionModel) async {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
@@ -1049,6 +1105,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles unread messages for a specific user.
+  ///
+  /// * `userId`: The user ID to check for unread messages.
   void _handleUnreadMessages(String userId) async {
     if (userId == _controller.userConfig?.userId) {
       return;
@@ -1056,6 +1115,9 @@ mixin IsmChatMqttEventMixin {
     await _controller.getChatConversationsUnreadCount();
   }
 
+  /// Handles deletion of chat from local storage.
+  ///
+  /// * `actionModel`: The action model containing details for deletion.
   void _handleDeletChatFromLocal(IsmChatMqttActionModel actionModel) async {
     if (IsmChatProperties.chatPageProperties.isAllowedDeleteChatFromLocal) {
       final deleteChat = await _controller.deleteChatFormDB('',
@@ -1067,6 +1129,9 @@ mixin IsmChatMqttEventMixin {
     }
   }
 
+  /// Handles updates to conversation details.
+  ///
+  /// * `actionModel`: The action model containing updated conversation details.
   void _handleConversationUpdate(IsmChatMqttActionModel actionModel) async {
     if (actionModel.userDetails?.userId == _controller.userConfig?.userId) {
       return;
