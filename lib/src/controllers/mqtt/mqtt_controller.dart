@@ -285,7 +285,6 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   ///
   /// - `isLoading`: Boolean flag indicating whether to show a loading indicator while
   ///   the request is in progress. Defaults to false.
-
   Future<String> getChatConversationsCount({
     bool isLoading = false,
   }) async =>
@@ -365,7 +364,6 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   /// - Displaying offline conversation history
   /// - Syncing with server data
   /// - Finding specific conversations by filtering the results
-
   Future<List<IsmChatConversationModel>?> getAllConversationFromDB() async =>
       await IsmChatConfig.dbWrapper?.getAllConversations();
 

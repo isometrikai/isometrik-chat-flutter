@@ -6,10 +6,20 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// A GetxController that provides common functionality for Isometrik Chat Flutter.
 class IsmChatCommonController extends GetxController {
   IsmChatCommonController(this.viewModel);
+
+  /// The underlying view model that provides the logic for the controller.
   final IsmChatCommonViewModel viewModel;
 
+  /// Updates a presigned URL.
+  ///
+  /// * `presignedUrl`: The presigned URL to update.
+  /// * `bytes`: The bytes to update.
+  /// * `isLoading`: A boolean indicating whether the update is in progress.
+  ///
+  /// Returns a future that resolves to an integer value.
   Future<int?> updatePresignedUrl({
     String? presignedUrl,
     Uint8List? bytes,
@@ -21,6 +31,14 @@ class IsmChatCommonController extends GetxController {
         isLoading: isLoading,
       );
 
+  /// Retrieves a presigned URL.
+  ///
+  /// * `isLoading`: A boolean indicating whether the retrieval is in progress.
+  /// * `userIdentifier`: The user identifier.
+  /// * `mediaExtension`: The media extension.
+  /// * `bytes`: The bytes to retrieve.
+  ///
+  /// Returns a future that resolves to a PresignedUrlModel instance.
   Future<PresignedUrlModel?> getPresignedUrl({
     required bool isLoading,
     required String userIdentifier,
@@ -34,6 +52,17 @@ class IsmChatCommonController extends GetxController {
         bytes: bytes,
       );
 
+  /// Posts a media URL.
+  ///
+  /// * `conversationId`: The conversation ID.
+  /// * `nameWithExtension`: The name with extension.
+  /// * `mediaType`: The media type.
+  /// * `mediaId`: The media ID.
+  /// * `bytes`: The bytes to post.
+  /// * `isLoading`: A boolean indicating whether the post is in progress.
+  /// * `isUpdateThumbnail`: A boolean indicating whether to update the thumbnail.
+  ///
+  /// Returns a future that resolves to a PresignedUrlModel instance.
   Future<PresignedUrlModel?> postMediaUrl({
     required String conversationId,
     required String nameWithExtension,
@@ -53,9 +82,36 @@ class IsmChatCommonController extends GetxController {
         isUpdateThumbnail: isUpdateThumbnail,
       );
 
+  /// Sorts a list of messages.
+  ///
+  /// * `messages`: The list of messages to sort.
+  ///
+  /// Returns a sorted list of IsmChatMessageModel instances.
   List<IsmChatMessageModel> sortMessages(List<IsmChatMessageModel> messages) =>
       viewModel.sortMessages(messages);
 
+  /// Sends a message.
+  ///
+  /// * `showInConversation`: A boolean indicating whether to show the message in the conversation.
+  /// * `messageType`: The message type.
+  /// * `encrypted`: A boolean indicating whether the message is encrypted.
+  /// * `deviceId`: The device ID.
+  /// * `conversationId`: The conversation ID.
+  /// * `body`: The message body.
+  /// * `createdAt`: The creation timestamp.
+  /// * `notificationBody`: The notification body.
+  /// * `notificationTitle`: The notification title.
+  /// * `parentMessageId`: The parent message ID.
+  /// * `metaData`: The metadata.
+  /// * `mentionedUsers`: The mentioned users.
+  /// * `events`: The events.
+  /// * `customType`: The custom type.
+  /// * `attachments`: The attachments.
+  /// * `searchableTags`: The searchable tags.
+  /// * `isBroadcast`: A boolean indicating whether the message is a broadcast.
+  /// * `isUpdateMesage`: A boolean indicating whether to update the message.
+  ///
+  /// Returns a future that resolves to a boolean value.
   Future<bool> sendMessage({
     required bool showInConversation,
     required int messageType,
@@ -96,6 +152,25 @@ class IsmChatCommonController extends GetxController {
           searchableTags: searchableTags,
           isUpdateMesage: isUpdateMesage);
 
+  // Sends a paid wallet message.
+  ///
+  /// * `showInConversation`: A boolean indicating whether to show the message in the conversation.
+  /// * `messageType`: The message type.
+  /// * `encrypted`: A boolean indicating whether the message is encrypted.
+  /// * `deviceId`: The device ID.
+  /// * `conversationId`: The conversation ID.
+  /// * `body`: The message body.
+  /// * `notificationBody`: The notification body.
+  /// * `notificationTitle`: The notification title.
+  /// * `createdAt`: The creation timestamp.
+  /// * `parentMessageId`: The parent message ID.
+  /// * `metaData`: The metadata.
+  /// * `mentionedUsers`: The mentioned users.
+  /// * `events`: The events.
+  /// * `customType`: The custom type.
+  /// * `attachments`: The attachments.
+  ///
+  /// Returns a future that resolves to a tuple containing a boolean value and an IsmChatResponseModel instance.
   Future<(bool, IsmChatResponseModel?)> sendPaidWalletMessage({
     required bool showInConversation,
     required int messageType,
@@ -130,6 +205,18 @@ class IsmChatCommonController extends GetxController {
           metaData: metaData,
           createdAt: createdAt);
 
+  /// Creates a conversation.
+  ///
+  /// * `userId`: The user ID.
+  /// * `metaData`: The metadata.
+  /// * `isGroup`: A boolean indicating whether the conversation is a group.
+  /// * `isLoading`: A boolean indicating whether the creation is in progress.
+  /// * `searchableTags`: The searchable tags.
+  /// * `conversationType`: The conversation type.
+  /// * `conversation`: The conversation model.
+  /// * `pushNotifications`: A boolean indicating whether to enable push notifications.
+  ///
+  /// Returns a future that resolves to an IsmChatConversationModel instance.
   Future<IsmChatConversationModel?> createConversation({
     required List<String> userId,
     IsmChatMetaData? metaData,
@@ -197,6 +284,16 @@ class IsmChatCommonController extends GetxController {
     return null;
   }
 
+  /// Retrieves chat messages.
+  ///
+  /// * `conversationId`: The conversation ID.
+  /// * `lastMessageTimestamp`: The last message timestamp.
+  /// * `limit`: The limit.
+  /// * `skip`: The skip.
+  /// * `searchText`: The search text.
+  /// * `isLoading`: A boolean indicating whether the retrieval is in progress.
+  ///
+  /// Returns a future that resolves to a list of IsmChatMessageModel instances.
   Future<List<IsmChatMessageModel>> getChatMessages({
     required String conversationId,
     required int lastMessageTimestamp,
@@ -216,7 +313,7 @@ class IsmChatCommonController extends GetxController {
 
   /// Handles sorting and indexing of member list for UI display.
   ///
-  /// - `list`: List of selected members to process
+  /// * `list`: The list of selected members to process.
   void handleSorSelectedMembers(List<SelectedMembers> list) {
     if (list.isEmpty) return;
     for (var i = 0, length = list.length; i < length; i++) {
@@ -235,7 +332,7 @@ class IsmChatCommonController extends GetxController {
 
   /// Handles sorting and indexing of contact list for UI display.
   ///
-  /// - `list`: List of selected members to process
+  /// * `list`: The list of selected contacts to process.
   void handleSorSelectedContact(List<SelectedContact> list) {
     if (list.isEmpty) return;
     for (var i = 0, length = list.length; i < length; i++) {
@@ -249,6 +346,9 @@ class IsmChatCommonController extends GetxController {
     _suspensionFilter(list);
   }
 
+  /// Filters the list of suspension beans.
+  ///
+  /// * `list`: The list of suspension beans to filter.
   void _suspensionFilter(List<ISuspensionBean>? list) {
     // A-Z sort.
     SuspensionUtil.sortListBySuspensionTag(list);

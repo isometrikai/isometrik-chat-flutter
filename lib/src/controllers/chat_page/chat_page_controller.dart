@@ -35,6 +35,7 @@ part './mixins/send_message.dart';
 part './mixins/show_dialog.dart';
 part './mixins/taps_controller.dart';
 
+/// A GetxController that provides common functionality for Isometrik Chat Flutter.
 class IsmChatPageController extends GetxController
     with
         IsmChatPageSendMessageMixin,
