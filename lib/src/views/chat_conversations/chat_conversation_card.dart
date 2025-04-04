@@ -186,51 +186,115 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                         ),
                   ),
                   IsmChatDimens.boxHeight2,
-                  widget.subtitleBuilder?.call(context, widget.conversation,
-                          widget.conversation.lastMessageDetails?.body ?? '') ??
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if (widget.conversation.lastMessageDetails
-                                  ?.reactionType?.isEmpty ==
-                              true) ...[
-                            if (!(widget.conversation.isGroup ?? false)) ...[
-                              widget.conversation.readCheck,
-                            ],
-                            widget.conversation.sender,
-                            if (widget.conversation.isGroup ?? false) ...[
-                              widget.conversation.readCheck,
-                            ],
-                            widget.conversation.lastMessageDetails?.icon ??
-                                IsmChatDimens.box0,
-                            IsmChatDimens.boxWidth4,
-                          ],
-                          Flexible(
-                            child: Text(
-                              widget.conversation.lastMessageDetails
-                                      ?.messageBody ??
-                                  '',
-                              style: IsmChatConfig
-                                      .chatTheme
-                                      .chatListCardThemData
-                                      ?.subTitleTextStyle ??
-                                  IsmChatStyles.w400Black12.copyWith(
-                                    fontStyle: widget
-                                                .conversation
-                                                .lastMessageDetails
-                                                ?.customType ==
-                                            IsmChatCustomMessageType
-                                                .deletedForEveryone
-                                        ? FontStyle.italic
-                                        : FontStyle.normal,
-                                  ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                  if (widget.subtitle != null) ...[
+                    Text(
+                      widget.subtitle?.call(
+                              context,
+                              widget.conversation,
+                              widget.conversation.lastMessageDetails?.body ??
+                                  '') ??
+                          '',
+                      style: IsmChatConfig.chatTheme.chatListCardThemData
+                              ?.subTitleTextStyle ??
+                          IsmChatStyles.w400Black12.copyWith(
+                            fontStyle: widget.conversation.lastMessageDetails
+                                        ?.customType ==
+                                    IsmChatCustomMessageType.deletedForEveryone
+                                ? FontStyle.italic
+                                : FontStyle.normal,
                           ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (widget.conversation.lastMessageDetails?.reactionType
+                                ?.isEmpty ==
+                            true) ...[
+                          if (!(widget.conversation.isGroup ?? false)) ...[
+                            widget.conversation.readCheck,
+                          ],
+                          widget.conversation.sender,
+                          if (widget.conversation.isGroup ?? false) ...[
+                            widget.conversation.readCheck,
+                          ],
+                          widget.conversation.lastMessageDetails?.icon ??
+                              IsmChatDimens.box0,
+                          IsmChatDimens.boxWidth4,
                         ],
-                      ),
+                        Flexible(
+                          child: Text(
+                            widget.conversation.lastMessageDetails
+                                    ?.messageBody ??
+                                '',
+                            style: IsmChatConfig.chatTheme.chatListCardThemData
+                                    ?.subTitleTextStyle ??
+                                IsmChatStyles.w400Black12.copyWith(
+                                  fontStyle: widget.conversation
+                                              .lastMessageDetails?.customType ==
+                                          IsmChatCustomMessageType
+                                              .deletedForEveryone
+                                      ? FontStyle.italic
+                                      : FontStyle.normal,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    )
+                  ] else ...[
+                    widget.subtitleBuilder?.call(
+                            context,
+                            widget.conversation,
+                            widget.conversation.lastMessageDetails?.body ??
+                                '') ??
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (widget.conversation.lastMessageDetails
+                                    ?.reactionType?.isEmpty ==
+                                true) ...[
+                              if (!(widget.conversation.isGroup ?? false)) ...[
+                                widget.conversation.readCheck,
+                              ],
+                              widget.conversation.sender,
+                              if (widget.conversation.isGroup ?? false) ...[
+                                widget.conversation.readCheck,
+                              ],
+                              widget.conversation.lastMessageDetails?.icon ??
+                                  IsmChatDimens.box0,
+                              IsmChatDimens.boxWidth4,
+                            ],
+                            Flexible(
+                              child: Text(
+                                widget.conversation.lastMessageDetails
+                                        ?.messageBody ??
+                                    '',
+                                style: IsmChatConfig
+                                        .chatTheme
+                                        .chatListCardThemData
+                                        ?.subTitleTextStyle ??
+                                    IsmChatStyles.w400Black12.copyWith(
+                                      fontStyle: widget
+                                                  .conversation
+                                                  .lastMessageDetails
+                                                  ?.customType ==
+                                              IsmChatCustomMessageType
+                                                  .deletedForEveryone
+                                          ? FontStyle.italic
+                                          : FontStyle.normal,
+                                    ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                  ]
                 ],
               ),
             ),

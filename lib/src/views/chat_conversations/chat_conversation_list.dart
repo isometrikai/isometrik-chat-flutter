@@ -88,13 +88,16 @@ class _ConversationList extends StatelessWidget {
         addAutomaticKeepAlives: true,
         itemBuilder: (_, index) {
           var conversation = controller.userConversations[index];
-
           return IsmChatTapHandler(
             onTap: () async {
               IsmChatProperties.conversationProperties.onChatTap
                   ?.call(_, conversation);
-              controller.updateLocalConversation(conversation);
-              await controller.goToChatPage();
+              if (IsmChatProperties.conversationProperties.shouldGoToChatPage
+                      ?.call(context, conversation) ??
+                  true) {
+                controller.updateLocalConversation(conversation);
+                await controller.goToChatPage();
+              }
             },
             child: IsmChatProperties.conversationProperties.cardBuilder
                     ?.call(_, conversation, index) ??
