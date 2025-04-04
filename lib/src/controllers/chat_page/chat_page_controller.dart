@@ -1361,7 +1361,7 @@ class IsmChatPageController extends GetxController
           .where((item) =>
               [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
                   .contains(item.customType) &&
-              (IsmChatProperties.chatPageProperties.isShowMediaMeessageBlure
+              (IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
                       ?.call(Get.context!, item) ??
                   true))
           .toList();
