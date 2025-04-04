@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -45,35 +43,42 @@ class IsmChatDBWrapper {
 
   /// Create an instance of HiveBox to use throughout the presenter.
   static Future<IsmChatDBWrapper> create([String? databaseName]) async {
-    var dbName = databaseName ?? IsmChatConfig.dbName;
+    final dbName = databaseName ?? IsmChatConfig.dbName;
     BoxCollection? collection;
-    Directory? directory;
-    if (!kIsWeb) {
-      directory = await getApplicationDocumentsDirectory();
-      collection = await BoxCollection.open(
-        dbName,
-        {
-          _userBox,
-          _conversationBox,
-          _pendingBox,
-        },
-        path: '${directory.path}/$dbName',
-      );
+    if (kIsWeb) {
+      try {
+        collection = await BoxCollection.open(
+          dbName,
+          {
+            _userBox,
+            _conversationBox,
+            _pendingBox,
+          },
+        );
+      } catch (_, __) {
+        IsmChatLog.error('Hive DB Create Error :- $_', __);
+      }
     } else {
-      collection = await BoxCollection.open(
-        dbName,
-        {
-          _userBox,
-          _conversationBox,
-          _pendingBox,
-        },
-      );
+      try {
+        final directory = await getApplicationDocumentsDirectory();
+        collection = await BoxCollection.open(
+          dbName,
+          {
+            _userBox,
+            _conversationBox,
+            _pendingBox,
+          },
+          path: '${directory.path}/$dbName',
+        );
+        IsmChatLog.success(
+          '[CREATED] - Hive databse at ${directory.path}/$dbName',
+        );
+      } catch (_, __) {
+        IsmChatLog.error('Hive DB Create Error :- $_', __);
+      }
     }
-    if (!kIsWeb) {
-      IsmChatLog.success(
-          '[CREATED] - Hive databse at ${directory?.path}/$dbName');
-    }
-    var instance = IsmChatDBWrapper._create(collection);
+    if (collection == null) throw Exception('Error Creating Database');
+    final instance = IsmChatDBWrapper._create(collection);
     await instance._createBox();
     return instance;
   }
