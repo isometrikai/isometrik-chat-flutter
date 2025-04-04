@@ -50,7 +50,7 @@ dependencies:
   mqtt_helper:
     git:
       url: https://github.com/rahulsaryam285/mqtt_helper.git
-      ref: feat/check_for_topics
+      ref: main
   open_filex: ^4.6.0
   path: ^1.9.1
   path_provider: ^2.1.5
