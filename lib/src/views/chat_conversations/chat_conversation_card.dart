@@ -187,25 +187,6 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                   ),
                   IsmChatDimens.boxHeight2,
                   if (widget.subtitle != null) ...[
-                    Text(
-                      widget.subtitle?.call(
-                              context,
-                              widget.conversation,
-                              widget.conversation.lastMessageDetails?.body ??
-                                  '') ??
-                          '',
-                      style: IsmChatConfig.chatTheme.chatListCardThemData
-                              ?.subTitleTextStyle ??
-                          IsmChatStyles.w400Black12.copyWith(
-                            fontStyle: widget.conversation.lastMessageDetails
-                                        ?.customType ==
-                                    IsmChatCustomMessageType.deletedForEveryone
-                                ? FontStyle.italic
-                                : FontStyle.normal,
-                          ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -226,8 +207,12 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                         ],
                         Flexible(
                           child: Text(
-                            widget.conversation.lastMessageDetails
-                                    ?.messageBody ??
+                            widget.subtitle?.call(
+                                    context,
+                                    widget.conversation,
+                                    widget.conversation.lastMessageDetails
+                                            ?.body ??
+                                        '') ??
                                 '',
                             style: IsmChatConfig.chatTheme.chatListCardThemData
                                     ?.subTitleTextStyle ??
