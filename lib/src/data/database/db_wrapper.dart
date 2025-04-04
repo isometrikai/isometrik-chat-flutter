@@ -56,11 +56,12 @@ class IsmChatDBWrapper {
           },
         );
       } catch (_, __) {
-        IsmChatLog.error('Hive DB Create Error :- $_', __);
+        IsmChatLog.error('IsmChat DB Create Error :- $_', __);
       }
     } else {
       try {
         final directory = await getApplicationDocumentsDirectory();
+        final path = '${directory.path}/$dbName';
         collection = await BoxCollection.open(
           dbName,
           {
@@ -68,16 +69,16 @@ class IsmChatDBWrapper {
             _conversationBox,
             _pendingBox,
           },
-          path: '${directory.path}/$dbName',
+          path: path,
         );
         IsmChatLog.success(
-          '[CREATED] - Hive databse at ${directory.path}/$dbName',
+          '[CREATED] - IsmChat databse at $path',
         );
       } catch (_, __) {
-        IsmChatLog.error('Hive DB Create Error :- $_', __);
+        IsmChatLog.error('IsmChat DB Create Error :- $_', __);
       }
     }
-    if (collection == null) throw Exception('Error Creating Database');
+    if (collection == null) throw Exception('Error Creating IsmChat Database');
     final instance = IsmChatDBWrapper._create(collection);
     await instance._createBox();
     return instance;

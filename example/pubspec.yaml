@@ -8,7 +8,7 @@ environment:
   sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
-  app_settings: ^5.2.0
+  app_settings: ^6.1.1
   isometrik_chat_flutter:
     path: ../
   device_info_plus: ^11.2.2
@@ -35,10 +35,7 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
-  collection: ^1.19.1
   device_info_plus: ^11.2.2
-  meta: ^1.16.0
-  path: ^1.9.1
 
 flutter:
   uses-material-design: true
