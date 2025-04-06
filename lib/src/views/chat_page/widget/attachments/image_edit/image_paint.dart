@@ -4,28 +4,25 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_painter/image_painter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
-class IsmChatImagePainterWidget extends StatefulWidget {
-  const IsmChatImagePainterWidget({super.key, required this.file});
+class IsmChatImagePaintView extends StatelessWidget {
+  IsmChatImagePaintView({super.key});
 
-  final File file;
+  static const String route = IsmPageRoutes.imagePaint;
 
-  @override
-  State<IsmChatImagePainterWidget> createState() => _ImagePainterWidgetState();
-}
-
-class _ImagePainterWidgetState extends State<IsmChatImagePainterWidget> {
   final ImagePainterController _controller = ImagePainterController(
     color: IsmChatColors.primaryColorLight,
     strokeWidth: 4,
     mode: PaintMode.line,
   );
-  final _key = GlobalKey<ScaffoldState>();
+
+  final file = Get.arguments['file'] as XFile? ?? XFile('');
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        key: _key,
         appBar: AppBar(
           leading: InkWell(
             child: const Icon(
@@ -33,7 +30,7 @@ class _ImagePainterWidgetState extends State<IsmChatImagePainterWidget> {
               color: IsmChatColors.whiteColor,
             ),
             onTap: () {
-              Get.back<File>(result: widget.file);
+              Get.back<XFile>(result: XFile(file.path));
             },
           ),
           backgroundColor: IsmChatConfig.chatTheme.primaryColor,
@@ -42,23 +39,17 @@ class _ImagePainterWidgetState extends State<IsmChatImagePainterWidget> {
               onPressed: () async {
                 IsmChatUtility.showLoader();
                 final image = await _controller.exportImage();
-
-                final pathSplite = widget.file.path.split('/').last;
-                final extensionSplite = pathSplite.split('.');
-
-                final extension = extensionSplite.last;
-
+                final pathSplite = file.path.split('/').last;
+                final extension = pathSplite.split('.').last;
                 final directory =
                     (await getApplicationDocumentsDirectory()).path;
                 await Directory('$directory/sample').create(recursive: true);
                 final fullPath =
                     '$directory/sample/${DateTime.now().millisecondsSinceEpoch}.$extension';
-
                 final imgFile = File(fullPath);
                 imgFile.writeAsBytesSync(image ?? Uint8List(0));
                 IsmChatUtility.closeLoader();
-                Get.back<File>(result: imgFile);
-                IsmChatLog.success('Image edit file $imgFile');
+                Get.back<XFile>(result: XFile(imgFile.path));
               },
               style: ButtonStyle(
                   side: const WidgetStatePropertyAll(
@@ -79,7 +70,7 @@ class _ImagePainterWidgetState extends State<IsmChatImagePainterWidget> {
         ),
         backgroundColor: IsmChatColors.blackColor,
         body: ImagePainter.file(
-          File(widget.file.path),
+          File(file.path),
           // key: _imageKey,
           controller: _controller,
           scalable: true,

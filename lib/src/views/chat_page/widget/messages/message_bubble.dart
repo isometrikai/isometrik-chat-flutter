@@ -32,7 +32,9 @@ class MessageBubble extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (_message.sentByMe) ...[
+            if (_message.sentByMe &&
+                IsmChatResponsive.isWeb(context) &&
+                !showMessageInCenter) ...[
               _OnMessageHoverWeb(
                 controller: controller,
                 globalKey: _globalKey,
@@ -284,7 +286,9 @@ class MessageBubble extends StatelessWidget {
                 ],
               ),
             ),
-            if (!_message.sentByMe) ...[
+            if (!_message.sentByMe &&
+                IsmChatResponsive.isWeb(context) &&
+                !showMessageInCenter) ...[
               IsmChatDimens.boxWidth8,
               _OnMessageHoverWeb(
                 controller: controller,

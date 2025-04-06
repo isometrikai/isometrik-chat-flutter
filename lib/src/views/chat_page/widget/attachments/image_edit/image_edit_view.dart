@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -8,7 +7,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatImageEditView extends StatelessWidget {
   const IsmChatImageEditView({super.key});
 
-  static const String route = IsmPageRoutes.eidtMedia;
+  static const String route = IsmPageRoutes.edittMedia;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
@@ -21,14 +20,16 @@ class IsmChatImageEditView extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: IsmChatConfig.chatTheme.primaryColor,
             title: Text(
-              controller.fileSize,
+              controller.webMedia.first.dataSize,
               style: IsmChatStyles.w600White16,
             ),
             centerTitle: true,
             actions: [
               IconButton(
-                onPressed: () async {
-                  await controller.cropImage(controller.imagePath ?? File(''));
+                onPressed: () {
+                  controller.cropImage(
+                    url: controller.webMedia.first.platformFile.path ?? '',
+                  );
                 },
                 icon: Icon(
                   Icons.crop,
@@ -37,13 +38,10 @@ class IsmChatImageEditView extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () async {
-                  controller.imagePath =
-                      await Get.to<File>(IsmChatImagePainterWidget(
-                    file: controller.imagePath!,
-                  ));
-                  controller.fileSize = await IsmChatUtility.fileToSize(
-                      controller.imagePath ?? File(''));
+                onPressed: () {
+                  controller.paintImage(
+                    url: controller.webMedia.first.platformFile.path ?? '',
+                  );
                 },
                 icon: Icon(
                   Icons.edit,
@@ -64,8 +62,8 @@ class IsmChatImageEditView extends StatelessWidget {
               },
             ),
           ),
-          body: Image.file(
-            controller.imagePath ?? File(''),
+          body: Image.memory(
+            controller.webMedia.first.platformFile.bytes ?? Uint8List(0),
             fit: BoxFit.contain,
             height: IsmChatDimens.percentHeight(1),
             width: IsmChatDimens.percentWidth(1),
@@ -86,15 +84,16 @@ class IsmChatImageEditView extends StatelessWidget {
                     cursorColor: IsmChatColors.whiteColor,
                     style: IsmChatStyles.w400White16,
                     controller: controller.textEditingController,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      controller.webMedia.first.caption = value;
+                    },
                   ),
                 ),
                 IsmChatDimens.boxWidth8,
                 FloatingActionButton(
                   backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                   onPressed: () async {
-                    if (controller.fileSize.size()) {
-                      Get.back<void>();
+                    if (controller.webMedia.first.dataSize.size()) {
                       Get.back<void>();
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
@@ -106,13 +105,12 @@ class IsmChatImageEditView extends StatelessWidget {
                                   IsmChatCustomMessageType.image) ??
                           true) {
                         await controller.sendImage(
-                          caption: controller.textEditingController.text,
                           conversationId:
                               controller.conversation?.conversationId ?? '',
                           userId: controller
                                   .conversation?.opponentDetails?.userId ??
                               '',
-                          imagePath: controller.imagePath,
+                          webMediaModel: controller.webMedia.first,
                         );
                       }
                     } else {

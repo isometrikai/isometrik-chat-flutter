@@ -1,8 +1,13 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
+import 'package:easy_video_editor/easy_video_editor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
 
 /// show the Video editing view page
 class IsmChatVideoView extends StatefulWidget {
@@ -17,21 +22,65 @@ class IsmChatVideoView extends StatefulWidget {
 
 class _IsmChatVideoViewState extends State<IsmChatVideoView> {
   TextEditingController textEditingController = TextEditingController();
-  File? videoFile;
-  String dataSize = '';
+
+  WebMediaModel? webMediaModel;
 
   final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   @override
   void initState() {
     super.initState();
-    final argumnet = Get.arguments as Map<String, dynamic>;
-    videoFile = argumnet['file'] as File;
-    setSize();
+    _startInit();
   }
 
-  void setSize() async {
-    dataSize = await IsmChatUtility.fileToSize(videoFile!);
+  void _voidConfig(XFile file) async {
+    var name = '';
+    if (kIsWeb) {
+      name = '${DateTime.now().millisecondsSinceEpoch}.png';
+    } else {
+      name = file.path.split('/').last;
+    }
+    var bytes = await file.readAsBytes();
+    final extension = name.split('.').last;
+    var dataSize = IsmChatUtility.formatBytes(bytes.length);
+    var platformFile = IsmchPlatformFile(
+      name: name,
+      size: bytes.length,
+      bytes: bytes,
+      path: file.path,
+      extension: extension,
+    );
+
+    var thumbnailBytes = Uint8List(0);
+    if (kIsWeb) {
+      thumbnailBytes =
+          await IsmChatBlob.getVideoThumbnailBytes(bytes) ?? Uint8List(0);
+    } else {
+      final thumb =
+          await VideoEditorBuilder(videoPath: file.path).generateThumbnail(
+        quality: 50,
+        positionMs: 1,
+      );
+      final thumbFile = File(thumb ?? '');
+
+      thumbnailBytes = await thumbFile.readAsBytes();
+    }
+    platformFile.thumbnailBytes = thumbnailBytes;
+    webMediaModel = WebMediaModel(
+      dataSize: dataSize,
+      isVideo: true,
+      platformFile: platformFile,
+    );
+    safeUpdate();
+  }
+
+  void _startInit() async {
+    final argumnet = Get.arguments as Map<String, dynamic>;
+    final file = argumnet['file'] as XFile? ?? XFile('');
+    _voidConfig(file);
+  }
+
+  void safeUpdate() async {
     if (mounted) {
       setState(() {});
     }
@@ -43,7 +92,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            dataSize,
+            webMediaModel?.dataSize ?? '',
             style: IsmChatStyles.w600White16,
           ),
           leading: IconButton(
@@ -57,13 +106,15 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
           actions: [
             IconButton(
               onPressed: () async {
-                var trimFile = await Get.to<File>(
-                  IsmVideoTrimmerView(
-                      file: videoFile ?? File(''), durationInSeconds: 30),
+                var trimFile = await IsmChatRouteManagement.goToVideoTrimeView(
+                  index: 0,
+                  file: XFile(
+                    webMediaModel?.platformFile.path ?? '',
+                  ),
+                  maxVideoTrim: 30,
                 );
-                videoFile = trimFile;
-                dataSize = await IsmChatUtility.fileToSize(videoFile!);
-                setState(() {});
+
+                _voidConfig(trimFile);
               },
               icon: const Icon(
                 Icons.content_cut_rounded,
@@ -76,7 +127,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
             child: Stack(
           fit: StackFit.expand,
           children: [
-            VideoViewPage(path: videoFile!.path),
+            VideoViewPage(path: webMediaModel?.platformFile.path ?? ''),
           ],
         )),
         floatingActionButton: Padding(
@@ -95,25 +146,26 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                   cursorColor: IsmChatColors.whiteColor,
                   style: IsmChatStyles.w400White16,
                   controller: textEditingController,
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    webMediaModel?.caption = value;
+                    safeUpdate();
+                  },
                 ),
               ),
               IsmChatDimens.boxWidth8,
               FloatingActionButton(
                 backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                 onPressed: () async {
-                  if (dataSize.size()) {
+                  if (webMediaModel?.dataSize.size() ?? false) {
                     Get.back<void>();
                     Get.back<void>();
-
                     if (await IsmChatProperties.chatPageProperties
                             .messageAllowedConfig?.isMessgeAllowed
                             ?.call(Get.context!, controller.conversation!,
                                 IsmChatCustomMessageType.video) ??
                         true) {
                       await controller.sendVideo(
-                        caption: textEditingController.text,
-                        file: videoFile,
+                        webMediaModel: webMediaModel!,
                         conversationId:
                             controller.conversation?.conversationId ?? '',
                         userId:

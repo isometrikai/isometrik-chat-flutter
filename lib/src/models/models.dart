@@ -1,4 +1,3 @@
-export 'attachment_caption_model.dart';
 export 'attachment_model.dart';
 export 'background_model.dart';
 export 'bottom_sheet_attachment_model.dart';

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:easy_video_editor/easy_video_editor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -13,23 +15,21 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
 
   static const String route = IsmPageRoutes.alleryAssetsView;
 
-  final argument = Get.arguments['fileList'] as List<XFile?>? ?? [];
+  final mediaXFile = Get.arguments['fileList'] as List<XFile?>? ?? [];
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.tag,
         initState: (state) {
-          state.controller?.listOfAssetsPath.clear();
-          state.controller?.selectAssets(argument);
-          state.controller?.textEditingController.clear();
+          state.controller?.selectAssets(mediaXFile);
         },
         builder: (controller) {
-          if (controller.listOfAssetsPath.isNotEmpty) {
+          if (controller.webMedia.isNotEmpty) {
             return Scaffold(
               resizeToAvoidBottomInset: true,
               appBar: IsmChatAppBar(
                 title: Text(
-                  controller.dataSize,
+                  controller.webMedia[controller.assetsIndex].dataSize,
                   style:
                       IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
                           IsmChatStyles.w600White14,
@@ -44,47 +44,27 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                   ),
                   onTap: () {
                     Get.back<void>();
-                    controller.listOfAssetsPath.clear();
+                    controller.webMedia.clear();
                     controller.isVideoVisible = false;
                   },
                 ),
                 action: [
                   IsmChatConstants.imageExtensions.contains(controller
-                          .listOfAssetsPath[controller.assetsIndex]
-                          .attachmentModel
-                          .mediaUrl!
-                          .split('.')
-                          .last)
+                          .webMedia[controller.assetsIndex]
+                          .platformFile
+                          .extension)
                       ? Row(
                           children: [
                             InkWell(
                               onTap: () async {
-                                await controller.cropImage(File(controller
-                                        .listOfAssetsPath[
-                                            controller.assetsIndex]
-                                        .attachmentModel
-                                        .mediaUrl ??
-                                    ''));
-                                controller.listOfAssetsPath[
-                                    controller
-                                        .assetsIndex] = controller
-                                    .listOfAssetsPath[controller.assetsIndex]
-                                    .copyWith(
-                                  attachmentModel: controller
-                                      .listOfAssetsPath[controller.assetsIndex]
-                                      .attachmentModel
-                                      .copyWith(
-                                          mediaUrl: controller.imagePath?.path),
-                                );
-
-                                controller.dataSize =
-                                    await IsmChatUtility.fileToSize(
-                                  File(controller
-                                          .listOfAssetsPath[
-                                              controller.assetsIndex]
-                                          .attachmentModel
-                                          .mediaUrl ??
-                                      ''),
+                                await controller.cropImage(
+                                  url: controller
+                                          .webMedia[controller.assetsIndex]
+                                          .platformFile
+                                          .path ??
+                                      '',
+                                  forGalllery: true,
+                                  selectedIndex: controller.assetsIndex,
                                 );
                               },
                               child: Icon(
@@ -97,36 +77,14 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             IsmChatDimens.boxWidth16,
                             InkWell(
                               onTap: () async {
-                                var mediaFile = await Get.to<File>(
-                                  IsmChatImagePainterWidget(
-                                    file: File(
-                                      controller
-                                              .listOfAssetsPath[
-                                                  controller.assetsIndex]
-                                              .attachmentModel
-                                              .mediaUrl ??
-                                          '',
-                                    ),
-                                  ),
-                                );
-                                controller.listOfAssetsPath[
-                                    controller
-                                        .assetsIndex] = controller
-                                    .listOfAssetsPath[controller.assetsIndex]
-                                    .copyWith(
-                                  attachmentModel: controller
-                                      .listOfAssetsPath[controller.assetsIndex]
-                                      .attachmentModel
-                                      .copyWith(mediaUrl: mediaFile?.path),
-                                );
-                                controller.dataSize =
-                                    await IsmChatUtility.fileToSize(
-                                  File(controller
-                                          .listOfAssetsPath[
-                                              controller.assetsIndex]
-                                          .attachmentModel
-                                          .mediaUrl ??
-                                      ''),
+                                await controller.paintImage(
+                                  url: controller
+                                          .webMedia[controller.assetsIndex]
+                                          .platformFile
+                                          .path ??
+                                      '',
+                                  forGalllery: true,
+                                  selectedIndex: controller.assetsIndex,
                                 );
                               },
                               child: Icon(
@@ -139,9 +97,11 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             IsmChatDimens.boxWidth16,
                             InkWell(
                               onTap: () {
-                                controller.listOfAssetsPath
+                                controller.webMedia
                                     .removeAt(controller.assetsIndex);
-                                if (controller.listOfAssetsPath.isEmpty) {
+                                controller.assetsIndex =
+                                    controller.webMedia.length - 1;
+                                if (controller.webMedia.isEmpty) {
                                   Get.back<void>();
                                 }
                               },
@@ -159,43 +119,45 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             IconButton(
                               onPressed: () async {
                                 controller.isVideoVisible = true;
-                                var mediaFile = await Get.to<File>(
-                                  IsmVideoTrimmerView(
-                                    index: controller.assetsIndex,
-                                    file: File(
-                                      controller
-                                              .listOfAssetsPath[
-                                                  controller.assetsIndex]
-                                              .attachmentModel
-                                              .mediaUrl ??
-                                          '',
-                                    ),
-                                    durationInSeconds: 30,
+                                var mediaFile = await IsmChatRouteManagement
+                                    .goToVideoTrimeView(
+                                  index: controller.assetsIndex,
+                                  file: XFile(
+                                    controller.webMedia[controller.assetsIndex]
+                                            .platformFile.path ??
+                                        '',
                                   ),
+                                  maxVideoTrim: 30,
                                 );
-
-                                controller.listOfAssetsPath[
-                                    controller
-                                        .assetsIndex] = controller
-                                    .listOfAssetsPath[controller.assetsIndex]
-                                    .copyWith(
-                                  attachmentModel: controller
-                                      .listOfAssetsPath[controller.assetsIndex]
-                                      .attachmentModel
-                                      .copyWith(mediaUrl: mediaFile?.path),
+                                final thumb = await VideoEditorBuilder(
+                                        videoPath: mediaFile.path)
+                                    .generateThumbnail(
+                                  quality: 50,
+                                  positionMs: 1,
                                 );
-                                controller.dataSize =
-                                    await IsmChatUtility.fileToSize(
-                                  File(controller
-                                          .listOfAssetsPath[
-                                              controller.assetsIndex]
-                                          .attachmentModel
-                                          .mediaUrl ??
-                                      ''),
+                                final thumbFile = File(thumb ?? '');
+                                final thumbnailBytes =
+                                    await thumbFile.readAsBytes();
+                                var bytes = await mediaFile.readAsBytes();
+                                final fileSize = IsmChatUtility.formatBytes(
+                                  int.parse(bytes.length.toString()),
+                                );
+                                controller.webMedia[controller.assetsIndex] =
+                                    WebMediaModel(
+                                  dataSize: fileSize,
+                                  isVideo: true,
+                                  platformFile: IsmchPlatformFile(
+                                    name: mediaFile.name,
+                                    bytes: bytes,
+                                    path: mediaFile.path,
+                                    size: bytes.length,
+                                    extension: mediaFile.mimeType,
+                                    thumbnailBytes: thumbnailBytes,
+                                  ),
                                 );
                               },
                               icon: Icon(
-                                Icons.content_cut_rounded,
+                                Icons.video_settings_rounded,
                                 color: IsmChatConfig.chatTheme
                                         .chatPageHeaderTheme?.iconColor ??
                                     IsmChatColors.whiteColor,
@@ -203,11 +165,11 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             ),
                             IconButton(
                               onPressed: () {
-                                controller.listOfAssetsPath
+                                controller.webMedia
                                     .removeAt(controller.assetsIndex);
                                 controller.assetsIndex =
-                                    controller.listOfAssetsPath.length - 1;
-                                if (controller.listOfAssetsPath.isEmpty) {
+                                    controller.webMedia.length - 1;
+                                if (controller.webMedia.isEmpty) {
                                   controller.assetsIndex = 0;
                                   Get.back<void>();
                                 }
@@ -228,15 +190,13 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
               body: SafeArea(
                 child: PageView.builder(
                   controller: controller.pageController,
-                  itemCount: controller.listOfAssetsPath.length,
+                  itemCount: controller.webMedia.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final url = controller
-                            .listOfAssetsPath[index].attachmentModel.mediaUrl ??
-                        '';
-                    return IsmChatConstants.imageExtensions.contains(controller
-                            .listOfAssetsPath[index].attachmentModel.mediaUrl!
-                            .split('.')
-                            .last)
+                    final url =
+                        controller.webMedia[index].platformFile.path ?? '';
+
+                    return IsmChatConstants.imageExtensions.contains(
+                            controller.webMedia[index].platformFile.extension)
                         ? PhotoView(
                             imageProvider: url.isValidUrl
                                 ? NetworkImage(url) as ImageProvider
@@ -252,14 +212,9 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                   },
                   onPageChanged: (value) async {
                     controller.textEditingController.text =
-                        controller.listOfAssetsPath[value].caption;
+                        controller.webMedia[value].caption ?? '';
                     controller.assetsIndex = value;
                     controller.isVideoVisible = false;
-                    controller.dataSize = await IsmChatUtility.fileToSize(
-                      File(controller.listOfAssetsPath[controller.assetsIndex]
-                              .attachmentModel.mediaUrl ??
-                          ''),
-                    );
                   },
                 ),
               ),
@@ -281,28 +236,19 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         separatorBuilder: (context, index) =>
                             IsmChatDimens.boxWidth8,
-                        itemCount: controller.listOfAssetsPath.length,
+                        itemCount: controller.webMedia.length,
                         itemBuilder: (context, index) {
-                          var media = controller.listOfAssetsPath[index];
+                          var media = controller.webMedia[index];
                           return InkWell(
                             onTap: () async {
                               controller.textEditingController.text =
-                                  media.caption;
+                                  media.caption ?? '';
                               controller.assetsIndex = index;
                               controller.isVideoVisible = false;
                               await controller.pageController.animateToPage(
                                   index,
                                   duration: const Duration(milliseconds: 100),
                                   curve: Curves.linear);
-                              controller.dataSize =
-                                  await IsmChatUtility.fileToSize(
-                                File(controller
-                                        .listOfAssetsPath[
-                                            controller.assetsIndex]
-                                        .attachmentModel
-                                        .mediaUrl ??
-                                    ''),
-                              );
                             },
                             child: Stack(
                               alignment: Alignment.center,
@@ -319,17 +265,21 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                               width: IsmChatDimens.two)
                                           : null),
                                   width: IsmChatDimens.sixty,
-                                  child: IsmChatImage(
-                                    media.attachmentModel.attachmentType ==
-                                            IsmChatMediaType.video
-                                        ? media.attachmentModel.thumbnailUrl ??
-                                            ''
-                                        : media.attachmentModel.mediaUrl ?? '',
-                                    isNetworkImage: false,
-                                  ),
+                                  child: Builder(
+                                      builder: (context) => IsmChatImage(
+                                            media.isVideo
+                                                ? media
+                                                    .platformFile.thumbnailBytes
+                                                    .toString()
+                                                : media.platformFile.path ?? '',
+                                            isNetworkImage:
+                                                kIsWeb && media.isVideo
+                                                    ? false
+                                                    : kIsWeb,
+                                            isBytes: media.isVideo,
+                                          )),
                                 ),
-                                if (media.attachmentModel.attachmentType ==
-                                    IsmChatMediaType.video)
+                                if (media.isVideo)
                                   Container(
                                     alignment: Alignment.center,
                                     width: IsmChatDimens.thirtyTwo,
@@ -363,13 +313,8 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                               style: IsmChatStyles.w400White16,
                               controller: controller.textEditingController,
                               onChanged: (value) {
-                                controller.listOfAssetsPath[
-                                    controller
-                                        .assetsIndex] = controller
-                                    .listOfAssetsPath[controller.assetsIndex]
-                                    .copyWith(
-                                  caption: value,
-                                );
+                                controller.webMedia[controller.assetsIndex]
+                                    .caption = value;
                               },
                             ),
                           ),

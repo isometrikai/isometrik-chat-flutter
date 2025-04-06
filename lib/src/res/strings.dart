@@ -194,7 +194,7 @@ class IsmChatStrings {
   static const String addYourEmail = 'Add your email...';
   static const String dial = 'Dial';
   static const String addToContact = 'Add to contacts';
-  static const String noContact = 'No contact found';
+  static const String noContact = 'No contact found...!';
 
   static const String downloadingMedia = 'Downloading media...';
 

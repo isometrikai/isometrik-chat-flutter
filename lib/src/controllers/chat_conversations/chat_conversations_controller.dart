@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:azlistview/azlistview.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -38,7 +37,7 @@ class IsmChatConversationsController extends GetxController {
   TextEditingController searchConversationTEC = TextEditingController();
 
   /// This variable use for get all method and varibles from IsmChatCommonController
-  IsmChatCommonController get _commonController =>
+  IsmChatCommonController get commonController =>
       Get.find<IsmChatCommonController>();
 
   // /// This variable use for get all method and varibles from IsmChatDeviceConfig
@@ -327,18 +326,21 @@ class IsmChatConversationsController extends GetxController {
   bool get isUserEmailType => _isUserEmailType.value;
   set isUserEmailType(bool value) => _isUserEmailType.value = value;
 
+  /// Observable list for managing skipped forwarded members.
   final _forwardedListSkip = <SelectedMembers>[].obs;
   List<SelectedMembers> get forwardedListSkip => _forwardedListSkip;
   set forwardedListSkip(List<SelectedMembers> value) {
     _forwardedList.value = value;
   }
 
+  /// Observable boolean indicating if the controller has been initialized.
   final RxBool _intilizedContrller = false.obs;
   bool get intilizedContrller => _intilizedContrller.value;
   set intilizedContrller(bool value) {
     _intilizedContrller.value = value;
   }
 
+  /// Initializes the controller, sets up internet connectivity, fetches user data, conversations, and background assets.
   @override
   onInit() async {
     super.onInit();
@@ -372,24 +374,28 @@ class IsmChatConversationsController extends GetxController {
     sendPendingMessgae();
   }
 
+  /// Cleans up resources when the controller is closed.
   @override
   void onClose() {
     onDispose();
     super.onClose();
   }
 
+  /// Disposes of the controller and its resources.
   @override
   void dispose() {
     onDispose();
     super.dispose();
   }
 
+  /// Custom dispose method to clean up specific resources.
   void onDispose() {
     conversationScrollController.dispose();
     searchConversationScrollController.dispose();
     connectivitySubscription?.cancel();
   }
 
+  /// Sets up connectivity listener to monitor internet connection changes.
   void _isInterNetConnect() {
     connectivity = Connectivity();
     connectivitySubscription =
@@ -398,6 +404,7 @@ class IsmChatConversationsController extends GetxController {
     });
   }
 
+  /// Sends any pending messages if the internet is available.
   void _sendPendingMessage() async {
     if (await IsmChatUtility.isNetworkAvailable) {
       if (currentConversation?.conversationId?.isNotEmpty == true) {
@@ -409,6 +416,7 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Adds scroll listeners to manage pagination for conversations and search results.
   void scrollListener() async {
     conversationScrollController.addListener(
       () async {
@@ -433,6 +441,7 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
+  /// Returns the appropriate widget based on the current render screen state.
   Widget isRenderScreenWidget() {
     switch (isRenderScreen) {
       case IsRenderConversationScreen.none:
@@ -461,6 +470,7 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Returns the appropriate widget based on the current chat page screen state.
   Widget isRenderChatScreenWidget() {
     switch (isRenderChatPageaScreen) {
       case IsRenderChatPageScreen.coversationInfoView:
@@ -507,6 +517,7 @@ class IsmChatConversationsController extends GetxController {
     return const SizedBox.shrink();
   }
 
+  /// Fetches the list of asset files from a JSON file.
   Future<AssetsModel?> getAssetFilesList() async {
     var jsonString = await rootBundle.loadString(
         'packages/isometrik_chat_flutter/assets/assets_backgroundAssets.json');
@@ -517,6 +528,7 @@ class IsmChatConversationsController extends GetxController {
     return null;
   }
 
+  /// Retrieves background assets and populates the background image and color lists.
   Future<void> getBackGroundAssets() async {
     var assets = await getAssetFilesList();
     if (assets != null) {
@@ -525,6 +537,7 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Generates a list of emoji reactions for the chat application.
   void _generateReactionList() {
     reactions.clear();
     reactions.addAll(IsmChatEmoji.values
@@ -535,11 +548,15 @@ class IsmChatConversationsController extends GetxController {
   }
 
   /// This function will be used in [Forward Screen and New conversation screen] to Select or Unselect users
+  ///
+  ///  `index` : The index of the user in the forwarded list.
   void onForwardUserTap(int index) {
     forwardedList[index].isUserSelected = !forwardedList[index].isUserSelected;
   }
 
-  /// This function will be used in [Forward Screen and New conversation screen] to Select users
+  /// This function will be used in [Forward Screen and New conversation screen] Adds or removes a user from the selected user list based on their selection state.
+  ///
+  ///  `userDetails`: The user to be selected or deselected.
   void isSelectedUser(UserDetails userDetails) {
     if (selectedUserList.isEmpty) {
       selectedUserList.add(userDetails);
@@ -552,7 +569,11 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  /// api to unblock user
+  /// Unblocks a user based on their opponent ID
+  ///
+  /// `opponentId`: The ID of the user to unblock.
+  /// `isLoading`: Indicates if loading should be shown.
+  /// `fromUser` : Indicates if the unblock action is initiated by the user.
   Future<bool> unblockUser({
     required String opponentId,
     required bool isLoading,
@@ -573,6 +594,9 @@ class IsmChatConversationsController extends GetxController {
     return true;
   }
 
+  ///  Unblocks a user for web-based chat.
+  ///
+  /// `opponentId`: The ID of the user to unblock.
   void unblockUserForWeb(String opponentId) {
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       var conversationId = getConversationId(opponentId);
@@ -588,6 +612,9 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Uploads an image and returns the URL of the uploaded image.
+  ///
+  /// `imageSource`: The source of the image to upload.
   Future<String> ismUploadImage(ImageSource imageSource) async {
     var file = await IsmChatUtility.pickMedia(imageSource);
     if (file.isEmpty) {
@@ -610,7 +637,9 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
-  /// function to pick image for group profile
+  /// Changes the profile image for a group.
+  ///
+  /// `imageSource`: The source of the image to upload.
   Future<void> ismChangeImage(ImageSource imageSource) async {
     var file = await IsmChatUtility.pickMedia(imageSource);
     if (file.isEmpty) {
@@ -622,13 +651,17 @@ class IsmChatConversationsController extends GetxController {
     await getPresignedUrl(fileExtension!, bytes!);
   }
 
-  // / get Api for presigned Url.....
+  /// Retrieves a presigned URL for uploading media.
+  ///
+  ///  `mediaExtension`: The extension of the media file.
+  ///  `bytes`: The bytes of the media file.
+  ///  `isLoading`: Indicates if loading should be shown.
   Future<String> getPresignedUrl(
     String mediaExtension,
     Uint8List bytes, [
     bool isLoading = false,
   ]) async {
-    var response = await _commonController.getPresignedUrl(
+    var response = await commonController.getPresignedUrl(
         isLoading: true,
         userIdentifier: userDetails?.userIdentifier ?? '',
         mediaExtension: mediaExtension,
@@ -637,7 +670,7 @@ class IsmChatConversationsController extends GetxController {
     if (response == null) {
       return '';
     }
-    var responseCode = await _commonController.updatePresignedUrl(
+    var responseCode = await commonController.updatePresignedUrl(
       presignedUrl: response.presignedUrl,
       bytes: bytes,
       isLoading: isLoading,
@@ -648,9 +681,16 @@ class IsmChatConversationsController extends GetxController {
     return profileImage;
   }
 
-  /// This will be used to fetch all the users associated with the current user
+  /// Fetches a list of non-blocked users for creating chats or forwarding messages.
   ///
   /// Will be used for Create chat and/or Forward message
+  ///  `sort`: Sorting order.
+  ///  `skip`: Number of users to skip.
+  ///  `limi`t: Maximum number of users to return.
+  ///  `searchTag`: Search term for filtering users.
+  ///  `opponentId`: ID of the opponent to exclude.
+  ///  `isLoading`: Indicates if loading should be shown.
+  ///  `isGroupConversation`: Indicates if the conversation is a group chat.
   Future<List<SelectedMembers>?> getNonBlockUserList({
     int sort = 1,
     int skip = 0,
@@ -716,7 +756,9 @@ class IsmChatConversationsController extends GetxController {
     }
 
     if (response != null) {
-      handleList(forwardedList);
+      commonController.handleSorSelectedMembers(
+        forwardedList,
+      );
     }
 
     if (response == null && searchTag.isEmpty && isGroupConversation == false) {
@@ -728,27 +770,10 @@ class IsmChatConversationsController extends GetxController {
     return forwardedList;
   }
 
-  void handleList(List<SelectedMembers> list) {
-    if (list.isEmpty) return;
-    for (var i = 0, length = list.length; i < length; i++) {
-      var tag = list[i].userDetails.userName[0].toUpperCase();
-      var isLocal = list[i].localContacts ?? false;
-      if (RegExp('[A-Z]').hasMatch(tag) && isLocal == false) {
-        list[i].tagIndex = tag;
-      } else {
-        if (isLocal == true) {
-          list[i].tagIndex = '#';
-        }
-      }
-    }
-
-    // A-Z sort.
-    SuspensionUtil.sortListBySuspensionTag(forwardedList);
-
-    // show sus tag.
-    SuspensionUtil.setShowSuspensionStatus(forwardedList);
-  }
-
+  /// Clears all messages in a conversation.
+  ///
+  /// `conversationId`: The ID of the conversation to clear messages from.
+  ///  `fromServer`: Indicates if the clear action should be performed on the server.
   Future<void> clearAllMessages(String? conversationId,
       {bool fromServer = true}) async {
     if (conversationId == null || conversationId.isEmpty) {
@@ -757,11 +782,19 @@ class IsmChatConversationsController extends GetxController {
     return _viewModel.clearAllMessages(conversationId, fromServer: fromServer);
   }
 
+  /// Updates the current conversation with new details.
+  ///
+  /// `conversation`: The conversation model to update.
   void updateLocalConversation(IsmChatConversationModel conversation) {
     currentConversation = conversation;
     currentConversationId = conversation.conversationId ?? '';
   }
 
+  /// Deletes a chat based on the conversation ID
+  ///
+  /// `conversationId`: The ID of the conversation to delete.
+  /// `deleteFromServer`: Indicates if the chat should be deleted from the server.
+  /// `shouldUpdateLocal`: Indicates if the local database should be updated.
   Future<void> deleteChat(
     String? conversationId, {
     bool deleteFromServer = true,
@@ -782,6 +815,9 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Retrieves conversations from the local database and updates the observable list.
+  ///
+  /// `searchTag`: Optional search term for filtering conversations.
   Future<void> getConversationsFromDB({
     String? searchTag,
   }) async {
@@ -841,6 +877,9 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Retrieves the conversation ID for a given user ID.
+  ///
+  /// `userId`: The ID of the user to find the conversation for.
   String getConversationId(String userId) {
     var conversation = conversations.firstWhere(
         (element) => element.opponentDetails?.userId == userId,
@@ -852,6 +891,9 @@ class IsmChatConversationsController extends GetxController {
     return conversation.conversationId ?? '';
   }
 
+  /// Retrieves a conversation model based on the conversation ID.
+  ///
+  /// `conversationId`: The ID of the conversation to retrieve.
   IsmChatConversationModel? getConversation(String conversationId) {
     var conversation = conversations.firstWhere(
         (element) => element.conversationId == conversationId,
@@ -863,6 +905,11 @@ class IsmChatConversationsController extends GetxController {
     return conversation;
   }
 
+  /// Fetches chat conversations from the server and updates the local
+  ///
+  /// `skip`: Number of conversations to skip.
+  /// `origin`: The origin of the API call (e.g., refresh, load more).
+  /// `searchTag`: Optional search term for filtering conversations.
   Future<void> getChatConversations({
     int skip = 0,
     ApiCallOrigin? origin,
@@ -916,6 +963,11 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Fetches search results for chat conversations.
+  ///
+  /// `skip`: Number of conversations to skip.
+  /// `origin`: The origin of the API call (e.g., refresh, load more).
+  /// `chatLimit`: Maximum number of chat results to return.
   Future<void> getChatSearchConversations({
     int skip = 0,
     ApiCallOrigin? origin,
@@ -942,6 +994,9 @@ class IsmChatConversationsController extends GetxController {
     isConversationsLoading = false;
   }
 
+  /// Retrieves a list of blocked users.
+  ///
+  /// `isLoading`: Indicates if loading should be shown.
   Future<List<UserDetails>> getBlockUser({bool isLoading = false}) async {
     var users = await _viewModel.getBlockUser(
       skip: 0,
@@ -956,6 +1011,9 @@ class IsmChatConversationsController extends GetxController {
     return blockUsers;
   }
 
+  /// Fetches user data from the server and updates the local database.
+  ///
+  /// `isLoading`: Indicates if loading should be shown.
   Future<void> getUserData({bool isLoading = false}) async {
     var user = await _viewModel.getUserData(isLoading: isLoading);
     if (user != null) {
@@ -996,6 +1054,13 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Updates user data on the server.
+  ///
+  /// `userProfileImageUrl`: The URL of the user's profile image.
+  ///  `userName`: The user's name.
+  /// `userIdentifier`: The user's identifier.
+  /// `metaData`: Additional metadata for the user.
+  /// `isloading`: Indicates if loading should be shown.
   Future<void> updateUserData({
     String? userProfileImageUrl,
     String? userName,
@@ -1012,6 +1077,9 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
+  /// Filters suggestions based on the search query.
+  ///
+  /// `query`: The search query to filter suggestions.
   void onSearch(String query) {
     if (query.trim().isEmpty) {
       suggestions = conversations;
@@ -1026,7 +1094,10 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  /// This will call an API that will notify the sender that the message has been delivered to me using mqtt
+  ///  Notifies the sender that a message has been delivered using MQTT
+  ///
+  ///  `conversationId`: The ID of the conversation.
+  ///  `messageId`: The ID of the message.
   Future<void> pingMessageDelivered({
     required String conversationId,
     required String messageId,
@@ -1037,6 +1108,11 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
+  /// Updates a conversation's metadata on the server.
+  ///
+  /// `conversationId`: The ID of the conversation to update.
+  /// `metaData`: The new metadata for the conversation.
+  /// `isLoading`: Indicates if loading should be shown.
   Future<void> updateConversation({
     required String conversationId,
     required IsmChatMetaData metaData,
@@ -1052,6 +1128,11 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Updates the settings of a conversation.
+  ///
+  /// `conversationId`: The ID of the conversation to update.
+  /// `events`: The events to update in the conversation.
+  /// `isLoading`: Indicates if loading should be shown.
   Future<void> updateConversationSetting({
     required String conversationId,
     required IsmChatEvents events,
@@ -1064,6 +1145,14 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
+  /// Sends a forwarded message to specified users.
+  ///
+  ///  `userIds`: List of user IDs to send the message to.
+  /// `body`: The body of the message.
+  /// `attachments`: Optional attachments for the message.
+  /// `customType`: Optional custom type for the message.
+  /// `isLoading`: Indicates if loading should be shown.
+  /// `metaData`: Optional metadata for the message.
   Future<void> sendForwardMessage({
     required List<String> userIds,
     required String body,
@@ -1097,6 +1186,9 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Initializes the public and open conversation state.
+  ///
+  /// `conversationType`: The type of conversation to initialize.
   void intiPublicAndOpenConversation(
       IsmChatConversationType conversationType) async {
     publicAndOpenConversation.clear();
@@ -1108,6 +1200,13 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
+  /// Fetches public and open conversations based on specified parameters.
+  ///
+  /// `conversationType`: The type of conversation to fetch.
+  /// `searchTag`: Optional search term for filtering conversations.
+  /// `sort`: Sorting order.
+  /// `skip`: Number of conversations to skip.
+  /// `limit`: Maximum number of conversations to return.
   Future<void> getPublicAndOpenConversation({
     required int conversationType,
     String? searchTag,
@@ -1124,17 +1223,19 @@ class IsmChatConversationsController extends GetxController {
       limit: limit,
       conversationType: conversationType,
     );
-
     if (response == null || response.isEmpty) {
       isLoadResponse = true;
       publicAndOpenConversation = [];
       return;
     }
-
     publicAndOpenConversation.addAll(response);
     callApiOrNot = true;
   }
 
+  /// Joins a conversation based on its ID.
+  ///
+  /// `conversationId`: The ID of the conversation to join.
+  /// `isloading`: Indicates if loading should be shown.
   Future<void> joinConversation({
     required String conversationId,
     bool isloading = false,
@@ -1147,11 +1248,19 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Joins an observer to a conversation.
+  ///
+  /// `conversationId`: The ID of the conversation to join as an observer.
+  ///  `isLoading`: Indicates if loading should be shown.
   Future<IsmChatResponseModel?> joinObserver(
           {required String conversationId, bool isLoading = false}) async =>
       await _viewModel.joinObserver(
           conversationId: conversationId, isLoading: isLoading);
 
+  /// Leaves an observer role in a conversation.
+  ///
+  /// `conversationId`: The ID of the conversation to leave.
+  /// `isLoading`: Indicates if loading should be shown.
   Future<void> leaveObserver(
       {required String conversationId, bool isLoading = false}) async {
     var response = await _viewModel.leaveObserver(
@@ -1159,6 +1268,7 @@ class IsmChatConversationsController extends GetxController {
     if (response != null) {}
   }
 
+  /// Navigates to the chat page based on the platform (web or mobile).
   Future<void> goToChatPage() async {
     if (IsmChatResponsive.isWeb(Get.context!)) {
       if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
@@ -1178,6 +1288,13 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Retrieves users observing a conversation.
+  ///
+  /// `conversationId`: The ID of the conversation to get observers from.
+  /// `skip`: Number of users to skip.
+  /// `limit`: Maximum number of users to return.
+  /// `isLoading`: Indicates if loading should be shown.
+  /// `searchText`: Optional search term for filtering users.
   Future<List<UserDetails>> getObservationUser({
     required String conversationId,
     int skip = 0,
@@ -1198,6 +1315,9 @@ class IsmChatConversationsController extends GetxController {
     return [];
   }
 
+  /// Sends any pending messages stored in the local database.
+  ///
+  /// `conversationId`: The ID of the conversation to send pending messages for.
   void sendPendingMessgae({String conversationId = ''}) async {
     var messages = IsmChatMessages.from({});
 
@@ -1230,7 +1350,7 @@ class IsmChatConversationsController extends GetxController {
         var attachment = x.attachments?.first;
         var bytes = File(attachment?.mediaUrl ?? '').readAsBytesSync();
         PresignedUrlModel? presignedUrlModel;
-        presignedUrlModel = await _commonController.postMediaUrl(
+        presignedUrlModel = await commonController.postMediaUrl(
           conversationId: x.conversationId ?? '',
           nameWithExtension: attachment?.name ?? '',
           mediaType: attachment?.attachmentType?.value ?? 0,
@@ -1241,7 +1361,7 @@ class IsmChatConversationsController extends GetxController {
 
         var mediaUrlPath = '';
         if (presignedUrlModel != null) {
-          var response = await _commonController.updatePresignedUrl(
+          var response = await commonController.updatePresignedUrl(
             presignedUrl: presignedUrlModel.mediaPresignedUrl,
             bytes: bytes,
             isLoading: false,
@@ -1255,7 +1375,7 @@ class IsmChatConversationsController extends GetxController {
           PresignedUrlModel? presignedUrlModel;
           var nameWithExtension = attachment?.thumbnailUrl?.split('/').last;
           var bytes = File(attachment?.thumbnailUrl ?? '').readAsBytesSync();
-          presignedUrlModel = await _commonController.postMediaUrl(
+          presignedUrlModel = await commonController.postMediaUrl(
             conversationId: x.conversationId ?? '',
             nameWithExtension: nameWithExtension ?? '',
             mediaType: 0,
@@ -1264,7 +1384,7 @@ class IsmChatConversationsController extends GetxController {
             bytes: bytes,
           );
           if (presignedUrlModel != null) {
-            var response = await _commonController.updatePresignedUrl(
+            var response = await commonController.updatePresignedUrl(
               presignedUrl: presignedUrlModel.thumbnailPresignedUrl,
               bytes: bytes,
               isLoading: false,
@@ -1291,7 +1411,7 @@ class IsmChatConversationsController extends GetxController {
           ];
         }
       }
-      var isMessageSent = await _commonController.sendMessage(
+      var isMessageSent = await commonController.sendMessage(
         showInConversation: true,
         encrypted: true,
         events: {'updateUnreadCount': true, 'sendPushNotification': true},
@@ -1324,6 +1444,25 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Retrieves user messages from the server or local database.
+  ///
+  /// `ids`: Optional list of message IDs to retrieve.
+  /// `messageTypes`: Optional list of message types to filter.
+  /// `customTypes`: Optional list of custom message types to filter.
+  /// `attachmentTypes`: Optional list of attachment types to filter.
+  /// `showInConversation`: Indicates if messages should be shown in conversation.
+  /// `senderIds`: Optional list of sender IDs to filter.
+  /// `parentMessageId`: Optional parent message ID for threaded messages.
+  /// `lastMessageTimestamp`: Optional timestamp for filtering messages.
+  /// `conversationStatusMessage`: Indicates if the message is a status message.
+  /// `searchTag`: Optional search term for filtering messages.
+  /// `fetchConversationDetails`: Indicates if conversation details should be fetched.
+  /// `deliveredToMe`: Indicates if the messages should be filtered by delivery status.
+  /// `senderIdsExclusive`: Indicates if the sender IDs should be exclusive.
+  /// `limit`: Maximum number of messages to retrieve.
+  /// `skip`: Number of messages to skip.
+  /// `sort`: Sorting order for messages.
+  /// `isLoading`: Indicates if loading should be shown.
   Future<void> getUserMessges({
     List<String>? ids,
     List<String>? messageTypes,
@@ -1380,6 +1519,9 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Initializes the state for creating a new conversation.
+  ///
+  /// `isGroupConversation`: Indicates if the conversation is a group chat.
   void initCreateConversation([bool isGroupConversation = false]) async {
     callApiOrNot = true;
     profileImage = '';
@@ -1398,6 +1540,9 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Updates the user's profile image.
+  ///
+  /// `source`: The source of the image to upload.
   void updateUserDetails(ImageSource source) async {
     Get.back();
     final imageUrl = await ismUploadImage(source);
@@ -1412,7 +1557,7 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  /// Ask permission for contacts
+  /// Requests permission to access contacts.
   Future<void> askPermissions() async {
     if (await IsmChatUtility.requestPermission(Permission.contacts)) {
       fillContact();
@@ -1425,7 +1570,7 @@ class IsmChatConversationsController extends GetxController {
   /// use for fast access the name through number
   Map<String, String> hashMapSendContactSync = {};
 
-  /// get and fill the contact in useable model..
+  /// Fetches and fills the local contacts into a usable model.
   void fillContact() async {
     final localList = [];
     var contacts = await FlutterContacts.getContacts(
@@ -1479,7 +1624,13 @@ class IsmChatConversationsController extends GetxController {
   /// get the contact after filter contacts those registered or not registered basis on (isRegisteredUser)...
   List<ContactSyncModel> getContactSyncUser = [];
 
-  /// to get the contacts..
+  /// Retrieves contacts from the server and updates the forwarded list.
+  ///
+  /// `isLoading`: Indicates if loading should be shown.
+  /// `isRegisteredUser` : Indicates if only registered users should be fetched.
+  /// `skip`: Number of contacts to skip.
+  /// `limit`: Maximum number of contacts to return.
+  /// `searchTag`: Optional search term for filtering contacts.
   Future<void> getContacts({
     bool isLoading = false,
     bool isRegisteredUser = false,
@@ -1523,12 +1674,17 @@ class IsmChatConversationsController extends GetxController {
         }
         forwardedList.addAll(forwardedListLocalList);
       }
-      handleList(forwardedList);
+      commonController.handleSorSelectedMembers(
+        forwardedList,
+      );
+
       update();
     }
   }
 
-  /// get search based user for local contacts..
+  /// Searches local contacts based on the provided search term.
+  ///
+  /// `search`: The search term to filter local contacts.
   void searchOnLocalContacts(String search) async {
     final filterContacts = sendContactSync
         .where((element) => (element.fullName ?? '').contains(search))
@@ -1556,9 +1712,12 @@ class IsmChatConversationsController extends GetxController {
         ),
       ),
     );
-    handleList(forwardedList);
+    commonController.handleSorSelectedMembers(
+      forwardedList,
+    );
   }
 
+  /// Navigates to the contact synchronization page.
   void goToContactSync() async {
     // await askPermissions();
     await Future.delayed(Durations.extralong1);
@@ -1567,12 +1726,12 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
-  /// Use the funciton for the delete the user of local contacts from DB...
+  /// Removes local users from the forwarded list.
   Future<void> removeDBUser() async {
     forwardedList.removeWhere((element) => element.localContacts == true);
   }
 
-  /// for upload and get the filter Users...
+  /// Adds contacts to the server.
   Future<void> addContact({
     bool isLoading = true,
   }) async {
@@ -1587,6 +1746,13 @@ class IsmChatConversationsController extends GetxController {
     if (res != null) {}
   }
 
+  /// Replies to stories with a media message.
+  ///
+  /// `conversationId`: The ID of the conversation to reply in.
+  /// `userDetails`: The user details of the person whose story is being replied to.
+  /// `storyMediaUrl`: The URL of the story media.
+  /// `caption`: Optional caption for the reply.
+  /// `sendPushNotification`: Indicates if a push notification should be sent.
   Future<void> replayOnStories({
     required String conversationId,
     required UserDetails userDetails,
@@ -1597,7 +1763,7 @@ class IsmChatConversationsController extends GetxController {
     final chatConversationResponse = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: conversationId);
     if (chatConversationResponse == null) {
-      final conversation = await _commonController.createConversation(
+      final conversation = await commonController.createConversation(
         conversation: currentConversation!,
         userId: [userDetails.userId],
         metaData: currentConversation?.metaData,
@@ -1658,7 +1824,7 @@ class IsmChatConversationsController extends GetxController {
     var notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             userDetails.userName;
-    await _commonController.sendMessage(
+    await commonController.sendMessage(
       showInConversation: true,
       encrypted: true,
       events: {
@@ -1680,6 +1846,10 @@ class IsmChatConversationsController extends GetxController {
     );
   }
 
+  /// Navigates to the broadcast message page with specified members.
+  ///
+  /// `members`: List of members to include in the broadcast.
+  /// `conversationId`: The ID of the conversation for the broadcast.
   void goToBroadcastMessage(List<UserDetails> members, String conversationId) {
     var conversation = IsmChatConversationModel(
       members: members,

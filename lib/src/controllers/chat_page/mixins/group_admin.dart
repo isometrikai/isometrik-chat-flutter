@@ -4,6 +4,10 @@ mixin IsmChatGroupAdminMixin on GetxController {
   IsmChatPageController get _controller =>
       Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
+  /// This variable use for get all method and varibles from IsmChatCommonController
+  IsmChatCommonController get _commonController =>
+      Get.find<IsmChatCommonController>();
+
   /// Add members to a conversation
   Future<void> addMembers(
       {required List<String> memberIds, bool isLoading = false}) async {
@@ -115,27 +119,11 @@ mixin IsmChatGroupAdminMixin on GetxController {
     _controller.groupEligibleUserDuplicate =
         List.from(_controller.groupEligibleUser);
     _controller.canCallCurrentApi = false;
-    _handleList(_controller.groupEligibleUser);
+
+    _commonController.handleSorSelectedMembers(_controller.groupEligibleUser);
   }
 
-  void _handleList(List<SelectedMembers> list) {
-    if (list.isEmpty) return;
-    for (var i = 0, length = list.length; i < length; i++) {
-      var tag = list[i].userDetails.userName[0].toUpperCase();
-      if (RegExp('[A-Z]').hasMatch(tag)) {
-        list[i].tagIndex = tag;
-      } else {
-        list[i].tagIndex = '#';
-      }
-    }
-    // A-Z sort.
-    SuspensionUtil.sortListBySuspensionTag(_controller.groupEligibleUser);
-
-    // show sus tag.
-    SuspensionUtil.setShowSuspensionStatus(_controller.groupEligibleUser);
-  }
-
-  ///Remove members from conversation
+  /// Remove members from conversation
   Future<bool> leaveConversation(String conversationId) async {
     var response =
         await _controller.viewModel.leaveConversation(conversationId, true);

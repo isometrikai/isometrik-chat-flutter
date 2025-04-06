@@ -164,7 +164,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           Padding(
                             padding: IsmChatDimens.edgeInsets10_5_10_10,
                             child: Text(
-                                '${IsmChatStrings.createdOn} ${controller.conversation?.createdAt?.toLastMessageTimeString()} ${IsmChatStrings.by} ${controller.conversation?.createdByUserName}'),
+                                '${IsmChatStrings.createdOn} ${controller.conversation?.createdAt?.toLastMessageTimeString} ${IsmChatStrings.by} ${controller.conversation?.createdByUserName}'),
                           ),
                         ],
                         if ((!(controller.conversation?.isGroup ?? false)) &&

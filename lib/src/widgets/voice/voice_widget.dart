@@ -82,7 +82,7 @@ class VoiceMessageState extends State<VoiceMessage>
           isPlaying = false;
           break;
         case PlayerState.completed:
-          remainingTime = _audioDuration?.formatDuration() ?? '';
+          remainingTime = _audioDuration?.formatDuration ?? '';
           isPlaying = false;
           break;
         default:
@@ -92,7 +92,7 @@ class VoiceMessageState extends State<VoiceMessage>
     _player.onPositionChanged.listen(
       (Duration duration) {
         if (isPlaying) {
-          remainingTime = duration.formatDuration();
+          remainingTime = duration.formatDuration;
         }
       },
     );
@@ -209,7 +209,7 @@ class VoiceMessageState extends State<VoiceMessage>
       }
     });
 
-    remainingTime = _audioDuration!.formatDuration();
+    remainingTime = _audioDuration!.formatDuration;
     audioConfigurationDone = true;
   }
 

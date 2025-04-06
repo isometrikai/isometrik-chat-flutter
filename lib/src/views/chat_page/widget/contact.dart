@@ -74,35 +74,40 @@ class IsmChatContactView extends StatelessWidget {
               )
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              Get.back();
-              if (await IsmChatProperties
-                      .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-                      ?.call(
-                          Get.context!,
-                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                              .conversation!,
-                          IsmChatCustomMessageType.contact) ??
-                  true) {
-                controller.sendContact(
-                  conversationId: controller.conversation?.conversationId ?? '',
-                  userId:
-                      controller.conversation?.opponentDetails?.userId ?? '',
-                  contacts: controller.contactSelectedList.selectedContact
-                      .map((e) => e.contact)
-                      .toList(),
-                );
-              }
-            },
-            elevation: 0,
-            shape: const CircleBorder(),
-            backgroundColor: IsmChatConfig.chatTheme.primaryColor,
-            child: const Icon(
-              Icons.send_rounded,
-              color: IsmChatColors.whiteColor,
-            ),
-          ),
+          floatingActionButton: controller.contactList.isEmpty
+              ? null
+              : FloatingActionButton(
+                  onPressed: () async {
+                    Get.back();
+                    if (await IsmChatProperties.chatPageProperties
+                            .messageAllowedConfig?.isMessgeAllowed
+                            ?.call(
+                                Get.context!,
+                                Get.find<IsmChatPageController>(
+                                        tag: IsmChat.i.tag)
+                                    .conversation!,
+                                IsmChatCustomMessageType.contact) ??
+                        true) {
+                      controller.sendContact(
+                        conversationId:
+                            controller.conversation?.conversationId ?? '',
+                        userId:
+                            controller.conversation?.opponentDetails?.userId ??
+                                '',
+                        contacts: controller.contactSelectedList.selectedContact
+                            .map((e) => e.contact)
+                            .toList(),
+                      );
+                    }
+                  },
+                  elevation: 0,
+                  shape: const CircleBorder(),
+                  backgroundColor: IsmChatConfig.chatTheme.primaryColor,
+                  child: const Icon(
+                    Icons.send_rounded,
+                    color: IsmChatColors.whiteColor,
+                  ),
+                ),
           body: controller.contactList.isEmpty
               ? controller.isLoadingContact
                   ? Center(

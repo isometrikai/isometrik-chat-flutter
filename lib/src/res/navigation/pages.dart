@@ -130,11 +130,6 @@ class IsmChatPages {
       binding: IsmChatPageBinding(),
     ),
     GetPage(
-      name: WebMediaPreview.route,
-      page: WebMediaPreview.new,
-      binding: IsmChatPageBinding(),
-    ),
-    GetPage(
       name: IsmChatCameraView.route,
       page: IsmChatCameraView.new,
       binding: IsmChatPageBinding(),
@@ -175,6 +170,11 @@ class IsmChatPages {
       binding: IsmChatPageBinding(),
     ),
     GetPage(
+      name: IsmChatImagePaintView.route,
+      page: IsmChatImagePaintView.new,
+      binding: IsmChatPageBinding(),
+    ),
+    GetPage(
       name: IsmChatProfilePicView.route,
       page: IsmChatProfilePicView.new,
       binding: IsmChatPageBinding(),
@@ -182,6 +182,11 @@ class IsmChatPages {
     GetPage(
       name: IsmChatVideoView.route,
       page: IsmChatVideoView.new,
+      binding: IsmChatPageBinding(),
+    ),
+    GetPage(
+      name: IsmVideoTrimmerView.route,
+      page: IsmVideoTrimmerView.new,
       binding: IsmChatPageBinding(),
     ),
   ];

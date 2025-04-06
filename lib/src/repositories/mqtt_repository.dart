@@ -26,6 +26,24 @@ class IsmChatMqttRepository {
     }
   }
 
+  Future<void> getChatConversationsUnreadCountBulk({
+    required List<String> userIds,
+    bool isLoading = false,
+  }) async {
+    try {
+      var response = await _apiWrapper.get(
+        '${IsmChatAPI.conversationUnreadCountBulk}?includeConversationStatusMessagesInUnreadMessagesCount=false&hidden=false&userIds=${userIds.join(',')}',
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+      if (response.hasError) {
+        return;
+      }
+    } catch (e, st) {
+      IsmChatLog.error('Get Conversations unread error $e', st);
+    }
+  }
+
   Future<String?> getChatConversationsCount({
     bool isLoading = false,
   }) async {

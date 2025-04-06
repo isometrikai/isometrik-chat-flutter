@@ -17,6 +17,16 @@ class IsmChatMqttViewModel {
     return response;
   }
 
+  Future<void> getChatConversationsUnreadCountBulk({
+    required List<String> userIds,
+    bool isLoading = false,
+  }) async {
+    await _repository.getChatConversationsUnreadCountBulk(
+      isLoading: isLoading,
+      userIds: userIds,
+    );
+  }
+
   Future<String> getChatConversationsCount({
     bool isLoading = false,
   }) async {

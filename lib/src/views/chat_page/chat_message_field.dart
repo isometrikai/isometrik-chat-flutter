@@ -70,9 +70,7 @@ class IsmChatMessageField extends StatelessWidget {
                           color: Colors.red,
                         ),
                         IsmChatDimens.boxWidth32,
-                        Text(
-                            controller.seconds
-                                .getTimerRecord(controller.seconds),
+                        Text(controller.seconds.getTimerRecord,
                             style: IsmChatStyles.w600Black20),
                       ],
                     ),
@@ -449,7 +447,6 @@ class _MicOrSendButton extends StatelessWidget {
                           extension: 'mp3',
                         ),
                         isVideo: false,
-                        thumbnailBytes: Uint8List(0),
                         dataSize: sizeMedia,
                         duration: Duration(
                           seconds: controller.seconds,
