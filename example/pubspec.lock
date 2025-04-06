@@ -1018,12 +1018,11 @@ packages:
   mqtt_helper:
     dependency: transitive
     description:
-      path: "."
-      ref: main
-      resolved-ref: "567b63044a1db3abedc3cdcb87b39d488d02fafe"
-      url: "https://github.com/rahulsaryam285/mqtt_helper.git"
-    source: git
-    version: "1.0.0"
+      name: mqtt_helper
+      sha256: c7095c0b2cc29e7f54da54d92129ba3253d3fc656d09ec562b5fbcc409585b2c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   nm:
     dependency: transitive
     description:
