@@ -217,12 +217,12 @@ class IsmChatRouteManagement {
 
   static Future<XFile> goToVideoTrimeView({
     required XFile file,
-    required double durationInSeconds,
+    required double maxVideoTrim,
     required int index,
   }) async =>
       await Get.toNamed(IsmVideoTrimmerView.route, arguments: {
         'file': file,
-        'durationInSeconds': durationInSeconds,
+        'maxVideoTrim': maxVideoTrim,
         'index': index
       });
 

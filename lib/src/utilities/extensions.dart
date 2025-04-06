@@ -98,7 +98,7 @@ extension DistanceLatLng on LatLng {
 }
 
 extension DurationExtensions on Duration {
-  String formatDuration() {
+  String get formatDuration {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     var twoDigitMinutes = twoDigits(inMinutes.remainder(60));
     var twoDigitSeconds = twoDigits(inSeconds.remainder(60));
@@ -134,15 +134,22 @@ extension DurationExtensions on Duration {
 }
 
 extension IntToTimeLeft on int {
-  String getTimerRecord(int value) {
+  String get getTimerRecord {
     int h, m, s;
-    h = value ~/ 3600;
-    m = (value - h * 3600) ~/ 60;
-    s = value - (h * 3600) - (m * 60);
+    h = this ~/ 3600;
+    m = (this - h * 3600) ~/ 60;
+    s = this - (h * 3600) - (m * 60);
     var minuteLeft = m.toString().length < 2 ? '0$m' : m.toString();
     var secondsLeft = s.toString().length < 2 ? '0$s' : s.toString();
     var result = '$minuteLeft:$secondsLeft';
     return result;
+  }
+}
+
+extension TimerSecond on double {
+  String get inSecTimer {
+    final data = (this / 1000).toStringAsFixed(1);
+    return '$data s';
   }
 }
 

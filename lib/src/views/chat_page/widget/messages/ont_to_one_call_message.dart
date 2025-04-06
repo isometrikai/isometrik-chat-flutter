@@ -86,7 +86,7 @@ class IsmOneToOneCallMessage extends StatelessWidget {
                   final time = Duration(
                       milliseconds: smaleValue?.durationInMilliseconds ?? 0);
                   return Text(
-                    time.formatDuration(),
+                    time.formatDuration,
                     style: message.style.copyWith(
                       fontSize: IsmChatDimens.twelve,
                     ),

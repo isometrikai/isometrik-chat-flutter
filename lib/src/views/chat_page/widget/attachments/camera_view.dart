@@ -80,7 +80,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                         borderRadius: BorderRadius.circular(IsmChatDimens.five),
                       ),
                       child: Text(
-                        controller.myDuration.formatDuration(),
+                        controller.myDuration.formatDuration,
                         style: const TextStyle(color: IsmChatColors.whiteColor),
                       ),
                     ),

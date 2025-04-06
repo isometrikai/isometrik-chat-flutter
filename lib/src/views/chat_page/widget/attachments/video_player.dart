@@ -25,15 +25,6 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
   final chatPageController =
       Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
-  String _videoDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = twoDigits(duration.inHours);
-    final minutes = twoDigits(duration.inMinutes % 60);
-    final seconds = twoDigits(duration.inSeconds % 60);
-
-    return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
-  }
-
   @override
   void initState() {
     super.initState();
@@ -150,9 +141,7 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
                                       builder: (context, VideoPlayerValue value,
                                               child) =>
                                           Text(
-                                        _videoDuration(
-                                          value.position,
-                                        ),
+                                        value.position.formatDuration,
                                         style: IsmChatStyles.w600White14,
                                       ),
                                     ),
@@ -173,8 +162,8 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
                                     ),
                                     if (!kIsWeb)
                                       Text(
-                                        _videoDuration(
-                                            _controller.value.duration),
+                                        _controller
+                                            .value.duration.formatDuration,
                                         style: IsmChatStyles.w600White14,
                                       )
                                   ],
@@ -227,9 +216,7 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
                               builder:
                                   (context, VideoPlayerValue value, child) =>
                                       Text(
-                                        _videoDuration(
-                                          value.position,
-                                        ),
+                                        value.position.formatDuration,
                                         style: IsmChatStyles.w600White14,
                                       )),
                           SizedBox(
@@ -243,7 +230,7 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
                                 padding: IsmChatDimens.edgeInsetsHorizontal10),
                           ),
                           Text(
-                            _videoDuration(_controller.value.duration),
+                            _controller.value.duration.formatDuration,
                             style: IsmChatStyles.w600White14,
                           )
                         ],
