@@ -14,7 +14,7 @@ class IsmChatConfig {
 
   static bool useDatabase = false;
   static bool shouldPendingMessageSend = true;
-  static bool shouldSetupMqtt = false;
+  static bool shouldSetupMqtt = true;
   static String dbName = IsmChatStrings.dbname;
   static Duration animationDuration = const Duration(milliseconds: 300);
   static NotificaitonCallback? showNotification;
