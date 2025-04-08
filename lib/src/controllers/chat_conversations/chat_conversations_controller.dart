@@ -40,9 +40,6 @@ class IsmChatConversationsController extends GetxController {
   IsmChatCommonController get commonController =>
       Get.find<IsmChatCommonController>();
 
-  // /// This variable use for get all method and varibles from IsmChatDeviceConfig
-  // final _deviceConfig = Get.find<IsmChatDeviceConfig>();
-
   /// This variable use for store conversation details
   final _conversations = <IsmChatConversationModel>[].obs;
   List<IsmChatConversationModel> get conversations => _conversations;
@@ -339,6 +336,22 @@ class IsmChatConversationsController extends GetxController {
   set intilizedContrller(bool value) {
     _intilizedContrller.value = value;
   }
+
+  final RxInt _currentConversationIndex = 0.obs;
+  int get currentConversationIndex => _currentConversationIndex.value;
+  set currentConversationIndex(int value) {
+    _currentConversationIndex.value = value;
+  }
+
+  final conversationView = [
+    const IsmChatConversationList(),
+    ...IsmChatProperties.conversationProperties.ontherConversationsWidget ?? []
+  ];
+
+  final chatPageView = [
+    const IsmChatPageView(),
+    ...IsmChatProperties.conversationProperties.ontherChatPagesWidget ?? []
+  ];
 
   /// Initializes the controller, sets up internet connectivity, fetches user data, conversations, and background assets.
   @override

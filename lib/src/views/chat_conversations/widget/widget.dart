@@ -8,4 +8,5 @@ export 'group_input_field.dart';
 export 'observer_view.dart';
 export 'open_conversation.dart';
 export 'public_conversation.dart';
+export 'search_conversations.dart';
 export 'user_info.dart';

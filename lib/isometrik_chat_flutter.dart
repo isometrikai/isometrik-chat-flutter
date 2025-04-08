@@ -1036,4 +1036,7 @@ class IsmChat {
     bool isLoading = false,
   }) async =>
       await _delegate.getChatConversationsUnreadCount(isLoading: isLoading);
+
+  void currentConversationIndex({int index = 0}) =>
+      _delegate.currentConversationIndex(index: index);
 }

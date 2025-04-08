@@ -144,23 +144,24 @@ class ChatList extends StatelessWidget {
                 IsmChatConversationType.public,
                 IsmChatConversationType.open,
               ],
-
               showCreateChatIcon: true,
               enableGroupChat: true,
               allowDelete: true,
-
               onCreateTap: () {},
-
-              isHeaderAppBar: IsmChatResponsive.isWeb(context) ? false : true,
-              header: IsmChatListHeader(
-                onSignOut: () {
-                  controller.onSignOut();
-                },
-                onSearchTap: (p0, p1, p2) {},
-                showSearch: false,
-                width: IsmChatResponsive.isWeb(context)
-                    ? IsmChatDimens.percentWidth(.3)
-                    : null,
+              shouldShowAppBar: IsmChatResponsive.isWeb(context) ? false : true,
+              header: Column(
+                children: [
+                  IsmChatListHeader(
+                    onSignOut: () {
+                      controller.onSignOut();
+                    },
+                    onSearchTap: (p0, p1, p2) {},
+                    showSearch: false,
+                    width: IsmChatResponsive.isWeb(context)
+                        ? IsmChatDimens.percentWidth(.3)
+                        : null,
+                  ),
+                ],
               ),
               placeholder: const IsmChatEmptyView(
                 text: 'Create conversation',
