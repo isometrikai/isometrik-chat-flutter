@@ -55,6 +55,7 @@ class ChatList extends StatelessWidget {
             ),
 
             chatPageProperties: IsmChatPageProperties(
+              // isShowMediaMessageBlur: (p0, p1) => true,
               // stackWidget: Container(
               //   alignment: Alignment.center,
               //   color: IsmChatColors.greenColor,
@@ -109,6 +110,7 @@ class ChatList extends StatelessWidget {
                 if (!kIsWeb) IsmChatAttachmentType.location,
                 if (!kIsWeb) IsmChatAttachmentType.contact,
               ],
+
               // features: [
               //   IsmChatFeature.reply,
               //   IsmChatFeature.showMessageStatus,

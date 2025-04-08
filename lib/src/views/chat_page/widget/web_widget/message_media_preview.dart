@@ -200,21 +200,27 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                               ? media?.customType
                               : media?.metaData?.replyMessage
                                   ?.parentMessageMessageType;
-                      return customType == IsmChatCustomMessageType.image
-                          ? PhotoView(
-                              backgroundDecoration: const BoxDecoration(
-                                  color: Colors.transparent),
-                              imageProvider: url.isValidUrl
-                                  ? NetworkImage(url)
-                                  : kIsWeb
-                                      ? MemoryImage(url.strigToUnit8List)
-                                          as ImageProvider
-                                      : FileImage(File(url)),
-                              loadingBuilder: (context, event) =>
-                                  const IsmChatLoadingDialog(),
-                              wantKeepAlive: true,
-                            )
-                          : VideoViewPage(path: url);
+                      return BlurFilter(
+                        isBlured: IsmChatProperties
+                                .chatPageProperties.isShowMediaMessageBlur
+                                ?.call(context, media!) ??
+                            false,
+                        child: customType == IsmChatCustomMessageType.image
+                            ? PhotoView(
+                                backgroundDecoration: const BoxDecoration(
+                                    color: Colors.transparent),
+                                imageProvider: url.isValidUrl
+                                    ? NetworkImage(url)
+                                    : kIsWeb
+                                        ? MemoryImage(url.strigToUnit8List)
+                                            as ImageProvider
+                                        : FileImage(File(url)),
+                                loadingBuilder: (context, event) =>
+                                    const IsmChatLoadingDialog(),
+                                wantKeepAlive: true,
+                              )
+                            : VideoViewPage(path: url),
+                      );
                     },
                     onPageChanged: (index) {
                       var media = widget._messageData?[index];
@@ -350,60 +356,66 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                           duration: const Duration(milliseconds: 100));
                       updateState();
                     },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: IsmChatDimens.sixty,
-                          decoration: BoxDecoration(
+                    child: BlurFilter(
+                      isBlured: IsmChatProperties
+                              .chatPageProperties.isShowMediaMessageBlur
+                              ?.call(context, mediaMessage!) ??
+                          false,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            height: IsmChatDimens.sixty,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(IsmChatDimens.ten),
+                                ),
+                                border: chatPageController.assetsIndex == index
+                                    ? Border.all(
+                                        color: IsmChatColors.blackColor,
+                                        width: IsmChatDimens.two)
+                                    : null),
+                            width: IsmChatDimens.sixty,
+                            child: ClipRRect(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(IsmChatDimens.ten),
                               ),
-                              border: chatPageController.assetsIndex == index
-                                  ? Border.all(
-                                      color: IsmChatColors.blackColor,
-                                      width: IsmChatDimens.two)
-                                  : null),
-                          width: IsmChatDimens.sixty,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(IsmChatDimens.ten),
+                              child: isVideo
+                                  ? IsmChatImage(
+                                      media?.first.thumbnailUrl ?? '',
+                                      isNetworkImage: media?.first.thumbnailUrl
+                                              ?.isValidUrl ??
+                                          false,
+                                      isBytes: !(media?.first.thumbnailUrl
+                                              ?.isValidUrl ??
+                                          false),
+                                    )
+                                  : IsmChatImage(
+                                      media?.first.mediaUrl ?? '',
+                                      isNetworkImage:
+                                          media?.first.mediaUrl?.isValidUrl ??
+                                              false,
+                                      isBytes:
+                                          !(media?.first.mediaUrl?.isValidUrl ??
+                                              false),
+                                    ),
                             ),
-                            child: isVideo
-                                ? IsmChatImage(
-                                    media?.first.thumbnailUrl ?? '',
-                                    isNetworkImage:
-                                        media?.first.thumbnailUrl?.isValidUrl ??
-                                            false,
-                                    isBytes: !(media
-                                            ?.first.thumbnailUrl?.isValidUrl ??
-                                        false),
-                                  )
-                                : IsmChatImage(
-                                    media?.first.mediaUrl ?? '',
-                                    isNetworkImage:
-                                        media?.first.mediaUrl?.isValidUrl ??
-                                            false,
-                                    isBytes:
-                                        !(media?.first.mediaUrl?.isValidUrl ??
-                                            false),
-                                  ),
                           ),
-                        ),
-                        if (isVideo)
-                          Container(
-                            alignment: Alignment.center,
-                            width: IsmChatDimens.thirtyTwo,
-                            height: IsmChatDimens.thirtyTwo,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              color: Colors.white,
-                              shape: BoxShape.circle,
+                          if (isVideo)
+                            Container(
+                              alignment: Alignment.center,
+                              width: IsmChatDimens.thirtyTwo,
+                              height: IsmChatDimens.thirtyTwo,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.play_arrow,
+                                  color: Colors.black),
                             ),
-                            child: const Icon(Icons.play_arrow,
-                                color: Colors.black),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },

@@ -187,27 +187,30 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
           child: PageView.builder(
             controller: pageController,
             itemBuilder: (BuildContext context, int index) {
-              var url =
-                  widget._messageData?[index].attachments?.first.mediaUrl ?? '';
-
-              var customType = (widget._messageData?[index].messageType ==
-                      IsmChatMessageType.normal)
-                  ? widget._messageData![index].customType
-                  : widget._messageData?[index].metaData?.replyMessage
-                      ?.parentMessageMessageType;
-              return customType == IsmChatCustomMessageType.image
-                  ? PhotoView(
-                      imageProvider: url.isValidUrl
-                          ? NetworkImage(url) as ImageProvider
-                          : kIsWeb
-                              ? MemoryImage(url.strigToUnit8List)
-                                  as ImageProvider
-                              : FileImage(File(url)) as ImageProvider,
-                      loadingBuilder: (context, event) =>
-                          const IsmChatLoadingDialog(),
-                      wantKeepAlive: true,
-                    )
-                  : VideoViewPage(path: url);
+              final media = widget._messageData?[index];
+              var url = media?.attachments?.first.mediaUrl ?? '';
+              var customType = (media?.messageType == IsmChatMessageType.normal)
+                  ? media?.customType
+                  : media?.metaData?.replyMessage?.parentMessageMessageType;
+              return BlurFilter(
+                isBlured: IsmChatProperties
+                        .chatPageProperties.isShowMediaMessageBlur
+                        ?.call(context, media!) ??
+                    false,
+                child: customType == IsmChatCustomMessageType.image
+                    ? PhotoView(
+                        imageProvider: url.isValidUrl
+                            ? NetworkImage(url) as ImageProvider
+                            : kIsWeb
+                                ? MemoryImage(url.strigToUnit8List)
+                                    as ImageProvider
+                                : FileImage(File(url)) as ImageProvider,
+                        loadingBuilder: (context, event) =>
+                            const IsmChatLoadingDialog(),
+                        wantKeepAlive: true,
+                      )
+                    : VideoViewPage(path: url),
+              );
             },
             onPageChanged: (index) {
               final timeStamp = DateTime.fromMillisecondsSinceEpoch(
