@@ -332,6 +332,7 @@ enum IsmChatConversationType {
         return IsmChatConversationType.public;
       case 2:
         return IsmChatConversationType.open;
+
       default:
         return IsmChatConversationType.private;
     }

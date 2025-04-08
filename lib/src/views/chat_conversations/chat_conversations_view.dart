@@ -69,20 +69,17 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
             backgroundColor:
                 IsmChatConfig.chatTheme.chatListTheme?.backGroundColor,
             drawerScrimColor: Colors.transparent,
-            appBar: IsmChatProperties.conversationProperties.appBar ??
-                (IsmChatProperties.conversationProperties.isHeaderAppBar
-                    ? PreferredSize(
-                        preferredSize: Size(
-                          Get.width,
-                          IsmChatProperties
-                                  .conversationProperties.headerHeight ??
-                              IsmChatDimens.sixty,
-                        ),
-                        child:
-                            IsmChatProperties.conversationProperties.header ??
-                                IsmChatDimens.box0,
-                      )
-                    : null),
+            appBar: (IsmChatProperties.conversationProperties.shouldShowAppBar
+                ? PreferredSize(
+                    preferredSize: Size(
+                      Get.width,
+                      IsmChatProperties.conversationProperties.headerHeight ??
+                          IsmChatDimens.sixty,
+                    ),
+                    child: IsmChatProperties.conversationProperties.header ??
+                        IsmChatDimens.box0,
+                  )
+                : null),
             body: SafeArea(
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -105,61 +102,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        if (IsmChatResponsive.isWeb(context) &&
-                            IsmChatProperties.conversationProperties
-                                .shouldConversationSearchShow) ...[
-                          IsmChatDimens.boxHeight10,
-                          IsmChatInputField(
-                            isShowBorderColor: true,
-                            contentPadding: IsmChatDimens.edgeInsets20,
-                            autofocus: false,
-                            borderRadius: IsmChatDimens.fifteen,
-                            cursorColor: IsmChatColors.blackColor,
-                            fillColor: IsmChatColors.whiteColor,
-                            controller: controller.searchConversationTEC,
-                            style: IsmChatStyles.w400Black18
-                                .copyWith(fontSize: IsmChatDimens.twenty),
-                            borderColor: IsmChatConfig.chatTheme.borderColor ??
-                                IsmChatColors.greyColor.applyIsmOpacity(.5),
-                            hint: IsmChatStrings.searchChat,
-                            hintStyle: IsmChatStyles.w400Black18
-                                .copyWith(fontSize: IsmChatDimens.twenty),
-                            onChanged: (value) async {
-                              controller.debounce.run(() async {
-                                switch (value.trim().isNotEmpty) {
-                                  case true:
-                                    await controller.getChatConversations(
-                                      searchTag: value,
-                                    );
-                                    break;
-                                  default:
-                                    await controller.getConversationsFromDB();
-                                }
-                              });
-                              controller.update();
-                            },
-                            suffixIcon: controller
-                                    .searchConversationTEC.text.isNotEmpty
-                                ? IconButton(
-                                    highlightColor: IsmChatColors.transparent,
-                                    disabledColor: IsmChatColors.transparent,
-                                    hoverColor: IsmChatColors.transparent,
-                                    splashColor: IsmChatColors.transparent,
-                                    focusColor: IsmChatColors.transparent,
-                                    onPressed: () {
-                                      controller.searchConversationTEC.clear();
-                                      controller.getConversationsFromDB();
-                                    },
-                                    icon: const Icon(
-                                      Icons.close_outlined,
-                                      color: IsmChatColors.whiteColor,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ],
                         if (!IsmChatProperties
-                                .conversationProperties.isHeaderAppBar &&
+                                .conversationProperties.shouldShowAppBar &&
                             IsmChatProperties.conversationProperties.header !=
                                 null) ...[
                           IsmChatProperties.conversationProperties.header ??
@@ -174,7 +118,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
-                          const Expanded(child: IsmChatConversationList()),
+                          Expanded(
+                            child: controller.conversationView[
+                                controller.currentConversationIndex],
+                          ),
                         ]
                       ],
                     ),
@@ -192,7 +139,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                                   ].contains(
                                         controller.isRenderChatPageaScreen))
                                     ? controller.isRenderChatScreenWidget()
-                                    : const IsmChatPageView()
+                                    : controller.chatPageView[
+                                        controller.currentConversationIndex]
                                 : IsmChatProperties.noChatSelectedPlaceholder ??
                                     Center(
                                       child: Text(

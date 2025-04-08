@@ -18,7 +18,6 @@ class IsmChatConversationProperties {
     this.createChatIcon,
     this.enableGroupChat = false,
     this.allowDelete = false,
-    this.shouldConversationSearchShow = false,
     this.actions,
     this.endActions,
     this.isSlidableEnable,
@@ -26,9 +25,8 @@ class IsmChatConversationProperties {
     this.endActionSlidableEnable,
     this.placeholder,
     this.height,
-    this.appBar,
     this.header,
-    this.isHeaderAppBar = false,
+    this.shouldShowAppBar = false,
     this.shouldGoToChatPage,
     this.headerHeight,
     this.thirdColumnWidget,
@@ -37,12 +35,14 @@ class IsmChatConversationProperties {
     this.conversationPosition = IsmChatConversationPosition.tabBar,
     this.opponentSubTitle,
     this.conversationDivider,
+    this.ontherConversationsWidget,
+    this.ontherChatPagesWidget,
   }) {
     assert(
       (showCreateChatIcon && onCreateTap != null) || !showCreateChatIcon,
       'If showCreateChatIcon is set to true then a non null callback must be passed to onCreateChatTap parameter',
     );
-    assert(!isHeaderAppBar || (isHeaderAppBar && header != null),
+    assert(!shouldShowAppBar || (shouldShowAppBar && header != null),
         'If isHeaderAppBar is set to true then a widget must be passed to header parameter');
     assert(
         allowedConversations.isNotEmpty &&
@@ -176,13 +176,10 @@ class IsmChatConversationProperties {
   /// The header to display above the conversation UI.
   final Widget? header;
 
-  /// The app bar to display above the conversation UI.
-  final PreferredSizeWidget? appBar;
-
   /// Whether the header is an app bar.
   ///
   /// Defaults to `false`.
-  final bool isHeaderAppBar;
+  final bool shouldShowAppBar;
 
   /// The height of the header.
   final double? headerHeight;
@@ -230,5 +227,6 @@ class IsmChatConversationProperties {
 
   final Widget? conversationDivider;
 
-  final bool shouldConversationSearchShow;
+  final List<Widget>? ontherConversationsWidget;
+  final List<Widget>? ontherChatPagesWidget;
 }

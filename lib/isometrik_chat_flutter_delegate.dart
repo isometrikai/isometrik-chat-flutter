@@ -617,4 +617,11 @@ class IsmChatDelegate {
     }
     return [];
   }
+
+  void currentConversationIndex({int index = 0}) {
+    if (Get.isRegistered<IsmChatConversationsController>()) {
+      Get.find<IsmChatConversationsController>().currentConversationIndex =
+          index;
+    }
+  }
 }

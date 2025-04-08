@@ -61,6 +61,7 @@ class IsmChatStrings {
   static const String publicConversation = 'Public Conversation';
   static const String openConversation = 'Open Conversation';
   static const String groupConversation = 'Group Conversation';
+  static const String otherConversation = 'Other Conversation';
 
   static const String conversation = 'Conversation';
   static const String newCommunity = 'New Community';

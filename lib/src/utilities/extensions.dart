@@ -973,7 +973,7 @@ extension Conversation on IsmChatConversationType {
   String get conversationName {
     switch (this) {
       case IsmChatConversationType.private:
-        return 'Conversation';
+        return 'All Chats';
       case IsmChatConversationType.public:
         return 'Public';
       case IsmChatConversationType.open:
