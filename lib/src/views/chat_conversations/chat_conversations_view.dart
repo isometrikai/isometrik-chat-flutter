@@ -118,10 +118,12 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           _IsmchatTabBar(),
                           _IsmChatTabView()
                         ] else ...[
-                          Expanded(
-                            child: controller.conversationView[
-                                controller.currentConversationIndex],
-                          ),
+                          Obx(
+                            () => Expanded(
+                              child: controller.conversationView[
+                                  controller.currentConversationIndex],
+                            ),
+                          )
                         ]
                       ],
                     ),
