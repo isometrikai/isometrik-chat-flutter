@@ -1375,24 +1375,22 @@ class IsmChatPageController extends GetxController
     if ([IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
         .contains(message.customType)) {
       var mediaList = messages
-          .where((item) =>
-              [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
-                  .contains(item.customType) &&
-              (IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
-                      ?.call(Get.context!, item) ??
-                  true))
+          .where((item) => [
+                IsmChatCustomMessageType.image,
+                IsmChatCustomMessageType.video
+              ].contains(item.customType))
           .toList();
       if (mediaList.isNotEmpty) {
         var selectedMediaIndex = mediaList.indexOf(message);
         if (IsmChatResponsive.isWeb(Get.context!)) {
           {
-            await Get.dialog(IsmWebMessageMediaPreview(
+            IsmChatRouteManagement.goToWebMediaMessagePreview(
               mediaIndex: selectedMediaIndex,
               messageData: mediaList,
               mediaUserName: message.chatName,
               initiated: message.sentByMe,
               mediaTime: message.sentAt,
-            ));
+            );
           }
         } else {
           IsmChatRouteManagement.goToMediaPreview(
@@ -1459,13 +1457,13 @@ class IsmChatPageController extends GetxController
 
       if (IsmChatResponsive.isWeb(Get.context!)) {
         {
-          await Get.dialog(IsmWebMessageMediaPreview(
+          IsmChatRouteManagement.goToWebMediaMessagePreview(
             mediaIndex: selectedMediaIndex,
             messageData: mediaList,
             mediaUserName: message.chatName,
             initiated: message.sentByMe,
             mediaTime: message.sentAt,
-          ));
+          );
         }
       } else {
         IsmChatRouteManagement.goToMediaPreview(

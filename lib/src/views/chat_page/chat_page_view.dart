@@ -42,7 +42,8 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     final mqttController = Get.find<IsmChatMqttController>();
-    if (AppLifecycleState.resumed == state) {
+    if (AppLifecycleState.resumed == state &&
+        !(controller.conversation?.conversationId).isNullOrEmpty) {
       mqttController.isAppInBackground = false;
       controller.readAllMessages(
         conversationId: controller.conversation?.conversationId ?? '',

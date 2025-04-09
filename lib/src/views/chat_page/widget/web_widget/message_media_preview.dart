@@ -10,38 +10,39 @@ import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
 import 'package:photo_view/photo_view.dart';
 
 class IsmWebMessageMediaPreview extends StatefulWidget {
-  IsmWebMessageMediaPreview({
+  const IsmWebMessageMediaPreview({
     super.key,
-    List<IsmChatMessageModel>? messageData,
-    int? mediaIndex,
-    String? mediaUserName,
-    bool? initiated,
-    int? mediaTime,
-  })  : _mediaIndex = mediaIndex ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaIndex'] ??
-            0,
-        _mediaTime = mediaTime ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaTime'] ??
-            0,
-        _initiated = initiated ??
-            (Get.arguments as Map<String, dynamic>?)?['initiated'] ??
-            false,
-        _mediaUserName = mediaUserName ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaUserName'] ??
-            '',
-        _messageData = messageData ??
-            (Get.arguments as Map<String, dynamic>?)?['messageData'] ??
-            [];
+    // List<IsmChatMessageModel>? messageData,
+    // int? mediaIndex,
+    // String? mediaUserName,
+    // bool? initiated,
+    // int? mediaTime,
+  });
+  //  : _mediaIndex = mediaIndex ??
+  //           (Get.arguments as Map<String, dynamic>?)?['mediaIndex'] ??
+  //           0,
+  //       _mediaTime = mediaTime ??
+  //           (Get.arguments as Map<String, dynamic>?)?['mediaTime'] ??
+  //           0,
+  //       _initiated = initiated ??
+  //           (Get.arguments as Map<String, dynamic>?)?['initiated'] ??
+  //           false,
+  //       _mediaUserName = mediaUserName ??
+  //           (Get.arguments as Map<String, dynamic>?)?['mediaUserName'] ??
+  //           '',
+  //       _messageData = messageData ??
+  //           (Get.arguments as Map<String, dynamic>?)?['messageData'] ??
+  //           [];
 
-  final List<IsmChatMessageModel>? _messageData;
+  // final List<IsmChatMessageModel>? _messageData;
 
-  final String? _mediaUserName;
+  // final String? _mediaUserName;
 
-  final bool? _initiated;
+  // final bool? _initiated;
 
-  final int? _mediaTime;
+  // final int? _mediaTime;
 
-  final int? _mediaIndex;
+  // final int? _mediaIndex;
 
   static const String route = IsmPageRoutes.messageMediaPreivew;
 
@@ -51,16 +52,17 @@ class IsmWebMessageMediaPreview extends StatefulWidget {
 }
 
 class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
-  /// Page controller for handing the PageView pages
   PageController? pageController;
-
   final chatPageController =
       Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
   String mediaTime = '';
   String mediaSize = '';
-
+  String mediaUserName = '';
   bool initiated = false;
+  List<IsmChatMessageModel> messageData = [];
+
+  final argument = Get.arguments as Map<String, dynamic>? ?? {};
 
   @override
   void initState() {
@@ -69,16 +71,19 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   }
 
   startInit() {
-    initiated = widget._initiated ?? false;
-    chatPageController.assetsIndex = widget._mediaIndex ?? 0;
-    final timeStamp =
-        DateTime.fromMillisecondsSinceEpoch(widget._mediaTime ?? 0);
+    messageData = argument['messageData'] ?? [];
+    mediaUserName = argument['mediaUserName'] ?? '';
+    initiated = argument['initiated'] ?? false;
+    chatPageController.assetsIndex = argument['mediaIndex'] ?? 0;
+    final timeStamp = DateTime.fromMillisecondsSinceEpoch(
+      argument['mediaTime'] ?? 0,
+    );
     final time = DateFormat.jm().format(timeStamp);
     final monthDay = DateFormat.MMMd().format(timeStamp);
     mediaTime = '$monthDay, $time';
     mediaSize = IsmChatUtility.formatBytes(
       int.parse(
-          '${widget._messageData![widget._mediaIndex ?? 0].attachments?.first.size}'),
+          '${messageData[chatPageController.assetsIndex].attachments?.first.size}'),
     );
     pageController =
         PageController(initialPage: chatPageController.assetsIndex);
@@ -104,9 +109,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                initiated
-                    ? IsmChatStrings.you
-                    : widget._mediaUserName.toString(),
+                initiated ? IsmChatStrings.you : mediaUserName,
                 style:
                     IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
                         IsmChatStyles.w400Black16,
@@ -126,25 +129,26 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
               triggerMode: TooltipTriggerMode.tap,
               child: IconButton(
                 onPressed: () async {
-                  if (widget._messageData?[chatPageController.assetsIndex]
-                          .attachments!.first.mediaUrl!.isValidUrl ??
+                  if (messageData[chatPageController.assetsIndex]
+                          .attachments
+                          ?.first
+                          .mediaUrl
+                          ?.isValidUrl ??
                       false) {
-                    IsmChatBlob.fileDownloadWithUrl(widget
-                        ._messageData![chatPageController.assetsIndex]
-                        .attachments!
-                        .first
-                        .mediaUrl!);
+                    IsmChatBlob.fileDownloadWithUrl(
+                        messageData[chatPageController.assetsIndex]
+                            .attachments!
+                            .first
+                            .mediaUrl!);
                   } else {
                     IsmChatBlob.fileDownloadWithBytes(
-                        widget
-                                ._messageData?[chatPageController.assetsIndex]
-                                .attachments!
-                                .first
-                                .mediaUrl!
-                                .strigToUnit8List ??
-                            List.empty(),
+                        messageData[chatPageController.assetsIndex]
+                            .attachments!
+                            .first
+                            .mediaUrl!
+                            .strigToUnit8List,
                         downloadName:
-                            '${widget._messageData?[chatPageController.assetsIndex].attachments!.first.name}.${widget._messageData?[chatPageController.assetsIndex].attachments!.first.extension}');
+                            '${messageData[chatPageController.assetsIndex].attachments!.first.name}.${messageData[chatPageController.assetsIndex].attachments!.first.extension}');
                     IsmChatUtility.showToast('Save your media');
                   }
                 },
@@ -158,7 +162,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
               child: IconButton(
                 onPressed: () async {
                   await chatPageController.showDialogForMessageDelete(
-                      widget._messageData![chatPageController.assetsIndex],
+                      messageData[chatPageController.assetsIndex],
                       fromMediaPrivew: true);
                 },
                 icon: const Icon(Icons.delete_rounded),
@@ -188,22 +192,22 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 children: [
                   PageView.builder(
                     controller: pageController,
-                    itemCount: widget._messageData?.length ?? 0,
+                    itemCount: messageData.length,
                     itemBuilder: (
                       BuildContext context,
                       int index,
                     ) {
-                      var media = widget._messageData?[index];
-                      var url = media?.attachments?.first.mediaUrl ?? '';
+                      var media = messageData[index];
+                      var url = media.attachments?.first.mediaUrl ?? '';
                       var customType =
-                          (media?.messageType == IsmChatMessageType.normal)
-                              ? media?.customType
-                              : media?.metaData?.replyMessage
+                          (media.messageType == IsmChatMessageType.normal)
+                              ? media.customType
+                              : media.metaData?.replyMessage
                                   ?.parentMessageMessageType;
                       return BlurFilter(
                         isBlured: IsmChatProperties
                                 .chatPageProperties.isShowMediaMessageBlur
-                                ?.call(context, media!) ??
+                                ?.call(context, media) ??
                             false,
                         child: customType == IsmChatCustomMessageType.image
                             ? PhotoView(
@@ -223,12 +227,12 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                       );
                     },
                     onPageChanged: (index) {
-                      var media = widget._messageData?[index];
-                      initiated = media?.sentByMe ?? false;
-                      mediaTime = media?.sentAt.deliverTime ?? '';
+                      var media = messageData[index];
+                      initiated = media.sentByMe;
+                      mediaTime = media.sentAt.deliverTime;
                       chatPageController.assetsIndex = index;
                       mediaSize = IsmChatUtility.formatBytes(
-                        int.parse('${media?.attachments?.first.size}'),
+                        int.parse('${media.attachments?.first.size}'),
                       );
                       updateState();
                     },
@@ -243,17 +247,13 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                           child: IsmChatTapHandler(
                             onTap: () async {
                               chatPageController.assetsIndex--;
-                              initiated = widget
-                                      ._messageData?[
-                                          chatPageController.assetsIndex]
-                                      .sentByMe ??
-                                  false;
-                              mediaTime = widget
-                                      ._messageData?[
-                                          chatPageController.assetsIndex]
+                              initiated =
+                                  messageData[chatPageController.assetsIndex]
+                                      .sentByMe;
+                              mediaTime =
+                                  messageData[chatPageController.assetsIndex]
                                       .sentAt
-                                      .deliverTime ??
-                                  '';
+                                      .deliverTime;
                               updateState();
                               await pageController?.animateToPage(
                                   chatPageController.assetsIndex,
@@ -280,23 +280,19 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                         ),
                         Opacity(
                           opacity: (chatPageController.assetsIndex ==
-                                  (widget._messageData?.length ?? 0) - 1)
+                                  (messageData.length) - 1)
                               ? 0
                               : 1,
                           child: IsmChatTapHandler(
                             onTap: () async {
                               chatPageController.assetsIndex++;
-                              initiated = widget
-                                      ._messageData?[
-                                          chatPageController.assetsIndex]
-                                      .sentByMe ??
-                                  false;
-                              mediaTime = widget
-                                      ._messageData?[
-                                          chatPageController.assetsIndex]
+                              initiated =
+                                  messageData[chatPageController.assetsIndex]
+                                      .sentByMe;
+                              mediaTime =
+                                  messageData[chatPageController.assetsIndex]
                                       .sentAt
-                                      .deliverTime ??
-                                  '';
+                                      .deliverTime;
                               updateState();
                               await pageController?.animateToPage(
                                 chatPageController.assetsIndex,
@@ -338,17 +334,17 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 separatorBuilder: (context, index) => IsmChatDimens.boxWidth8,
-                itemCount: widget._messageData?.length ?? 0,
+                itemCount: messageData.length,
                 itemBuilder: (context, index) {
-                  var media = widget._messageData?[index].attachments;
-                  var mediaMessage = widget._messageData?[index];
+                  var media = messageData[index].attachments;
+                  var mediaMessage = messageData[index];
                   var isVideo = IsmChatConstants.videoExtensions.contains(
                     media?.first.extension,
                   );
                   return InkWell(
                     onTap: () async {
-                      initiated = mediaMessage?.sentByMe ?? false;
-                      mediaTime = mediaMessage?.sentAt.deliverTime ?? '';
+                      initiated = mediaMessage.sentByMe;
+                      mediaTime = mediaMessage.sentAt.deliverTime;
                       chatPageController.assetsIndex = index;
                       chatPageController.isVideoVisible = false;
                       await pageController?.animateToPage(index,
@@ -359,7 +355,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                     child: BlurFilter(
                       isBlured: IsmChatProperties
                               .chatPageProperties.isShowMediaMessageBlur
-                              ?.call(context, mediaMessage!) ??
+                              ?.call(context, mediaMessage) ??
                           false,
                       child: Stack(
                         alignment: Alignment.center,
