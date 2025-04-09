@@ -448,6 +448,7 @@ class IsmChatPageController extends GetxController
   void startInit({
     bool isBroadcasts = false,
   }) async {
+    chatInputController.clear();
     recordVoice = AudioRecorder();
     isActionAllowed = false;
     _generateReactionList();
