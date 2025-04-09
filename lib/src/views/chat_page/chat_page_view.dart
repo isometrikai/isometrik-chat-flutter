@@ -45,20 +45,16 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     if (AppLifecycleState.resumed == state &&
         !(controller.conversation?.conversationId).isNullOrEmpty) {
       mqttController.isAppInBackground = false;
-      controller.readAllMessages(
-        conversationId: controller.conversation?.conversationId ?? '',
-        timestamp: controller.messages.isNotEmpty
-            ? DateTime.now().millisecondsSinceEpoch
-            : controller.conversation?.lastMessageSentAt ?? 0,
-      );
-      IsmChatLog.info('app in resumed');
+      controller.getMessageForStatus();
+      controller.readAllMessages();
+      IsmChatLog.info('app chat in resumed');
     }
     if (AppLifecycleState.paused == state) {
       mqttController.isAppInBackground = true;
-      IsmChatLog.info('app in backgorund');
+      IsmChatLog.info('app chat in backgorund');
     }
     if (AppLifecycleState.detached == state) {
-      IsmChatLog.info('app in killed');
+      IsmChatLog.info('app chat in killed');
     }
   }
 

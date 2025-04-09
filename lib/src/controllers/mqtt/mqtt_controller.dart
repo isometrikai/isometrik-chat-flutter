@@ -390,4 +390,14 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         includeConversationStatusMessagesInUnreadMessagesCount:
             includeConversationStatusMessagesInUnreadMessagesCount,
       );
+
+  Future<void> readSingleMessage({
+    required String conversationId,
+    required String messageId,
+  }) async {
+    await viewModel.readSingleMessage(
+      conversationId: conversationId,
+      messageId: messageId,
+    );
+  }
 }

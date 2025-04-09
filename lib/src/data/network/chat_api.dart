@@ -50,6 +50,7 @@ class IsmChatAPI {
   static String readStatus = '$chatStatus/read';
   static String deliverStatus = '$chatStatus/delivery';
   static String chatMessages = '$baseUrl/chat/messages';
+  static String chatMessagesStatus = '$chatMessages/status';
   static String chatMessagesCount = '$chatMessages/count';
   static String userchatMessages = '$chatMessages/user';
   static String readAllMessages = '$chatMessages/read';

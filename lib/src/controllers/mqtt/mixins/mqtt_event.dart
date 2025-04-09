@@ -297,8 +297,6 @@ mixin IsmChatMqttEventMixin {
       );
     }
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
-
-    // To handle messages in chatList
     if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       return;
     }
@@ -306,10 +304,9 @@ mixin IsmChatMqttEventMixin {
     if (chatController.conversation?.conversationId != message.conversationId) {
       return;
     }
-
     unawaited(chatController.getMessagesFromDB(message.conversationId ?? ''));
     await Future.delayed(const Duration(milliseconds: 30));
-    await chatController.readSingleMessage(
+    await _controller.readSingleMessage(
       conversationId: message.conversationId ?? '',
       messageId: message.messageId ?? '',
     );
@@ -402,7 +399,7 @@ mixin IsmChatMqttEventMixin {
     unawaited(chatController.getMessagesFromDB(message.conversationId ?? ''));
     await Future.delayed(const Duration(milliseconds: 100));
     if (_controller.isAppInBackground == false) {
-      await chatController.readSingleMessage(
+      await _controller.readSingleMessage(
         conversationId: message.conversationId ?? '',
         messageId: message.messageId ?? '',
       );
@@ -627,11 +624,9 @@ mixin IsmChatMqttEventMixin {
     readActions.add(actionModel);
     ismChatActionDebounce.run(() async {
       final actionsData = List<IsmChatMqttActionModel>.from(readActions);
-
       for (var action in actionsData) {
         var conversation = await IsmChatConfig.dbWrapper
             ?.getConversation(conversationId: action.conversationId);
-
         var message = conversation?.messages?.values
             .cast<IsmChatMessageModel?>()
             .firstWhere(

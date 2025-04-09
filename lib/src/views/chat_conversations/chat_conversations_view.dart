@@ -15,15 +15,17 @@ class IsmChatConversations extends StatefulWidget {
 }
 
 class _IsmChatConversationsState extends State<IsmChatConversations>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
     startInit();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     closeOverlay();
     super.dispose();
   }
@@ -58,6 +60,23 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
           IsmChatProperties.conversationProperties.allowedConversations.length,
       vsync: this,
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (AppLifecycleState.resumed == state) {
+      if (Get.isRegistered<IsmChatConversationsController>()) {
+        Get.find<IsmChatConversationsController>().getChatConversations();
+      }
+      IsmChatLog.info('app in resumed');
+    }
+    if (AppLifecycleState.paused == state) {
+      IsmChatLog.info('app in backgorund');
+    }
+    if (AppLifecycleState.detached == state) {
+      IsmChatLog.info('app in killed');
+    }
   }
 
   @override

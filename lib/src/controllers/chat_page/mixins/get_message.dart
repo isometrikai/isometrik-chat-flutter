@@ -24,14 +24,12 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
-
     _controller.messages = _controller.commonController
         .sortMessages(filterMessages(messages.values.toList()));
 
     if (_controller.messages.isEmpty) {
       return;
     }
-
     _controller.isMessagesLoading = false;
     _controller._generateIndexedMessageList();
   }
@@ -401,6 +399,61 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           await IsmChatConfig.dbWrapper
               ?.saveConversation(conversation: conversation);
         }
+        await getMessagesFromDB(conversationId);
+      }
+    }
+  }
+
+  Future<void> getMessageForStatus() async {
+    var messageIds = <String>[];
+    final conversationId = _controller.conversation?.conversationId ?? '';
+    for (var message in _controller.messages) {
+      if (((message.deliveredToAll == false) || (message.readByAll == false)) &&
+          !message.messageId.isNullOrEmpty) {
+        messageIds.add(message.messageId ?? '');
+      }
+    }
+    if (messageIds.isNotEmpty) {
+      messageIds.removeWhere((e) => e.isNullOrEmpty);
+      final response = await _controller.viewModel.getMessageForStatus(
+        conversationId: conversationId,
+        messageIds: messageIds,
+        isLoading: false,
+      );
+      if (response != null) {
+        var conversation = await IsmChatConfig.dbWrapper
+            ?.getConversation(conversationId: conversationId);
+
+        final dbMessages = conversation?.messages?.values.toList() ?? [];
+        for (var dbmessage in dbMessages) {
+          final messageStatus = response.cast<MessageStatusModel?>().firstWhere(
+                (e) => e?.messageId == dbmessage.messageId,
+                orElse: () => null,
+              );
+          if (dbmessage.messageId == messageStatus?.messageId) {
+            if (messageStatus?.deliveredToAll ?? false) {
+              dbmessage.deliveredTo?.add(
+                MessageStatus(
+                  userId: conversation?.opponentDetails?.userId ?? '',
+                  timestamp: int.tryParse(dbmessage.key),
+                ),
+              );
+            }
+            if (messageStatus?.readByAll ?? false) {
+              dbmessage.readBy?.add(
+                MessageStatus(
+                  userId: conversation?.opponentDetails?.userId ?? '',
+                  timestamp: int.tryParse(dbmessage.key),
+                ),
+              );
+            }
+            dbmessage.deliveredToAll = messageStatus?.deliveredToAll ?? false;
+            dbmessage.readByAll = messageStatus?.readByAll ?? false;
+            conversation?.messages?[dbmessage.key] = dbmessage;
+          }
+        }
+        await IsmChatConfig.dbWrapper
+            ?.saveConversation(conversation: conversation!);
         await getMessagesFromDB(conversationId);
       }
     }

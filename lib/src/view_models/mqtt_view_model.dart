@@ -5,6 +5,15 @@ class IsmChatMqttViewModel {
 
   final IsmChatMqttRepository _repository;
 
+  Future<void> readSingleMessage({
+    required String conversationId,
+    required String messageId,
+  }) async =>
+      await _repository.readSingleMessage(
+        conversationId: conversationId,
+        messageId: messageId,
+      );
+
   Future<String> getChatConversationsUnreadCount({
     bool isLoading = false,
   }) async {

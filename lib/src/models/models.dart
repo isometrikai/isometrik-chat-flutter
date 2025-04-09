@@ -18,6 +18,7 @@ export 'local_mention.dart';
 export 'location_models/location_models.dart';
 export 'mention.dart';
 export 'message_reaction.dart';
+export 'message_status_model.dart';
 export 'meta_data_model.dart';
 export 'mqtt_models/mqtt_models.dart';
 export 'platformfile_model.dart';

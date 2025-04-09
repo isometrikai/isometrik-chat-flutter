@@ -5,6 +5,25 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatMqttRepository {
   final _apiWrapper = IsmChatApiWrapper();
 
+  Future<void> readSingleMessage({
+    required String conversationId,
+    required String messageId,
+  }) async {
+    try {
+      var payload = {'messageId': messageId, 'conversationId': conversationId};
+      var response = await _apiWrapper.put(
+        IsmChatAPI.readIndicator,
+        payload: payload,
+        headers: IsmChatUtility.tokenCommonHeader(),
+      );
+      if (response.hasError) {
+        return;
+      }
+    } catch (e, st) {
+      IsmChatLog.error('Read message $e', st);
+    }
+  }
+
   Future<String?> getChatConversationsUnreadCount({
     bool isLoading = false,
   }) async {

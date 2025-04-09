@@ -360,25 +360,6 @@ class IsmChatPageRepository {
     }
   }
 
-  Future<void> readSingleMessage({
-    required String conversationId,
-    required String messageId,
-  }) async {
-    try {
-      var payload = {'messageId': messageId, 'conversationId': conversationId};
-      var response = await _apiWrapper.put(
-        IsmChatAPI.readIndicator,
-        payload: payload,
-        headers: IsmChatUtility.tokenCommonHeader(),
-      );
-      if (response.hasError) {
-        return;
-      }
-    } catch (e, st) {
-      IsmChatLog.error('Read message $e', st);
-    }
-  }
-
   Future<List<UserDetails>?> getMessageDeliverTime({
     required String conversationId,
     required String messageId,
@@ -744,6 +725,29 @@ class IsmChatPageRepository {
     } catch (e, st) {
       IsmChatLog.error('updateMessage  $e', st);
       return false;
+    }
+  }
+
+  Future<List<MessageStatusModel>?> getMessageForStatus({
+    required String conversationId,
+    required List<String> messageIds,
+    required bool isLoading,
+  }) async {
+    try {
+      var response = await _apiWrapper.get(
+          '${IsmChatAPI.chatMessagesStatus}?conversationId=$conversationId&messageIds=${messageIds.join(',')}',
+          headers: IsmChatUtility.tokenCommonHeader(),
+          showLoader: isLoading);
+      if (response.hasError) {
+        return null;
+      }
+      var data = jsonDecode(response.data);
+      return (data['messages'] as List)
+          .map((e) => MessageStatusModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmChatLog.error('getMessageForStatus $e', st);
+      return null;
     }
   }
 }

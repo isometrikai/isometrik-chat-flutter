@@ -239,15 +239,6 @@ class IsmChatPageViewModel {
   }) async =>
       await _repository.removeAdmin(conversationId, memberId, isLoading);
 
-  Future<void> readSingleMessage({
-    required String conversationId,
-    required String messageId,
-  }) async =>
-      await _repository.readSingleMessage(
-        conversationId: conversationId,
-        messageId: messageId,
-      );
-
   Future<List<UserDetails>?> getMessageDeliverTime({
     required String conversationId,
     required String messageId,
@@ -596,4 +587,15 @@ class IsmChatPageViewModel {
           isLoading: isLoading,
           messageId: messageId,
           conversationId: conversationId);
+
+  Future<List<MessageStatusModel>?> getMessageForStatus({
+    required String conversationId,
+    required List<String> messageIds,
+    required bool isLoading,
+  }) async =>
+      await _repository.getMessageForStatus(
+        conversationId: conversationId,
+        messageIds: messageIds,
+        isLoading: isLoading,
+      );
 }
