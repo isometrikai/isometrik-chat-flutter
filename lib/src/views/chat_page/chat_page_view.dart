@@ -176,9 +176,8 @@ class _IsmChatPageView extends StatelessWidget {
                         onPressed: () async {
                           var selectedMessage = <String, IsmChatMessageModel>{};
                           for (var message in controller.selectedMessage) {
-                            selectedMessage.addEntries({
-                              '${message.metaData?.messageSentAt}': message
-                            }.entries);
+                            selectedMessage
+                                .addEntries({message.key: message}.entries);
                           }
                           var messageSenderSide =
                               controller.isAllMessagesFromMe();

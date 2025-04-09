@@ -110,7 +110,13 @@ typedef NotificaitonCallback = void Function(
   String,
 );
 
-typedef MessageFutureCallback = Future<(Map<String, dynamic>?, bool)> Function(
+typedef MessageFutureCallback = Future<
+        ({
+          Map<String, dynamic>? metaData,
+          bool shouldUpdateMessage,
+          bool shouldGoToMediaPreview
+        })>
+    Function(
   BuildContext,
   IsmChatMessageModel,
   IsmChatConversationModel,

@@ -915,6 +915,12 @@ extension MentionMessage on IsmChatMessageModel {
     return theme?.opponentMessageTheme?.borderColor ??
         IsmChatConfig.chatTheme.backgroundColor;
   }
+
+  String get key {
+    final key = metaData?.messageSentAt ?? sentAt;
+    final mapKey = key != 0 ? key : sentAt;
+    return '$mapKey';
+  }
 }
 
 extension SizeOfMedia on String {

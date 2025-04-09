@@ -174,19 +174,6 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     _controller.canCallCurrentApi = false;
   }
 
-  Future<void> updateConversationMessage() async {
-    var chatConersationController = Get.find<IsmChatConversationsController>();
-    var converstionIndex = chatConersationController.conversations.indexWhere(
-        (e) => e.conversationId == _controller.conversation?.conversationId);
-    chatConersationController.conversations[converstionIndex] =
-        chatConersationController.conversations[converstionIndex]
-            .copyWith(messages: {
-      for (var message in _controller.messages)
-        '${message.metaData?.messageSentAt ?? DateTime.now().millisecondsSinceEpoch}':
-            message
-    });
-  }
-
   Future<void> getMessageDeliverTime(IsmChatMessageModel message) async {
     _controller.deliverdMessageMembers.clear();
     var response = await _controller.viewModel.getMessageDeliverTime(
@@ -406,7 +393,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
             isDownloaded: true,
           );
         }
-        allMessages['${message.metaData?.messageSentAt}'] = message;
+        allMessages[message.key] = message;
         var conversation = await IsmChatConfig.dbWrapper
             ?.getConversation(conversationId: conversationId);
         if (conversation != null) {

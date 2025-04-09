@@ -4,9 +4,10 @@ mixin IsmChatTapsController on GetxController {
   IsmChatPageController get _controller =>
       Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
 
-  void onMessageTap(
-      {required BuildContext context,
-      required IsmChatMessageModel message}) async {
+  void onMessageTap({
+    required BuildContext context,
+    required IsmChatMessageModel message,
+  }) async {
     _controller.closeOverlay();
     final response =
         await IsmChatProperties.chatPageProperties.onMessageTap?.call(
@@ -14,8 +15,7 @@ mixin IsmChatTapsController on GetxController {
       message,
       _controller.conversation!,
     );
-
-    if (response?.$2 ?? true) {
+    if (response?.shouldGoToMediaPreview ?? true) {
       if (message.messageType == IsmChatMessageType.reply) {
         if ([
           IsmChatCustomMessageType.image,
@@ -37,15 +37,17 @@ mixin IsmChatTapsController on GetxController {
       ].contains(message.customType)) {
         _controller.tapForMediaPreview(message);
       }
+    }
+    if (response?.shouldUpdateMessage ?? true) {
       if (message.sentByMe == false) {
         unawaited(
           _controller.updateMessage(
             messageId: message.messageId ?? '',
             conversationId: message.conversationId ?? '',
             isOpponentMessage: true,
-            metaData: response?.$1 != null
+            metaData: response?.metaData != null
                 ? IsmChatMetaData.fromMap(
-                    response?.$1 ?? {},
+                    response?.metaData ?? {},
                   )
                 : null,
           ),

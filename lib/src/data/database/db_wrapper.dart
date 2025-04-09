@@ -250,10 +250,8 @@ class IsmChatDBWrapper {
             message.conversationId?.trim().isEmpty == true)) {
       return;
     }
-    var messageMap = {
-      '${message.metaData?.messageSentAt ?? DateTime.now().millisecondsSinceEpoch}':
-          message
-    };
+
+    var messageMap = {message.key: message};
     switch (dbBox) {
       case IsmChatDbBox.main:
         var conversationMain = await getConversation(

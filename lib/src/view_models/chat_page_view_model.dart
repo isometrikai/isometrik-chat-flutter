@@ -49,8 +49,7 @@ class IsmChatPageViewModel {
         if (conversation != null) {
           var data = <String, IsmChatMessageModel>{};
           for (var message in messages) {
-            final key = message.metaData?.messageSentAt ?? message.sentAt;
-            final entriesData = {'${key != 0 ? key : message.sentAt}': message};
+            final entriesData = {message.key: message};
             data.addEntries(entriesData.entries);
           }
           conversation.messages?.addAll(data);
@@ -352,9 +351,9 @@ class IsmChatPageViewModel {
                 orElse: () => null,
               );
       if (gotMessage != null) {
-        allMessages['${gotMessage.metaData?.messageSentAt}']?.customType =
+        allMessages[gotMessage.key]?.customType =
             IsmChatCustomMessageType.deletedForEveryone;
-        allMessages['${gotMessage.metaData?.messageSentAt}']?.reactions = [];
+        allMessages[gotMessage.key]?.reactions = [];
       }
     }
 
@@ -450,7 +449,6 @@ class IsmChatPageViewModel {
       }
       if (isEmoji == false) {
         message.reactions ??= [];
-
         message.reactions?.add(
           MessageReactionModel(
             emojiKey: reaction.reactionType.value,
@@ -458,7 +456,7 @@ class IsmChatPageViewModel {
           ),
         );
       }
-      allMessages['${message.metaData?.messageSentAt}'] = message;
+      allMessages[message.key] = message;
       var conversation = await IsmChatConfig.dbWrapper
           ?.getConversation(conversationId: reaction.conversationId);
       if (conversation != null) {
@@ -506,11 +504,8 @@ class IsmChatPageViewModel {
         reactionMap
             .removeWhere((e) => e.emojiKey == reaction.reactionType.value);
       }
-
       message.reactions = reactionMap;
-
-      allMessages['${message.metaData?.messageSentAt ?? 0}'] = message;
-
+      allMessages[message.key] = message;
       var conversation = await IsmChatConfig.dbWrapper
           ?.getConversation(conversationId: reaction.conversationId);
       if (conversation != null) {

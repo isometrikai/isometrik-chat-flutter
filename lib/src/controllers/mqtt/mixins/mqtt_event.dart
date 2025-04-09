@@ -206,8 +206,8 @@ mixin IsmChatMqttEventMixin {
         ),
         metaData: IsmChatMetaData(messageSentAt: actionModel.sentAt),
       );
-      conversation.messages
-          ?.addEntries({'${message.metaData?.messageSentAt}': message}.entries);
+
+      conversation.messages?.addEntries({message.key: message}.entries);
       await IsmChatConfig.dbWrapper
           ?.saveConversation(conversation: conversation);
       if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
@@ -594,9 +594,7 @@ mixin IsmChatMqttEventMixin {
           }
           message.deliveredToAll = message.deliveredTo?.length ==
               (conversation?.membersCount ?? 0) - 1;
-
-          conversation?.messages?['${message.metaData?.messageSentAt}'] =
-              message;
+          conversation?.messages?[message.key] = message;
           conversation = conversation?.copyWith(
             lastMessageDetails: conversation.lastMessageDetails?.copyWith(
               deliverCount: message.deliveredTo?.length,
@@ -653,9 +651,7 @@ mixin IsmChatMqttEventMixin {
           }
           message.readByAll =
               message.readBy?.length == (conversation?.membersCount ?? 0) - 1;
-
-          conversation?.messages?['${message.metaData?.messageSentAt}'] =
-              message;
+          conversation?.messages?[message.key] = message;
           conversation = conversation?.copyWith(
             lastMessageDetails: conversation.lastMessageDetails?.copyWith(
               readCount: message.readBy?.length,
@@ -695,8 +691,7 @@ mixin IsmChatMqttEventMixin {
       var modifiedMessages = {};
       for (var message in allMessages.values) {
         if (message.deliveredToAll == true && message.readByAll == true) {
-          modifiedMessages.addEntries(
-              {'${message.metaData?.messageSentAt}': message}.entries);
+          modifiedMessages.addEntries({message.key: message}.entries);
         } else {
           var isDelivered = message.deliveredTo
               ?.any((e) => e.userId == actionModel.userDetails?.userId);
@@ -788,7 +783,7 @@ mixin IsmChatMqttEventMixin {
             .cast<IsmChatMessageModel?>()
             .firstWhere((e) => e?.messageId == x, orElse: () => null);
         if (message != null) {
-          allMessages['${message.metaData?.messageSentAt}']?.customType =
+          allMessages[message.key]?.customType =
               IsmChatCustomMessageType.deletedForEveryone;
         }
       }
