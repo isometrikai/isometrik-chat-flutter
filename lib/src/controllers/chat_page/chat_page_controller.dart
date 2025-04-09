@@ -1375,10 +1375,12 @@ class IsmChatPageController extends GetxController
     if ([IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
         .contains(message.customType)) {
       var mediaList = messages
-          .where((item) => [
-                IsmChatCustomMessageType.image,
-                IsmChatCustomMessageType.video
-              ].contains(item.customType))
+          .where((item) =>
+              [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
+                  .contains(item.customType) &&
+              !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
+                      ?.call(Get.context!, item) ??
+                  false))
           .toList();
       if (mediaList.isNotEmpty) {
         var selectedMediaIndex = mediaList.indexOf(message);
@@ -1448,13 +1450,15 @@ class IsmChatPageController extends GetxController
     if ([IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
         .contains(message.metaData?.replyMessage?.parentMessageMessageType)) {
       var mediaList = messages
-          .where((item) => [
-                IsmChatCustomMessageType.image,
-                IsmChatCustomMessageType.video
-              ].contains(item.metaData?.replyMessage?.parentMessageMessageType))
+          .where((item) =>
+              [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
+                  .contains(
+                      item.metaData?.replyMessage?.parentMessageMessageType) &&
+              !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
+                      ?.call(Get.context!, item) ??
+                  false))
           .toList();
       var selectedMediaIndex = mediaList.indexOf(message);
-
       if (IsmChatResponsive.isWeb(Get.context!)) {
         {
           IsmChatRouteManagement.goToWebMediaMessagePreview(

@@ -192,25 +192,19 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
               var customType = (media?.messageType == IsmChatMessageType.normal)
                   ? media?.customType
                   : media?.metaData?.replyMessage?.parentMessageMessageType;
-              return BlurFilter(
-                isBlured: IsmChatProperties
-                        .chatPageProperties.isShowMediaMessageBlur
-                        ?.call(context, media!) ??
-                    false,
-                child: customType == IsmChatCustomMessageType.image
-                    ? PhotoView(
-                        imageProvider: url.isValidUrl
-                            ? NetworkImage(url) as ImageProvider
-                            : kIsWeb
-                                ? MemoryImage(url.strigToUnit8List)
-                                    as ImageProvider
-                                : FileImage(File(url)) as ImageProvider,
-                        loadingBuilder: (context, event) =>
-                            const IsmChatLoadingDialog(),
-                        wantKeepAlive: true,
-                      )
-                    : VideoViewPage(path: url),
-              );
+              return customType == IsmChatCustomMessageType.image
+                  ? PhotoView(
+                      imageProvider: url.isValidUrl
+                          ? NetworkImage(url) as ImageProvider
+                          : kIsWeb
+                              ? MemoryImage(url.strigToUnit8List)
+                                  as ImageProvider
+                              : FileImage(File(url)) as ImageProvider,
+                      loadingBuilder: (context, event) =>
+                          const IsmChatLoadingDialog(),
+                      wantKeepAlive: true,
+                    )
+                  : VideoViewPage(path: url);
             },
             onPageChanged: (index) {
               final timeStamp = DateTime.fromMillisecondsSinceEpoch(

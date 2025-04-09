@@ -12,37 +12,7 @@ import 'package:photo_view/photo_view.dart';
 class IsmWebMessageMediaPreview extends StatefulWidget {
   const IsmWebMessageMediaPreview({
     super.key,
-    // List<IsmChatMessageModel>? messageData,
-    // int? mediaIndex,
-    // String? mediaUserName,
-    // bool? initiated,
-    // int? mediaTime,
   });
-  //  : _mediaIndex = mediaIndex ??
-  //           (Get.arguments as Map<String, dynamic>?)?['mediaIndex'] ??
-  //           0,
-  //       _mediaTime = mediaTime ??
-  //           (Get.arguments as Map<String, dynamic>?)?['mediaTime'] ??
-  //           0,
-  //       _initiated = initiated ??
-  //           (Get.arguments as Map<String, dynamic>?)?['initiated'] ??
-  //           false,
-  //       _mediaUserName = mediaUserName ??
-  //           (Get.arguments as Map<String, dynamic>?)?['mediaUserName'] ??
-  //           '',
-  //       _messageData = messageData ??
-  //           (Get.arguments as Map<String, dynamic>?)?['messageData'] ??
-  //           [];
-
-  // final List<IsmChatMessageModel>? _messageData;
-
-  // final String? _mediaUserName;
-
-  // final bool? _initiated;
-
-  // final int? _mediaTime;
-
-  // final int? _mediaIndex;
 
   static const String route = IsmPageRoutes.messageMediaPreivew;
 
@@ -137,16 +107,18 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                       false) {
                     IsmChatBlob.fileDownloadWithUrl(
                         messageData[chatPageController.assetsIndex]
-                            .attachments!
-                            .first
-                            .mediaUrl!);
+                                .attachments
+                                ?.first
+                                .mediaUrl ??
+                            '');
                   } else {
                     IsmChatBlob.fileDownloadWithBytes(
                         messageData[chatPageController.assetsIndex]
-                            .attachments!
-                            .first
-                            .mediaUrl!
-                            .strigToUnit8List,
+                                .attachments
+                                ?.first
+                                .mediaUrl
+                                ?.strigToUnit8List ??
+                            [],
                         downloadName:
                             '${messageData[chatPageController.assetsIndex].attachments!.first.name}.${messageData[chatPageController.assetsIndex].attachments!.first.extension}');
                     IsmChatUtility.showToast('Save your media');
@@ -204,27 +176,21 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                               ? media.customType
                               : media.metaData?.replyMessage
                                   ?.parentMessageMessageType;
-                      return BlurFilter(
-                        isBlured: IsmChatProperties
-                                .chatPageProperties.isShowMediaMessageBlur
-                                ?.call(context, media) ??
-                            false,
-                        child: customType == IsmChatCustomMessageType.image
-                            ? PhotoView(
-                                backgroundDecoration: const BoxDecoration(
-                                    color: Colors.transparent),
-                                imageProvider: url.isValidUrl
-                                    ? NetworkImage(url)
-                                    : kIsWeb
-                                        ? MemoryImage(url.strigToUnit8List)
-                                            as ImageProvider
-                                        : FileImage(File(url)),
-                                loadingBuilder: (context, event) =>
-                                    const IsmChatLoadingDialog(),
-                                wantKeepAlive: true,
-                              )
-                            : VideoViewPage(path: url),
-                      );
+                      return customType == IsmChatCustomMessageType.image
+                          ? PhotoView(
+                              backgroundDecoration: const BoxDecoration(
+                                  color: Colors.transparent),
+                              imageProvider: url.isValidUrl
+                                  ? NetworkImage(url)
+                                  : kIsWeb
+                                      ? MemoryImage(url.strigToUnit8List)
+                                          as ImageProvider
+                                      : FileImage(File(url)),
+                              loadingBuilder: (context, event) =>
+                                  const IsmChatLoadingDialog(),
+                              wantKeepAlive: true,
+                            )
+                          : VideoViewPage(path: url);
                     },
                     onPageChanged: (index) {
                       var media = messageData[index];
@@ -352,66 +318,60 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                           duration: const Duration(milliseconds: 100));
                       updateState();
                     },
-                    child: BlurFilter(
-                      isBlured: IsmChatProperties
-                              .chatPageProperties.isShowMediaMessageBlur
-                              ?.call(context, mediaMessage) ??
-                          false,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            height: IsmChatDimens.sixty,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(IsmChatDimens.ten),
-                                ),
-                                border: chatPageController.assetsIndex == index
-                                    ? Border.all(
-                                        color: IsmChatColors.blackColor,
-                                        width: IsmChatDimens.two)
-                                    : null),
-                            width: IsmChatDimens.sixty,
-                            child: ClipRRect(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          height: IsmChatDimens.sixty,
+                          decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(IsmChatDimens.ten),
                               ),
-                              child: isVideo
-                                  ? IsmChatImage(
-                                      media?.first.thumbnailUrl ?? '',
-                                      isNetworkImage: media?.first.thumbnailUrl
-                                              ?.isValidUrl ??
-                                          false,
-                                      isBytes: !(media?.first.thumbnailUrl
-                                              ?.isValidUrl ??
-                                          false),
-                                    )
-                                  : IsmChatImage(
-                                      media?.first.mediaUrl ?? '',
-                                      isNetworkImage:
-                                          media?.first.mediaUrl?.isValidUrl ??
-                                              false,
-                                      isBytes:
-                                          !(media?.first.mediaUrl?.isValidUrl ??
-                                              false),
-                                    ),
+                              border: chatPageController.assetsIndex == index
+                                  ? Border.all(
+                                      color: IsmChatColors.blackColor,
+                                      width: IsmChatDimens.two)
+                                  : null),
+                          width: IsmChatDimens.sixty,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(IsmChatDimens.ten),
                             ),
+                            child: isVideo
+                                ? IsmChatImage(
+                                    media?.first.thumbnailUrl ?? '',
+                                    isNetworkImage:
+                                        media?.first.thumbnailUrl?.isValidUrl ??
+                                            false,
+                                    isBytes: !(media
+                                            ?.first.thumbnailUrl?.isValidUrl ??
+                                        false),
+                                  )
+                                : IsmChatImage(
+                                    media?.first.mediaUrl ?? '',
+                                    isNetworkImage:
+                                        media?.first.mediaUrl?.isValidUrl ??
+                                            false,
+                                    isBytes:
+                                        !(media?.first.mediaUrl?.isValidUrl ??
+                                            false),
+                                  ),
                           ),
-                          if (isVideo)
-                            Container(
-                              alignment: Alignment.center,
-                              width: IsmChatDimens.thirtyTwo,
-                              height: IsmChatDimens.thirtyTwo,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.play_arrow,
-                                  color: Colors.black),
+                        ),
+                        if (isVideo)
+                          Container(
+                            alignment: Alignment.center,
+                            width: IsmChatDimens.thirtyTwo,
+                            height: IsmChatDimens.thirtyTwo,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              color: Colors.white,
+                              shape: BoxShape.circle,
                             ),
-                        ],
-                      ),
+                            child: const Icon(Icons.play_arrow,
+                                color: Colors.black),
+                          ),
+                      ],
                     ),
                   );
                 },
