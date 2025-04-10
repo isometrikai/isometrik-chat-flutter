@@ -42,7 +42,7 @@ PODS:
   - DKPhotoGallery/Resource (0.0.19):
     - SDWebImage
     - SwiftyGif
-  - easy_video_editor (0.0.1):
+  - easy_video_editor (0.0.5):
     - Flutter
   - emoji_picker_flutter (0.0.1):
     - Flutter
@@ -340,7 +340,7 @@ SPEC CHECKSUMS:
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
-  easy_video_editor: 1cb6a9e952e5ff0b94b086b6746d7e50c3d171ed
+  easy_video_editor: 3b4b38c40be7344935f79698115ee36077df8a57
   emoji_picker_flutter: ece213fc274bdddefb77d502d33080dc54e616cc
   file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   Firebase: 1fe1c0a7d9aaea32efe01fbea5f0ebd8d70e53a2

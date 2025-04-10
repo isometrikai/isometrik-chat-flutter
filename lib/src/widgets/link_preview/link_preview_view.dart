@@ -32,9 +32,8 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
   }
 
   Future<void> _fetchAndSetMetadata() async {
-    setState(() {
-      _isLoading = true;
-    });
+    _isLoading = true;
+    updateState();
     try {
       _metadata = await _fetchMetadata(widget.url);
       if (_metadata == null) {
@@ -43,16 +42,20 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
     } catch (e) {
       _setErrorState();
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      _isLoading = false;
+      updateState();
+    }
+  }
+
+  void updateState() {
+    if (mounted) {
+      setState(() {});
     }
   }
 
   void _setErrorState() {
-    setState(() {
-      _isError = true;
-    });
+    _isError = true;
+    updateState();
   }
 
   Future<MetaDataResponse?> _fetchMetadata(String url) async {

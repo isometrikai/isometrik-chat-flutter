@@ -10,22 +10,17 @@ class IsmChatMetaData {
     this.profilePic,
     this.lastName,
     this.firstName,
-    this.isPopularUser,
-    this.gender,
     this.contacts,
-    this.customType,
     this.assetList,
     this.duration,
     this.caption,
     this.replyMessage,
     this.senderInfo,
-    this.countryCode,
-    this.phone,
-    this.phoneIsoCode,
+    this.customType,
+    this.customMetaData,
     this.aboutText,
     this.isDownloaded,
     this.messageSentAt,
-    this.trigger,
   });
 
   factory IsmChatMetaData.fromMap(Map<String, dynamic> map) {
@@ -40,14 +35,10 @@ class IsmChatMetaData {
       profilePic: map['profilePic'] as String? ?? '',
       firstName: map['firstName'] as String? ?? '',
       lastName: map['lastName'] as String? ?? '',
-      isPopularUser: map['isPopularUser'] as bool? ?? false,
-      gender: map['gender'] as String? ?? '',
-      countryCode: map['countryCode'] as String? ?? '',
-      phone: map['phone'] as String? ?? '',
-      phoneIsoCode: map['phoneIsoCode'] as String? ?? '',
       customType: map['customType'].runtimeType == String
           ? {'${map['customType']}': map['customType']}
           : map['customType'] as Map<String, dynamic>? ?? {},
+      customMetaData: map,
       assetList: map['assetList'] == null
           ? []
           : List<Map<String, IsmChatBackgroundModel>>.from(
@@ -80,14 +71,12 @@ class IsmChatMetaData {
           : null,
       isDownloaded: map['isDownloaded'] as bool? ?? true,
       messageSentAt: map['messageSentAt'] as int? ?? 0,
-      trigger: map['trigger'] as String? ?? '',
       aboutText: map['aboutText'] != null
           ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
           : map['about'] != null
               ? AboutTextModel(title: map['about'] as String? ?? '')
               : null,
     );
-
     return data;
   }
 
@@ -103,22 +92,17 @@ class IsmChatMetaData {
   final String? profilePic;
   final String? lastName;
   final String? firstName;
-  final bool? isPopularUser;
-  final String? gender;
   final List<IsmChatContactMetaDatModel>? contacts;
   final Map<String, dynamic>? customType;
+  final Map<String, dynamic>? customMetaData;
   final List<Map<String, IsmChatBackgroundModel>>? assetList;
   final Duration? duration;
   final String? caption;
   final IsmChatReplyMessageModel? replyMessage;
   final UserDetails? senderInfo;
-  final String? phoneIsoCode;
-  final String? phone;
-  final String? countryCode;
   final AboutTextModel? aboutText;
   final bool? isDownloaded;
   final int? messageSentAt;
-  final String? trigger;
 
   IsmChatMetaData copyWith({
     String? parentMessageBody,
@@ -130,22 +114,16 @@ class IsmChatMetaData {
     List<IsmChatContactMetaDatModel>? contacts,
     bool? parentMessageInitiator,
     Map<String, dynamic>? customType,
+    Map<String, dynamic>? customMetaData,
     List<Map<String, IsmChatBackgroundModel>>? assetList,
     Duration? duration,
     String? captionMessage,
     IsmChatCustomMessageType? replayMessageCustomType,
     IsmChatReplyMessageModel? replyMessage,
     UserDetails? senderInfo,
-    String? phoneIsoCode,
-    String? phone,
-    String? countryCode,
-    String? about,
     AboutTextModel? aboutText,
     bool? isDownloaded,
     int? messageSentAt,
-    bool? isPopularUser,
-    String? gender,
-    String? trigger,
   }) =>
       IsmChatMetaData(
         locationAddress: locationAddress ?? this.locationAddress,
@@ -153,22 +131,16 @@ class IsmChatMetaData {
         profilePic: profilePic ?? this.profilePic,
         lastName: lastName ?? this.lastName,
         firstName: firstName ?? this.firstName,
-        isPopularUser: isPopularUser ?? this.isPopularUser,
-        gender: gender ?? this.gender,
-        contacts: contacts ?? this.contacts,
         customType: customType ?? this.customType,
-        assetList: assetList ?? this.assetList,
+        customMetaData: customMetaData ?? this.customMetaData,
         duration: duration ?? this.duration,
+        assetList: assetList ?? this.assetList,
+        contacts: contacts ?? this.contacts,
         caption: captionMessage ?? caption,
         replyMessage: replyMessage ?? this.replyMessage,
-        senderInfo: senderInfo ?? this.senderInfo,
-        phoneIsoCode: phoneIsoCode ?? this.phoneIsoCode,
-        phone: phone ?? this.phone,
-        countryCode: countryCode ?? this.countryCode,
         aboutText: aboutText ?? this.aboutText,
         isDownloaded: isDownloaded ?? this.isDownloaded,
         messageSentAt: messageSentAt ?? this.messageSentAt,
-        trigger: trigger ?? this.trigger,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -177,21 +149,16 @@ class IsmChatMetaData {
         'profilePic': profilePic,
         'lastName': lastName,
         'firstName': firstName,
-        'gender': gender,
-        'isPopularUser': isPopularUser,
         'contacts': contacts?.map((x) => x.toMap()).toList(),
         'customType': customType,
+        'customMetaData': customMetaData,
         'assetList': assetList,
         'duration': duration?.inSeconds,
         'captionMessage': caption,
         'replyMessage': replyMessage?.toMap(),
         'senderInfo': senderInfo?.toMap(),
-        'phoneIsoCode': phoneIsoCode,
-        'phone': phone,
-        'countryCode': countryCode,
         'isDownloaded': isDownloaded,
         'messageSentAt': messageSentAt,
-        'trigger': trigger,
         'aboutText': aboutText?.toMap()
       }.removeNullValues();
 
@@ -199,7 +166,7 @@ class IsmChatMetaData {
 
   @override
   String toString() =>
-      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo  phoneIsoCode : $phoneIsoCode, phone : $phone, countryCode : $countryCode,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt,  gender : $gender, isPopularUser: $isPopularUser, trigger: $trigger)';
+      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo ,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt, customMetaData : $customMetaData)';
 
   @override
   bool operator ==(covariant IsmChatMetaData other) {
@@ -210,21 +177,16 @@ class IsmChatMetaData {
         other.profilePic == profilePic &&
         other.lastName == lastName &&
         other.firstName == firstName &&
-        other.gender == gender &&
-        other.isPopularUser == isPopularUser &&
         listEquals(other.contacts, contacts) &&
         mapEquals(other.customType, customType) &&
+        mapEquals(other.customMetaData, customMetaData) &&
         listEquals(other.assetList, assetList) &&
         other.duration == duration &&
         other.caption == caption &&
         other.replyMessage == replyMessage &&
         other.senderInfo == senderInfo &&
-        other.phoneIsoCode == phoneIsoCode &&
-        other.phone == phone &&
-        other.countryCode == countryCode &&
         other.isDownloaded == isDownloaded &&
         other.messageSentAt == messageSentAt &&
-        other.trigger == trigger &&
         other.aboutText == aboutText;
   }
 
@@ -235,20 +197,15 @@ class IsmChatMetaData {
       profilePic.hashCode ^
       lastName.hashCode ^
       firstName.hashCode ^
-      gender.hashCode ^
-      isPopularUser.hashCode ^
       contacts.hashCode ^
       customType.hashCode ^
+      customMetaData.hashCode ^
       assetList.hashCode ^
       duration.hashCode ^
       caption.hashCode ^
       replyMessage.hashCode ^
       senderInfo.hashCode ^
-      phone.hashCode ^
-      phoneIsoCode.hashCode ^
-      countryCode.hashCode ^
       isDownloaded.hashCode ^
       messageSentAt.hashCode ^
-      trigger.hashCode ^
       aboutText.hashCode;
 }
