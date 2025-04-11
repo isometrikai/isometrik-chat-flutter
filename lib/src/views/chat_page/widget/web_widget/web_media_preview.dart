@@ -182,9 +182,7 @@ class WebMediaPreview extends StatelessWidget {
                                             ?.isMessgeAllowed
                                             ?.call(
                                                 context,
-                                                Get.find<IsmChatPageController>(
-                                                        tag: IsmChat.i.tag)
-                                                    .conversation!,
+                                                controller.conversation!,
                                                 IsmChatCustomMessageType
                                                     .image) ??
                                         true) {
@@ -229,9 +227,7 @@ class WebMediaPreview extends StatelessWidget {
                                         .messageAllowedConfig?.isMessgeAllowed
                                         ?.call(
                                             context,
-                                            Get.find<IsmChatPageController>(
-                                                    tag: IsmChat.i.tag)
-                                                .conversation!,
+                                            controller.conversation!,
                                             IsmChatCustomMessageType.image) ??
                                     true) {
                                   controller.sendMediaWeb();

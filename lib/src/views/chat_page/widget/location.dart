@@ -266,9 +266,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
                                               Get.context!,
-                                              Get.find<IsmChatPageController>(
-                                                      tag: IsmChat.i.tag)
-                                                  .conversation!,
+                                              controller.conversation!,
                                               IsmChatCustomMessageType
                                                   .location) ??
                                       true) {}
@@ -320,9 +318,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
                                               Get.context!,
-                                              Get.find<IsmChatPageController>(
-                                                      tag: IsmChat.i.tag)
-                                                  .conversation!,
+                                              controller.conversation!,
                                               IsmChatCustomMessageType
                                                   .location) ??
                                       true) {

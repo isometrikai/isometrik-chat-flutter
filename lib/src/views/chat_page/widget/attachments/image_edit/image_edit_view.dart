@@ -97,11 +97,7 @@ class IsmChatImageEditView extends StatelessWidget {
                       Get.back<void>();
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
-                              ?.call(
-                                  context,
-                                  Get.find<IsmChatPageController>(
-                                          tag: IsmChat.i.tag)
-                                      .conversation!,
+                              ?.call(context, controller.conversation!,
                                   IsmChatCustomMessageType.image) ??
                           true) {
                         await controller.sendImage(

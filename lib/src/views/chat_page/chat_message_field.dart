@@ -127,9 +127,7 @@ class IsmChatMessageField extends StatelessWidget {
                                       .messageAllowedConfig?.isMessgeAllowed
                                       ?.call(
                                           Get.context!,
-                                          Get.find<IsmChatPageController>(
-                                                  tag: IsmChat.i.tag)
-                                              .conversation!,
+                                          controller.conversation!,
                                           controller.isreplying
                                               ? IsmChatCustomMessageType.reply
                                               : IsmChatCustomMessageType
@@ -426,11 +424,7 @@ class _MicOrSendButton extends StatelessWidget {
                   WebMediaModel? webMediaModel;
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
-                          ?.call(
-                              Get.context!,
-                              Get.find<IsmChatPageController>(
-                                      tag: IsmChat.i.tag)
-                                  .conversation!,
+                          ?.call(Get.context!, controller.conversation!,
                               IsmChatCustomMessageType.audio) ??
                       true) {
                     if (kIsWeb) {
@@ -483,9 +477,7 @@ class _MicOrSendButton extends StatelessWidget {
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
                               Get.context!,
-                              Get.find<IsmChatPageController>(
-                                      tag: IsmChat.i.tag)
-                                  .conversation!,
+                              controller.conversation!,
                               controller.isreplying
                                   ? IsmChatCustomMessageType.reply
                                   : IsmChatCustomMessageType.text) ??
