@@ -30,6 +30,7 @@ class IsmChatPageProperties {
     this.loggedInUser,
     this.messageStatus,
     this.textFieldActions,
+    this.shouldShowHoverHold,
   });
 
   final Widget? placeholder;
@@ -133,4 +134,8 @@ class IsmChatPageProperties {
   final IsmChatMessgaeStatusProperties? messageStatus;
 
   final Widget? textFieldActions;
+
+  final bool? Function(
+          BuildContext, IsmChatConversationModel, IsmChatMessageModel)?
+      shouldShowHoverHold;
 }

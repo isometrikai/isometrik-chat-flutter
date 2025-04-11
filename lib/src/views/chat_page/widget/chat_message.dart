@@ -81,7 +81,11 @@ class _IsmChatMessageState extends State<IsmChatMessage>
       builder: (controller) => IgnorePointer(
         ignoring: showMessageInCenter || widget._isIgnorTap!,
         child: IsmChatTapHandler(
-          onLongPress: showMessageInCenter
+          onLongPress: showMessageInCenter ||
+                  (IsmChatProperties.chatPageProperties.shouldShowHoverHold
+                          ?.call(context, controller.conversation!,
+                              widget._message!) ??
+                      true)
               ? null
               : () async {
                   if (widget._message?.customType !=

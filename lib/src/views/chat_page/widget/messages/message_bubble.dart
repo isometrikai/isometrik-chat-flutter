@@ -34,7 +34,10 @@ class MessageBubble extends StatelessWidget {
           children: [
             if (_message.sentByMe &&
                 IsmChatResponsive.isWeb(context) &&
-                !showMessageInCenter) ...[
+                !showMessageInCenter &&
+                (IsmChatProperties.chatPageProperties.shouldShowHoverHold
+                        ?.call(context, controller.conversation!, _message) ??
+                    true)) ...[
               _OnMessageHoverWeb(
                 controller: controller,
                 globalKey: _globalKey,
@@ -288,7 +291,10 @@ class MessageBubble extends StatelessWidget {
             ),
             if (!_message.sentByMe &&
                 IsmChatResponsive.isWeb(context) &&
-                !showMessageInCenter) ...[
+                !showMessageInCenter &&
+                (IsmChatProperties.chatPageProperties.shouldShowHoverHold
+                        ?.call(context, controller.conversation!, _message) ??
+                    true)) ...[
               IsmChatDimens.boxWidth8,
               _OnMessageHoverWeb(
                 controller: controller,
