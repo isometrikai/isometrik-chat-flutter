@@ -9,20 +9,25 @@ class IsmChatReplyMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IntrinsicWidth(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _ReplyMessage(message),
-            IsmChatDimens.boxHeight5,
-            ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: (IsmChatResponsive.isWeb(context))
-                      ? context.height * .04
-                      : context.height * .05,
-                ),
-                child: IsmChatMessageWrapperWithMetaData(message)),
-          ],
+        child: BlurFilter.widget(
+          isBlured: IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
+                  ?.call(context, message) ??
+              false,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ReplyMessage(message),
+              IsmChatDimens.boxHeight5,
+              ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: (IsmChatResponsive.isWeb(context))
+                        ? context.height * .04
+                        : context.height * .05,
+                  ),
+                  child: IsmChatMessageWrapperWithMetaData(message)),
+            ],
+          ),
         ),
       );
 }
