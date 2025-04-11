@@ -176,7 +176,20 @@ class WebMediaPreview extends StatelessWidget {
                                 onKeyEvent: (event) async {
                                   if (event.logicalKey ==
                                       LogicalKeyboardKey.enter) {
-                                    controller.sendMediaWeb();
+                                    if (await IsmChatProperties
+                                            .chatPageProperties
+                                            .messageAllowedConfig
+                                            ?.isMessgeAllowed
+                                            ?.call(
+                                                context,
+                                                Get.find<IsmChatPageController>(
+                                                        tag: IsmChat.i.tag)
+                                                    .conversation!,
+                                                IsmChatCustomMessageType
+                                                    .image) ??
+                                        true) {
+                                      controller.sendMediaWeb();
+                                    }
                                   }
                                 },
                                 child: IsmChatInputField(
@@ -211,8 +224,18 @@ class WebMediaPreview extends StatelessWidget {
                             ),
                             IsmChatDimens.boxWidth20,
                             IsmChatStartChatFAB(
-                              onTap: () {
-                                controller.sendMediaWeb();
+                              onTap: () async {
+                                if (await IsmChatProperties.chatPageProperties
+                                        .messageAllowedConfig?.isMessgeAllowed
+                                        ?.call(
+                                            context,
+                                            Get.find<IsmChatPageController>(
+                                                    tag: IsmChat.i.tag)
+                                                .conversation!,
+                                            IsmChatCustomMessageType.image) ??
+                                    true) {
+                                  controller.sendMediaWeb();
+                                }
                               },
                               icon: const Icon(
                                 Icons.send,
