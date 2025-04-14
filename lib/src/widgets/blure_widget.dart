@@ -8,8 +8,8 @@ class BlurFilter extends StatelessWidget {
     super.key,
     required this.child,
     this.isBlured = false,
-    this.sigmaX = 2.5,
-    this.sigmaY = 2.5,
+    this.sigmaX = 3,
+    this.sigmaY = 3,
   }) : _isWidget = true;
 
   const BlurFilter({
