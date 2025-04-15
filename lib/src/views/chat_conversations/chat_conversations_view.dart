@@ -151,25 +151,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                     Expanded(
                       child: Stack(
                         children: [
-                          Obx(
-                            () => controller.currentConversation != null
-                                ? ([
-                                    IsRenderChatPageScreen
-                                        .boradcastChatMessagePage,
-                                    IsRenderChatPageScreen.openChatMessagePage
-                                  ].contains(
-                                        controller.isRenderChatPageaScreen))
-                                    ? controller.isRenderChatScreenWidget()
-                                    : controller.chatPageView[
-                                        controller.currentConversationIndex]
-                                : IsmChatProperties.noChatSelectedPlaceholder ??
-                                    Center(
-                                      child: Text(
-                                        IsmChatStrings.startConversation,
-                                        style: IsmChatStyles.w400White18,
-                                      ),
-                                    ),
-                          ),
+                          Obx(() => _buildChatContent(controller)),
                           if (IsmChatResponsive.isTablet(context)) ...[
                             Obx(
                               () => controller.isRenderChatPageaScreen !=
@@ -243,6 +225,38 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                 : null,
           );
         },
+      );
+
+  Widget _buildChatContent(IsmChatConversationsController controller) {
+    if (controller.currentConversation == null &&
+        controller.currentConversationIndex == 0) {
+      return _buildNoConversationPlaceholder();
+    }
+
+    if (controller.currentConversationIndex == 0) {
+      return _buildFirstTabContent(controller);
+    }
+    return controller.chatPageView[controller.currentConversationIndex];
+  }
+
+  Widget _buildFirstTabContent(IsmChatConversationsController controller) {
+    var isSpecialPage = [
+      IsRenderChatPageScreen.boradcastChatMessagePage,
+      IsRenderChatPageScreen.openChatMessagePage
+    ].contains(controller.isRenderChatPageaScreen);
+
+    return isSpecialPage
+        ? controller.isRenderChatScreenWidget()
+        : controller.chatPageView[0];
+  }
+
+  Widget _buildNoConversationPlaceholder() =>
+      IsmChatProperties.noChatSelectedPlaceholder ??
+      Center(
+        child: Text(
+          IsmChatStrings.startConversation,
+          style: IsmChatStyles.w400White18,
+        ),
       );
 }
 
