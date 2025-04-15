@@ -1039,4 +1039,6 @@ class IsmChat {
 
   void currentConversationIndex({int index = 0}) =>
       _delegate.currentConversationIndex(index: index);
+
+  void shouldShowOtherOnChatPage() => _delegate.shouldShowOtherOnChatPage();
 }

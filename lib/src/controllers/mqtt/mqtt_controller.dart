@@ -400,4 +400,10 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       messageId: messageId,
     );
   }
+
+  void isSenderMe(String? senderId) {
+    if (senderId == userConfig?.userId) {
+      return;
+    }
+  }
 }

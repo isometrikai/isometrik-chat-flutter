@@ -624,4 +624,13 @@ class IsmChatDelegate {
           index;
     }
   }
+
+  void shouldShowOtherOnChatPage() {
+    if (Get.isRegistered<IsmChatConversationsController>()) {
+      final controller = Get.find<IsmChatConversationsController>();
+      if (controller.currentConversationIndex != 0) {
+        controller.isRenderChatPageaScreen = IsRenderChatPageScreen.none;
+      }
+    }
+  }
 }

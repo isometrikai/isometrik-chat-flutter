@@ -30,6 +30,27 @@ Path: `web` > `index.html`
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 ```
 
+```html
+<!-- This script adds the flutter initialization in body tag -->
+<!-- IMPORTANT: load pdfjs files -->
+<script
+  src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.min.js"
+  type="text/javascript"
+></script>
+<script type="text/javascript">
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.worker.min.js";
+  pdfRenderOptions = {
+    // where cmaps are downloaded from
+    cMapUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/cmaps/",
+    // The cmaps are compressed in the case
+    cMapPacked: true,
+    // any other options for pdfjsLib.getDocument.
+    // params: {}
+  };
+</script>
+```
+
 ---
 
 web Setup is done
@@ -40,3 +61,7 @@ Setup other platforms
 - [iOS](./README_ios.md)
 
 [Go back to main](./README.md)
+
+```
+
+```
