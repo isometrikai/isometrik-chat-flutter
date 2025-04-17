@@ -34,7 +34,7 @@ dependencies:
   fluttertoast: ^8.2.12
   gal: ^2.3.1
   geocoding: ^3.0.0
-  geolocator: ^13.0.2
+  geolocator: ^14.0.0
   get: ^4.7.2
   google_maps_flutter: ^2.10.0
   hive: ^2.2.3
@@ -45,15 +45,15 @@ dependencies:
   image_painter: ^0.7.1
   image_picker: ^1.1.2
   intl: ^0.20.2
-  just_audio: ^0.9.46
+  just_audio: ^0.10.0
   metadata_fetch: ^0.4.2
   mqtt_client: ^10.7.0
   mqtt_helper: ^1.0.2
   open_filex: ^4.6.0
   path: ^1.9.1
   path_provider: ^2.1.5
-  pdfx: ^2.8.0
-  permission_handler: ^11.3.1
+  pdfx: ^2.9.0
+  permission_handler: ^12.0.0+1
   photo_view: ^0.15.0
   plugin_platform_interface: ^2.1.8
   pull_to_refresh: ^2.0.0
