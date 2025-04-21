@@ -91,7 +91,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
             appBar: (IsmChatProperties.conversationProperties.shouldShowAppBar
                 ? PreferredSize(
                     preferredSize: Size(
-                      Get.width,
+                      IsmChatDimens.percentWidth(1),
                       IsmChatProperties.conversationProperties.headerHeight ??
                           IsmChatDimens.sixty,
                     ),

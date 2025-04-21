@@ -39,7 +39,7 @@ class IsmChatConversationSearchView extends StatelessWidget {
                   },
                   child: SizedBox(
                     height: IsmChatProperties.conversationProperties.height ??
-                        Get.height,
+                        IsmChatDimens.percentHeight(1),
                     child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: controller.searchConversationList.length,

@@ -20,8 +20,9 @@ class IsmChatDelegate {
   String? get tag => _tag.value;
   set tag(String? value) => _tag.value = value;
 
-  Future<void> initialize(
-    IsmChatCommunicationConfig config, {
+  Future<void> initialize({
+    required IsmChatCommunicationConfig communicationConfig,
+    required GlobalKey<NavigatorState> kNavigatorKey,
     bool useDatabase = true,
     NotificaitonCallback? showNotification,
     BuildContext? context,
@@ -37,10 +38,11 @@ class IsmChatDelegate {
     bool? isMonthFirst,
   }) async {
     _config = config;
+    IsmChatConfig.kNavigatorKey = kNavigatorKey;
     IsmChatConfig.context = context;
     IsmChatConfig.dbName = databaseName;
     IsmChatConfig.useDatabase = !kIsWeb && useDatabase;
-    IsmChatConfig.communicationConfig = config;
+    IsmChatConfig.communicationConfig = communicationConfig;
     IsmChatConfig.showNotification = showNotification;
     IsmChatConfig.mqttConnectionStatus = mqttConnectionStatus;
     IsmChatConfig.sortConversationWithIdentifier =

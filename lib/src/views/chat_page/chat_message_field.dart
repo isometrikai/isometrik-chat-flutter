@@ -311,7 +311,7 @@ class _ReplyMessage extends StatelessWidget {
           bottom: IsmChatDimens.zero,
         ),
         padding: IsmChatDimens.edgeInsets8,
-        width: Get.width,
+        width: IsmChatDimens.percentWidth(1),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(
             IsmChatDimens.sixteen,

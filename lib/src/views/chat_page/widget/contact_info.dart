@@ -36,7 +36,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
           centerTitle: true,
         ),
         body: SizedBox(
-          height: Get.height,
+          height: IsmChatDimens.percentHeight(1),
           child: ListView.separated(
             padding: IsmChatDimens.edgeInsets10,
             itemBuilder: (_, index) {

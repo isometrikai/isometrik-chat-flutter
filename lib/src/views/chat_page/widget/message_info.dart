@@ -64,7 +64,7 @@ class IsmChatMessageInfo extends StatelessWidget {
           body: SingleChildScrollView(
             child: Container(
               margin: IsmChatDimens.edgeInsets16,
-              height: Get.height,
+              height: IsmChatDimens.percentHeight(1),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

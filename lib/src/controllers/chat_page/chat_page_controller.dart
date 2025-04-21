@@ -777,10 +777,12 @@ class IsmChatPageController extends GetxController
             ? IsmChatDimens.percentHeight(.1)
             : 0);
 
-    var isOverFlowing = (overlayHeight + offset.dy) > (Get.height);
+    var isOverFlowing =
+        (overlayHeight + offset.dy) > (IsmChatDimens.percentHeight(1));
     var topPosition = offset.dy;
     if (isOverFlowing) {
-      topPosition = (Get.height - overlayHeight) - IsmChatDimens.twenty;
+      topPosition = (IsmChatDimens.percentHeight(1) - overlayHeight) -
+          IsmChatDimens.twenty;
     }
     OverlayState? overlayState = Overlay.of(context);
     messageHoldOverlayEntry = OverlayEntry(
@@ -842,7 +844,8 @@ class IsmChatPageController extends GetxController
           );
         }
         toggleEmojiBoard(false, false);
-        if (Get.height * 0.3 < (messagesScrollController.offset)) {
+        if (IsmChatDimens.percentHeight(1) * 0.3 <
+            (messagesScrollController.offset)) {
           showDownSideButton = true;
         } else {
           showDownSideButton = false;

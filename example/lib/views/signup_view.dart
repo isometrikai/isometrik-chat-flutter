@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter_example/controllers/auth/auth_binding.dart';
 import 'package:isometrik_chat_flutter_example/controllers/auth/auth_controller.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
 
@@ -17,7 +18,11 @@ class SignupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      GetX<AuthController>(builder: (controller) {
+      GetX<AuthController>(initState: (state) {
+        if (!Get.isRegistered<AuthController>()) {
+          AuthBinding().dependencies();
+        }
+      }, builder: (controller) {
         return SafeArea(
           bottom: false,
           top: false,

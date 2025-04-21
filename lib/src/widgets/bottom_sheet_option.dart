@@ -27,7 +27,7 @@ class IsmChatBottomSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(IsmChatDimens.twenty),
                 ),
                 padding: IsmChatDimens.edgeInsets20,
-                width: Get.width,
+                width: IsmChatDimens.percentWidth(1),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,

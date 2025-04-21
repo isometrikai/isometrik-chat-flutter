@@ -128,7 +128,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                   children: [
                     if (_isGroupConversation ?? false) ...[
                       Container(
-                          width: Get.width,
+                          width: IsmChatDimens.percentWidth(1),
                           color: IsmChatColors.whiteColor,
                           child: const _GroupChatImageAndName()),
                     ],

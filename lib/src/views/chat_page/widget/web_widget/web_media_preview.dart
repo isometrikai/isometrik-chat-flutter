@@ -87,7 +87,7 @@ class WebMediaPreview extends StatelessWidget {
                         Stack(
                           children: [
                             Container(
-                              width: Get.width,
+                              width: IsmChatDimens.percentWidth(1),
                               alignment: Alignment.center,
                               height: IsmChatDimens.sixty,
                               margin: IsmChatDimens.edgeInsets10,

@@ -38,8 +38,8 @@ class IsmChatConversationList extends StatelessWidget {
             );
           }
           return SizedBox(
-            height:
-                IsmChatProperties.conversationProperties.height ?? Get.height,
+            height: IsmChatProperties.conversationProperties.height ??
+                IsmChatDimens.percentHeight(1),
             child: kIsWeb
                 ? SlidableAutoCloseBehavior(
                     child: _ConversationList(),

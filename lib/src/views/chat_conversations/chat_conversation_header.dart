@@ -47,22 +47,26 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                         IsRenderConversationScreen.userView;
                     Scaffold.of(context).openDrawer();
                   }
-                : () => IsmChatUtility.openFullScreenBottomSheet(
-                      IsmChatUserView(
+                : () => IsmChatContextWidget.showBottomsheetContext(
+                      content: IsmChatUserView(
                         signOutTap: () async {
-                          await Get.dialog(IsmChatAlertDialogBox(
-                            title: '${IsmChatStrings.logout}?',
-                            content: const Text(IsmChatStrings.logoutMessage),
-                            actionLabels: const [
-                              IsmChatStrings.logout,
-                            ],
-                            callbackActions: [
-                              () {
-                                Get.back();
-                                onSignOut?.call();
-                              },
-                            ],
-                          ));
+                          await showDialog(
+                            context:
+                                IsmChatConfig.kNavigatorKey.currentContext!,
+                            builder: (context) => IsmChatAlertDialogBox(
+                              title: '${IsmChatStrings.logout}?',
+                              content: const Text(IsmChatStrings.logoutMessage),
+                              actionLabels: const [
+                                IsmChatStrings.logout,
+                              ],
+                              callbackActions: [
+                                () {
+                                  IsmChatContextWidget.goBack();
+                                  onSignOut?.call();
+                                },
+                              ],
+                            ),
+                          );
                         },
                       ),
                       enableDrag: true,
