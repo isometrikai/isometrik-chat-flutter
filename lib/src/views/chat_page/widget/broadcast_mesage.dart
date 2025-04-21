@@ -7,8 +7,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatBoradcastMessagePage extends StatelessWidget {
   const IsmChatBoradcastMessagePage({super.key});
 
-  static const String route = IsmPageRoutes.boradCastMessagePage;
-
   Future<bool> _back(
     BuildContext context,
   ) async {
@@ -25,9 +23,9 @@ class IsmChatBoradcastMessagePage extends StatelessWidget {
       await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
     } else {
       if (controller.messages.isNotEmpty) {
-        Get.back();
+        IsmChatContextWidget.goBack();
       }
-      Get.back();
+      IsmChatContextWidget.goBack();
     }
     if (controller.messages.isNotEmpty) {
       unawaited(conversationController.getChatConversations());

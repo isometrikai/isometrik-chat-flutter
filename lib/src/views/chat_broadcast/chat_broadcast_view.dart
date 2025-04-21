@@ -7,8 +7,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class IsmChatBroadCastView extends StatelessWidget {
   const IsmChatBroadCastView({super.key});
 
-  static const String route = IsmPageRoutes.broadCastView;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatBroadcastController>(
         initState: (state) {

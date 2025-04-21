@@ -21,8 +21,6 @@ class IsmChatForwardView extends StatelessWidget {
 
   final converstaionController = Get.find<IsmChatConversationsController>();
 
-  static const String route = IsmPageRoutes.forwardView;
-
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,
         height: IsmChatDimens.forty,
@@ -38,7 +36,10 @@ class IsmChatForwardView extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(
-                  IsmChatResponsive.isWeb(Get.context!) ? .23 : .7,
+                  IsmChatResponsive.isWeb(
+                          IsmChatConfig.kNavigatorKey.currentContext!)
+                      ? .23
+                      : .7,
                 ),
                 child: Divider(
                   height: .0,
@@ -263,16 +264,19 @@ class IsmChatForwardView extends StatelessWidget {
                                                           .length >
                                                       4
                                               ? () {
-                                                  Get.dialog(
-                                                    AlertDialog(
-                                                      title: const Text(
+                                                  IsmChatContextWidget
+                                                      .showDialogContext(
+                                                    content: const AlertDialog(
+                                                      title: Text(
                                                           'Alert message...'),
-                                                      content: const Text(
+                                                      content: Text(
                                                           'You can only share with up to 5 chats'),
                                                       actions: [
                                                         TextButton(
-                                                          onPressed: Get.back,
-                                                          child: const Text(
+                                                          onPressed:
+                                                              IsmChatContextWidget
+                                                                  .goBack,
+                                                          child: Text(
                                                             'Okay',
                                                             style: TextStyle(
                                                                 fontSize: 15),
@@ -362,7 +366,8 @@ class IsmChatForwardView extends StatelessWidget {
                                 if (await IsmChatProperties.chatPageProperties
                                         .messageAllowedConfig?.isMessgeAllowed
                                         ?.call(
-                                            Get.context!,
+                                            IsmChatConfig
+                                                .kNavigatorKey.currentContext!,
                                             Get.find<IsmChatPageController>(
                                                     tag: IsmChat.i.tag)
                                                 .conversation!,

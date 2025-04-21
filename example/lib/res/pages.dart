@@ -1,9 +1,9 @@
 import 'package:go_router/go_router.dart';
+import 'package:isometrik_chat_flutter_example/main.dart';
+import 'package:isometrik_chat_flutter_example/utilities/config.dart';
 import 'package:isometrik_chat_flutter_example/views/signup_view.dart';
 import 'package:isometrik_chat_flutter_example/views/views.dart';
 
-import '../main.dart';
-import '../utilities/config.dart';
 import 'res.dart';
 
 class AppRouter {
@@ -33,7 +33,6 @@ class AppRouter {
         name: AppRouteName.userListPage,
         builder: (context, state) => UserListPageView(),
       ),
-      //  ...IsmChatPages.pages
     ],
   );
 }

@@ -21,7 +21,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool sendPushNotification = true,
   }) async {
     if (IsmChatConfig.sendPaidWalletMessage?.call(
-            Get.context!,
+            IsmChatConfig.kNavigatorKey.currentContext!,
             _controller.conversation!,
             IsmChatCustomMessageType.fromString(customType)) ??
         false) {
@@ -55,7 +55,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       if (response.$1) {
         _controller.didReactedLast = false;
         await _controller.getMessagesFromDB(conversationId);
-        if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+        if (kIsWeb &&
+            IsmChatResponsive.isWeb(
+                IsmChatConfig.kNavigatorKey.currentContext!)) {
           await _controller.conversationController.getConversationsFromDB();
         }
       }
@@ -89,7 +91,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       if (isMessageSent && !isBroadcast) {
         _controller.didReactedLast = false;
         await _controller.getMessagesFromDB(conversationId);
-        if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+        if (kIsWeb &&
+            IsmChatResponsive.isWeb(
+                IsmChatConfig.kNavigatorKey.currentContext!)) {
           await _controller.conversationController.getConversationsFromDB();
         }
       }
@@ -125,11 +129,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
     if (isMaxSize == false) {
-      Get.back<void>();
+      IsmChatContextWidget.goBack<void>();
       sendPhotoAndVideo();
     } else {
-      await Get.dialog(
-        const IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: const IsmChatAlertDialogBox(
           title: IsmChatStrings.youCanNotSend,
           cancelLabel: IsmChatStrings.okay,
         ),
@@ -149,12 +153,12 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     }
     if (isMaxSize == false) {
       _controller.showCloseLoaderForMoble(showLoader: false);
-      Get.back<void>();
+      IsmChatContextWidget.goBack<void>();
       sendPhotoAndVideoForWeb();
     } else {
       IsmChatUtility.closeLoader();
-      await Get.dialog(
-        const IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: const IsmChatAlertDialogBox(
           title: IsmChatStrings.youCanNotSend,
           cancelLabel: IsmChatStrings.okay,
         ),
@@ -194,7 +198,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         if (await IsmChatProperties
                 .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
                 ?.call(
-                    Get.context!,
+                    IsmChatConfig.kNavigatorKey.currentContext!,
                     Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                         .conversation!,
                     media.isVideo
@@ -312,7 +316,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper
           ?.saveMessage(audioMessage, IsmChatDbBox.pending);
-      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext!)) {
         _controller.updateLastMessagOnCurrentTime(audioMessage);
       }
     }
@@ -435,8 +441,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             ),
           );
         } else {
-          await Get.dialog(
-            const IsmChatAlertDialogBox(
+          await IsmChatContextWidget.showDialogContext(
+            content: const IsmChatAlertDialogBox(
               title: IsmChatStrings.youCanNotSend,
               cancelLabel: IsmChatStrings.okay,
             ),
@@ -452,7 +458,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       if (!_controller.isBroadcast) {
         await IsmChatConfig.dbWrapper!
             .saveMessage(documentMessage, IsmChatDbBox.pending);
-        if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+        if (kIsWeb &&
+            IsmChatResponsive.isWeb(
+                IsmChatConfig.kNavigatorKey.currentContext!)) {
           _controller.updateLastMessagOnCurrentTime(documentMessage);
         }
       }
@@ -464,7 +472,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       if (await IsmChatProperties
               .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
               ?.call(
-                  Get.context!,
+                  IsmChatConfig.kNavigatorKey.currentContext!,
                   Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                       .conversation!,
                   IsmChatCustomMessageType.file) ??
@@ -500,7 +508,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     IsmChatMessageModel? videoMessage;
     Uint8List? bytes;
     var sentAt = DateTime.now().millisecondsSinceEpoch;
-    if (IsmChatResponsive.isMobile(Get.context!) & !kIsWeb) {
+    if (IsmChatResponsive.isMobile(
+            IsmChatConfig.kNavigatorKey.currentContext!) &
+        !kIsWeb) {
       final editor =
           VideoEditorBuilder(videoPath: webMediaModel.platformFile.path ?? '')
               .compress();
@@ -582,7 +592,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper!
           .saveMessage(videoMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext!)) {
         _controller.updateLastMessagOnCurrentTime(videoMessage);
       }
     }
@@ -681,7 +693,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper!
           .saveMessage(imageMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext!)) {
         _controller.updateLastMessagOnCurrentTime(imageMessage);
       }
     }
@@ -775,7 +789,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper!
           .saveMessage(imageMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext!)) {
         _controller.updateLastMessagOnCurrentTime(imageMessage);
       }
     }
@@ -871,7 +887,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper!
           .saveMessage(locationMessage, IsmChatDbBox.pending);
 
-      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext!)) {
         _controller.updateLastMessagOnCurrentTime(locationMessage);
       }
     }
@@ -1047,7 +1065,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper
           ?.saveMessage(textMessage, IsmChatDbBox.pending);
-      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext!)) {
         _controller.updateLastMessagOnCurrentTime(textMessage);
       }
     }
@@ -1325,7 +1345,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
           .saveMessage(aboutTextMessage, IsmChatDbBox.pending);
-      if (kIsWeb && IsmChatResponsive.isWeb(Get.context!)) {
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext!)) {
         _controller.updateLastMessagOnCurrentTime(aboutTextMessage);
       }
     }

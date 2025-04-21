@@ -5,8 +5,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatGlobalSearchView extends StatefulWidget {
   const IsmChatGlobalSearchView({super.key});
 
-  static const String route = IsmPageRoutes.globalSearch;
-
   @override
   State<IsmChatGlobalSearchView> createState() =>
       _IsmChatGlobalSearchViewState();

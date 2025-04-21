@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/src/res/res.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatBottomSheet extends StatelessWidget {
   const IsmChatBottomSheet({
@@ -34,7 +33,7 @@ class IsmChatBottomSheet extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        Get.back<void>();
+                        IsmChatContextWidget.goBack();
                         onClearTap.call();
                       },
                       child: Text(
@@ -46,7 +45,7 @@ class IsmChatBottomSheet extends StatelessWidget {
                     IsmChatDimens.boxHeight16,
                     InkWell(
                       onTap: () {
-                        Get.back<void>();
+                        IsmChatContextWidget.goBack();
                         onDeleteTap.call();
                       },
                       child: Text(
@@ -60,7 +59,7 @@ class IsmChatBottomSheet extends StatelessWidget {
               ),
               IsmChatDimens.boxHeight4,
               InkWell(
-                onTap: Get.back,
+                onTap: IsmChatContextWidget.goBack,
                 child: Container(
                   padding: IsmChatDimens.edgeInsets10,
                   decoration: BoxDecoration(
@@ -150,10 +149,10 @@ class IsmChatProfilePhotoBottomSheet extends StatelessWidget {
             ),
           ),
         ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: Get.back,
+        cancelButton: const CupertinoActionSheetAction(
+          onPressed: IsmChatContextWidget.goBack,
           isDestructiveAction: true,
-          child: const Text('Cancel'),
+          child: Text('Cancel'),
         ),
       );
 }

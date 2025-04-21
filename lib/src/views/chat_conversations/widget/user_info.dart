@@ -9,7 +9,6 @@ class IsmChatUserView extends StatelessWidget {
   IsmChatUserView({super.key, this.signOutTap});
 
   final VoidCallback? signOutTap;
-  static const String route = IsmPageRoutes.userView;
 
   final FocusNode focusNode = FocusNode();
 
@@ -36,7 +35,7 @@ class IsmChatUserView extends StatelessWidget {
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
-            onBack: Get.back,
+            onBack: IsmChatContextWidget.goBack,
             title: Text(
               IsmChatStrings.userInfo,
               style: IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
@@ -80,8 +79,8 @@ class IsmChatUserView extends StatelessWidget {
                           if (IsmChatResponsive.isWeb(context)) {
                             controller.ismUploadImage(ImageSource.gallery);
                           } else {
-                            Get.bottomSheet<void>(
-                              IsmChatProfilePhotoBottomSheet(
+                            IsmChatContextWidget.showBottomsheetContext<void>(
+                              content: IsmChatProfilePhotoBottomSheet(
                                 onCameraTap: () async {
                                   controller
                                       .updateUserDetails(ImageSource.camera);
@@ -91,7 +90,6 @@ class IsmChatUserView extends StatelessWidget {
                                       .updateUserDetails(ImageSource.gallery);
                                 },
                               ),
-                              elevation: 0,
                             );
                           }
                         },
@@ -264,7 +262,7 @@ class IsmChatUserView extends StatelessWidget {
                               } else {
                                 controller.unblockUserForWeb(user.userId);
 
-                                Get.back();
+                                IsmChatContextWidget.goBack();
                               }
                               unawaited(controller.getChatConversations());
                             },

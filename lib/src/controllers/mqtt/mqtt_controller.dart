@@ -64,10 +64,10 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   ///
   /// This method initializes the MQTT connection and sets up necessary configurations.
   Future<void> setup({
-    IsmChatCommunicationConfig? config,
+    required IsmChatCommunicationConfig config,
     required IsmMqttProperties mqttProperties,
   }) async {
-    _config = config ?? IsmChat.i.config;
+    _config = config;
     projectConfig = _config?.projectConfig;
     mqttConfig = _config?.mqttConfig;
     userConfig = _config?.userConfig;

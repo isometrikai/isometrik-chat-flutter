@@ -6,8 +6,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatGroupEligibleUser extends StatelessWidget {
   const IsmChatGroupEligibleUser({super.key});
 
-  static const String route = IsmPageRoutes.groupEligiableView;
-
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,
         height: IsmChatDimens.forty,
@@ -23,8 +21,10 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
               style: IsmChatStyles.w600Black14,
             ),
             SizedBox(
-                width: IsmChatDimens.percentWidth(
-                    IsmChatResponsive.isWeb(Get.context!) ? .24 : .7),
+                width: IsmChatDimens.percentWidth(IsmChatResponsive.isWeb(
+                        IsmChatConfig.kNavigatorKey.currentContext!)
+                    ? .24
+                    : .7),
                 child: Divider(
                   height: .0,
                   indent: IsmChatDimens.ten,
@@ -343,7 +343,7 @@ class _SelectedUsers extends StatelessWidget {
                         memberIds.add(x.userDetails.userId);
                       }
                     }
-                    Get.back<void>();
+                    IsmChatContextWidget.goBack<void>();
                     await controller.addMembers(
                         isLoading: true, memberIds: memberIds);
                   },

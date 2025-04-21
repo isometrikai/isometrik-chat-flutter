@@ -5,8 +5,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatUserSearchView extends StatelessWidget {
   const IsmChatUserSearchView({super.key});
 
-  static const String route = IsmPageRoutes.userSearch;
-
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(

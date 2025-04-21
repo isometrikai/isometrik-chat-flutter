@@ -197,8 +197,8 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                       if (IsmChatProperties.conversationProperties.allowDelete)
                         SlidableAction(
                           onPressed: (_) async {
-                            await Get.bottomSheet(
-                              IsmChatClearConversationBottomSheet(
+                            await IsmChatContextWidget.showBottomsheetContext(
+                              content: IsmChatClearConversationBottomSheet(
                                 widget.conversation,
                               ),
                               isDismissible: false,

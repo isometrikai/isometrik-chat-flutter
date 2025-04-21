@@ -11,8 +11,6 @@ import 'package:path_provider/path_provider.dart';
 class IsmChatImagePaintView extends StatelessWidget {
   IsmChatImagePaintView({super.key});
 
-  static const String route = IsmPageRoutes.imagePaint;
-
   final ImagePainterController _controller = ImagePainterController(
     color: IsmChatColors.primaryColorLight,
     strokeWidth: 4,
@@ -30,7 +28,7 @@ class IsmChatImagePaintView extends StatelessWidget {
               color: IsmChatColors.whiteColor,
             ),
             onTap: () {
-              Get.back<XFile>(result: XFile(file.path));
+              IsmChatContextWidget.goBack<XFile>(XFile(file.path));
             },
           ),
           backgroundColor: IsmChatConfig.chatTheme.primaryColor,
@@ -49,7 +47,7 @@ class IsmChatImagePaintView extends StatelessWidget {
                 final imgFile = File(fullPath);
                 imgFile.writeAsBytesSync(image ?? Uint8List(0));
                 IsmChatUtility.closeLoader();
-                Get.back<XFile>(result: XFile(imgFile.path));
+                IsmChatContextWidget.goBack<XFile>(XFile(imgFile.path));
               },
               style: ButtonStyle(
                   side: const WidgetStatePropertyAll(

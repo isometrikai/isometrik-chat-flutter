@@ -37,7 +37,6 @@ class IsmChatDelegate {
     IsmMqttProperties? mqttProperties,
     bool? isMonthFirst,
   }) async {
-    _config = config;
     IsmChatConfig.kNavigatorKey = kNavigatorKey;
     IsmChatConfig.context = context;
     IsmChatConfig.dbName = databaseName;
@@ -56,13 +55,13 @@ class IsmChatDelegate {
     IsmChatConfig.configInitilized = true;
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
     await _initializeMqtt(
-      config: _config,
+      config: communicationConfig,
       mqttProperties: mqttProperties ?? IsmMqttProperties(),
     );
   }
 
   Future<void> _initializeMqtt({
-    IsmChatCommunicationConfig? config,
+    required IsmChatCommunicationConfig config,
     required IsmMqttProperties mqttProperties,
   }) async {
     if (!Get.isRegistered<IsmChatMqttController>()) {

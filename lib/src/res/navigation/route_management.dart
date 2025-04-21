@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -6,87 +6,87 @@ class IsmChatRouteManagement {
   const IsmChatRouteManagement._();
 
   static void goToChatPage() {
-    Get.toNamed(IsmChatPageView.route);
+    // Get.toNamed(IsmChatPageView.route);
   }
 
   static void goToBroadcastMessagePage({bool isBroadcast = false}) {
-    Get.toNamed(IsmChatBoradcastMessagePage.route, arguments: {
-      'isBroadcast': isBroadcast,
-    });
+    // Get.toNamed(IsmChatBoradcastMessagePage.route, arguments: {
+    //   'isBroadcast': isBroadcast,
+    // });
   }
 
   static void goToOpenChatMessagePage({bool isBroadcast = false}) {
-    Get.toNamed(IsmChatOpenChatMessagePage.route, arguments: {
-      'isBroadcast': isBroadcast,
-    });
+    // Get.toNamed(IsmChatOpenChatMessagePage.route, arguments: {
+    //   'isBroadcast': isBroadcast,
+    // });
   }
 
   static void goToCreateChat({
     required bool isGroupConversation,
     IsmChatConversationType conversationType = IsmChatConversationType.private,
   }) {
-    Get.toNamed(IsmChatCreateConversationView.route, arguments: {
-      'isGroupConversation': isGroupConversation,
-      'conversationType': conversationType
-    });
+    // Get.toNamed(IsmChatCreateConversationView.route, arguments: {
+    //   'isGroupConversation': isGroupConversation,
+    //   'conversationType': conversationType
+    // });
   }
 
   static void goToBlockView() {
-    Get.toNamed(IsmChatBlockedUsersView.route);
+    // Get.toNamed(IsmChatBlockedUsersView.route);
   }
 
   static void goToBroadcastListView() {
-    Get.toNamed(IsmChatBroadCastView.route);
+    // Get.toNamed(IsmChatBroadCastView.route);
   }
 
   static void goToEditBroadcastView(BroadcastModel broadcast) {
-    Get.toNamed(
-      IsmChatEditBroadcastView.route,
-      arguments: broadcast,
-    );
+    // Get.toNamed(
+    //   IsmChatEditBroadcastView.route,
+    //   arguments: broadcast,
+    // );
   }
 
   static void goToEligibleMembersView(String groupcastId) {
-    Get.toNamed(
-      IsmChatEligibleMembersView.route,
-      arguments: groupcastId,
-    );
+    // Get.toNamed(
+    //   IsmChatEligibleMembersView.route,
+    //   arguments: groupcastId,
+    // );
   }
 
   static void goToObserverView(String conversationId) {
-    Get.toNamed(IsmChatObserverUsersView.route,
-        arguments: {'conversationId': conversationId});
+    // Get.toNamed(IsmChatObserverUsersView.route,
+    //     arguments: {'conversationId': conversationId});
   }
 
   static void goToForwardView(
       {required IsmChatMessageModel message,
       required IsmChatConversationModel conversation}) {
-    Get.toNamed(IsmChatForwardView.route,
-        arguments: {'message': message, 'conversation': conversation});
+    // Get.toNamed(IsmChatForwardView.route,
+    //     arguments: {'message': message, 'conversation': conversation});
   }
 
   static void goToCreteBroadcastView() {
-    Get.toNamed(IsmChatCreateBroadCastView.route);
+    // Get.toNamed(IsmChatCreateBroadCastView.route);
   }
 
   static void goToPublicView() {
-    Get.toNamed(IsmChatPublicConversationView.route);
+    // Get.toNamed(IsmChatPublicConversationView.route);
   }
 
   static void goToOpenView() {
-    Get.toNamed(IsmChatOpenConversationView.route);
+    // Get.toNamed(IsmChatOpenConversationView.route);
   }
 
   static void goToConversationInfo() {
-    Get.toNamed(IsmChatConverstaionInfoView.route);
+    // Get.toNamed(IsmChatConverstaionInfoView.route);
   }
 
   static void goToEligibleUser() {
-    Get.toNamed(IsmChatGroupEligibleUser.route);
+    // Get.toNamed(IsmChatGroupEligibleUser.route);
   }
 
   static void goToLocation() {
-    Get.toNamed(IsmChatLocationWidget.route);
+    // Get.toNamed(IsmChatLocationWidget.route);
   }
 
   static void goToMediaPreview({
@@ -96,37 +96,37 @@ class IsmChatRouteManagement {
     required int mediaTime,
     required int mediaIndex,
   }) {
-    Get.toNamed(IsmMediaPreview.route, arguments: {
-      'messageData': messageData,
-      'mediaUserName': mediaUserName,
-      'initiated': initiated,
-      'mediaTime': mediaTime,
-      'mediaIndex': mediaIndex,
-    });
+    // Get.toNamed(IsmMediaPreview.route, arguments: {
+    //   'messageData': messageData,
+    //   'mediaUserName': mediaUserName,
+    //   'initiated': initiated,
+    //   'mediaTime': mediaTime,
+    //   'mediaIndex': mediaIndex,
+    // });
   }
 
   static void goToMessageInfo({
     required IsmChatMessageModel? message,
     required bool? isGroup,
   }) {
-    Get.toNamed(IsmChatMessageInfo.route, arguments: {
-      'message': message,
-      'isGroup': isGroup,
-    });
+    // Get.toNamed(IsmChatMessageInfo.route, arguments: {
+    //   'message': message,
+    //   'isGroup': isGroup,
+    // });
   }
 
   static void goToUserInfo(
       {required UserDetails user,
       required String conversationId,
       bool fromMessagePage = true}) {
-    Get.toNamed(
-      IsmChatUserInfo.route,
-      arguments: {
-        'user': user,
-        'conversationId': conversationId,
-        'fromMessagePage': fromMessagePage
-      },
-    );
+    // Get.toNamed(
+    //   IsmChatUserInfo.route,
+    //   arguments: {
+    //     'user': user,
+    //     'conversationId': conversationId,
+    //     'fromMessagePage': fromMessagePage
+    //   },
+    // );
   }
 
   static void goToMedia(
@@ -134,25 +134,25 @@ class IsmChatRouteManagement {
       required List<IsmChatMessageModel>? mediaListLinks,
       required List<IsmChatMessageModel>? mediaListDocs,
       d}) {
-    Get.toNamed(
-      IsmMedia.route,
-      arguments: {
-        'mediaList': mediaList,
-        'mediaListLinks': mediaListLinks,
-        'mediaListDocs': mediaListDocs
-      },
-    );
+    // Get.toNamed(
+    //   IsmMedia.route,
+    //   arguments: {
+    //     'mediaList': mediaList,
+    //     'mediaListLinks': mediaListLinks,
+    //     'mediaListDocs': mediaListDocs
+    //   },
+    // );
   }
 
   static void goToWallpaperPreview(
       {required String? backgroundColor,
       required XFile? imagePath,
       required int? assetSrNo}) {
-    Get.toNamed(IsmChatWallpaperPreview.route, arguments: {
-      'backgroundColor': backgroundColor,
-      'imagePath': imagePath,
-      'assetSrNo': assetSrNo
-    });
+    // Get.toNamed(IsmChatWallpaperPreview.route, arguments: {
+    //   'backgroundColor': backgroundColor,
+    //   'imagePath': imagePath,
+    //   'assetSrNo': assetSrNo
+    // });
   }
 
   static void goToWebMediaMessagePreview({
@@ -162,71 +162,85 @@ class IsmChatRouteManagement {
     required int? mediaTime,
     final int? mediaIndex,
   }) {
-    Get.toNamed(IsmWebMessageMediaPreview.route, arguments: {
-      'messageData': messageData,
-      'mediaUserName': mediaUserName,
-      'mediaTime': mediaTime,
-      'mediaIndex': mediaIndex,
-    });
+    // Get.toNamed(IsmWebMessageMediaPreview.route, arguments: {
+    //   'messageData': messageData,
+    //   'mediaUserName': mediaUserName,
+    //   'mediaTime': mediaTime,
+    //   'mediaIndex': mediaIndex,
+    // });
   }
 
   static void goToCameraView() {
-    Get.toNamed(
-      IsmChatCameraView.route,
-    );
+    // Get.toNamed(
+    //   IsmChatCameraView.route,
+    // );
   }
 
   static void goToVideView({required XFile file}) {
-    Get.toNamed(IsmChatVideoView.route, arguments: {'file': file});
+    // Get.toNamed(IsmChatVideoView.route, arguments: {'file': file});
   }
 
   static void goToContactView() {
-    Get.toNamed(IsmChatContactView.route);
+    // Get.toNamed(IsmChatContactView.route);
   }
 
   static void goToContactInfoView(
       {required List<IsmChatContactMetaDatModel> contacts}) {
-    Get.toNamed(
-      IsmChatContactsInfoView.route,
-      arguments: {'contacts': contacts},
-    );
+    // Get.toNamed(
+    //   IsmChatContactsInfoView.route,
+    //   arguments: {'contacts': contacts},
+    // );
   }
 
   static void goToSearchMessageView() {
-    Get.toNamed(IsmChatSearchMessgae.route);
+    // Get.toNamed(IsmChatSearchMessgae.route);
   }
 
   static void goToGlobalSearchView() {
-    Get.toNamed(IsmChatGlobalSearchView.route);
+    // Get.toNamed(IsmChatGlobalSearchView.route);
   }
 
   static void goToMediaEditView() {
-    Get.toNamed(IsmChatImageEditView.route);
+    // Get.toNamed(IsmChatImageEditView.route);
   }
 
   static void goToGalleryAssetsView(List<XFile?> fileList) {
-    Get.toNamed(IsmChatGalleryAssetsView.route, arguments: {
-      'fileList': fileList,
-    });
+    // Get.toNamed(IsmChatGalleryAssetsView.route, arguments: {
+    //   'fileList': fileList,
+    // });
   }
 
-  static Future<XFile> goToImagePaintView(XFile file) async =>
-      await Get.toNamed(IsmChatImagePaintView.route, arguments: {
-        'file': file,
-      });
+  // static Future<XFile> goToImagePaintView(XFile file) async =>
+  //     await Get.toNamed(
+  //       IsmChatImagePaintView.route,
+  //       arguments: {
+  //         'file': file,
+  //       },
+  //     );
 
-  static Future<XFile> goToVideoTrimeView({
-    required XFile file,
-    required double maxVideoTrim,
-    required int index,
-  }) async =>
-      await Get.toNamed(IsmVideoTrimmerView.route, arguments: {
-        'file': file,
-        'maxVideoTrim': maxVideoTrim,
-        'index': index
-      });
+  // static Future<XFile> goToVideoTrimeView({
+  //   required XFile file,
+  //   required double maxVideoTrim,
+  //   required int index,
+  // }) async =>
+  //     await Get.toNamed(IsmVideoTrimmerView.route, arguments: {
+  //       'file': file,
+  //       'maxVideoTrim': maxVideoTrim,
+  //       'index': index
+  //     });
 
   static void goToProfilePicView(UserDetails user) {
-    Get.toNamed(IsmChatProfilePicView.route, arguments: {'user': user});
+    // Get.toNamed(IsmChatProfilePicView.route, arguments: {'user': user});
   }
+}
+
+class IsmChatRoute {
+  IsmChatRoute._();
+
+  static Future<void> goToRoute<T>(Widget child) async =>
+      await IsmChatConfig.kNavigatorKey.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => child,
+        ),
+      );
 }

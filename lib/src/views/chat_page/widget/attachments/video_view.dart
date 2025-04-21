@@ -15,7 +15,6 @@ class IsmChatVideoView extends StatefulWidget {
     super.key,
   });
 
-  static const String route = IsmPageRoutes.videoView;
   @override
   State<IsmChatVideoView> createState() => _IsmChatVideoViewState();
 }
@@ -95,9 +94,9 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
             webMediaModel?.dataSize ?? '',
             style: IsmChatStyles.w600White16,
           ),
-          leading: IconButton(
-            onPressed: Get.back,
-            icon: const Icon(
+          leading: const IconButton(
+            onPressed: IsmChatContextWidget.goBack,
+            icon: Icon(
               Icons.arrow_back_rounded,
               color: IsmChatColors.whiteColor,
             ),
@@ -106,15 +105,15 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
           actions: [
             IconButton(
               onPressed: () async {
-                var trimFile = await IsmChatRouteManagement.goToVideoTrimeView(
-                  index: 0,
-                  file: XFile(
-                    webMediaModel?.platformFile.path ?? '',
-                  ),
-                  maxVideoTrim: 30,
-                );
+                // var trimFile = await IsmChatRouteManagement.goToVideoTrimeView(
+                //   index: 0,
+                //   file: XFile(
+                //     webMediaModel?.platformFile.path ?? '',
+                //   ),
+                //   maxVideoTrim: 30,
+                // );
 
-                _voidConfig(trimFile);
+                // _voidConfig(trimFile);
               },
               icon: const Icon(
                 Icons.content_cut_rounded,
@@ -157,11 +156,13 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                 backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                 onPressed: () async {
                   if (webMediaModel?.dataSize.size() ?? false) {
-                    Get.back<void>();
-                    Get.back<void>();
+                    IsmChatContextWidget.goBack();
+                    IsmChatContextWidget.goBack();
                     if (await IsmChatProperties.chatPageProperties
                             .messageAllowedConfig?.isMessgeAllowed
-                            ?.call(Get.context!, controller.conversation!,
+                            ?.call(
+                                IsmChatConfig.kNavigatorKey.currentContext!,
+                                controller.conversation!,
                                 IsmChatCustomMessageType.video) ??
                         true) {
                       await controller.sendVideo(
@@ -174,8 +175,8 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                       );
                     }
                   } else {
-                    await Get.dialog(
-                      const IsmChatAlertDialogBox(
+                    await IsmChatContextWidget.showDialogContext(
+                      content: const IsmChatAlertDialogBox(
                         title: IsmChatStrings.youCanNotSend,
                         cancelLabel: IsmChatStrings.okay,
                       ),

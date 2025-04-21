@@ -5,8 +5,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatEligibleMembersView extends StatelessWidget {
   IsmChatEligibleMembersView({super.key});
 
-  static const String route = IsmPageRoutes.eligibleMemberstView;
-
   final groupcastId = Get.arguments as String;
 
   @override

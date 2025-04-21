@@ -523,8 +523,10 @@ class IsmChatConversationsController extends GetxController {
           conversationId: currentConversation?.conversationId ?? '',
         );
       case IsRenderChatPageScreen.outSideView:
-        return IsmChatProperties.conversationProperties.thirdColumnWidget
-                ?.call(Get.context!, currentConversation!, false) ??
+        return IsmChatProperties.conversationProperties.thirdColumnWidget?.call(
+                IsmChatConfig.kNavigatorKey.currentContext!,
+                currentConversation!,
+                false) ??
             const SizedBox.shrink();
     }
     return const SizedBox.shrink();
@@ -1194,7 +1196,7 @@ class IsmChatConversationsController extends GetxController {
       metaData: metaData,
     );
     if (response?.hasError == false) {
-      Get.back();
+      IsmChatContextWidget.goBack();
       await getChatConversations();
     }
   }
@@ -1256,7 +1258,7 @@ class IsmChatConversationsController extends GetxController {
     var response = await _viewModel.joinConversation(
         conversationId: conversationId, isLoading: isloading);
     if (response != null) {
-      Get.back();
+      IsmChatContextWidget.goBack();
       await getChatConversations();
     }
   }
@@ -1283,7 +1285,7 @@ class IsmChatConversationsController extends GetxController {
 
   /// Navigates to the chat page based on the platform (web or mobile).
   Future<void> goToChatPage() async {
-    if (IsmChatResponsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
       if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         IsmChatPageBinding().dependencies();
         return;
@@ -1297,7 +1299,7 @@ class IsmChatConversationsController extends GetxController {
         chatPagecontroller.toggleEmojiBoard(false, false);
       }
     } else {
-      IsmChatRouteManagement.goToChatPage();
+      await IsmChatRoute.goToRoute(const IsmChatPageView());
     }
   }
 
@@ -1557,7 +1559,7 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// `source`: The source of the image to upload.
   void updateUserDetails(ImageSource source) async {
-    Get.back();
+    IsmChatContextWidget.goBack();
     final imageUrl = await ismUploadImage(source);
     if (imageUrl.isNotEmpty) {
       await updateUserData(
@@ -1872,8 +1874,8 @@ class IsmChatConversationsController extends GetxController {
     );
 
     updateLocalConversation(conversation);
-    if (IsmChatResponsive.isWeb(Get.context!)) {
-      Get.back();
+    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+      IsmChatContextWidget.goBack();
       if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         IsmChatPageBinding().dependencies();
       }

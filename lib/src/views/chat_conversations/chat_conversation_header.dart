@@ -197,18 +197,20 @@ class _MoreIcon extends StatelessWidget {
           controller.isRenderScreen = IsRenderConversationScreen.groupUserView;
           Scaffold.of(context).openDrawer();
         } else if (index == 5) {
-          await Get.dialog(IsmChatAlertDialogBox(
-            title: '${IsmChatStrings.logout}?',
-            content: const Text(IsmChatStrings.logoutMessage),
-            actionLabels: const [
-              IsmChatStrings.logout,
-            ],
-            callbackActions: [
-              () {
-                onSignOut?.call();
-              },
-            ],
-          ));
+          await IsmChatContextWidget.showDialogContext(
+            content: IsmChatAlertDialogBox(
+              title: '${IsmChatStrings.logout}?',
+              content: const Text(IsmChatStrings.logoutMessage),
+              actionLabels: const [
+                IsmChatStrings.logout,
+              ],
+              callbackActions: [
+                () {
+                  onSignOut?.call();
+                },
+              ],
+            ),
+          );
         } else if (IsmChatProperties
                     .conversationProperties.conversationPosition ==
                 IsmChatConversationPosition.menu &&

@@ -7,8 +7,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatOpenChatMessagePage extends StatelessWidget {
   const IsmChatOpenChatMessagePage({super.key});
 
-  static const String route = IsmPageRoutes.openChatMessagePage;
-
   Future<bool> _back({
     required BuildContext context,
     required IsmChatPageController controller,
@@ -23,7 +21,7 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
           IsRenderChatPageScreen.none;
       await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
     } else {
-      Get.back();
+      IsmChatContextWidget.goBack();
     }
     unawaited(conversationController.leaveObserver(
       conversationId: controller.conversation?.conversationId ?? '',
@@ -96,12 +94,14 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
                 IconButton(
                   onPressed: () async {
                     if (IsmChatResponsive.isWeb(context)) {
-                      await Get.dialog(IsmChatPageDailog(
-                        child: IsmChatObserverUsersView(
-                          conversationId:
-                              controller.conversation?.conversationId ?? '',
+                      await IsmChatContextWidget.showDialogContext(
+                        content: IsmChatPageDailog(
+                          child: IsmChatObserverUsersView(
+                            conversationId:
+                                controller.conversation?.conversationId ?? '',
+                          ),
                         ),
-                      ));
+                      );
                     } else {
                       IsmChatRouteManagement.goToObserverView(
                           controller.conversation?.conversationId ?? '');

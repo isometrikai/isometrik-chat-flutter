@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:easy_video_editor/easy_video_editor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,8 +11,6 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
   IsmChatGalleryAssetsView({
     super.key,
   });
-
-  static const String route = IsmPageRoutes.alleryAssetsView;
 
   final mediaXFile = Get.arguments['fileList'] as List<XFile?>? ?? [];
 
@@ -43,7 +40,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                         IsmChatColors.whiteColor,
                   ),
                   onTap: () {
-                    Get.back<void>();
+                    IsmChatContextWidget.goBack<void>();
                     controller.webMedia.clear();
                     controller.isVideoVisible = false;
                   },
@@ -102,7 +99,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                 controller.assetsIndex =
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
-                                  Get.back<void>();
+                                  IsmChatContextWidget.goBack<void>();
                                 }
                               },
                               child: Icon(
@@ -119,42 +116,42 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             IconButton(
                               onPressed: () async {
                                 controller.isVideoVisible = true;
-                                var mediaFile = await IsmChatRouteManagement
-                                    .goToVideoTrimeView(
-                                  index: controller.assetsIndex,
-                                  file: XFile(
-                                    controller.webMedia[controller.assetsIndex]
-                                            .platformFile.path ??
-                                        '',
-                                  ),
-                                  maxVideoTrim: 30,
-                                );
-                                final thumb = await VideoEditorBuilder(
-                                        videoPath: mediaFile.path)
-                                    .generateThumbnail(
-                                  quality: 50,
-                                  positionMs: 1,
-                                );
-                                final thumbFile = File(thumb ?? '');
-                                final thumbnailBytes =
-                                    await thumbFile.readAsBytes();
-                                var bytes = await mediaFile.readAsBytes();
-                                final fileSize = IsmChatUtility.formatBytes(
-                                  int.parse(bytes.length.toString()),
-                                );
-                                controller.webMedia[controller.assetsIndex] =
-                                    WebMediaModel(
-                                  dataSize: fileSize,
-                                  isVideo: true,
-                                  platformFile: IsmchPlatformFile(
-                                    name: mediaFile.name,
-                                    bytes: bytes,
-                                    path: mediaFile.path,
-                                    size: bytes.length,
-                                    extension: mediaFile.mimeType,
-                                    thumbnailBytes: thumbnailBytes,
-                                  ),
-                                );
+                                // var mediaFile = await IsmChatRouteManagement
+                                //     .goToVideoTrimeView(
+                                //   index: controller.assetsIndex,
+                                //   file: XFile(
+                                //     controller.webMedia[controller.assetsIndex]
+                                //             .platformFile.path ??
+                                //         '',
+                                //   ),
+                                //   maxVideoTrim: 30,
+                                // );
+                                // final thumb = await VideoEditorBuilder(
+                                //         videoPath: mediaFile.path)
+                                //     .generateThumbnail(
+                                //   quality: 50,
+                                //   positionMs: 1,
+                                // );
+                                // final thumbFile = File(thumb ?? '');
+                                // final thumbnailBytes =
+                                //     await thumbFile.readAsBytes();
+                                // var bytes = await mediaFile.readAsBytes();
+                                // final fileSize = IsmChatUtility.formatBytes(
+                                //   int.parse(bytes.length.toString()),
+                                // );
+                                // controller.webMedia[controller.assetsIndex] =
+                                //     WebMediaModel(
+                                //   dataSize: fileSize,
+                                //   isVideo: true,
+                                //   platformFile: IsmchPlatformFile(
+                                //     name: mediaFile.name,
+                                //     bytes: bytes,
+                                //     path: mediaFile.path,
+                                //     size: bytes.length,
+                                //     extension: mediaFile.mimeType,
+                                //     thumbnailBytes: thumbnailBytes,
+                                //   ),
+                                // );
                               },
                               icon: Icon(
                                 Icons.video_settings_rounded,
@@ -171,7 +168,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
                                   controller.assetsIndex = 0;
-                                  Get.back<void>();
+                                  IsmChatContextWidget.goBack<void>();
                                 }
                               },
                               icon: Icon(

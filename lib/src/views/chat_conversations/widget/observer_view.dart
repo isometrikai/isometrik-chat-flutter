@@ -8,7 +8,6 @@ class IsmChatObserverUsersView extends StatefulWidget {
             (Get.arguments as Map<String, dynamic>?)?['conversationId'];
 
   final String _conversationId;
-  static const String route = IsmPageRoutes.observerView;
 
   @override
   State<IsmChatObserverUsersView> createState() =>

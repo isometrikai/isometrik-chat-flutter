@@ -14,15 +14,13 @@ class IsmChatContactsInfoView extends StatelessWidget {
 
   final List<IsmChatContactMetaDatModel>? _contacts;
 
-  static const String route = IsmPageRoutes.contactInfoView;
-
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: IsmChatColors.whiteColor,
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
-            onPressed: Get.back,
+            onPressed: IsmChatContextWidget.goBack,
             icon: Icon(
               Icons.arrow_back_rounded,
               color: IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??

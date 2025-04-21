@@ -126,7 +126,8 @@ class IsmChatMessageField extends StatelessWidget {
                               if (await IsmChatProperties.chatPageProperties
                                       .messageAllowedConfig?.isMessgeAllowed
                                       ?.call(
-                                          Get.context!,
+                                          IsmChatConfig
+                                              .kNavigatorKey.currentContext!,
                                           controller.conversation!,
                                           controller.isreplying
                                               ? IsmChatCustomMessageType.reply
@@ -424,7 +425,9 @@ class _MicOrSendButton extends StatelessWidget {
                   WebMediaModel? webMediaModel;
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
-                          ?.call(Get.context!, controller.conversation!,
+                          ?.call(
+                              IsmChatConfig.kNavigatorKey.currentContext!,
+                              controller.conversation!,
                               IsmChatCustomMessageType.audio) ??
                       true) {
                     if (kIsWeb) {
@@ -464,8 +467,8 @@ class _MicOrSendButton extends StatelessWidget {
                       );
                       controller.seconds = 0;
                     } else {
-                      await Get.dialog(
-                        const IsmChatAlertDialogBox(
+                      await IsmChatContextWidget.showDialogContext(
+                        content: const IsmChatAlertDialogBox(
                           title: IsmChatStrings.youCanNotSend,
                           cancelLabel: IsmChatStrings.okay,
                         ),
@@ -476,7 +479,7 @@ class _MicOrSendButton extends StatelessWidget {
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
-                              Get.context!,
+                              IsmChatConfig.kNavigatorKey.currentContext!,
                               controller.conversation!,
                               controller.isreplying
                                   ? IsmChatCustomMessageType.reply
@@ -511,8 +514,8 @@ class _MicOrSendButton extends StatelessWidget {
                 if (kIsWeb) {
                   final state = await IsmChatBlob.checkPermission('microphone');
                   if (state == 'prompt') {
-                    unawaited(Get.dialog(
-                      const IsmChatAlertDialogBox(
+                    unawaited(IsmChatContextWidget.showDialogContext(
+                      content: const IsmChatAlertDialogBox(
                         title: IsmChatStrings.micePermission,
                         cancelLabel: IsmChatStrings.okay,
                       ),
@@ -520,8 +523,8 @@ class _MicOrSendButton extends StatelessWidget {
                     await controller.recordVoice.hasPermission();
                     return;
                   } else if (state == 'denied') {
-                    await Get.dialog(
-                      const IsmChatAlertDialogBox(
+                    await IsmChatContextWidget.showDialogContext(
+                      content: const IsmChatAlertDialogBox(
                         title: IsmChatStrings.micePermissionBlock,
                         cancelLabel: IsmChatStrings.okay,
                       ),
@@ -826,13 +829,8 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                         .chatPageProperties.isSendMediaAllowed
                         ?.call(context, controller.conversation!) ??
                     true) {
-                  await Get.bottomSheet(
-                    const IsmChatAttachmentCard(),
-                    enterBottomSheetDuration:
-                        IsmChatConstants.bottomSheetDuration,
-                    exitBottomSheetDuration:
-                        IsmChatConstants.bottomSheetDuration,
-                    elevation: 0,
+                  await IsmChatContextWidget.showBottomsheetContext(
+                    content: const IsmChatAttachmentCard(),
                   );
                 }
               }
