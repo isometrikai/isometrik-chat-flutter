@@ -57,7 +57,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                             isLoading: true);
                         chatPageController.backgroundColor = '';
                         chatPageController.backgroundImage = '';
-                        IsmChatContextWidget.goBack();
+                        IsmChatRoute.goBack();
                       },
                       child: Row(
                         children: [
@@ -76,7 +76,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                     const Spacer()
                   ],
                   IconButton(
-                    onPressed: IsmChatContextWidget.goBack,
+                    onPressed: IsmChatRoute.goBack,
                     icon: Icon(
                       Icons.clear_rounded,
                       color: IsmChatConfig
@@ -128,7 +128,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                             if (index == 0) {
                               return IsmChatTapHandler(
                                 onTap: () async {
-                                  IsmChatContextWidget.goBack();
+                                  IsmChatRoute.goBack();
                                   var file = await IsmChatUtility.pickMedia(
                                     ImageSource.gallery,
                                   );
@@ -146,12 +146,12 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                         ),
                                       );
                                     } else {
-                                      IsmChatRouteManagement
-                                          .goToWallpaperPreview(
+                                      await IsmChatRoute.goToRoute(
+                                          IsmChatWallpaperPreview(
                                         assetSrNo: 100,
                                         backgroundColor: '',
                                         imagePath: file.first,
-                                      );
+                                      ));
                                     }
                                   }
                                 },
@@ -196,12 +196,13 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                     ),
                                   );
                                 } else {
-                                  IsmChatRouteManagement.goToWallpaperPreview(
+                                  await IsmChatRoute.goToRoute(
+                                      IsmChatWallpaperPreview(
                                     assetSrNo: image.srNo,
                                     backgroundColor: '',
                                     imagePath: XFile(
                                         '${IsmChatAssets.backgroundImages}/${image.path!}'),
-                                  );
+                                  ));
                                 }
                               },
                               child: _BackgroundImage(image: image),
@@ -236,10 +237,12 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                     ),
                                   );
                                 } else {
-                                  IsmChatRouteManagement.goToWallpaperPreview(
-                                    backgroundColor: color.color,
-                                    imagePath: null,
-                                    assetSrNo: color.srNo,
+                                  await IsmChatRoute.goToRoute(
+                                    IsmChatWallpaperPreview(
+                                      backgroundColor: color.color,
+                                      imagePath: null,
+                                      assetSrNo: color.srNo,
+                                    ),
                                   );
                                 }
                               },

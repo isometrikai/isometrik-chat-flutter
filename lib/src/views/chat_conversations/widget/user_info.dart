@@ -35,7 +35,7 @@ class IsmChatUserView extends StatelessWidget {
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
-            onBack: IsmChatContextWidget.goBack,
+            onBack: IsmChatRoute.goBack,
             title: Text(
               IsmChatStrings.userInfo,
               style: IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
@@ -262,7 +262,7 @@ class IsmChatUserView extends StatelessWidget {
                               } else {
                                 controller.unblockUserForWeb(user.userId);
 
-                                IsmChatContextWidget.goBack();
+                                IsmChatRoute.goBack();
                               }
                               unawaited(controller.getChatConversations());
                             },

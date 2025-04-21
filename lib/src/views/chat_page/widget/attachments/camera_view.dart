@@ -94,7 +94,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                             controller.isCameraView = false;
                             await controller.cameraController.dispose();
                           } else {
-                            IsmChatContextWidget.goBack();
+                            IsmChatRoute.goBack();
                           }
                         },
                         icon: const Icon(
@@ -181,8 +181,9 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                     ),
                                   );
                                 } else {
-                                  IsmChatRouteManagement.goToVideView(
-                                      file: file);
+                                  await IsmChatRoute.goToRoute(IsmChatVideoView(
+                                    file: file,
+                                  ));
                                 }
                               },
                               onTap: controller.isRecording

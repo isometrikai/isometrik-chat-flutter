@@ -22,7 +22,7 @@ class IsmChatAudioPlayer extends StatelessWidget {
                 decoration: const BoxDecoration(),
               ),
               IconButton(
-                  onPressed: IsmChatContextWidget.goBack,
+                  onPressed: IsmChatRoute.goBack,
                   icon: Icon(
                     Icons.close,
                     color: IsmChatConfig.chatTheme.backgroundColor,

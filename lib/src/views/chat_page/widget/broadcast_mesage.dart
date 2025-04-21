@@ -23,9 +23,9 @@ class IsmChatBoradcastMessagePage extends StatelessWidget {
       await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
     } else {
       if (controller.messages.isNotEmpty) {
-        IsmChatContextWidget.goBack();
+        IsmChatRoute.goBack();
       }
-      IsmChatContextWidget.goBack();
+      IsmChatRoute.goBack();
     }
     if (controller.messages.isNotEmpty) {
       unawaited(conversationController.getChatConversations());

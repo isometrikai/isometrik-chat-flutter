@@ -6,15 +6,11 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 // / The view part of the [IsmChatPageView], which will be used to
 /// show the Message Information view page
 class IsmChatMessageInfo extends StatelessWidget {
-  IsmChatMessageInfo({super.key, IsmChatMessageModel? message, bool? isGroup})
-      : _isGroup = isGroup ??
-            (Get.arguments as Map<String, dynamic>?)?['isGroup'] ??
-            false,
-        _message =
-            message ?? (Get.arguments as Map<String, dynamic>?)?['message'];
+  const IsmChatMessageInfo(
+      {super.key, required this.message, required this.isGroup});
 
-  final IsmChatMessageModel? _message;
-  final bool? _isGroup;
+  final IsmChatMessageModel message;
+  final bool isGroup;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
@@ -40,7 +36,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                               .isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
                     }
-                  : IsmChatContextWidget.goBack,
+                  : IsmChatRoute.goBack,
               icon: Icon(
                 IsmChatResponsive.isWeb(context)
                     ? Icons.close_rounded
@@ -77,7 +73,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                       ),
                       padding: IsmChatDimens.edgeInsets8_4,
                       child: Text(
-                        _message?.sentAt.toMessageDateString() ?? '',
+                        message.sentAt.toMessageDateString(),
                         style: IsmChatConfig.chatTheme.chatPageTheme
                                 ?.centerMessageTheme?.textStyle ??
                             IsmChatStyles.w500Black12.copyWith(
@@ -89,18 +85,18 @@ class IsmChatMessageInfo extends StatelessWidget {
                   IsmChatDimens.boxHeight16,
                   Column(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: _message?.sentByMe ?? false
+                    crossAxisAlignment: message.sentByMe
                         ? CrossAxisAlignment.end
                         : CrossAxisAlignment.start,
                     children: [
                       MessageBubble(
-                        message: _message,
+                        message: message,
                         showMessageInCenter: false,
                       )
                     ],
                   ),
                   IsmChatDimens.boxHeight16,
-                  _isGroup ?? false
+                  isGroup
                       ? Obx(
                           () => Column(
                             children: [
@@ -112,7 +108,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                                   title: IsmChatStrings.deliveredTo,
                                 ),
                               ] else ...[
-                                const _MessageReadDelivered(
+                                const MessageReadDelivered(
                                   title: IsmChatStrings.deliveredTo,
                                 )
                               ],
@@ -125,7 +121,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                                   isRead: true,
                                 ),
                               ] else ...[
-                                const _MessageReadDelivered(
+                                const MessageReadDelivered(
                                   title: IsmChatStrings.readby,
                                 )
                               ],
@@ -158,8 +154,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                                             'Delivered',
                                             style: IsmChatStyles.w400Black12
                                                 .copyWith(
-                                              fontSize:
-                                                  _message?.style.fontSize,
+                                              fontSize: message.style.fontSize,
                                             ),
                                           ),
                                         ],
@@ -180,7 +175,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                                               style: IsmChatStyles.w400Black12
                                                   .copyWith(
                                                 fontSize:
-                                                    _message?.style.fontSize,
+                                                    message.style.fontSize,
                                               ),
                                             )
                                     ],
@@ -210,7 +205,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                                               style: IsmChatStyles.w400Black12
                                                   .copyWith(
                                                 fontSize:
-                                                    _message?.style.fontSize,
+                                                    message.style.fontSize,
                                               ))
                                         ],
                                       ),
@@ -229,7 +224,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                                               style: IsmChatStyles.w400Black12
                                                   .copyWith(
                                                 fontSize:
-                                                    _message?.style.fontSize,
+                                                    message.style.fontSize,
                                               ),
                                             ),
                                     ],
@@ -247,8 +242,9 @@ class IsmChatMessageInfo extends StatelessWidget {
       );
 }
 
-class _MessageReadDelivered extends StatelessWidget {
-  const _MessageReadDelivered({
+class MessageReadDelivered extends StatelessWidget {
+  const MessageReadDelivered({
+    super.key,
     required this.title,
   });
 

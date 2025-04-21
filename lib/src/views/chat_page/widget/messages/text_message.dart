@@ -111,10 +111,12 @@ class IsmChatTextMessage extends StatelessWidget {
                                               .isRenderChatPageaScreen =
                                           IsRenderChatPageScreen.userInfoView;
                                     } else {
-                                      IsmChatRouteManagement.goToUserInfo(
-                                        conversationId: conversationId,
-                                        user: user.first,
-                                        fromMessagePage: true,
+                                      await IsmChatRoute.goToRoute(
+                                        IsmChatUserInfo(
+                                          conversationId: conversationId,
+                                          user: user.first,
+                                          fromMessagePage: true,
+                                        ),
                                       );
                                     }
                                   }

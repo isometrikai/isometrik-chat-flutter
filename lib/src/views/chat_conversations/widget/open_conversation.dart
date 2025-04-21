@@ -115,7 +115,7 @@ class _IsmChatOpenConversationViewState
 
                                 if (IsmChatResponsive.isWeb(IsmChatConfig
                                     .kNavigatorKey.currentContext!)) {
-                                  IsmChatContextWidget.goBack();
+                                  IsmChatRoute.goBack();
 
                                   if (!Get.isRegistered<IsmChatPageController>(
                                       tag: IsmChat.i.tag)) {
@@ -131,7 +131,6 @@ class _IsmChatOpenConversationViewState
                                   chatPagecontroller.startInit(
                                     isBroadcasts: true,
                                   );
-
                                   chatPagecontroller.closeOverlay();
                                   chatPagecontroller.messages.add(
                                     IsmChatMessageModel(
@@ -155,9 +154,8 @@ class _IsmChatOpenConversationViewState
                                     chatPagecontroller.messages,
                                   );
                                 } else {
-                                  IsmChatRouteManagement
-                                      .goToOpenChatMessagePage(
-                                    isBroadcast: true,
+                                  await IsmChatRoute.goToRoute(
+                                    const IsmChatOpenChatMessagePage(),
                                   );
                                 }
                               }

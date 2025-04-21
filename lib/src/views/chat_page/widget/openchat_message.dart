@@ -21,7 +21,7 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
           IsRenderChatPageScreen.none;
       await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
     } else {
-      IsmChatContextWidget.goBack();
+      IsmChatRoute.goBack();
     }
     unawaited(conversationController.leaveObserver(
       conversationId: controller.conversation?.conversationId ?? '',
@@ -103,8 +103,10 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
                         ),
                       );
                     } else {
-                      IsmChatRouteManagement.goToObserverView(
-                          controller.conversation?.conversationId ?? '');
+                      await IsmChatRoute.goToRoute(IsmChatObserverUsersView(
+                        conversationId:
+                            controller.conversation?.conversationId ?? '',
+                      ));
                     }
                   },
                   icon: Icon(

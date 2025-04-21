@@ -3,13 +3,20 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:easy_video_editor/easy_video_editor.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 // Todo refactor code
 class IsmVideoTrimmerView extends StatefulWidget {
-  const IsmVideoTrimmerView({super.key});
+  const IsmVideoTrimmerView(
+      {super.key,
+      required this.maxVideoTrim,
+      required this.file,
+      required this.index});
+
+  final XFile file;
+  final double maxVideoTrim;
+  final int index;
 
   @override
   State<IsmVideoTrimmerView> createState() => _VideoTrimmerViewState();
@@ -26,13 +33,12 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
   int videoRotationIndex = -1;
   final List<File> thumbnails = [];
   var file = XFile('');
-  final arguments = Get.arguments as Map<String, dynamic>? ?? {};
 
   @override
   void initState() {
     super.initState();
-    maxVideoTrim = arguments['maxVideoTrim'] as double? ?? 0;
-    file = arguments['file'] as XFile? ?? XFile('');
+    maxVideoTrim = widget.maxVideoTrim;
+    file = widget.file;
     loadVideo(file.path);
   }
 
@@ -88,7 +94,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
     final trimVideo = await editor.export();
     IsmChatUtility.closeLoader();
     if (!trimVideo.isNullOrEmpty) {
-      IsmChatContextWidget.goBack<XFile>(XFile(trimVideo ?? ''));
+      IsmChatRoute.goBack<XFile>(XFile(trimVideo ?? ''));
     }
   }
 
@@ -137,7 +143,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              IsmChatContextWidget.goBack<XFile>(file);
+              IsmChatRoute.goBack<XFile>(file);
             },
             icon: Icon(
               Icons.arrow_back_rounded,

@@ -65,7 +65,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       controller.selectedMessage.clear();
       return false;
     } else {
-      IsmChatContextWidget.goBack<void>();
+      IsmChatRoute.goBack<void>();
       controller.closeOverlay();
       final updateMessage = await controller.updateLastMessage();
       if (IsmChatProperties.chatPageProperties.header?.onBackTap != null) {
@@ -220,8 +220,8 @@ class _IsmChatPageView extends StatelessWidget {
                                               IsRenderChatPageScreen
                                                   .coversationInfoView;
                                         } else {
-                                          IsmChatRouteManagement
-                                              .goToConversationInfo();
+                                          IsmChatRoute.goToRoute(
+                                              IsmChatConverstaionInfoView());
                                         }
                                       }
                                     }

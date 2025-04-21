@@ -239,8 +239,8 @@ class IsmChatCommonRepository {
           await IsmChatUtility.showErrorDialog(
             error,
             onCancel: () {
-              IsmChatContextWidget.goBack();
-              IsmChatContextWidget.goBack();
+              IsmChatRoute.goBack();
+              IsmChatRoute.goBack();
             },
           );
         }

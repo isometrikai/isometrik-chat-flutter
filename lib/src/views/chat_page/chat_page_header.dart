@@ -68,7 +68,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                 var updateLastMessage = false;
                                 controller.closeOverlay();
                                 if (IsmChat.i.tag == null) {
-                                  IsmChatContextWidget.goBack<void>();
+                                  IsmChatRoute.goBack<void>();
                                   updateLastMessage =
                                       await controller.updateLastMessage();
                                 }
@@ -483,7 +483,7 @@ class _PopupMenuWidget extends StatelessWidget {
                       .isRenderChatPageaScreen =
                   IsRenderChatPageScreen.messageSearchView;
             } else {
-              IsmChatRouteManagement.goToSearchMessageView();
+              IsmChatRoute.goToRoute(const IsmChatSearchMessgae());
             }
           } else {
             if (IsmChatProperties.chatPageProperties.header == null) {

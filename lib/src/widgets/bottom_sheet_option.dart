@@ -33,7 +33,7 @@ class IsmChatBottomSheet extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        IsmChatContextWidget.goBack();
+                        IsmChatRoute.goBack();
                         onClearTap.call();
                       },
                       child: Text(
@@ -45,7 +45,7 @@ class IsmChatBottomSheet extends StatelessWidget {
                     IsmChatDimens.boxHeight16,
                     InkWell(
                       onTap: () {
-                        IsmChatContextWidget.goBack();
+                        IsmChatRoute.goBack();
                         onDeleteTap.call();
                       },
                       child: Text(
@@ -59,7 +59,7 @@ class IsmChatBottomSheet extends StatelessWidget {
               ),
               IsmChatDimens.boxHeight4,
               InkWell(
-                onTap: IsmChatContextWidget.goBack,
+                onTap: IsmChatRoute.goBack,
                 child: Container(
                   padding: IsmChatDimens.edgeInsets10,
                   decoration: BoxDecoration(
@@ -150,7 +150,7 @@ class IsmChatProfilePhotoBottomSheet extends StatelessWidget {
           ),
         ],
         cancelButton: const CupertinoActionSheetAction(
-          onPressed: IsmChatContextWidget.goBack,
+          onPressed: IsmChatRoute.goBack,
           isDestructiveAction: true,
           child: Text('Cancel'),
         ),

@@ -2,17 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatContactsInfoView extends StatelessWidget {
-  IsmChatContactsInfoView(
-      {super.key, List<IsmChatContactMetaDatModel>? contacts})
-      : _contacts = contacts ??
-            (Get.arguments as Map<String, dynamic>?)?['contacts'] ??
-            [];
+  const IsmChatContactsInfoView({super.key, required this.contacts});
 
-  final List<IsmChatContactMetaDatModel>? _contacts;
+  final List<IsmChatContactMetaDatModel> contacts;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -20,7 +15,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
-            onPressed: IsmChatContextWidget.goBack,
+            onPressed: IsmChatRoute.goBack,
             icon: Icon(
               Icons.arrow_back_rounded,
               color: IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??
@@ -38,39 +33,39 @@ class IsmChatContactsInfoView extends StatelessWidget {
           child: ListView.separated(
             padding: IsmChatDimens.edgeInsets10,
             itemBuilder: (_, index) {
-              var contact = _contacts?[index];
+              var contact = contacts[index];
               return Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: IsmChatImage.profile(
-                        contact?.contactImageUrl ?? '',
-                        name: contact?.contactName,
+                        contact.contactImageUrl ?? '',
+                        name: contact.contactName,
                         isNetworkImage: false,
                         isBytes: true,
                       ),
                       title: Text(
-                        contact?.contactName ?? '',
+                        contact.contactName ?? '',
                         style: IsmChatStyles.w600Black14,
                       ),
                       subtitle: Text(
-                        contact?.contactIdentifier ?? '',
+                        contact.contactIdentifier ?? '',
                         style: IsmChatStyles.w600Black12,
                       ),
                       trailing: IsmChatTapHandler(
                         onTap: () async {
                           final opnecontact = Contact(
-                              id: contact?.contactId ?? '',
-                              displayName: contact?.contactName ?? '',
-                              photo: (contact?.contactImageUrl ?? '').isNotEmpty
-                                  ? (contact?.contactImageUrl ?? '')
+                              id: contact.contactId ?? '',
+                              displayName: contact.contactName ?? '',
+                              photo: (contact.contactImageUrl ?? '').isNotEmpty
+                                  ? (contact.contactImageUrl ?? '')
                                       .strigToUnit8List
                                   : Uint8List(0),
                               phones: [
                                 Phone(
-                                  contact?.contactIdentifier ?? '',
+                                  contact.contactIdentifier ?? '',
                                   normalizedNumber:
-                                      contact?.contactIdentifier ?? '',
+                                      contact.contactIdentifier ?? '',
                                 )
                               ]);
                           await FlutterContacts.openExternalInsert(opnecontact);
@@ -101,7 +96,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
                           child: TextButton.icon(
                             onPressed: () async {
                               IsmChatUtility.toSMS(
-                                  contact?.contactIdentifier ?? '');
+                                  contact.contactIdentifier ?? '');
                             },
                             icon: Icon(
                               Icons.message_rounded,
@@ -115,7 +110,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
                           child: TextButton.icon(
                             onPressed: () async {
                               IsmChatUtility.dialNumber(
-                                contact?.contactIdentifier ?? '',
+                                contact.contactIdentifier ?? '',
                               );
                             },
                             icon: Icon(
@@ -133,7 +128,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
               );
             },
             separatorBuilder: (_, index) => IsmChatDimens.boxHeight10,
-            itemCount: _contacts?.length ?? 0,
+            itemCount: contacts.length,
           ),
         ),
       );

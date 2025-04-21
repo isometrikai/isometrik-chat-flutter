@@ -54,7 +54,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                 actions: [
                   IsmChatTapHandler(
                     onTap: () {
-                      onCancel ?? IsmChatContextWidget.goBack();
+                      onCancel ?? IsmChatRoute.goBack();
                     },
                     child: Text(
                       cancelLabel,
@@ -67,7 +67,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                     IsmChatDimens.boxWidth8,
                     IsmChatTapHandler(
                       onTap: () {
-                        IsmChatContextWidget.goBack();
+                        IsmChatRoute.goBack();
                         callbackActions?.first();
                       },
                       child: Text(
@@ -96,7 +96,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                         return SimpleDialogOption(
                           child: IsmChatTapHandler(
                             onTap: () {
-                              IsmChatContextWidget.goBack();
+                              IsmChatRoute.goBack();
                               action.call();
                             },
                             child: Text(
@@ -111,7 +111,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                       SimpleDialogOption(
                         child: IsmChatTapHandler(
                           onTap: () {
-                            onCancel ?? IsmChatContextWidget.goBack();
+                            onCancel ?? IsmChatRoute.goBack();
                           },
                           child: Text(
                             cancelLabel,

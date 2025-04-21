@@ -2,22 +2,24 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_painter/image_painter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 class IsmChatImagePaintView extends StatelessWidget {
-  IsmChatImagePaintView({super.key});
+  IsmChatImagePaintView({
+    super.key,
+    required this.file,
+  });
+
+  final XFile file;
 
   final ImagePainterController _controller = ImagePainterController(
     color: IsmChatColors.primaryColorLight,
     strokeWidth: 4,
     mode: PaintMode.line,
   );
-
-  final file = Get.arguments['file'] as XFile? ?? XFile('');
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -28,7 +30,7 @@ class IsmChatImagePaintView extends StatelessWidget {
               color: IsmChatColors.whiteColor,
             ),
             onTap: () {
-              IsmChatContextWidget.goBack<XFile>(XFile(file.path));
+              IsmChatRoute.goBack<XFile>(XFile(file.path));
             },
           ),
           backgroundColor: IsmChatConfig.chatTheme.primaryColor,
@@ -45,9 +47,9 @@ class IsmChatImagePaintView extends StatelessWidget {
                 final fullPath =
                     '$directory/sample/${DateTime.now().millisecondsSinceEpoch}.$extension';
                 final imgFile = File(fullPath);
-                imgFile.writeAsBytesSync(image ?? Uint8List(0));
+                await imgFile.writeAsBytes(image ?? Uint8List(0));
                 IsmChatUtility.closeLoader();
-                IsmChatContextWidget.goBack<XFile>(XFile(imgFile.path));
+                IsmChatRoute.goBack<XFile>(XFile(imgFile.path));
               },
               style: ButtonStyle(
                   side: const WidgetStatePropertyAll(

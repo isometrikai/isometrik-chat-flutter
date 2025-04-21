@@ -153,7 +153,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
               onPressed: () {
                 controller.isSearchSelect
                     ? controller.isSearchSelect = false
-                    : IsmChatContextWidget.goBack<void>();
+                    : IsmChatRoute.goBack<void>();
               },
               icon: Icon(
                 Icons.adaptive.arrow_back,
@@ -259,7 +259,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                   );
 
                                   IsmChatUtility.closeLoader();
-                                  IsmChatContextWidget.goBack<void>();
+                                  IsmChatRoute.goBack<void>();
                                   if (await IsmChatProperties.chatPageProperties
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
@@ -312,7 +312,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
 
                               return IsmChatTapHandler(
                                 onTap: () async {
-                                  IsmChatContextWidget.goBack<void>();
+                                  IsmChatRoute.goBack<void>();
                                   if (await IsmChatProperties.chatPageProperties
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(

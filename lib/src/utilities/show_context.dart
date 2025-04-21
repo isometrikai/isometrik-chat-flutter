@@ -4,10 +4,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatContextWidget {
   IsmChatContextWidget._();
 
-  static void goBack<T>([T? result]) {
-    Navigator.of(IsmChatConfig.kNavigatorKey.currentContext!).pop(result);
-  }
-
   static Future<T?> showDialogContext<T>({
     required Widget content,
     bool barrierDismissible = true,

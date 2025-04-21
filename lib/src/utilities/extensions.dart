@@ -1032,7 +1032,7 @@ extension Conversation on IsmChatConversationType {
               IsRenderConversationScreen.publicConverationView;
           Scaffold.of(controller.isDrawerContext!).openDrawer();
         } else {
-          IsmChatRouteManagement.goToPublicView();
+          IsmChatRoute.goToRoute(const IsmChatPublicConversationView());
         }
 
         break;
@@ -1043,7 +1043,7 @@ extension Conversation on IsmChatConversationType {
               IsRenderConversationScreen.openConverationView;
           Scaffold.of(controller.isDrawerContext!).openDrawer();
         } else {
-          IsmChatRouteManagement.goToOpenView();
+          IsmChatRoute.goToRoute(const IsmChatOpenConversationView());
         }
 
         break;

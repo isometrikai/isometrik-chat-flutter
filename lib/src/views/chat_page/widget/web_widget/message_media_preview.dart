@@ -10,9 +10,9 @@ import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
 import 'package:photo_view/photo_view.dart';
 
 class IsmWebMessageMediaPreview extends StatefulWidget {
-  const IsmWebMessageMediaPreview({
-    super.key,
-  });
+  const IsmWebMessageMediaPreview({super.key, required this.previewData});
+
+  final Map<String, dynamic> previewData;
 
   @override
   State<IsmWebMessageMediaPreview> createState() =>
@@ -30,8 +30,6 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   bool initiated = false;
   List<IsmChatMessageModel> messageData = [];
 
-  final argument = Get.arguments as Map<String, dynamic>? ?? {};
-
   @override
   void initState() {
     super.initState();
@@ -39,12 +37,12 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   }
 
   startInit() {
-    messageData = argument['messageData'] ?? [];
-    mediaUserName = argument['mediaUserName'] ?? '';
-    initiated = argument['initiated'] ?? false;
-    chatPageController.assetsIndex = argument['mediaIndex'] ?? 0;
+    messageData = widget.previewData['messageData'] ?? [];
+    mediaUserName = widget.previewData['mediaUserName'] ?? '';
+    initiated = widget.previewData['initiated'] ?? false;
+    chatPageController.assetsIndex = widget.previewData['mediaIndex'] ?? 0;
     final timeStamp = DateTime.fromMillisecondsSinceEpoch(
-      argument['mediaTime'] ?? 0,
+      widget.previewData['mediaTime'] ?? 0,
     );
     final time = DateFormat.jm().format(timeStamp);
     final monthDay = DateFormat.MMMd().format(timeStamp);
@@ -145,7 +143,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 color: IsmChatColors.blackColor,
               ),
               onPressed: () {
-                IsmChatContextWidget.goBack<void>();
+                Get.back<void>();
               },
             ),
             IsmChatDimens.boxWidth32

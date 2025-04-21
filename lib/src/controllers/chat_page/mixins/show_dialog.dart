@@ -39,7 +39,7 @@ mixin IsmChatShowDialogMixin on GetxController {
           ],
         ),
       );
-      IsmChatContextWidget.goBack();
+      IsmChatRoute.goBack();
     }
   }
 
@@ -154,7 +154,7 @@ mixin IsmChatShowDialogMixin on GetxController {
           ],
         ),
       );
-      if (fromMediaPrivew) IsmChatContextWidget.goBack();
+      if (fromMediaPrivew) IsmChatRoute.goBack();
     } else {
       await IsmChatContextWidget.showDialogContext(
         content: IsmChatAlertDialogBox(
@@ -166,7 +166,7 @@ mixin IsmChatShowDialogMixin on GetxController {
           ],
         ),
       );
-      if (fromMediaPrivew) IsmChatContextWidget.goBack();
+      if (fromMediaPrivew) IsmChatRoute.goBack();
     }
   }
 
@@ -185,7 +185,7 @@ mixin IsmChatShowDialogMixin on GetxController {
             () => _controller.deleteMessageForMe(messages),
           ],
           onCancel: () {
-            IsmChatContextWidget.goBack<void>();
+            IsmChatRoute.goBack<void>();
             _controller.selectedMessage.clear();
             _controller.isMessageSeleted = false;
           },
@@ -201,7 +201,7 @@ mixin IsmChatShowDialogMixin on GetxController {
             () => _controller.deleteMessageForMe(messages),
           ],
           onCancel: () {
-            IsmChatContextWidget.goBack<void>();
+            IsmChatRoute.goBack<void>();
             _controller.selectedMessage.clear();
             _controller.isMessageSeleted = false;
           },

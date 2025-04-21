@@ -14,7 +14,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
           actions: [
             CupertinoActionSheetAction(
               onPressed: () async {
-                IsmChatContextWidget.goBack();
+                IsmChatRoute.goBack();
                 await IsmChatContextWidget.showDialogContext(
                   content: IsmChatAlertDialogBox(
                     title: IsmChatStrings.deleteAllMessage,
@@ -48,7 +48,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
                     IsmChatConfig.communicationConfig.userConfig.userId) ...[
               CupertinoActionSheetAction(
                 onPressed: () async {
-                  IsmChatContextWidget.goBack();
+                  IsmChatRoute.goBack();
                   await IsmChatContextWidget.showDialogContext(
                     content: IsmChatAlertDialogBox(
                       title: IsmChatStrings.deleteThiGroup,
@@ -73,7 +73,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
             ] else ...[
               CupertinoActionSheetAction(
                 onPressed: () async {
-                  IsmChatContextWidget.goBack();
+                  IsmChatRoute.goBack();
                   if (conversation.isGroup == true) {
                     // await IsmChatContextWidget.showDialogContext(
                     //   IsmChatAlertDialogBox(
@@ -119,7 +119,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
             ],
           ],
           cancelButton: CupertinoActionSheetAction(
-            onPressed: IsmChatContextWidget.goBack,
+            onPressed: IsmChatRoute.goBack,
             child: Text(
               IsmChatStrings.cancel,
               style: IsmChatStyles.w600Black16,
