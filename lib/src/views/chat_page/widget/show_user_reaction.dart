@@ -148,7 +148,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                         (e) => e.name == reactionValue.emojiKeyword);
                     return IsmChatTapHandler(
                       onTap: () async {
-                        Get.back();
+                        IsmChatContextWidget.goBack();
                         if (showOwnUser) {
                           ismChatEmoji =
                               getIsmChatEmoji(reaction: allReactions[index]);
@@ -236,7 +236,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
 
                         return IsmChatTapHandler(
                           onTap: () async {
-                            Get.back();
+                            IsmChatContextWidget.goBack();
                             if (showOwnUser) {
                               await widget._controller.deleteReacton(
                                   reaction: Reaction(

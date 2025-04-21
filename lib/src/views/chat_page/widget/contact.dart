@@ -6,8 +6,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatContactView extends StatelessWidget {
   const IsmChatContactView({super.key});
 
-  static const String route = IsmPageRoutes.contact;
-
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,
         height: IsmChatDimens.forty,
@@ -78,10 +76,12 @@ class IsmChatContactView extends StatelessWidget {
               ? null
               : FloatingActionButton(
                   onPressed: () async {
-                    Get.back();
+                    IsmChatContextWidget.goBack();
                     if (await IsmChatProperties.chatPageProperties
                             .messageAllowedConfig?.isMessgeAllowed
-                            ?.call(Get.context!, controller.conversation!,
+                            ?.call(
+                                IsmChatConfig.kNavigatorKey.currentContext!,
+                                controller.conversation!,
                                 IsmChatCustomMessageType.contact) ??
                         true) {
                       controller.sendContact(
@@ -270,15 +270,16 @@ class IsmChatContactView extends StatelessWidget {
                                     if (!user.isConotactSelected &&
                                         controller.contactSelectedList.length >=
                                             5) {
-                                      Get.dialog(
-                                        AlertDialog(
-                                          title: const Text('Alert message...'),
-                                          content: const Text(
+                                      IsmChatContextWidget.showDialogContext(
+                                        content: const AlertDialog(
+                                          title: Text('Alert message...'),
+                                          content: Text(
                                               'You can only share with up to 5 contacts'),
                                           actions: [
                                             TextButton(
-                                              onPressed: Get.back,
-                                              child: const Text(
+                                              onPressed:
+                                                  IsmChatContextWidget.goBack,
+                                              child: Text(
                                                 'Okay',
                                                 style: TextStyle(fontSize: 15),
                                               ),

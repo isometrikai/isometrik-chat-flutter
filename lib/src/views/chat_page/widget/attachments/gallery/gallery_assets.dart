@@ -13,8 +13,6 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
     super.key,
   });
 
-  static const String route = IsmPageRoutes.alleryAssetsView;
-
   final mediaXFile = Get.arguments['fileList'] as List<XFile?>? ?? [];
 
   @override
@@ -43,7 +41,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                         IsmChatColors.whiteColor,
                   ),
                   onTap: () {
-                    Get.back<void>();
+                    IsmChatContextWidget.goBack<void>();
                     controller.webMedia.clear();
                     controller.isVideoVisible = false;
                   },
@@ -102,7 +100,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                 controller.assetsIndex =
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
-                                  Get.back<void>();
+                                  IsmChatContextWidget.goBack<void>();
                                 }
                               },
                               child: Icon(
@@ -169,7 +167,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
                                   controller.assetsIndex = 0;
-                                  Get.back<void>();
+                                  IsmChatContextWidget.goBack<void>();
                                 }
                               },
                               icon: Icon(

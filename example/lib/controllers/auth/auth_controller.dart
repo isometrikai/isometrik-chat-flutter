@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter_example/res/res.dart';
 import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
 import 'package:isometrik_chat_flutter_example/view_models/view_models.dart';
 
@@ -38,16 +37,16 @@ class AuthController extends GetxController {
 
     if (response.data != null) {
       await AppConfig.getUserData();
-      Get.offAllNamed(AppRoutes.chatList);
+      RouteManagement.goToChatList();
     } else if (response.statusCode == 401) {
-      Get.back();
+      Utility.goBack();
       await Get.dialog(
         AlertDialog(
           title: const Text('Alert message...'),
           content: const Text('Incorrect userIdentifier or password.'),
           actions: [
             TextButton(
-              onPressed: Get.back,
+              onPressed: Utility.goBack,
               child: const Text(
                 'Okay',
                 style: TextStyle(fontSize: 15),
@@ -57,14 +56,14 @@ class AuthController extends GetxController {
         ),
       );
     } else if (response.statusCode == 404) {
-      Get.back();
+      Utility.goBack();
       await Get.dialog(
         AlertDialog(
           title: const Text('Alert message...'),
           content: const Text('User not found.'),
           actions: [
             TextButton(
-              onPressed: Get.back,
+              onPressed: Utility.goBack,
               child: const Text(
                 'Okay',
                 style: TextStyle(fontSize: 15),
@@ -164,7 +163,7 @@ class AuthController extends GetxController {
 
       Utility.showLoader();
       await ismGetPresignedUrl(extension, bytes);
-      Get.back();
+      Utility.goBack();
     }
   }
 
@@ -180,16 +179,16 @@ class AuthController extends GetxController {
         await _viewModel.postCreateUser(isLoading: true, createUser: creatUser);
     if (response.data != null) {
       await AppConfig.getUserData();
-      Get.offAllNamed(AppRoutes.chatList);
+      RouteManagement.goToChatList();
     } else if (response.statusCode == 409) {
-      Get.back();
+      Utility.goBack();
       await Get.dialog(
         AlertDialog(
           title: const Text('Alert message...'),
           content: const Text('This email address has already been registered'),
           actions: [
             TextButton(
-              onPressed: Get.back,
+              onPressed: Utility.goBack,
               child: const Text(
                 'Okay',
                 style: TextStyle(fontSize: 15),
@@ -209,12 +208,12 @@ class AuthController extends GetxController {
         userIdentifier: emailController.text,
         mediaExtension: mediaExtension);
     if (response != null) {
-      Get.back();
+      Utility.goBack();
       var urlResponse =
           await updatePresignedUrl(response.presignedUrl ?? '', bytes);
       if (urlResponse == 200) {
         profileImage = response.mediaUrl!;
-        Get.back();
+        Utility.goBack();
       }
     }
   }

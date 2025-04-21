@@ -36,7 +36,7 @@ class ReactionGrid extends StatelessWidget {
                 emoji: reaciton,
                 emojiSize: IsmChatDimens.twenty,
                 onEmojiSelected: (_, emoji) {
-                  Get.back();
+                  IsmChatContextWidget.goBack();
                   _controller.closeOverlay();
                   _controller.addReacton(
                     reaction: Reaction(

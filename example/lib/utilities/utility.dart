@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:isometrik_chat_flutter_example/main.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
 
 class Utility {
@@ -10,8 +11,9 @@ class Utility {
   /// Show loader
   static void showLoader() async {
     if (!isLoaderOpen) {
-      await Get.dialog<void>(
-        loadingDialog(),
+      await showDialog(
+        context: kNavigatorKey.currentContext!,
+        builder: (context) => loadingDialog(),
         barrierDismissible: false,
       );
     }
@@ -60,5 +62,9 @@ class Utility {
       'userToken': token,
     };
     return header;
+  }
+
+  static void goBack<T>([T? result]) {
+    Navigator.of(kNavigatorKey.currentContext!).pop(result);
   }
 }

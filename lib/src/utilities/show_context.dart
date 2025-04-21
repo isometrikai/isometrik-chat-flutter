@@ -4,8 +4,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatContextWidget {
   IsmChatContextWidget._();
 
-  static void goBack() {
-    Navigator.of(IsmChatConfig.kNavigatorKey.currentContext!).pop();
+  static void goBack<T>([T? result]) {
+    Navigator.of(IsmChatConfig.kNavigatorKey.currentContext!).pop(result);
   }
 
   static Future<T?> showDialogContext<T>({
@@ -35,17 +35,17 @@ class IsmChatContextWidget {
     required Widget content,
     Color? backgroundColor,
     String? barrierLabel,
-    double? elevation,
+    double elevation = 0,
     ShapeBorder? shape,
     Clip? clipBehavior,
     BoxConstraints? constraints,
     Color? barrierColor,
-    bool isScrollControlled = false,
+    bool isScrollControlled = true,
     bool useRootNavigator = false,
     bool isDismissible = true,
     bool enableDrag = true,
     bool? showDragHandle,
-    bool useSafeArea = false,
+    bool useSafeArea = true,
     RouteSettings? routeSettings,
     AnimationController? transitionAnimationController,
     Offset? anchorPoint,

@@ -16,8 +16,6 @@ class IsmChatMessageInfo extends StatelessWidget {
   final IsmChatMessageModel? _message;
   final bool? _isGroup;
 
-  static const String route = IsmPageRoutes.messageInfoView;
-
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
         tag: IsmChat.i.tag,
@@ -42,7 +40,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                               .isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
                     }
-                  : Get.back,
+                  : IsmChatContextWidget.goBack,
               icon: Icon(
                 IsmChatResponsive.isWeb(context)
                     ? Icons.close_rounded

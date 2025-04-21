@@ -5,8 +5,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatOpenConversationView extends StatefulWidget {
   const IsmChatOpenConversationView({super.key});
 
-  static const String route = IsmPageRoutes.openView;
-
   @override
   State<IsmChatOpenConversationView> createState() =>
       _IsmChatOpenConversationViewState();
@@ -109,12 +107,15 @@ class _IsmChatOpenConversationViewState
                                   conversationId: data.conversationId ?? '',
                                   isLoading: true);
                               if (response != null) {
-                                IsmChatProperties.conversationProperties
-                                    .onChatTap!(Get.context!, data);
+                                IsmChatProperties
+                                        .conversationProperties.onChatTap!(
+                                    IsmChatConfig.kNavigatorKey.currentContext!,
+                                    data);
                                 controller.updateLocalConversation(data);
 
-                                if (IsmChatResponsive.isWeb(Get.context!)) {
-                                  Get.back();
+                                if (IsmChatResponsive.isWeb(IsmChatConfig
+                                    .kNavigatorKey.currentContext!)) {
+                                  IsmChatContextWidget.goBack();
 
                                   if (!Get.isRegistered<IsmChatPageController>(
                                       tag: IsmChat.i.tag)) {

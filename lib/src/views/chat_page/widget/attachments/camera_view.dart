@@ -10,8 +10,6 @@ import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
 class IsmChatCameraView extends StatefulWidget {
   const IsmChatCameraView({super.key});
 
-  static const String route = IsmPageRoutes.cameraView;
-
   @override
   State<IsmChatCameraView> createState() => _CameraScreenViewState();
 }
@@ -21,7 +19,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
 
   @override
   void dispose() {
-    if (IsmChatResponsive.isWeb(Get.context!)) {
+    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
       controller.cameraController.dispose();
     }
     super.dispose();
@@ -96,7 +94,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                             controller.isCameraView = false;
                             await controller.cameraController.dispose();
                           } else {
-                            Get.back();
+                            IsmChatContextWidget.goBack();
                           }
                         },
                         icon: const Icon(

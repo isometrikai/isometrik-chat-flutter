@@ -14,8 +14,6 @@ class IsmChatPageView extends StatefulWidget {
 
   final String? viewTag;
 
-  static const String route = IsmPageRoutes.chatPage;
-
   @override
   State<IsmChatPageView> createState() => _IsmChatPageViewState();
 }
@@ -68,7 +66,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       controller.selectedMessage.clear();
       return false;
     } else {
-      Get.back<void>();
+      IsmChatContextWidget.goBack<void>();
       controller.closeOverlay();
       final updateMessage = await controller.updateLastMessage();
       if (IsmChatProperties.chatPageProperties.header?.onBackTap != null) {

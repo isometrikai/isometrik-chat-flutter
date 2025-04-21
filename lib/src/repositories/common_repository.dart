@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCommonRepository {
@@ -240,8 +239,8 @@ class IsmChatCommonRepository {
           await IsmChatUtility.showErrorDialog(
             error,
             onCancel: () {
-              Get.back();
-              Get.back();
+              IsmChatContextWidget.goBack();
+              IsmChatContextWidget.goBack();
             },
           );
         }

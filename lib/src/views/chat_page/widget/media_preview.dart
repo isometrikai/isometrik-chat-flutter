@@ -43,8 +43,6 @@ class IsmMediaPreview extends StatefulWidget {
 
   final int? _mediaIndex;
 
-  static const String route = IsmPageRoutes.mediaPreviewView;
-
   @override
   State<IsmMediaPreview> createState() => _MediaPreviewState();
 }
@@ -110,7 +108,7 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
               color: IsmChatColors.whiteColor,
             ),
             onTap: () {
-              Get.back<void>();
+              IsmChatContextWidget.goBack<void>();
             },
           ),
           actions: [
@@ -243,7 +241,7 @@ class AudioPreview extends StatelessWidget {
                 children: [
                   TextButton.icon(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatContextWidget.goBack();
                       await controller.shareMedia(message);
                     },
                     icon: const Icon(
@@ -257,7 +255,7 @@ class AudioPreview extends StatelessWidget {
                   ),
                   TextButton.icon(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatContextWidget.goBack();
                       await controller.saveMedia(message);
                     },
                     icon: const Icon(
@@ -271,7 +269,7 @@ class AudioPreview extends StatelessWidget {
                   ),
                   TextButton.icon(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatContextWidget.goBack();
                       await controller.showDialogForMessageDelete(message,
                           fromMediaPrivew: true);
                     },

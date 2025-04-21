@@ -6,8 +6,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatEditBroadcastView extends StatelessWidget {
   IsmChatEditBroadcastView({super.key});
 
-  static const String route = IsmPageRoutes.editBroadcastView;
-
   final broadcast = Get.arguments as BroadcastModel;
 
   @override

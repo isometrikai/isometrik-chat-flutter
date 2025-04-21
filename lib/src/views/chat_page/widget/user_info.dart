@@ -20,8 +20,6 @@ class IsmChatUserInfo extends StatefulWidget {
   final String _conversationId;
   final bool _fromMessagePage;
 
-  static const String route = IsmPageRoutes.userInfoView;
-
   @override
   State<IsmChatUserInfo> createState() => _IsmChatUserInfoState();
 }
@@ -186,10 +184,10 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                               .updateLocalConversation(conversationModel);
                           controller.messages.clear();
                           if (widget._fromMessagePage) {
-                            Get.back();
+                            IsmChatContextWidget.goBack();
                           } else {
-                            Get.back();
-                            Get.back();
+                            IsmChatContextWidget.goBack();
+                            IsmChatContextWidget.goBack();
                           }
 
                           IsmChatUtility.closeLoader();
@@ -224,8 +222,8 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           widget._user?.userId) ...[
                         ListTile(
                           onTap: () async {
-                            await Get.dialog(
-                              IsmChatAlertDialogBox(
+                            await IsmChatContextWidget.showDialogContext(
+                              content: IsmChatAlertDialogBox(
                                 title: isUserBlock
                                     ? IsmChatStrings.doWantUnBlckUser
                                     : IsmChatStrings.doWantBlckUser,
@@ -236,7 +234,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                                 ],
                                 callbackActions: [
                                   () {
-                                    Get.back();
+                                    IsmChatContextWidget.goBack();
                                     isUserBlock
                                         ? controller.unblockUser(
                                             opponentId:

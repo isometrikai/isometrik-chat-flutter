@@ -11,8 +11,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatLocationWidget extends StatefulWidget {
   const IsmChatLocationWidget({super.key});
 
-  static const String route = IsmPageRoutes.location;
-
   @override
   State<IsmChatLocationWidget> createState() => _IsmLocationWidgetViewState();
 }
@@ -155,7 +153,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
               onPressed: () {
                 controller.isSearchSelect
                     ? controller.isSearchSelect = false
-                    : Get.back<void>();
+                    : IsmChatContextWidget.goBack<void>();
               },
               icon: Icon(
                 Icons.adaptive.arrow_back,
@@ -261,11 +259,12 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                   );
 
                                   IsmChatUtility.closeLoader();
-                                  Get.back<void>();
+                                  IsmChatContextWidget.goBack<void>();
                                   if (await IsmChatProperties.chatPageProperties
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
-                                              Get.context!,
+                                              IsmChatConfig.kNavigatorKey
+                                                  .currentContext!,
                                               controller.conversation!,
                                               IsmChatCustomMessageType
                                                   .location) ??
@@ -313,11 +312,12 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
 
                               return IsmChatTapHandler(
                                 onTap: () async {
-                                  Get.back<void>();
+                                  IsmChatContextWidget.goBack<void>();
                                   if (await IsmChatProperties.chatPageProperties
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
-                                              Get.context!,
+                                              IsmChatConfig.kNavigatorKey
+                                                  .currentContext!,
                                               controller.conversation!,
                                               IsmChatCustomMessageType
                                                   .location) ??

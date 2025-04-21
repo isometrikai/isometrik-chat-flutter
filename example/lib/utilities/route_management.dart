@@ -13,4 +13,8 @@ class RouteManagement {
   static void goToSignPage() {
     kNavigatorKey.currentContext?.goNamed(AppRouteName.signUp);
   }
+
+  static void goToChatList() {
+    kNavigatorKey.currentContext?.goNamed(AppRouteName.chatList);
+  }
 }

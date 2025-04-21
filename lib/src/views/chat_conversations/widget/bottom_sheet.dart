@@ -14,9 +14,9 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
           actions: [
             CupertinoActionSheetAction(
               onPressed: () async {
-                Get.back();
-                await Get.dialog(
-                  IsmChatAlertDialogBox(
+                IsmChatContextWidget.goBack();
+                await IsmChatContextWidget.showDialogContext(
+                  content: IsmChatAlertDialogBox(
                     title: IsmChatStrings.deleteAllMessage,
                     actionLabels: const [IsmChatStrings.clearChat],
                     callbackActions: [
@@ -48,9 +48,9 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
                     IsmChatConfig.communicationConfig.userConfig.userId) ...[
               CupertinoActionSheetAction(
                 onPressed: () async {
-                  Get.back();
-                  await Get.dialog(
-                    IsmChatAlertDialogBox(
+                  IsmChatContextWidget.goBack();
+                  await IsmChatContextWidget.showDialogContext(
+                    content: IsmChatAlertDialogBox(
                       title: IsmChatStrings.deleteThiGroup,
                       actionLabels: const [IsmChatStrings.deleteGroup],
                       callbackActions: [
@@ -73,9 +73,9 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
             ] else ...[
               CupertinoActionSheetAction(
                 onPressed: () async {
-                  Get.back();
+                  IsmChatContextWidget.goBack();
                   if (conversation.isGroup == true) {
-                    // await Get.dialog(
+                    // await IsmChatContextWidget.showDialogContext(
                     //   IsmChatAlertDialogBox(
                     //     title: 'Exit ${conversation.chatName}?',
                     //     content: const Text(
@@ -94,8 +94,8 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
                     //   ),
                     // );
                   } else {
-                    await Get.dialog(
-                      IsmChatAlertDialogBox(
+                    await IsmChatContextWidget.showDialogContext(
+                      content: IsmChatAlertDialogBox(
                         title: '${IsmChatStrings.deleteChat}?',
                         actionLabels: const [IsmChatStrings.deleteChat],
                         callbackActions: [
@@ -119,7 +119,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
             ],
           ],
           cancelButton: CupertinoActionSheetAction(
-            onPressed: Get.back,
+            onPressed: IsmChatContextWidget.goBack,
             child: Text(
               IsmChatStrings.cancel,
               style: IsmChatStyles.w600Black16,

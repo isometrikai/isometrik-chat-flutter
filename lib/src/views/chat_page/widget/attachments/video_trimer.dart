@@ -9,8 +9,6 @@ import 'package:video_trimmer/video_trimmer.dart';
 class IsmVideoTrimmerView extends StatefulWidget {
   const IsmVideoTrimmerView({super.key});
 
-  static const String route = IsmPageRoutes.videoTrimView;
-
   @override
   State<IsmVideoTrimmerView> createState() => _VideoTrimmerViewState();
 }
@@ -67,7 +65,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              Get.back<XFile>(result: file);
+              IsmChatContextWidget.goBack<XFile>(file);
             },
             icon: const Icon(
               Icons.arrow_back_rounded,

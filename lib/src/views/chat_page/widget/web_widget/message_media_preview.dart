@@ -14,8 +14,6 @@ class IsmWebMessageMediaPreview extends StatefulWidget {
     super.key,
   });
 
-  static const String route = IsmPageRoutes.messageMediaPreivew;
-
   @override
   State<IsmWebMessageMediaPreview> createState() =>
       _WebMessageMediaPreviewState();
@@ -147,7 +145,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 color: IsmChatColors.blackColor,
               ),
               onPressed: () {
-                Get.back<void>();
+                IsmChatContextWidget.goBack<void>();
               },
             ),
             IsmChatDimens.boxWidth32

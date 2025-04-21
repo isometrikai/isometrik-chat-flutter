@@ -7,8 +7,6 @@ import 'package:photo_view/photo_view.dart';
 class IsmChatProfilePicView extends StatelessWidget {
   IsmChatProfilePicView({super.key});
 
-  static const String route = IsmPageRoutes.profilePicView;
-
   final argument = Get.arguments as Map<String, dynamic>;
 
   @override
@@ -17,9 +15,9 @@ class IsmChatProfilePicView extends StatelessWidget {
     return Scaffold(
       backgroundColor: IsmChatColors.blackColor,
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: Get.back,
-            icon: const Icon(
+        leading: const IconButton(
+            onPressed: IsmChatContextWidget.goBack,
+            icon: Icon(
               Icons.arrow_back_rounded,
               color: IsmChatColors.whiteColor,
             )),

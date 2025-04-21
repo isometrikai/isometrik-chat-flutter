@@ -23,8 +23,6 @@ class IsmMedia extends StatefulWidget {
   final List<IsmChatMessageModel>? _mediaListLinks;
   final List<IsmChatMessageModel>? _mediaListDocs;
 
-  static const String route = IsmPageRoutes.media;
-
   @override
   State<IsmMedia> createState() => _IsmMediaState();
 }
@@ -77,7 +75,7 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
                               .isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
                     }
-                  : Get.back,
+                  : IsmChatContextWidget.goBack,
               icon: Icon(
                 IsmChatResponsive.isWeb(context)
                     ? Icons.close_rounded

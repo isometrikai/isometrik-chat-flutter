@@ -23,8 +23,6 @@ class IsmChatCreateConversationView extends StatelessWidget {
   final IsmChatConversationType? _conversationType;
   final converstaionController = Get.find<IsmChatConversationsController>();
 
-  static const String route = IsmPageRoutes.createChat;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
         initState: (_) async {
@@ -267,7 +265,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                             user.userDetails.userId,
                                           ),
                                         );
-                                        Get.back<void>();
+                                        IsmChatContextWidget.goBack<void>();
                                         IsmChatProperties
                                             .conversationProperties.onChatTap
                                             ?.call(_, ismChatConversation);
@@ -438,8 +436,8 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                     controller.profileImage.isEmpty ||
                                     controller
                                         .addGrouNameController.text.isEmpty) {
-                                  await Get.dialog(
-                                    const IsmChatAlertDialogBox(
+                                  await IsmChatContextWidget.showDialogContext(
+                                    content: const IsmChatAlertDialogBox(
                                       cancelLabel: IsmChatStrings.okay,
                                       title: IsmChatStrings.createGroupAlert,
                                     ),
@@ -486,7 +484,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                       controller.selectedUserList.length + 1,
                                 );
 
-                                Get.back<void>();
+                                IsmChatContextWidget.goBack<void>();
                                 IsmChatProperties
                                     .conversationProperties.onChatTap
                                     ?.call(context, conversation);
@@ -535,16 +533,16 @@ class _GroupChatImageAndName extends StatelessWidget {
                       if (kIsWeb) {
                         controller.ismUploadImage(ImageSource.gallery);
                       } else {
-                        Get.back();
-                        Get.bottomSheet<void>(
-                          IsmChatProfilePhotoBottomSheet(
+                        IsmChatContextWidget.goBack();
+                        IsmChatContextWidget.showBottomsheetContext<void>(
+                          content: IsmChatProfilePhotoBottomSheet(
                             onCameraTap: () async {
-                              Get.back();
+                              IsmChatContextWidget.goBack();
                               await controller
                                   .ismUploadImage(ImageSource.camera);
                             },
                             onGalleryTap: () async {
-                              Get.back();
+                              IsmChatContextWidget.goBack();
                               await controller
                                   .ismUploadImage(ImageSource.gallery);
                             },
@@ -566,15 +564,15 @@ class _GroupChatImageAndName extends StatelessWidget {
                       if (IsmChatResponsive.isWeb(context)) {
                         controller.ismUploadImage(ImageSource.gallery);
                       } else {
-                        Get.bottomSheet<void>(
-                          IsmChatProfilePhotoBottomSheet(
+                        IsmChatContextWidget.showBottomsheetContext<void>(
+                          content: IsmChatProfilePhotoBottomSheet(
                             onCameraTap: () async {
-                              Get.back();
+                              IsmChatContextWidget.goBack();
                               await controller
                                   .ismUploadImage(ImageSource.camera);
                             },
                             onGalleryTap: () async {
-                              Get.back();
+                              IsmChatContextWidget.goBack();
                               await controller
                                   .ismUploadImage(ImageSource.gallery);
                             },
@@ -618,7 +616,7 @@ class ChatModes extends StatelessWidget {
           if (IsmChatProperties.conversationProperties.enableGroupChat)
             ListTile(
               onTap: () async {
-                Get.back();
+                IsmChatContextWidget.goBack();
                 await Future.delayed(Durations.extralong1);
                 IsmChatRouteManagement.goToCreateChat(
                   isGroupConversation: true,
@@ -680,7 +678,7 @@ class ChatModes extends StatelessWidget {
           // ),
           ListTile(
             onTap: () async {
-              Get.back();
+              IsmChatContextWidget.goBack();
               await Future.delayed(Durations.extralong1);
               IsmChatRouteManagement.goToCreteBroadcastView();
             },

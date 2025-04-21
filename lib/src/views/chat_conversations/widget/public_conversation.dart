@@ -5,8 +5,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatPublicConversationView extends StatefulWidget {
   const IsmChatPublicConversationView({super.key});
 
-  static const String route = IsmPageRoutes.publicView;
-
   @override
   State<IsmChatPublicConversationView> createState() =>
       _IsmChatPublicConversationViewState();

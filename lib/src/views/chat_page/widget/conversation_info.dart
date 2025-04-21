@@ -6,8 +6,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatConverstaionInfoView extends StatelessWidget {
   IsmChatConverstaionInfoView({super.key});
 
-  static const String route = IsmPageRoutes.converstaionInfoView;
-
   final conversationController = Get.find<IsmChatConversationsController>();
 
   @override
@@ -338,8 +336,9 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                                   .usersOwnDetails?.memberId !=
                                               member.userId
                                       ? () {
-                                          Get.dialog(
-                                            IsmChatGroupAdminDialog(
+                                          IsmChatContextWidget
+                                              .showDialogContext(
+                                            content: IsmChatGroupAdminDialog(
                                                 user: member,
                                                 isAdmin: true,
                                                 groupName: controller
@@ -362,8 +361,9 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                               ?.isAdmin ??
                                           false
                                       ? () {
-                                          Get.dialog(
-                                            IsmChatGroupAdminDialog(
+                                          IsmChatContextWidget
+                                              .showDialogContext(
+                                            content: IsmChatGroupAdminDialog(
                                               user: member,
                                               groupName: controller.conversation
                                                       ?.conversationTitle ??
@@ -472,8 +472,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           children: [
                             TextButton.icon(
                               onPressed: () async {
-                                await Get.dialog(
-                                  IsmChatAlertDialogBox(
+                                await IsmChatContextWidget.showDialogContext(
+                                  content: IsmChatAlertDialogBox(
                                     title: IsmChatStrings.deleteAllMessage,
                                     actionLabels: const [
                                       IsmChatStrings.clearChat
@@ -484,7 +484,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                     ],
                                   ),
                                 );
-                                Get.back();
+                                IsmChatContextWidget.goBack();
                               },
                               icon: const Icon(
                                 Icons.clear_all_outlined,
@@ -503,8 +503,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                             ),
                             TextButton.icon(
                               onPressed: () async {
-                                await Get.dialog(
-                                  IsmChatAlertDialogBox(
+                                await IsmChatContextWidget.showDialogContext(
+                                  content: IsmChatAlertDialogBox(
                                     title: '${IsmChatStrings.deleteChat}?',
                                     actionLabels: const [
                                       IsmChatStrings.deleteChat
@@ -517,8 +517,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                     ],
                                   ),
                                 );
-                                Get.back();
-                                Get.back();
+                                IsmChatContextWidget.goBack();
+                                IsmChatContextWidget.goBack();
                               },
                               icon: const Icon(
                                 Icons.delete_forever_outlined,

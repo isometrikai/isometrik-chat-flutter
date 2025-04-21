@@ -45,8 +45,8 @@ class IsmChatTextMessage extends StatelessWidget {
                             ..onTap = () async {
                               if (e.isLink) {
                                 if (e.text.contains(RegExp(r'^\d{9,13}$'))) {
-                                  await Get.dialog(
-                                    IsmChatAlertDialogBox(
+                                  await IsmChatContextWidget.showDialogContext(
+                                    content: IsmChatAlertDialogBox(
                                       title: IsmChatStrings
                                           .thisPhoneNumberNotonChat,
                                       actionLabels: [

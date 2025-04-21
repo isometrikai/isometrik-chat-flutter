@@ -24,8 +24,6 @@ class IsmChatWallpaperPreview extends StatelessWidget {
   final XFile? _imagePath;
   final int? _assetSrNo;
 
-  static const String route = IsmPageRoutes.wallpaperPreview;
-
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: IsmChatAppBar(
@@ -283,8 +281,8 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                       IsmChatUtility.closeLoader();
                     }
                     await conversationController.getUserData(isLoading: true);
-                    if (_assetSrNo != 100) Get.back();
-                    Get.back();
+                    if (_assetSrNo != 100) IsmChatContextWidget.goBack();
+                    IsmChatContextWidget.goBack();
                   },
                   child: Container(
                     padding: IsmChatDimens.edgeInsets20_15,

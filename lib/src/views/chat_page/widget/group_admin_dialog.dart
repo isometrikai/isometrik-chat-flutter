@@ -50,8 +50,8 @@ class IsmChatGroupAdminDialog extends StatelessWidget {
                   PopupMenuItem(
                     onTap: () async {
                       await Future.delayed(const Duration(milliseconds: 100));
-                      await Get.dialog(
-                        IsmChatAlertDialogBox(
+                      await IsmChatContextWidget.showDialogContext(
+                        content: IsmChatAlertDialogBox(
                           title:
                               'Remove "${user.userName.capitalizeFirst}" from $groupName?',
                           actionLabels: const [IsmChatStrings.okay],

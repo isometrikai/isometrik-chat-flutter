@@ -8,8 +8,6 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
     super.key,
   });
 
-  static const String route = IsmPageRoutes.createBroadcastView;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
         initState: (_) {
@@ -344,8 +342,8 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                 controller.goToBroadcastMessage(
                     controller.selectedUserList, '');
               } else {
-                await Get.dialog(
-                  const IsmChatAlertDialogBox(
+                await IsmChatContextWidget.showDialogContext(
+                  content: const IsmChatAlertDialogBox(
                     title: IsmChatStrings.broadcastAlert,
                     cancelLabel: 'Okay',
                   ),
@@ -385,7 +383,10 @@ class _GetSuspensionTag extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(
-                  IsmChatResponsive.isWeb(Get.context!) ? .23 : .7,
+                  IsmChatResponsive.isWeb(
+                          IsmChatConfig.kNavigatorKey.currentContext!)
+                      ? .23
+                      : .7,
                 ),
                 child: Divider(
                   height: .0,
