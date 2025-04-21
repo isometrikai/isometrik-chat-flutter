@@ -106,8 +106,9 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                         children: [
                           IsmChatTapHandler(
                             onTap: () {
-                              IsmChatRouteManagement.goToProfilePicView(
-                                  controller.conversation!.opponentDetails!);
+                              IsmChatRoute.goToRoute(IsmChatProfilePicView(
+                                user: controller.conversation!.opponentDetails!,
+                              ));
                             },
                             child: IsmChatImage.profile(
                               controller.conversation?.profileUrl ?? '',
@@ -214,12 +215,14 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                         .isRenderChatPageaScreen =
                                     IsRenderChatPageScreen.coversationMediaView;
                               } else {
-                                IsmChatRouteManagement.goToMedia(
-                                  mediaList: conversationController.mediaList,
-                                  mediaListLinks:
-                                      conversationController.mediaListLinks,
-                                  mediaListDocs:
-                                      conversationController.mediaListDocs,
+                                IsmChatRoute.goToRoute(
+                                  IsmMedia(
+                                    mediaList: conversationController.mediaList,
+                                    mediaListLinks:
+                                        conversationController.mediaListLinks,
+                                    mediaListDocs:
+                                        conversationController.mediaListDocs,
+                                  ),
                                 );
                               }
                             },
@@ -279,7 +282,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                           .isRenderChatPageaScreen =
                                       IsRenderChatPageScreen.groupEligibleView;
                                 } else {
-                                  IsmChatRouteManagement.goToEligibleUser();
+                                  IsmChatRoute.goToRoute(
+                                      const IsmChatGroupEligibleUser());
                                 }
                               },
                               icon: Icon(
@@ -484,7 +488,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                     ],
                                   ),
                                 );
-                                IsmChatContextWidget.goBack();
+                                IsmChatRoute.goBack();
                               },
                               icon: const Icon(
                                 Icons.clear_all_outlined,
@@ -517,8 +521,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                     ],
                                   ),
                                 );
-                                IsmChatContextWidget.goBack();
-                                IsmChatContextWidget.goBack();
+                                IsmChatRoute.goBack();
+                                IsmChatRoute.goBack();
                               },
                               icon: const Icon(
                                 Icons.delete_forever_outlined,

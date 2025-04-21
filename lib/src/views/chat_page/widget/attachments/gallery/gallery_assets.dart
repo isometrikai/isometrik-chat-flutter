@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:easy_video_editor/easy_video_editor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,11 +10,9 @@ import 'package:photo_view/photo_view.dart';
 import 'package:video_compress/video_compress.dart';
 
 class IsmChatGalleryAssetsView extends StatelessWidget {
-  IsmChatGalleryAssetsView({
-    super.key,
-  });
+  const IsmChatGalleryAssetsView({super.key, required this.mediaXFile});
 
-  final mediaXFile = Get.arguments['fileList'] as List<XFile?>? ?? [];
+  final List<XFile?> mediaXFile;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
@@ -41,7 +40,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                         IsmChatColors.whiteColor,
                   ),
                   onTap: () {
-                    IsmChatContextWidget.goBack<void>();
+                    IsmChatRoute.goBack<void>();
                     controller.webMedia.clear();
                     controller.isVideoVisible = false;
                   },
@@ -100,7 +99,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                 controller.assetsIndex =
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
-                                  IsmChatContextWidget.goBack<void>();
+                                  IsmChatRoute.goBack<void>();
                                 }
                               },
                               child: Icon(
@@ -117,8 +116,9 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             IconButton(
                               onPressed: () async {
                                 controller.isVideoVisible = true;
-                                var mediaFile = await IsmChatRouteManagement
-                                    .goToVideoTrimeView(
+                                var mediaFile =
+                                    await IsmChatRoute.goToRoute<XFile>(
+                                        IsmVideoTrimmerView(
                                   index: controller.assetsIndex,
                                   file: XFile(
                                     controller.webMedia[controller.assetsIndex]
@@ -126,14 +126,17 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                         '',
                                   ),
                                   maxVideoTrim: 30,
+                                ));
+                                if (mediaFile == null) return;
+                                final thumb = await VideoEditorBuilder(
+                                        videoPath: mediaFile.path)
+                                    .generateThumbnail(
+                                  quality: 50,
+                                  positionMs: 1,
                                 );
-
+                                final thumbFile = File(thumb ?? '');
                                 final thumbnailBytes =
-                                    await VideoCompress.getByteThumbnail(
-                                        mediaFile.path,
-                                        quality: 50,
-                                        position: 1);
-
+                                    await thumbFile.readAsBytes();
                                 var bytes = await mediaFile.readAsBytes();
                                 final fileSize = IsmChatUtility.formatBytes(
                                   int.parse(bytes.length.toString()),
@@ -167,7 +170,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
                                   controller.assetsIndex = 0;
-                                  IsmChatContextWidget.goBack<void>();
+                                  IsmChatRoute.goBack<void>();
                                 }
                               },
                               icon: Icon(

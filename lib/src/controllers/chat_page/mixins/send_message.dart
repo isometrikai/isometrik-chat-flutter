@@ -129,7 +129,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
     if (isMaxSize == false) {
-      IsmChatContextWidget.goBack<void>();
+      IsmChatRoute.goBack<void>();
       sendPhotoAndVideo();
     } else {
       await IsmChatContextWidget.showDialogContext(
@@ -153,7 +153,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     }
     if (isMaxSize == false) {
       _controller.showCloseLoaderForMoble(showLoader: false);
-      IsmChatContextWidget.goBack<void>();
+      IsmChatRoute.goBack<void>();
       sendPhotoAndVideoForWeb();
     } else {
       IsmChatUtility.closeLoader();

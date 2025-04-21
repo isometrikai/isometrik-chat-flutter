@@ -24,6 +24,8 @@ import 'package:url_launcher/url_launcher.dart';
 class IsmChatUtility {
   const IsmChatUtility._();
 
+  static bool isLoading = false;
+
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
   static void openKeyboard() =>
@@ -39,6 +41,7 @@ class IsmChatUtility {
   /// Show loader
   static void showLoader() async {
     closeLoader();
+    isLoading = true;
     await IsmChatContextWidget.showDialogContext(
       content: const IsmChatLoadingDialog(),
       barrierDismissible: false,
@@ -46,8 +49,9 @@ class IsmChatUtility {
   }
 
   static void closeLoader() {
-    if (Get.isDialogOpen == true) {
-      IsmChatContextWidget.goBack();
+    if (isLoading) {
+      isLoading = false;
+      IsmChatRoute.goBack();
     }
   }
 
@@ -65,7 +69,7 @@ class IsmChatUtility {
   // static void closeLoader() {
   //   var isLoaderOpen = Get.isDialogOpen;
   //   if (isLoaderOpen != null) {
-  //     IsmChatContextWidget.goBack(closeOverlays: false, canPop: true);
+  //     IsmChatRoute.goBack()(closeOverlays: false, canPop: true);
   //   }
   // }
 

@@ -461,22 +461,20 @@ class IsmChatPageController extends GetxController
   void onBottomAttachmentTapped(
     IsmChatAttachmentType attachmentType,
   ) async {
-    IsmChatContextWidget.goBack<void>();
+    IsmChatRoute.goBack();
     switch (attachmentType) {
       case IsmChatAttachmentType.camera:
         final initialize = await initializeCamera();
         if (initialize) {
-          IsmChatResponsive.isWeb(
-                      IsmChatConfig.kNavigatorKey.currentContext!) &&
-                  kIsWeb
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)
               ? isCameraView = true
-              : IsmChatRouteManagement.goToCameraView();
+              : IsmChatRoute.goToRoute(const IsmChatCameraView());
         }
 
         break;
       case IsmChatAttachmentType.gallery:
         webMedia.clear();
-        kIsWeb ? getMediaWithWeb() : getMedia();
+        getMedia();
         break;
       case IsmChatAttachmentType.document:
         sendDocument(
@@ -486,7 +484,7 @@ class IsmChatPageController extends GetxController
         break;
       case IsmChatAttachmentType.location:
         textEditingController.clear();
-        IsmChatRouteManagement.goToLocation();
+        await IsmChatRoute.goToRoute(const IsmChatLocationWidget());
         break;
       case IsmChatAttachmentType.contact:
         contactList.clear();
@@ -495,7 +493,8 @@ class IsmChatPageController extends GetxController
         isSearchSelect = false;
         isLoadingContact = false;
         if (await IsmChatUtility.requestPermission(Permission.contacts)) {
-          IsmChatRouteManagement.goToContactView();
+          unawaited(IsmChatRoute.goToRoute(const IsmChatContactView()));
+
           var contacts = await FlutterContacts.getContacts(
               withProperties: true, withPhoto: true);
           for (var x in contacts) {
@@ -525,7 +524,7 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  void getMediaWithWeb() async {
+  void getMedia() async {
     webMedia.clear();
     assetsIndex = 0;
     final result = await IsmChatUtility.pickMedia(
@@ -573,25 +572,16 @@ class IsmChatPageController extends GetxController
       IsmChatUtility.closeLoader();
     } else if (IsmChatResponsive.isMobile(
         IsmChatConfig.kNavigatorKey.currentContext!)) {
-      IsmChatRouteManagement.goToGalleryAssetsView(result);
+      await IsmChatRoute.goToRoute(IsmChatGalleryAssetsView(
+        mediaXFile: result,
+      ));
     }
-  }
-
-  void getMedia() async {
-    final result = await IsmChatUtility.pickMedia(
-      ImageSource.gallery,
-      isVideoAndImage: true,
-    );
-
-    if (result.isEmpty) return;
-    IsmChatRouteManagement.goToGalleryAssetsView(result);
   }
 
   Future<void> selectAssets(List<XFile?> assetList) async {
     textEditingController.clear();
     webMedia.clear();
     assetsIndex = 0;
-
     for (var file in assetList) {
       var bytes = await file?.readAsBytes();
       var name = '';
@@ -697,13 +687,15 @@ class IsmChatPageController extends GetxController
             content: IsmChatPageDailog(
               child: IsmChatForwardView(
                 message: message,
-                conversation: conversation,
+                conversation: conversation!,
               ),
             ),
           );
         } else {
-          IsmChatRouteManagement.goToForwardView(
-              message: message, conversation: conversation!);
+          await IsmChatRoute.goToRoute(IsmChatForwardView(
+            message: message,
+            conversation: conversation!,
+          ));
         }
 
         break;
@@ -1004,8 +996,8 @@ class IsmChatPageController extends GetxController
     }
     var didLeft = await leaveConversation(conversation!.conversationId!);
     if (didLeft) {
-      IsmChatContextWidget.goBack(); // to Chat Page
-      IsmChatContextWidget.goBack(); // to Conversation Page
+      IsmChatRoute.goBack(); // to Chat Page
+      IsmChatRoute.goBack(); // to Conversation Page
       await Future.wait([
         IsmChatConfig.dbWrapper!
             .removeConversation(conversation!.conversationId!),
@@ -1048,22 +1040,24 @@ class IsmChatPageController extends GetxController
         if (IsmChatResponsive.isWeb(
             IsmChatConfig.kNavigatorKey.currentContext!)) {
           {
-            IsmChatRouteManagement.goToWebMediaMessagePreview(
-              mediaIndex: selectedMediaIndex,
-              messageData: mediaList,
-              mediaUserName: message.chatName,
-              initiated: message.sentByMe,
-              mediaTime: message.sentAt,
-            );
+            await IsmChatRoute.goToRoute(IsmWebMessageMediaPreview(
+              previewData: {
+                'mediaIndex': selectedMediaIndex,
+                'messageData': mediaList,
+                'mediaUserName': message.chatName,
+                'initiated': message.sentByMe,
+                'mediaTime': message.sentAt,
+              },
+            ));
           }
         } else {
-          IsmChatRouteManagement.goToMediaPreview(
+          await IsmChatRoute.goToRoute(IsmMediaPreview(
             mediaIndex: selectedMediaIndex,
             messageData: mediaList,
             mediaUserName: message.chatName,
             initiated: message.sentByMe,
             mediaTime: message.sentAt,
-          );
+          ));
         }
       }
     } else if (message.customType == IsmChatCustomMessageType.file) {
@@ -1104,7 +1098,11 @@ class IsmChatPageController extends GetxController
         ),
       );
     } else if (message.customType == IsmChatCustomMessageType.contact) {
-      IsmChatRouteManagement.goToContactInfoView(contacts: message.contacts);
+      await IsmChatRoute.goToRoute(
+        IsmChatContactsInfoView(
+          contacts: message.contacts,
+        ),
+      );
     }
   }
 
@@ -1125,22 +1123,24 @@ class IsmChatPageController extends GetxController
       if (IsmChatResponsive.isWeb(
           IsmChatConfig.kNavigatorKey.currentContext!)) {
         {
-          IsmChatRouteManagement.goToWebMediaMessagePreview(
-            mediaIndex: selectedMediaIndex,
-            messageData: mediaList,
-            mediaUserName: message.chatName,
-            initiated: message.sentByMe,
-            mediaTime: message.sentAt,
-          );
+          await IsmChatRoute.goToRoute(IsmWebMessageMediaPreview(
+            previewData: {
+              'mediaIndex': selectedMediaIndex,
+              'messageData': mediaList,
+              'mediaUserName': message.chatName,
+              'initiated': message.sentByMe,
+              'mediaTime': message.sentAt
+            },
+          ));
         }
       } else {
-        IsmChatRouteManagement.goToMediaPreview(
+        await IsmChatRoute.goToRoute(IsmMediaPreview(
           mediaIndex: selectedMediaIndex,
           messageData: mediaList,
           mediaUserName: message.chatName,
           initiated: message.sentByMe,
           mediaTime: message.sentAt,
-        );
+        ));
       }
     } else if (message.metaData?.replyMessage?.parentMessageMessageType ==
         IsmChatCustomMessageType.file) {
@@ -1182,7 +1182,11 @@ class IsmChatPageController extends GetxController
       );
     } else if (message.metaData?.replyMessage?.parentMessageMessageType ==
         IsmChatCustomMessageType.contact) {
-      IsmChatRouteManagement.goToContactInfoView(contacts: message.contacts);
+      await IsmChatRoute.goToRoute(
+        IsmChatContactsInfoView(
+          contacts: message.contacts,
+        ),
+      );
     }
   }
 
@@ -1444,13 +1448,19 @@ class IsmChatPageController extends GetxController
     bool forGalllery = false,
     int selectedIndex = 0,
   }) async {
-    // final file = await IsmChatRouteManagement.goToImagePaintView(XFile(url));
-    // if (forGalllery) {
-    //   await updateGalleryImage(
-    //       file: XFile(file.path), selectedIndex: selectedIndex);
-    // } else {
-    //   await updateImage(XFile(file.path));
-    // }
+    final file = await IsmChatRoute.goToRoute<XFile>(
+      IsmChatImagePaintView(
+        file: XFile(url),
+      ),
+    );
+
+    if (file == null) return;
+    if (forGalllery) {
+      await updateGalleryImage(
+          file: XFile(file.path), selectedIndex: selectedIndex);
+    } else {
+      await updateImage(XFile(file.path));
+    }
   }
 
   void takePhoto() async {
@@ -1458,7 +1468,7 @@ class IsmChatPageController extends GetxController
     XFile? mainFile;
     if (IsmChatResponsive.isMobile(
         IsmChatConfig.kNavigatorKey.currentContext!)) {
-      IsmChatContextWidget.goBack();
+      IsmChatRoute.goBack();
     }
 
     if (cameraController.description.lensDirection ==
@@ -1481,7 +1491,7 @@ class IsmChatPageController extends GetxController
     await updateImage(mainFile);
     if (IsmChatResponsive.isMobile(
         IsmChatConfig.kNavigatorKey.currentContext!)) {
-      IsmChatRouteManagement.goToMediaEditView();
+      await IsmChatRoute.goToRoute(const IsmChatImageEditView());
     }
   }
 
@@ -1562,10 +1572,10 @@ class IsmChatPageController extends GetxController
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.messgaeInfoView;
     } else {
-      IsmChatRouteManagement.goToMessageInfo(
+      await IsmChatRoute.goToRoute(IsmChatMessageInfo(
         message: message,
         isGroup: conversation?.isGroup ?? false,
-      );
+      ));
     }
   }
 
@@ -1767,10 +1777,12 @@ class IsmChatPageController extends GetxController
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.userInfoView;
     } else {
-      IsmChatRouteManagement.goToUserInfo(
-        conversationId: conversationId,
-        user: user!,
-        fromMessagePage: fromMessagePage,
+      await IsmChatRoute.goToRoute(
+        IsmChatUserInfo(
+          conversationId: conversationId,
+          user: user!,
+          fromMessagePage: fromMessagePage,
+        ),
       );
     }
   }
@@ -1789,7 +1801,7 @@ class IsmChatPageController extends GetxController
       if (result.status == ShareResultStatus.success) {
         IsmChatUtility.showToast('Share your media');
         IsmChatLog.success('File shared: ${result.status}');
-        IsmChatContextWidget.goBack();
+        IsmChatRoute.goBack();
       }
     } else {
       IsmChatUtility.closeLoader();

@@ -61,7 +61,7 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                               ],
                               callbackActions: [
                                 () {
-                                  IsmChatContextWidget.goBack();
+                                  IsmChatRoute.goBack();
                                   onSignOut?.call();
                                 },
                               ],
@@ -176,14 +176,14 @@ class _MoreIcon extends StatelessWidget {
                 IsRenderConversationScreen.broadcastView;
             Scaffold.of(context).openDrawer();
           } else {
-            IsmChatRouteManagement.goToCreteBroadcastView();
+            await IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
           }
         } else if (index == 2) {
           if (IsmChatResponsive.isWeb(context)) {
             controller.isRenderScreen = IsRenderConversationScreen.blockView;
             Scaffold.of(context).openDrawer();
           } else {
-            IsmChatRouteManagement.goToBlockView();
+            await IsmChatRoute.goToRoute(const IsmChatBlockedUsersView());
           }
         } else if (index == 3) {
           if (IsmChatResponsive.isWeb(context)) {
@@ -191,7 +191,7 @@ class _MoreIcon extends StatelessWidget {
                 IsRenderConversationScreen.broadCastListView;
             Scaffold.of(context).openDrawer();
           } else {
-            IsmChatRouteManagement.goToBroadcastListView();
+            await IsmChatRoute.goToRoute(const IsmChatBroadCastView());
           }
         } else if (index == 4) {
           controller.isRenderScreen = IsRenderConversationScreen.groupUserView;
@@ -327,7 +327,7 @@ class _SearchAction extends StatelessWidget {
         onPressed: () {
           controller.isConversationsLoading = true;
           controller.searchConversationList.clear();
-          IsmChatRouteManagement.goToGlobalSearchView();
+          IsmChatRoute.goToRoute(const IsmChatGlobalSearchView());
         },
         icon: const Icon(Icons.search_rounded),
       );

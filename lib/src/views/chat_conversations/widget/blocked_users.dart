@@ -48,7 +48,7 @@ class IsmChatBlockedUsersView extends StatelessWidget {
                                   opponentId: user.userId, isLoading: true);
                             } else {
                               controller.unblockUserForWeb(user.userId);
-                              IsmChatContextWidget.goBack();
+                              IsmChatRoute.goBack();
                             }
                           },
                           child: const Text(

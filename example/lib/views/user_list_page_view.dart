@@ -9,6 +9,9 @@ class UserListPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IsmChatCreateConversationView();
+    return IsmChatCreateConversationView(
+      conversationType: IsmChatConversationType.private,
+      isGroupConversation: false,
+    );
   }
 }

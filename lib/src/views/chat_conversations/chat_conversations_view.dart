@@ -206,9 +206,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                       } else {
                         IsmChatProperties.conversationProperties.onCreateTap
                             ?.call();
-                        IsmChatRouteManagement.goToCreateChat(
+                        IsmChatRoute.goToRoute(IsmChatCreateConversationView(
                           isGroupConversation: false,
-                        );
+                          conversationType: IsmChatConversationType.private,
+                        ));
                       }
                     },
                   )
@@ -343,21 +344,19 @@ class _CreateChatBottomSheet extends StatelessWidget {
       [bool isGroup = false,
       IsmChatConversationType conversationType =
           IsmChatConversationType.private]) {
-    IsmChatContextWidget.goBack();
-    IsmChatRouteManagement.goToCreateChat(
+    IsmChatRoute.goBack();
+    Future.delayed(const Duration(milliseconds: 500));
+    IsmChatRoute.goToRoute(IsmChatCreateConversationView(
       isGroupConversation: isGroup,
       conversationType: conversationType,
-    );
+    ));
   }
 
   @override
   Widget build(BuildContext context) => CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
-            onPressed: () {
-              IsmChatContextWidget.goBack();
-              _startConversation();
-            },
+            onPressed: _startConversation,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -381,7 +380,6 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              IsmChatContextWidget.goBack();
               _startConversation(true);
             },
             child: Row(
@@ -407,7 +405,6 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              IsmChatContextWidget.goBack();
               _startConversation(
                 true,
                 IsmChatConversationType.public,
@@ -436,7 +433,6 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              IsmChatContextWidget.goBack();
               _startConversation(
                 true,
                 IsmChatConversationType.open,
@@ -465,8 +461,7 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              IsmChatContextWidget.goBack();
-              IsmChatRouteManagement.goToCreteBroadcastView();
+              IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -491,7 +486,7 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
         ],
         cancelButton: const CupertinoActionSheetAction(
-          onPressed: IsmChatContextWidget.goBack,
+          onPressed: IsmChatRoute.goBack,
           isDestructiveAction: true,
           child: Text('Cancel'),
         ),

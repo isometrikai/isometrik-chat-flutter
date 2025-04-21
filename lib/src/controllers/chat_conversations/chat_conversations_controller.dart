@@ -467,9 +467,13 @@ class IsmChatConversationsController extends GetxController {
       case IsRenderConversationScreen.groupUserView:
         return IsmChatCreateConversationView(
           isGroupConversation: true,
+          conversationType: IsmChatConversationType.private,
         );
       case IsRenderConversationScreen.createConverstaionView:
-        return IsmChatCreateConversationView();
+        return IsmChatCreateConversationView(
+          isGroupConversation: false,
+          conversationType: IsmChatConversationType.private,
+        );
       case IsRenderConversationScreen.userView:
         return IsmChatUserView();
       case IsRenderConversationScreen.broadcastView:
@@ -492,8 +496,8 @@ class IsmChatConversationsController extends GetxController {
         break;
       case IsRenderChatPageScreen.messgaeInfoView:
         return IsmChatMessageInfo(
-          isGroup: currentConversation?.isGroup,
-          message: message,
+          isGroup: currentConversation?.isGroup ?? false,
+          message: message!,
         );
       case IsRenderChatPageScreen.groupEligibleView:
         return const IsmChatGroupEligibleUser();
@@ -508,7 +512,7 @@ class IsmChatConversationsController extends GetxController {
       case IsRenderChatPageScreen.userInfoView:
         return IsmChatUserInfo(
           user: contactDetails,
-          conversationId: userConversationId,
+          conversationId: userConversationId ?? '',
           fromMessagePage: true,
         );
       case IsRenderChatPageScreen.messageSearchView:
@@ -1196,7 +1200,7 @@ class IsmChatConversationsController extends GetxController {
       metaData: metaData,
     );
     if (response?.hasError == false) {
-      IsmChatContextWidget.goBack();
+      IsmChatRoute.goBack();
       await getChatConversations();
     }
   }
@@ -1258,7 +1262,7 @@ class IsmChatConversationsController extends GetxController {
     var response = await _viewModel.joinConversation(
         conversationId: conversationId, isLoading: isloading);
     if (response != null) {
-      IsmChatContextWidget.goBack();
+      IsmChatRoute.goBack();
       await getChatConversations();
     }
   }
@@ -1559,7 +1563,7 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// `source`: The source of the image to upload.
   void updateUserDetails(ImageSource source) async {
-    IsmChatContextWidget.goBack();
+    IsmChatRoute.goBack();
     final imageUrl = await ismUploadImage(source);
     if (imageUrl.isNotEmpty) {
       await updateUserData(
@@ -1736,9 +1740,11 @@ class IsmChatConversationsController extends GetxController {
   void goToContactSync() async {
     // await askPermissions();
     await Future.delayed(Durations.extralong1);
-    IsmChatRouteManagement.goToCreateChat(
+
+    await IsmChatRoute.goToRoute(IsmChatCreateConversationView(
       isGroupConversation: false,
-    );
+      conversationType: IsmChatConversationType.private,
+    ));
   }
 
   /// Removes local users from the forwarded list.
@@ -1875,7 +1881,7 @@ class IsmChatConversationsController extends GetxController {
 
     updateLocalConversation(conversation);
     if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
-      IsmChatContextWidget.goBack();
+      IsmChatRoute.goBack();
       if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         IsmChatPageBinding().dependencies();
       }
@@ -1885,9 +1891,7 @@ class IsmChatConversationsController extends GetxController {
       chatPagecontroller.startInit(isBroadcasts: true);
       chatPagecontroller.closeOverlay();
     } else {
-      IsmChatRouteManagement.goToBroadcastMessagePage(
-        isBroadcast: true,
-      );
+      IsmChatRoute.goToRoute(const IsmChatBoradcastMessagePage());
     }
   }
 }

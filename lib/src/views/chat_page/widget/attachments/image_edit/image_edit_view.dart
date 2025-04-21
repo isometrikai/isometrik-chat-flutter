@@ -55,8 +55,8 @@ class IsmChatImageEditView extends StatelessWidget {
                 color: IsmChatColors.whiteColor,
               ),
               onPressed: () {
-                IsmChatContextWidget.goBack();
-                IsmChatContextWidget.goBack();
+                IsmChatRoute.goBack();
+                IsmChatRoute.goBack();
               },
             ),
           ),
@@ -92,7 +92,7 @@ class IsmChatImageEditView extends StatelessWidget {
                   backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                   onPressed: () async {
                     if (controller.webMedia.first.dataSize.size()) {
-                      IsmChatContextWidget.goBack();
+                      IsmChatRoute.goBack();
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
                               ?.call(context, controller.conversation!,

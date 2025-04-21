@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatObserverUsersView extends StatefulWidget {
-  IsmChatObserverUsersView({super.key, String? conversationId})
-      : _conversationId = conversationId ??
-            (Get.arguments as Map<String, dynamic>?)?['conversationId'];
+  const IsmChatObserverUsersView({super.key, required this.conversationId});
 
-  final String _conversationId;
+  final String conversationId;
 
   @override
   State<IsmChatObserverUsersView> createState() =>
@@ -24,7 +22,7 @@ class _IsmChatObserverUsersViewState extends State<IsmChatObserverUsersView> {
   void initState() {
     super.initState();
     future = converstaionController.getObservationUser(
-        conversationId: widget._conversationId);
+        conversationId: widget.conversationId);
   }
 
   @override
@@ -46,7 +44,7 @@ class _IsmChatObserverUsersViewState extends State<IsmChatObserverUsersView> {
                     if (value.trim().isNotEmpty) {
                       converstaionController.debounce.run(() {
                         future = converstaionController.getObservationUser(
-                          conversationId: widget._conversationId,
+                          conversationId: widget.conversationId,
                           searchText: value,
                           isLoading: true,
                         );
@@ -61,7 +59,7 @@ class _IsmChatObserverUsersViewState extends State<IsmChatObserverUsersView> {
                 isSearch = !isSearch;
                 setState(() {});
                 future = converstaionController.getObservationUser(
-                    conversationId: widget._conversationId);
+                    conversationId: widget.conversationId);
                 setState(() {});
               },
               icon:

@@ -76,7 +76,7 @@ class IsmChatContactView extends StatelessWidget {
               ? null
               : FloatingActionButton(
                   onPressed: () async {
-                    IsmChatContextWidget.goBack();
+                    IsmChatRoute.goBack();
                     if (await IsmChatProperties.chatPageProperties
                             .messageAllowedConfig?.isMessgeAllowed
                             ?.call(
@@ -277,8 +277,7 @@ class IsmChatContactView extends StatelessWidget {
                                               'You can only share with up to 5 contacts'),
                                           actions: [
                                             TextButton(
-                                              onPressed:
-                                                  IsmChatContextWidget.goBack,
+                                              onPressed: IsmChatRoute.goBack,
                                               child: Text(
                                                 'Okay',
                                                 style: TextStyle(fontSize: 15),

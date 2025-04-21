@@ -6,18 +6,13 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatForwardView extends StatelessWidget {
   IsmChatForwardView({
     super.key,
-    IsmChatMessageModel? message,
-    IsmChatConversationModel? conversation,
-  })  : _conversation = conversation ??
-            (Get.arguments as Map<String, dynamic>?)?['conversation'],
-        _message =
-            message ?? (Get.arguments as Map<String, dynamic>?)?['message'];
+    required this.message,
+    required this.conversation,
+  });
 
-  /// The selected [_message] which is to be forwarded
-  final IsmChatMessageModel? _message;
+  final IsmChatMessageModel message;
 
-  /// The [_conversation] to which the selected [_message] is to be forwarded
-  final IsmChatConversationModel? _conversation;
+  final IsmChatConversationModel conversation;
 
   final converstaionController = Get.find<IsmChatConversationsController>();
 
@@ -59,7 +54,7 @@ class IsmChatForwardView extends StatelessWidget {
           converstaionController.showSearchField = false;
           converstaionController.isLoadResponse = false;
           converstaionController.getNonBlockUserList(
-            opponentId: _conversation?.opponentDetails?.userId,
+            opponentId: conversation.opponentDetails?.userId,
           );
         },
         builder: (controller) => Scaffold(
@@ -274,7 +269,7 @@ class IsmChatForwardView extends StatelessWidget {
                                                       actions: [
                                                         TextButton(
                                                           onPressed:
-                                                              IsmChatContextWidget
+                                                              IsmChatRoute
                                                                   .goBack,
                                                           child: Text(
                                                             'Okay',
@@ -374,14 +369,13 @@ class IsmChatForwardView extends StatelessWidget {
                                             IsmChatCustomMessageType.forward) ??
                                     true) {
                                   await controller.sendForwardMessage(
-                                    customType:
-                                        _message?.customType?.name ?? '',
+                                    customType: message.customType?.name ?? '',
                                     userIds: controller.selectedUserList
                                         .map((e) => e.userId)
                                         .toList(),
-                                    body: _message?.body ?? '',
-                                    metaData: _message?.metaData,
-                                    attachments: _message?.attachments
+                                    body: message.body,
+                                    metaData: message.metaData,
+                                    attachments: message.attachments
                                         ?.map((e) => e.toMap())
                                         .toList(),
                                     isLoading: true,

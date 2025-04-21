@@ -11,7 +11,10 @@ import 'package:video_compress/video_compress.dart';
 class IsmChatVideoView extends StatefulWidget {
   const IsmChatVideoView({
     super.key,
+    required this.file,
   });
+
+  final XFile file;
 
   @override
   State<IsmChatVideoView> createState() => _IsmChatVideoViewState();
@@ -67,8 +70,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
   }
 
   void _startInit() async {
-    final argumnet = Get.arguments as Map<String, dynamic>;
-    final file = argumnet['file'] as XFile? ?? XFile('');
+    final file = widget.file;
     _voidConfig(file);
   }
 
@@ -88,7 +90,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
             style: IsmChatStyles.w600White16,
           ),
           leading: const IconButton(
-            onPressed: IsmChatContextWidget.goBack,
+            onPressed: IsmChatRoute.goBack,
             icon: Icon(
               Icons.arrow_back_rounded,
               color: IsmChatColors.whiteColor,
@@ -149,8 +151,8 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                 backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                 onPressed: () async {
                   if (webMediaModel?.dataSize.size() ?? false) {
-                    IsmChatContextWidget.goBack();
-                    IsmChatContextWidget.goBack();
+                    IsmChatRoute.goBack();
+                    IsmChatRoute.goBack();
                     if (await IsmChatProperties.chatPageProperties
                             .messageAllowedConfig?.isMessgeAllowed
                             ?.call(

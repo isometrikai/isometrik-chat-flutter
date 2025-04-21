@@ -4,24 +4,16 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// IsmMedia class is for showing the conversation media
 class IsmMedia extends StatefulWidget {
-  IsmMedia({
+  const IsmMedia({
     super.key,
-    List<IsmChatMessageModel>? mediaList,
-    List<IsmChatMessageModel>? mediaListLinks,
-    List<IsmChatMessageModel>? mediaListDocs,
-  })  : _mediaList = mediaList ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaList'] ??
-            [],
-        _mediaListDocs = mediaListDocs ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaListDocs'] ??
-            [],
-        _mediaListLinks = mediaListLinks ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaListLinks'] ??
-            [];
+    required this.mediaList,
+    required this.mediaListLinks,
+    required this.mediaListDocs,
+  });
 
-  final List<IsmChatMessageModel>? _mediaList;
-  final List<IsmChatMessageModel>? _mediaListLinks;
-  final List<IsmChatMessageModel>? _mediaListDocs;
+  final List<IsmChatMessageModel> mediaList;
+  final List<IsmChatMessageModel> mediaListLinks;
+  final List<IsmChatMessageModel> mediaListDocs;
 
   @override
   State<IsmMedia> createState() => _IsmMediaState();
@@ -75,7 +67,7 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
                               .isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
                     }
-                  : IsmChatContextWidget.goBack,
+                  : IsmChatRoute.goBack,
               icon: Icon(
                 IsmChatResponsive.isWeb(context)
                     ? Icons.close_rounded
@@ -87,9 +79,9 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: [
-                IsmMediaView(mediaList: widget._mediaList ?? []),
-                IsmLinksView(mediaListLinks: widget._mediaListLinks ?? []),
-                IsmDocsView(mediaListDocs: widget._mediaListDocs ?? []),
+                IsmMediaView(mediaList: widget.mediaList),
+                IsmLinksView(mediaListLinks: widget.mediaListLinks),
+                IsmDocsView(mediaListDocs: widget.mediaListDocs),
               ],
             ),
           ),

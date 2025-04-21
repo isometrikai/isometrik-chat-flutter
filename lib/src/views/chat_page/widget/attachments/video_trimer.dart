@@ -2,12 +2,19 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 
 class IsmVideoTrimmerView extends StatefulWidget {
-  const IsmVideoTrimmerView({super.key});
+  const IsmVideoTrimmerView(
+      {super.key,
+      required this.maxVideoTrim,
+      required this.file,
+      required this.index});
+
+  final XFile file;
+  final double maxVideoTrim;
+  final int index;
 
   @override
   State<IsmVideoTrimmerView> createState() => _VideoTrimmerViewState();
@@ -20,22 +27,61 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
   var durationInSeconds = 0.0;
   var isPlaying = false.obs;
   var playPausedAction = true;
-  var descriptionTEC = TextEditingController();
-  final arguments = Get.arguments as Map<String, dynamic>? ?? {};
+  bool isShowTrimmer = false;
+  int videoRotationIndex = -1;
+  final List<File> thumbnails = [];
   var file = XFile('');
 
   @override
   void initState() {
     super.initState();
-    endValue = (arguments['durationInSeconds'] as double? ?? 0).obs;
-    durationInSeconds = endValue.value;
-    file = arguments['file'] as XFile? ?? XFile('');
+    maxVideoTrim = widget.maxVideoTrim;
+    file = widget.file;
     loadVideo(file.path);
   }
 
   loadVideo(String url) async {
-    await trimmer.loadVideo(videoFile: File(url));
-    trimmer.videoPlayerController?.addListener(checkVideo);
+    _controller = VideoPlayerController.file(
+      File(file.path),
+    );
+    await _controller.initialize();
+    await _controller.setLooping(false);
+    await _controller.play();
+    generateThumbnails();
+    videoDuration = _controller.value.duration.inMilliseconds.toDouble();
+    endValue = videoDuration;
+    updateState();
+  }
+
+  void generateThumbnails() async {
+    final count = 10;
+    final interval = _controller.value.duration.inSeconds ~/ count;
+    thumbnails.clear();
+
+    for (var i = 0; i <= count; i++) {
+      final timeMs = (i * interval * 1000).toInt();
+      final thumb =
+          await VideoEditorBuilder(videoPath: file.path).generateThumbnail(
+        positionMs: timeMs,
+        quality: 50,
+      );
+      if (thumb.isNullOrEmpty) continue;
+      thumbnails.add(File(thumb ?? ''));
+    }
+    updateState();
+  }
+
+  void saveTrimVideo() async {
+    IsmChatUtility.showLoader();
+    final editor = VideoEditorBuilder(videoPath: file.path).trim(
+      startTimeMs: startValue.toInt(),
+      endTimeMs: endValue.toInt(),
+    );
+    final trimVideo = await editor.export();
+    IsmChatUtility.closeLoader();
+    if (!trimVideo.isNullOrEmpty) {
+      IsmChatRoute.goBack<XFile>(XFile(trimVideo ?? ''));
+    }
   }
 
   checkVideo() async {
@@ -65,7 +111,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              IsmChatContextWidget.goBack<XFile>(file);
+              IsmChatRoute.goBack<XFile>(file);
             },
             icon: const Icon(
               Icons.arrow_back_rounded,

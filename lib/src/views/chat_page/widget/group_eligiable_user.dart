@@ -343,7 +343,7 @@ class _SelectedUsers extends StatelessWidget {
                         memberIds.add(x.userDetails.userId);
                       }
                     }
-                    IsmChatContextWidget.goBack<void>();
+                    IsmChatRoute.goBack<void>();
                     await controller.addMembers(
                         isLoading: true, memberIds: memberIds);
                   },
