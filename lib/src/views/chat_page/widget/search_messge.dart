@@ -68,8 +68,8 @@ class IsmChatSearchMessgae extends StatelessWidget {
                     )
                   : SafeArea(
                       child: SizedBox(
-                        height: Get.height,
-                        width: Get.width,
+                        height: IsmChatDimens.percentHeight(1),
+                        width: IsmChatDimens.percentWidth(1),
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: ListView.builder(

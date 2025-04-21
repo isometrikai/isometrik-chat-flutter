@@ -45,7 +45,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
             extendBodyBehindAppBar: true,
             appBar: PreferredSize(
               preferredSize: Size(
-                Get.width,
+                IsmChatDimens.percentWidth(1),
                 IsmChatDimens.zero,
               ),
               child: AppBar(

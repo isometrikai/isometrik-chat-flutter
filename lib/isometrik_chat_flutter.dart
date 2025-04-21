@@ -72,8 +72,9 @@ class IsmChat {
   /// `showNotification` is the callback for showing notifications.
   /// `context` is the build context.
   /// `mqttProperties` is whether to set up MQTT. Defaults to `true`.
-  Future<void> initialize(
-    IsmChatCommunicationConfig communicationConfig, {
+  Future<void> initialize({
+    required IsmChatCommunicationConfig communicationConfig,
+    required GlobalKey<NavigatorState> kNavigatorKey,
     bool useDatabase = true,
     String databaseName = IsmChatStrings.dbname,
     NotificaitonCallback? showNotification,
@@ -98,7 +99,8 @@ class IsmChat {
     }
 
     await _delegate.initialize(
-      communicationConfig,
+      kNavigatorKey: kNavigatorKey,
+      communicationConfig: communicationConfig,
       useDatabase: useDatabase,
       showNotification: showNotification,
       context: context,

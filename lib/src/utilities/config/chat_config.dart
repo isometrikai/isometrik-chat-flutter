@@ -7,6 +7,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatConfig {
   const IsmChatConfig._();
   static late IsmChatCommunicationConfig communicationConfig;
+  static late GlobalKey<NavigatorState> kNavigatorKey;
   static bool configInitilized = false;
   static IsmChatThemeData? _chatLightTheme;
   static IsmChatThemeData? _chatDarkTheme;

@@ -240,7 +240,7 @@ class IsmChatUserView extends StatelessWidget {
                   ),
                 ] else ...[
                   SizedBox(
-                    height: Get.height,
+                    height: IsmChatDimens.percentHeight(1),
                     child: ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: controller.blockUsers.length,

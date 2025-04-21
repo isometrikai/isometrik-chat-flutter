@@ -94,7 +94,7 @@ class _IsmChatPublicConversationViewState
                       )
                     : const IsmChatLoadingDialog()
                 : SizedBox(
-                    height: Get.height,
+                    height: IsmChatDimens.percentHeight(1),
                     child: ListView.builder(
                       itemCount: controller.publicAndOpenConversation.length,
                       itemBuilder: (_, index) {

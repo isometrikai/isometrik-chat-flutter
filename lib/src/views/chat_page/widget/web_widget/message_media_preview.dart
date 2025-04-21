@@ -291,7 +291,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
               ),
             ),
             Container(
-              width: Get.width,
+              width: IsmChatDimens.percentWidth(1),
               alignment: Alignment.center,
               height: IsmChatDimens.sixty,
               margin: IsmChatDimens.edgeInsets10,

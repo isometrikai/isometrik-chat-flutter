@@ -171,7 +171,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
               Stack(children: [
                 SizedBox(
                     height: IsmChatDimens.percentHeight(.35),
-                    width: Get.width,
+                    width: IsmChatDimens.percentWidth(1),
                     child: GoogleMap(
                       initialCameraPosition: _kGooglePlex,
                       markers: Set<Marker>.of(_markers),
@@ -353,7 +353,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                     Icons.house_siding,
                                   ),
                                   title: SizedBox(
-                                    width: Get.width - 100,
+                                    width: IsmChatDimens.percentWidth(1) - 100,
                                     child: Text(
                                       prediction.name ?? '',
                                       maxLines: 3,

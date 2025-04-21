@@ -14,9 +14,10 @@ import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'data/data.dart';
-import 'views/views.dart';
 
 DBWrapper? dbWrapper;
+
+final GlobalKey<NavigatorState> kNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   await initialize();
@@ -75,7 +76,7 @@ class _MyAppState extends State<MyApp> {
       builder: (_, child) => GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: IsmChatUtility.hideKeyboard,
-        child: GetMaterialApp(
+        child: MaterialApp.router(
           key: const Key('ChatApp'),
 
           title: 'Isomterik flutter web chat',
@@ -94,10 +95,12 @@ class _MyAppState extends State<MyApp> {
           // darkTheme: ThemeData.dark(useMaterial3: true)
           //     .copyWith(primaryColor: AppColors.primaryColorDark),
           debugShowCheckedModeBanner: false,
-          translations: AppTranslations(),
-          initialRoute:
-              AppConfig.userDetail != null ? ChatList.route : LoginView.route,
-          getPages: AppPages.pages,
+
+          routerConfig: AppRouter.router,
+          // translations: AppTranslations(),
+          // initialRoute:
+          //     AppConfig.userDetail != null ? ChatList.route : LoginView.route,
+          // getPages: AppPages.pages,
         ),
       ),
     );
