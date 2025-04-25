@@ -129,11 +129,19 @@ class _MessageCardState extends State<MessageCard>
                         index: widget.index,
                         key: Key('scroll-${widget.message.messageId}'),
                         child: kIsWeb
-                            ? MessageBubble(
-                                message: widget.message,
-                                showMessageInCenter: widget.showMessageInCenter,
-                                index: widget.index,
-                              )
+                            ? IsmChatProperties
+                                    .chatPageProperties.messageBuilder
+                                    ?.call(
+                                        context,
+                                        widget.message,
+                                        widget.message.customType!,
+                                        widget.showMessageInCenter) ??
+                                MessageBubble(
+                                  message: widget.message,
+                                  showMessageInCenter:
+                                      widget.showMessageInCenter,
+                                  index: widget.index,
+                                )
                             : Hero(
                                 tag: widget.message,
                                 child: IsmChatProperties
