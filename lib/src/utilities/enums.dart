@@ -59,6 +59,7 @@ enum IsmChatCustomMessageType {
   observerLeave(25),
   aboutText(26),
   oneToOneCall(27),
+  bulkAction(28),
   date(100);
 
   const IsmChatCustomMessageType(this.number);
@@ -111,7 +112,8 @@ enum IsmChatCustomMessageType {
       'observerLeave': IsmChatCustomMessageType.observerLeave,
       'date': IsmChatCustomMessageType.date,
       'aboutText': IsmChatCustomMessageType.aboutText,
-      'oneToOneCall': IsmChatCustomMessageType.oneToOneCall
+      'oneToOneCall': IsmChatCustomMessageType.oneToOneCall,
+      'Bulk Action': IsmChatCustomMessageType.bulkAction,
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -220,7 +222,6 @@ enum IsmChatCustomMessageType {
         return IsmChatCustomMessageType.observerJoin;
       case IsmChatActionEvents.observerLeave:
         return IsmChatCustomMessageType.observerLeave;
-
       default:
         return IsmChatCustomMessageType.text;
     }
@@ -290,6 +291,8 @@ enum IsmChatCustomMessageType {
         return 'aboutText';
       case IsmChatCustomMessageType.oneToOneCall:
         return 'oneToOneCall';
+      case IsmChatCustomMessageType.bulkAction:
+        return 'Bulk Action';
     }
   }
 }
