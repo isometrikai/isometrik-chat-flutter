@@ -1769,7 +1769,9 @@ class IsmChatPageController extends GetxController
     if (path.path.isNotEmpty) {
       var file = XFile(path.path);
       IsmChatUtility.closeLoader();
-      var result = await Share.shareXFiles([file]);
+      var result = await SharePlus.instance.share(ShareParams(
+        files: [file],
+      ));
       if (result.status == ShareResultStatus.success) {
         IsmChatUtility.showToast('Share your media');
         IsmChatLog.success('File shared: ${result.status}');

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:custom_will_pop_scope/custom_will_pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -38,7 +39,7 @@ class IsmChatBoradcastMessagePage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => WillPopScope(
+  Widget build(BuildContext context) => CustomWillPopScope(
         onWillPop: () async {
           if (!GetPlatform.isAndroid) return false;
           return await _back(context);

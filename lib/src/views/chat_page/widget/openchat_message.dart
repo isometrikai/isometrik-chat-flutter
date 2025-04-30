@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:custom_will_pop_scope/custom_will_pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -34,7 +35,7 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.tag,
-        builder: (controller) => WillPopScope(
+        builder: (controller) => CustomWillPopScope(
           onWillPop: () async => await _back(
             context: context,
             controller: controller,
