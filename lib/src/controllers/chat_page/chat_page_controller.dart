@@ -829,6 +829,7 @@ class IsmChatPageController extends GetxController
           await fabAnimationController?.reverse();
           if (fabAnimationController?.isDismissed == true) {
             attchmentOverlayEntry?.remove();
+            attchmentOverlayEntry = null;
           }
           showAttachment = false;
         }
@@ -1765,8 +1766,9 @@ class IsmChatPageController extends GetxController
     if (path.path.isNotEmpty) {
       var file = XFile(path.path);
       IsmChatUtility.closeLoader();
-      var result = await SharePlus.instance.share(ShareParams(files: [file],
-      )));
+      var result = await SharePlus.instance.share(ShareParams(
+        files: [file],
+      ));
       if (result.status == ShareResultStatus.success) {
         IsmChatUtility.showToast('Share your media');
         IsmChatLog.success('File shared: ${result.status}');
