@@ -211,7 +211,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                                     context,
                                     widget.conversation,
                                     widget.conversation.lastMessageDetails
-                                            ?.body ??
+                                            ?.messageBody ??
                                         '') ??
                                 '',
                             style: IsmChatConfig.chatTheme.chatListCardThemData
@@ -234,7 +234,8 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
                     widget.subtitleBuilder?.call(
                             context,
                             widget.conversation,
-                            widget.conversation.lastMessageDetails?.body ??
+                            widget.conversation.lastMessageDetails
+                                    ?.messageBody ??
                                 '') ??
                         Row(
                           mainAxisSize: MainAxisSize.min,
