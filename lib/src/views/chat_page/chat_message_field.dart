@@ -649,6 +649,7 @@ class _AttachmentIconForWebState extends State<_AttachmentIconForWeb>
       await controller.fabAnimationController?.reverse();
       if (controller.fabAnimationController?.isDismissed == true) {
         controller.attchmentOverlayEntry?.remove();
+        controller.attchmentOverlayEntry = null;
       }
     }
   }

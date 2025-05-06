@@ -501,13 +501,15 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     Uint8List? bytes;
     var sentAt = DateTime.now().millisecondsSinceEpoch;
     if (IsmChatResponsive.isMobile(Get.context!) & !kIsWeb) {
-      final editor =
-          VideoEditorBuilder(videoPath: webMediaModel.platformFile.path ?? '')
-              .compress();
-      final videoCopress = await editor.export();
-      if (videoCopress != null) {
-        final videoCompresFile = File(videoCopress);
-        bytes = await videoCompresFile.readAsBytes();
+      final mediaInfo = await VideoCompress.compressVideo(
+        webMediaModel.platformFile.path ?? '',
+        quality: VideoQuality.DefaultQuality,
+        deleteOrigin: false, // It's false by default
+      );
+
+      if (mediaInfo != null) {
+        final videoCompresFile = mediaInfo.file;
+        bytes = await videoCompresFile?.readAsBytes();
       } else {
         bytes = webMediaModel.platformFile.bytes;
       }

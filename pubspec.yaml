@@ -19,7 +19,6 @@ dependencies:
   custom_will_pop_scope: ^2.1.1
   device_info_plus: ^11.4.0
   dio: ^5.8.0+1
-  easy_video_editor: ^0.0.5
   elegant_notification: ^2.4.1
   emoji_picker_flutter: ^4.3.0
   file_picker: ^10.0.0
@@ -64,13 +63,17 @@ dependencies:
   timezone: ^0.10.0
   universal_html: ^2.2.4
   url_launcher: ^6.3.1
+  video_compress: ^3.1.4
   video_player: ^2.9.2
+  video_trimmer: ^5.0.0
   visibility_detector: ^0.4.0+2
 
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+
+# dependency_overrides:
 
 flutter:
   plugin:

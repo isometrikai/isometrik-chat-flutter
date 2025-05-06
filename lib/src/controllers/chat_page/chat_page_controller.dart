@@ -6,7 +6,6 @@ import 'dart:math';
 import 'package:app_settings/app_settings.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
-import 'package:easy_video_editor/easy_video_editor.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -28,6 +27,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:video_compress/video_compress.dart';
 
 part './mixins/get_message.dart';
 part './mixins/group_admin.dart';
@@ -615,13 +615,9 @@ class IsmChatPageController extends GetxController
               await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0)) ??
                   Uint8List(0);
         } else {
-          final thumb = await VideoEditorBuilder(videoPath: file?.path ?? '')
-              .generateThumbnail(
-            quality: 50,
-            positionMs: 1,
-          );
-          final thumbFile = File(thumb ?? '');
-          thumbnailBytes = await thumbFile.readAsBytes();
+          final thumb = await VideoCompress.getByteThumbnail(file?.path ?? '',
+              quality: 50, position: 1);
+          thumbnailBytes = thumb ?? Uint8List(0);
         }
         platformFile.thumbnailBytes = thumbnailBytes;
         webMedia.add(
@@ -1769,9 +1765,8 @@ class IsmChatPageController extends GetxController
     if (path.path.isNotEmpty) {
       var file = XFile(path.path);
       IsmChatUtility.closeLoader();
-      var result = await SharePlus.instance.share(ShareParams(
-        files: [file],
-      ));
+      var result = await SharePlus.instance.share(ShareParams(files: [file],
+      )));
       if (result.status == ShareResultStatus.success) {
         IsmChatUtility.showToast('Share your media');
         IsmChatLog.success('File shared: ${result.status}');
