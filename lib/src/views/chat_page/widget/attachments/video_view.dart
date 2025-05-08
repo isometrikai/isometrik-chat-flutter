@@ -56,10 +56,11 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
       thumbnailBytes =
           await IsmChatBlob.getVideoThumbnailBytes(bytes) ?? Uint8List(0);
     } else {
-      final thumb = await VideoCompress.getByteThumbnail(file.path,
-          quality: 50, position: 1);
-      thumbnailBytes = thumb ?? Uint8List(0);
+      thumbnailBytes = await VideoCompress.getByteThumbnail(file.path,
+              quality: 50, position: 1) ??
+          Uint8List(0);
     }
+
     platformFile.thumbnailBytes = thumbnailBytes;
     webMediaModel = WebMediaModel(
       dataSize: dataSize,

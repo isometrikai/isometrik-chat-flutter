@@ -107,12 +107,14 @@ IsmChatApp(
 9. Initialize Chat and MQTT: The initialize method sets up the necessary configurations for using the `Isometrik Chat Flutter SDK` in your Flutter project. This method must be called before using any other features of the Isometrik Chat Flutter SDK.And Manually initializes the MQTT (Message Queuing Telemetry Transport) protocol for real-time messaging. .
 
 ```dart
-    IsmChat.i.initialize(
-        IsmChatCommunicationConfig communicationConfig, {
+    IsmChat.i.initialize({
+        required IsmChatCommunicationConfig communicationConfig,
+        required GlobalKey<NavigatorState> kNavigatorKey,
         bool useDatabase = true,
         String databaseName = IsmChatStrings.dbname,
         NotificaitonCallback? showNotification,
         BuildContext? context,
+         IsmMqttProperties? mqttProperties,
     })
 ```
 
