@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:easy_video_editor/easy_video_editor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:video_compress/video_compress.dart';
 
 class IsmChatGalleryAssetsView extends StatelessWidget {
   const IsmChatGalleryAssetsView({super.key, required this.mediaXFile});
@@ -127,15 +127,13 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                   maxVideoTrim: 30,
                                 ));
                                 if (mediaFile == null) return;
-                                final thumb = await VideoEditorBuilder(
-                                        videoPath: mediaFile.path)
-                                    .generateThumbnail(
-                                  quality: 50,
-                                  positionMs: 1,
-                                );
-                                final thumbFile = File(thumb ?? '');
-                                final thumbnailBytes =
-                                    await thumbFile.readAsBytes();
+
+                                final thumb =
+                                    await VideoCompress.getByteThumbnail(
+                                        mediaFile.path,
+                                        quality: 50,
+                                        position: 1);
+
                                 var bytes = await mediaFile.readAsBytes();
                                 final fileSize = IsmChatUtility.formatBytes(
                                   int.parse(bytes.length.toString()),
@@ -150,7 +148,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                     path: mediaFile.path,
                                     size: bytes.length,
                                     extension: mediaFile.mimeType,
-                                    thumbnailBytes: thumbnailBytes,
+                                    thumbnailBytes: thumb,
                                   ),
                                 );
                               },

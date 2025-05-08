@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:camera/camera.dart';
-import 'package:easy_video_editor/easy_video_editor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
     if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
+import 'package:video_compress/video_compress.dart';
 
 /// show the Video editing view page
 class IsmChatVideoView extends StatefulWidget {
@@ -58,15 +56,11 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
       thumbnailBytes =
           await IsmChatBlob.getVideoThumbnailBytes(bytes) ?? Uint8List(0);
     } else {
-      final thumb =
-          await VideoEditorBuilder(videoPath: file.path).generateThumbnail(
-        quality: 50,
-        positionMs: 1,
-      );
-      final thumbFile = File(thumb ?? '');
-
-      thumbnailBytes = await thumbFile.readAsBytes();
+      thumbnailBytes = await VideoCompress.getByteThumbnail(file.path,
+              quality: 50, position: 1) ??
+          Uint8List(0);
     }
+
     platformFile.thumbnailBytes = thumbnailBytes;
     webMediaModel = WebMediaModel(
       dataSize: dataSize,
