@@ -633,4 +633,34 @@ class IsmChatDelegate {
       }
     }
   }
+
+  Future<void> getMessagesFromDB({required String conversationId}) async {
+    if (Get.isRegistered<IsmChatPageController>()) {
+      await Get.find<IsmChatPageController>().getMessagesFromDB(conversationId);
+    }
+  }
+
+  Future<void> updateMessage({
+    required IsmChatMessageModel message,
+  }) async {
+    final converations = await IsmChat.i.getAllConversationFromDB() ?? [];
+    IsmChatConversationModel? conversation;
+    for (var i in converations) {
+      if (i.conversationId != message.conversationId) continue;
+      conversation = i;
+      break;
+    }
+    if (conversation != null) {
+      final messages = conversation.messages ?? {};
+      messages[message.messageId ?? ''] = message;
+      var dbConversations = await IsmChatConfig.dbWrapper
+          ?.getConversation(conversationId: message.conversationId);
+      if (dbConversations != null) {
+        dbConversations = dbConversations.copyWith(messages: messages);
+        await IsmChatConfig.dbWrapper
+            ?.saveConversation(conversation: conversation);
+      }
+      await getMessagesFromDB(conversationId: message.conversationId ?? '');
+    }
+  }
 }

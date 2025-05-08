@@ -1041,4 +1041,10 @@ class IsmChat {
       _delegate.currentConversationIndex(index: index);
 
   void shouldShowOtherOnChatPage() => _delegate.shouldShowOtherOnChatPage();
+
+  Future<void> getMessagesFromDB({required String conversationId}) async =>
+      await _delegate.getMessagesFromDB(conversationId: conversationId);
+
+  Future<void> updateMessage({required IsmChatMessageModel message}) async =>
+      await _delegate.updateMessage(message: message);
 }

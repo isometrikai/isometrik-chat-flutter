@@ -165,10 +165,10 @@ packages:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: a33cd9a250296271cdf556891b7c0986a93772426f286595eccd5f45b185933c
+      sha256: ca36181194f429eef3b09de3c96280f2400693f9735025f90d1f4a27465fdd72
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.18+14"
+    version: "0.9.19"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -309,10 +309,10 @@ packages:
     dependency: transitive
     description:
       name: elegant_notification
-      sha256: "5468d72ce677edb862bd01a289a636ab0a168554a02f2ac6e64076549c856fed"
+      sha256: e3f30aa3e805fc989b0e30819af7e829f85443dab712a2296aefd463b2454e63
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.5"
+    version: "2.5.0"
   emoji_picker_flutter:
     dependency: transitive
     description:
@@ -365,10 +365,10 @@ packages:
     dependency: transitive
     description:
       name: file_picker
-      sha256: "8986dec4581b4bcd4b6df5d75a2ea0bede3db802f500635d05fa8be298f9467f"
+      sha256: "978be1f602e0695daef8e345a3c597abf72b0c0ca6102fa2665eb549f5406a17"
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.2"
+    version: "10.1.5"
   file_selector_linux:
     dependency: transitive
     description:
@@ -796,10 +796,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: fe7ab022b76f3034adc518fb6ea04a82387620e19977665ea18d30a1cf43442f
+      sha256: "2c11f3f94c687ee9bad77c171151672986360b2b001d109814ee7140b2cf261b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.0"
+    version: "1.4.0"
   http_parser:
     dependency: transitive
     description:
@@ -931,10 +931,10 @@ packages:
     dependency: transitive
     description:
       name: just_audio
-      sha256: "369100a808395fc863d304cce97b920efcca71157b9705b0b3d21d415af344fd"
+      sha256: "90421d34e9ee9a407c3722e9db6a45c57b90620b51fcf3a172bae4c3c3278ed5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.1"
+    version: "0.10.2"
   just_audio_platform_interface:
     dependency: transitive
     description:
@@ -1131,10 +1131,10 @@ packages:
     dependency: transitive
     description:
       name: pdfx
-      sha256: cb3b109a5d3833f7df1b14129c9d9841430fe762dd48dcd3136a7a8cf6961776
+      sha256: "466d8b2ee79f208330698f96b132b07c4a717afc815e5a394f065044cb001607"
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.0"
+    version: "2.9.1"
   permission_handler:
     dependency: transitive
     description:
@@ -1704,10 +1704,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_android
-      sha256: ae7d4f1b41e3ac6d24dd9b9d5d6831b52d74a61bdd90a7a6262a33d8bb97c29a
+      sha256: "1f4e8e0e02403452d699ef7cf73fe9936fac8f6f0605303d111d71acb375d1bc"
       url: "https://pub.dev"
     source: hosted
-    version: "2.8.2"
+    version: "2.8.3"
   video_player_avfoundation:
     dependency: transitive
     description:
