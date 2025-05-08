@@ -57,7 +57,8 @@ mixin IsmChatMqttEventMixin {
   void onMqttEvent({required EventModel event}) async {
     _controller.eventStreamController.add(event);
     final payload = event.payload;
-    if (payload['action'] != 'chatMessageSent') {
+    if (!['chatMessageSentBulk', 'chatMessageSent']
+        .contains(payload['action'])) {
       var action = payload['action'];
       if (IsmChatActionEvents.values
           .map((e) => e.toString())
