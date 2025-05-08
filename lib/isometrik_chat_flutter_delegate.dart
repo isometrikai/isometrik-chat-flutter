@@ -660,7 +660,7 @@ class IsmChatDelegate {
         await IsmChatConfig.dbWrapper
             ?.saveConversation(conversation: conversation);
       }
-      await getMessagesFromDB(conversationId: message.conversationId ?? '');
     }
+    await getMessagesFromDB(conversationId: message.conversationId ?? '');
   }
 }
