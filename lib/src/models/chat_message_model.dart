@@ -91,14 +91,23 @@ class IsmChatMessageModel {
                   userId: map['senderId'] as String,
                   online: false,
                   lastSeen: 0,
-                  metaData: IsmChatMetaData(
-                    firstName:
-                        map['senderMetaData']['firstName'] as String? ?? '',
-                    lastName:
-                        map['senderMetaData']['lastName'] as String? ?? '',
-                    profilePic:
-                        map['senderMetaData']['profilePic'] as String? ?? '',
-                  ),
+                  metaData: map['senderMetaData'] != null
+                      ? IsmChatMetaData(
+                          firstName:
+                              map['senderMetaData']['firstName'] as String? ??
+                                  '',
+                          lastName:
+                              map['senderMetaData']['lastName'] as String? ??
+                                  '',
+                          profilePic:
+                              map['senderMetaData']['profilePic'] as String? ??
+                                  '',
+                        )
+                      : IsmChatMetaData(
+                          firstName: map['senderName'] as String? ?? '',
+                          profilePic:
+                              map['senderProfileImageUrl'] as String? ?? '',
+                        ),
                 )
               : null,
       metaData: map['metaData'] != null
