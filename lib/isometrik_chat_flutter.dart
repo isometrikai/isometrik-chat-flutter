@@ -1044,6 +1044,9 @@ class IsmChat {
 
   void shouldShowOtherOnChatPage() => _delegate.shouldShowOtherOnChatPage();
 
+  Future<void> searchConversation({required String searchValue}) async =>
+      await _delegate.searchConversation(searchValue: searchValue);
+
   Future<void> getMessagesFromDB({required String conversationId}) async =>
       await _delegate.getMessagesFromDB(conversationId: conversationId);
 
