@@ -1043,4 +1043,7 @@ class IsmChat {
       _delegate.currentConversationIndex(index: index);
 
   void shouldShowOtherOnChatPage() => _delegate.shouldShowOtherOnChatPage();
+
+  Future<void> searchConversation({required String searchValue}) async =>
+      await _delegate.searchConversation(searchValue: searchValue);
 }
