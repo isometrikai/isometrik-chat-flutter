@@ -439,7 +439,7 @@ mixin IsmChatMqttEventMixin {
                 ? notificationTitle
                 : message.notificationTitle ?? '',
             body: mqttMessage ?? '',
-            conversationId: message.conversationId ?? '');
+            data: message.toMap());
         return;
       }
       if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
@@ -455,7 +455,7 @@ mixin IsmChatMqttEventMixin {
               ? notificationTitle
               : message.notificationTitle ?? '',
           body: mqttMessage ?? '',
-          conversationId: message.conversationId ?? '');
+          data: message.toMap());
     } else {
       if (Get.isRegistered<IsmChatConversationsController>()) {
         if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
@@ -500,13 +500,13 @@ mixin IsmChatMqttEventMixin {
   void showPushNotification({
     required String title,
     required String body,
-    required String conversationId,
+    required Map<String, dynamic> data,
   }) {
     if (IsmChatConfig.showNotification != null) {
       IsmChatConfig.showNotification?.call(
         title,
         body,
-        conversationId,
+        data,
       );
     }
   }
@@ -960,7 +960,7 @@ mixin IsmChatMqttEventMixin {
     showPushNotification(
       title: actionModel.userDetails?.userName ?? '',
       body: 'Conversation Created',
-      conversationId: actionModel.conversationId ?? '',
+      data: actionModel.toMap(),
     );
     if (Get.isRegistered<IsmChatConversationsController>()) {
       await Get.find<IsmChatConversationsController>().getChatConversations();

@@ -107,7 +107,7 @@ typedef IsmChatConversationModifier = Future<IsmChatConversationModel> Function(
 typedef NotificaitonCallback = void Function(
   String,
   String,
-  String,
+  Map<String, dynamic>,
 );
 
 typedef MessageFutureCallback = Future<

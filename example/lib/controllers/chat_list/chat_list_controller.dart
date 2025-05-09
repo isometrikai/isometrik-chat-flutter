@@ -57,11 +57,11 @@ class ChatListController extends GetxController {
         shouldSetupMqtt: kIsWeb && kDebugMode ? false : true,
         autoReconnect: kIsWeb && kDebugMode ? false : true,
       ),
-      showNotification: (title, body, conversataionId) {
+      showNotification: (title, body, data) {
         LocalNoticeService().showFlutterNotification(
           title,
           body,
-          conversataionId: conversataionId,
+          conversataionId: data['conversataionId'],
         );
       },
     );
