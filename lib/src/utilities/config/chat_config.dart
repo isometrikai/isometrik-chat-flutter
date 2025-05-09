@@ -28,8 +28,10 @@ class IsmChatConfig {
       ? _chatDarkTheme ?? IsmChatThemeData.light()
       : _chatLightTheme ?? IsmChatThemeData.dark();
 
+  // ignore: avoid_setters_without_getters
   static set chatLightTheme(IsmChatThemeData data) => _chatLightTheme = data;
 
+  // ignore: avoid_setters_without_getters
   static set chatDarkTheme(IsmChatThemeData data) => _chatDarkTheme = data;
   static String? fontFamily;
   static String? notificationIconPath;

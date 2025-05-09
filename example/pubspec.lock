@@ -157,10 +157,10 @@ packages:
     dependency: transitive
     description:
       name: camera_android_camerax
-      sha256: f0dcbce91623f75030840609de9b64d0d73f86df279c6e9588c1501245a05eb2
+      sha256: ea7e40bd63afb8f55058e48ec529ce96562be9d08393f79631a06f781161fd0d
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.15+2"
+    version: "0.6.16"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -257,6 +257,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  custom_will_pop_scope:
+    dependency: transitive
+    description:
+      name: custom_will_pop_scope
+      sha256: c32bd1ac2836fc4f93a9f72955e04473361873f36035b38fe6c3cc9c5a8d5a6b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   dbus:
     dependency: transitive
     description:
@@ -301,10 +309,10 @@ packages:
     dependency: transitive
     description:
       name: elegant_notification
-      sha256: e3f30aa3e805fc989b0e30819af7e829f85443dab712a2296aefd463b2454e63
+      sha256: "8e20c4f5378a639428cf3703707b67aec796ac009bdf58be559753fe9e852d26"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.0"
+    version: "2.5.1"
   emoji_picker_flutter:
     dependency: transitive
     description:
@@ -357,10 +365,10 @@ packages:
     dependency: transitive
     description:
       name: file_picker
-      sha256: "8986dec4581b4bcd4b6df5d75a2ea0bede3db802f500635d05fa8be298f9467f"
+      sha256: "978be1f602e0695daef8e345a3c597abf72b0c0ca6102fa2665eb549f5406a17"
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.2"
+    version: "10.1.5"
   file_selector_linux:
     dependency: transitive
     description:
@@ -724,10 +732,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "2b9ba6d4c247457c35a6622f1dee6aab6694a4e15237ff7c32320345044112b6"
+      sha256: "0b1e06223bee260dee31a171fb1153e306907563a0b0225e8c1733211911429a"
       url: "https://pub.dev"
     source: hosted
-    version: "15.1.1"
+    version: "15.1.2"
   google_maps:
     dependency: transitive
     description:
@@ -1748,14 +1756,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.5"
-  video_thumbnail:
-    dependency: transitive
-    description:
-      name: video_thumbnail
-      sha256: "3455c189d3f0bb4e3fc2236475aa84fe598b9b2d0e08f43b9761f5bc44210016"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.3"
   video_trimmer:
     dependency: transitive
     description:

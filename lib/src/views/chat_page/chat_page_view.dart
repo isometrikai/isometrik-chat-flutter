@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:custom_will_pop_scope/custom_will_pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -77,7 +78,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   }
 
   @override
-  Widget build(BuildContext context) => WillPopScope(
+  Widget build(BuildContext context) => CustomWillPopScope(
         onWillPop: () async {
           if (!GetPlatform.isAndroid) return false;
           return IsmChat.i.tag == null ? await navigateBack() : false;
