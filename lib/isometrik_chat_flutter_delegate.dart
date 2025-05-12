@@ -652,7 +652,7 @@ class IsmChatDelegate {
     }
     if (conversation != null) {
       final messages = conversation.messages ?? {};
-      messages[message.messageId ?? ''] = message;
+      messages[message.key] = message;
       var dbConversations = await IsmChatConfig.dbWrapper
           ?.getConversation(conversationId: message.conversationId);
       if (dbConversations != null) {
