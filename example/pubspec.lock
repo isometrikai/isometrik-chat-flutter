@@ -306,7 +306,7 @@ packages:
     source: hosted
     version: "2.1.1"
   elegant_notification:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: elegant_notification
       sha256: "8e20c4f5378a639428cf3703707b67aec796ac009bdf58be559753fe9e852d26"
@@ -365,10 +365,10 @@ packages:
     dependency: transitive
     description:
       name: file_picker
-      sha256: "182fb2eddd7f917d69424c2ce95da28ed932ee654dbe010c33408884450ce5d2"
+      sha256: dd51fd20fdc45e073529c102376d54deba3e120603fe711c848ce44575b838e6
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.6"
+    version: "10.1.8"
   file_selector_linux:
     dependency: transitive
     description:
@@ -1768,10 +1768,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: dc6ecaa00a7c708e5b4d10ee7bec8c270e9276dfcab1783f57e9962d7884305f
+      sha256: "329edf97fdd893e0f1e3b9e88d6a0e627128cc17cc316a8d67fda8f1451178ba"
       url: "https://pub.dev"
     source: hosted
-    version: "5.12.0"
+    version: "5.13.0"
   win32_registry:
     dependency: transitive
     description:

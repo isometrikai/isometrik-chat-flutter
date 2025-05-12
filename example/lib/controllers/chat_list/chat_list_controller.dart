@@ -1,5 +1,8 @@
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter_example/main.dart';
@@ -58,11 +61,32 @@ class ChatListController extends GetxController {
         autoReconnect: kIsWeb && kDebugMode ? false : true,
       ),
       showNotification: (title, body, data) {
-        LocalNoticeService().showFlutterNotification(
-          title,
-          body,
-          conversataionId: data['conversataionId'],
-        );
+        if (IsmChatResponsive.isMobile(Get.context!)) {
+          LocalNoticeService().showFlutterNotification(
+            title,
+            body,
+            conversataionId: data['conversataionId'],
+          );
+        } else {
+          ElegantNotification(
+            icon: Icon(
+              Icons.message_rounded,
+              color: IsmChatConfig.chatTheme.primaryColor ?? Colors.blue,
+            ),
+            width: IsmChatDimens.twoHundredFifty,
+            animation: AnimationType.fromRight,
+            title: Text(title),
+            description: Expanded(
+              child: Text(
+                body,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            progressIndicatorColor:
+                IsmChatConfig.chatTheme.primaryColor ?? Colors.blue,
+          ).show(Get.context!);
+        }
       },
     );
   }

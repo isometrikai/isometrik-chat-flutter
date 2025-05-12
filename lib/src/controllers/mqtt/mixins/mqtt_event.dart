@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:elegant_notification/elegant_notification.dart';
-import 'package:elegant_notification/resources/arrays.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -442,54 +439,21 @@ mixin IsmChatMqttEventMixin {
             data: message.toMap());
         return;
       }
-      if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
-        if (Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                .conversation
-                ?.conversationId ==
-            message.conversationId) {
-          return;
-        }
-      }
-      showPushNotification(
-          title: notificationTitle.isNotEmpty
-              ? notificationTitle
-              : message.notificationTitle ?? '',
-          body: mqttMessage ?? '',
-          data: message.toMap());
-    } else {
-      if (Get.isRegistered<IsmChatConversationsController>()) {
-        if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
-          if (Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                  .conversation
-                  ?.conversationId ==
-              message.conversationId) {
-            return;
-          }
-        }
-        ElegantNotification(
-          icon: Icon(
-            Icons.message_rounded,
-            color: IsmChatConfig.chatTheme.primaryColor ?? Colors.blue,
-          ),
-          width: IsmChatDimens.twoHundredFifty,
-          // notificationPosition: NotificationPosition.topRight,
-          animation: AnimationType.fromRight,
-          title: Text(notificationTitle.isNotEmpty
-              ? notificationTitle
-              : message.notificationTitle ?? ''),
-          description: Expanded(
-            child: Text(
-              mqttMessage ?? '',
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          progressIndicatorColor:
-              IsmChatConfig.chatTheme.primaryColor ?? Colors.blue,
-        ).show(IsmChatConfig.context ??
-            Get.find<IsmChatConversationsController>().context!);
+    }
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      if (Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+              .conversation
+              ?.conversationId ==
+          message.conversationId) {
+        return;
       }
     }
+    showPushNotification(
+        title: notificationTitle.isNotEmpty
+            ? notificationTitle
+            : message.notificationTitle ?? '',
+        body: mqttMessage ?? '',
+        data: message.toMap());
   }
 
   /// Shows a push notification.
