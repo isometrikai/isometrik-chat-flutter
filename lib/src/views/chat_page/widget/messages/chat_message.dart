@@ -94,6 +94,13 @@ class IsmChatMessageWrapper extends StatelessWidget {
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
       case IsmChatCustomMessageType.oneToOneCall:
         return IsmOneToOneCallMessage(message);
+      case IsmChatCustomMessageType.productLink:
+        return IsmChatSocialLinkMessage(message);
+      case IsmChatCustomMessageType.socialLink:
+        return IsmChatSocialLinkMessage(message);
+
+      case IsmChatCustomMessageType.collectionLink:
+        return IsmChatSocialLinkMessage(message);
     }
   }
 }
@@ -193,6 +200,14 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
 
       case IsmChatCustomMessageType.oneToOneCall:
         return IsmOneToOneCallMessage(message);
+      case IsmChatCustomMessageType.productLink:
+        return IsmChatSocialLinkMessage(message);
+
+      case IsmChatCustomMessageType.socialLink:
+        return IsmChatSocialLinkMessage(message);
+
+      case IsmChatCustomMessageType.collectionLink:
+        return IsmChatSocialLinkMessage(message);
     }
   }
 }

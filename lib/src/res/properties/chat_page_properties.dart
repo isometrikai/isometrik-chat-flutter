@@ -31,6 +31,7 @@ class IsmChatPageProperties {
     this.messageStatus,
     this.textFieldActions,
     this.shouldShowHoverHold,
+    this.backgroundImageUrl,
   });
 
   final Widget? placeholder;
@@ -138,4 +139,6 @@ class IsmChatPageProperties {
   final bool? Function(
           BuildContext, IsmChatConversationModel, IsmChatMessageModel)?
       shouldShowHoverHold;
+
+  final String? backgroundImageUrl;
 }

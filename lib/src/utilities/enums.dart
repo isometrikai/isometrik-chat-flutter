@@ -59,6 +59,9 @@ enum IsmChatCustomMessageType {
   observerLeave(25),
   aboutText(26),
   oneToOneCall(27),
+  productLink(28),
+  socialLink(29),
+  collectionLink(30),
   date(100);
 
   const IsmChatCustomMessageType(this.number);
@@ -111,7 +114,11 @@ enum IsmChatCustomMessageType {
       'observerLeave': IsmChatCustomMessageType.observerLeave,
       'date': IsmChatCustomMessageType.date,
       'aboutText': IsmChatCustomMessageType.aboutText,
-      'oneToOneCall': IsmChatCustomMessageType.oneToOneCall
+      'oneToOneCall': IsmChatCustomMessageType.oneToOneCall,
+      'AttachmentMessage:ProductLink': IsmChatCustomMessageType.productLink,
+      'AttachmentMessage:SocialLink': IsmChatCustomMessageType.socialLink,
+      'AttachmentMessage:CollectionLink':
+          IsmChatCustomMessageType.collectionLink,
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -290,6 +297,12 @@ enum IsmChatCustomMessageType {
         return 'aboutText';
       case IsmChatCustomMessageType.oneToOneCall:
         return 'oneToOneCall';
+      case IsmChatCustomMessageType.productLink:
+        return 'AttachmentMessage:ProductLink';
+      case IsmChatCustomMessageType.socialLink:
+        return 'AttachmentMessage:SocialLink';
+      case IsmChatCustomMessageType.collectionLink:
+        return 'AttachmentMessage:CollectionLink';
     }
   }
 }
