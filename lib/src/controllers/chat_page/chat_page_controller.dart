@@ -199,7 +199,8 @@ class IsmChatPageController extends GetxController
       backgroundImage = asset.first.values.first.imageUrl!;
     } else {
       backgroundColor = '';
-      backgroundImage = '';
+      backgroundImage =
+          IsmChatProperties.chatPageProperties.backgroundImageUrl ?? '';
     }
   }
 
