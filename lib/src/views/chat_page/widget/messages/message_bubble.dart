@@ -15,11 +15,12 @@ class MessageBubble extends StatelessWidget {
               customType: IsmChatCustomMessageType.text,
               sentByMe: true,
             ),
-        _globalKey =
-            IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)
-                ? GlobalKey()
-                : Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                    .getGlobalKey(message?.sentAt ?? 0);
+        _globalKey = IsmChatResponsive.isWeb(
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context)
+            ? GlobalKey()
+            : Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                .getGlobalKey(message?.sentAt ?? 0);
 
   final IsmChatMessageModel _message;
   final bool showMessageInCenter;
@@ -339,9 +340,7 @@ class _OnMessageHoverWeb extends StatelessWidget {
                     } else {
                       controller.holdController?.forward();
                       controller.showOverlayWeb(
-                        globalKey.currentContext ??
-                            IsmChatConfig.kNavigatorKey.currentContext ??
-                            IsmChatConfig.context,
+                        globalKey.currentContext ?? context,
                         message,
                         controller.holdAnimation!,
                       );
