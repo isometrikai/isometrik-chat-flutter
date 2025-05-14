@@ -6,6 +6,7 @@ class IsmChatConfig {
   const IsmChatConfig._();
   static late IsmChatCommunicationConfig communicationConfig;
   static late GlobalKey<NavigatorState> kNavigatorKey;
+  static late BuildContext context;
   static bool configInitilized = false;
   static IsmChatThemeData? _chatLightTheme;
   static IsmChatThemeData? _chatDarkTheme;
@@ -35,7 +36,6 @@ class IsmChatConfig {
   static set chatDarkTheme(IsmChatThemeData data) => _chatDarkTheme = data;
   static String? fontFamily;
   static String? notificationIconPath;
-  static BuildContext? context;
   static SendMessageCallback? sendPaidWalletMessage;
   static IsmPaidWalletConfig? paidWalletModel;
   static ResponseCallback? paidWalletMessageApiResponse;

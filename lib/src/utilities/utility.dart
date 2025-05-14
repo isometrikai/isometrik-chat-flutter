@@ -222,7 +222,8 @@ class IsmChatUtility {
           cropStyle: CropStyle.circle,
         ),
         WebUiSettings(
-          context: IsmChatConfig.kNavigatorKey.currentContext!,
+          context: IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context,
         ),
       ],
     );
@@ -550,7 +551,8 @@ class IsmChatUtility {
                     style: IsmChatStyles.w600Black14,
                   ),
                   if (!IsmChatResponsive.isWeb(
-                      IsmChatConfig.kNavigatorKey.currentContext!))
+                      IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context))
                     SizedBox(
                         width: IsmChatDimens.percentWidth(.8),
                         child: Divider(

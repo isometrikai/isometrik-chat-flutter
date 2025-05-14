@@ -52,7 +52,8 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                         signOutTap: () async {
                           await showDialog(
                             context:
-                                IsmChatConfig.kNavigatorKey.currentContext!,
+                                IsmChatConfig.kNavigatorKey.currentContext ??
+                                    IsmChatConfig.context,
                             builder: (context) => IsmChatAlertDialogBox(
                               title: '${IsmChatStrings.logout}?',
                               content: const Text(IsmChatStrings.logoutMessage),

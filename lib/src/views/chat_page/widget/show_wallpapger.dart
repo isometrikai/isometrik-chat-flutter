@@ -134,7 +134,8 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                   );
                                   if (file.isNotEmpty) {
                                     if (IsmChatResponsive.isWeb(IsmChatConfig
-                                        .kNavigatorKey.currentContext!)) {
+                                            .kNavigatorKey.currentContext ??
+                                        IsmChatConfig.context)) {
                                       await IsmChatContextWidget
                                           .showDialogContext(
                                         content: IsmChatPageDailog(
@@ -184,7 +185,8 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                             return IsmChatTapHandler(
                               onTap: () async {
                                 if (IsmChatResponsive.isWeb(IsmChatConfig
-                                    .kNavigatorKey.currentContext!)) {
+                                        .kNavigatorKey.currentContext ??
+                                    IsmChatConfig.context)) {
                                   await IsmChatContextWidget.showDialogContext(
                                     content: IsmChatPageDailog(
                                       child: IsmChatWallpaperPreview(

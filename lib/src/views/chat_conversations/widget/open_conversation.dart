@@ -109,7 +109,9 @@ class _IsmChatOpenConversationViewState
                               if (response != null) {
                                 IsmChatProperties
                                         .conversationProperties.onChatTap!(
-                                    IsmChatConfig.kNavigatorKey.currentContext!,
+                                    IsmChatConfig
+                                            .kNavigatorKey.currentContext ??
+                                        IsmChatConfig.context,
                                     data);
                                 controller.updateLocalConversation(data);
 

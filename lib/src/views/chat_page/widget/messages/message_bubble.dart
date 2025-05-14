@@ -340,7 +340,8 @@ class _OnMessageHoverWeb extends StatelessWidget {
                       controller.holdController?.forward();
                       controller.showOverlayWeb(
                         globalKey.currentContext ??
-                            IsmChatConfig.kNavigatorKey.currentContext!,
+                            IsmChatConfig.kNavigatorKey.currentContext ??
+                            IsmChatConfig.context,
                         message,
                         controller.holdAnimation!,
                       );

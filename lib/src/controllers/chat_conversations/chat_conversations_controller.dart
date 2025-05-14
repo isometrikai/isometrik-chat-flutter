@@ -528,7 +528,8 @@ class IsmChatConversationsController extends GetxController {
         );
       case IsRenderChatPageScreen.outSideView:
         return IsmChatProperties.conversationProperties.thirdColumnWidget?.call(
-                IsmChatConfig.kNavigatorKey.currentContext!,
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context,
                 currentConversation!,
                 false) ??
             const SizedBox.shrink();
@@ -1289,7 +1290,9 @@ class IsmChatConversationsController extends GetxController {
 
   /// Navigates to the chat page based on the platform (web or mobile).
   Future<void> goToChatPage() async {
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+      IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+    )) {
       if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         IsmChatPageBinding().dependencies();
         return;
@@ -1880,7 +1883,8 @@ class IsmChatConversationsController extends GetxController {
     );
 
     updateLocalConversation(conversation);
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       IsmChatRoute.goBack();
       if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
         IsmChatPageBinding().dependencies();

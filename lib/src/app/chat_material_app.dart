@@ -4,7 +4,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatApp extends StatelessWidget {
   IsmChatApp({
     super.key,
-    this.context,
+    required this.context,
     this.chatPageProperties,
     this.conversationProperties,
     this.chatTheme,
@@ -39,7 +39,7 @@ class IsmChatApp extends StatelessWidget {
     IsmChatProperties.conversationModifier = conversationModifier;
   }
 
-  final BuildContext? context;
+  final BuildContext context;
 
   /// Required field
   ///

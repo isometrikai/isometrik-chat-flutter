@@ -88,8 +88,8 @@ class IsmChatConversationModel {
         model.lastMessageDetails?.action ==
             IsmChatActionEvents.conversationDetailsUpdated.name) {
       IsmChatMessageModel? message;
-      if (IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!) &&
+      if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context) &&
           Get.isRegistered<IsmChatPageController>()) {
         final controller = Get.find<IsmChatPageController>();
         if (controller.messages.isNotEmpty) {

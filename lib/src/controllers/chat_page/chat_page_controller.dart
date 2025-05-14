@@ -220,7 +220,8 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> callFunctions() async {
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       messages.clear();
     }
     if (conversation?.isGroup ?? false) {
@@ -332,7 +333,8 @@ class IsmChatPageController extends GetxController
       required String reactionType,
       required int index}) async {
     userReactionList.clear();
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       await IsmChatContextWidget.showDialogContext(
         content: IsmChatPageDailog(
           child: ImsChatShowUserReaction(
@@ -357,7 +359,8 @@ class IsmChatPageController extends GetxController
   }
 
   void addWallpaper() async {
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       await IsmChatContextWidget.showDialogContext(
         content: const IsmChatPageDailog(
           child: ImsChatShowWallpaper(),
@@ -467,7 +470,8 @@ class IsmChatPageController extends GetxController
       case IsmChatAttachmentType.camera:
         final initialize = await initializeCamera();
         if (initialize) {
-          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+                  IsmChatConfig.context)
               ? isCameraView = true
               : IsmChatRoute.goToRoute(const IsmChatCameraView());
         }
@@ -533,7 +537,8 @@ class IsmChatPageController extends GetxController
       isVideoAndImage: true,
     );
     if (result.isEmpty) return;
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       IsmChatUtility.showLoader();
       for (var x in result) {
         var bytes = await x?.readAsBytes();
@@ -572,7 +577,7 @@ class IsmChatPageController extends GetxController
       }
       IsmChatUtility.closeLoader();
     } else if (IsmChatResponsive.isMobile(
-        IsmChatConfig.kNavigatorKey.currentContext!)) {
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       await IsmChatRoute.goToRoute(IsmChatGalleryAssetsView(
         mediaXFile: result,
       ));
@@ -685,7 +690,8 @@ class IsmChatPageController extends GetxController
         conversationController.forwardedList.clear();
 
         if (IsmChatResponsive.isWeb(
-            IsmChatConfig.kNavigatorKey.currentContext!)) {
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context)) {
           await IsmChatContextWidget.showDialogContext(
             content: IsmChatPageDailog(
               child: IsmChatForwardView(
@@ -789,7 +795,8 @@ class IsmChatPageController extends GetxController
         right: message.sentByMe ? 0 + size.width + 5 : null,
         top: topPosition.isNegative
             ? IsmChatProperties.chatPageProperties.header?.height?.call(
-                    IsmChatConfig.kNavigatorKey.currentContext!,
+                    IsmChatConfig.kNavigatorKey.currentContext ??
+                        IsmChatConfig.context,
                     Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                         .conversation!) ??
                 IsmChatDimens.appBarHeight
@@ -870,7 +877,7 @@ class IsmChatPageController extends GetxController
           showEmojiBoard = false;
         }
         IsmChatProperties.chatPageProperties.meessageFieldFocusNode?.call(
-            IsmChatConfig.kNavigatorKey.currentContext!,
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             conversation!,
             messageFocusNode.hasFocus);
       },
@@ -1035,13 +1042,16 @@ class IsmChatPageController extends GetxController
                   .contains(item.customType) &&
               !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
                       ?.call(
-                          IsmChatConfig.kNavigatorKey.currentContext!, item) ??
+                          IsmChatConfig.kNavigatorKey.currentContext ??
+                              IsmChatConfig.context,
+                          item) ??
                   false))
           .toList();
       if (mediaList.isNotEmpty) {
         var selectedMediaIndex = mediaList.indexOf(message);
         if (IsmChatResponsive.isWeb(
-            IsmChatConfig.kNavigatorKey.currentContext!)) {
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context)) {
           {
             await IsmChatRoute.goToRoute(IsmWebMessageMediaPreview(
               previewData: {
@@ -1119,12 +1129,14 @@ class IsmChatPageController extends GetxController
                       item.metaData?.replyMessage?.parentMessageMessageType) &&
               !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
                       ?.call(
-                          IsmChatConfig.kNavigatorKey.currentContext!, item) ??
+                          IsmChatConfig.kNavigatorKey.currentContext ??
+                              IsmChatConfig.context,
+                          item) ??
                   false))
           .toList();
       var selectedMediaIndex = mediaList.indexOf(message);
-      if (IsmChatResponsive.isWeb(
-          IsmChatConfig.kNavigatorKey.currentContext!)) {
+      if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+          IsmChatConfig.context)) {
         {
           await IsmChatRoute.goToRoute(IsmWebMessageMediaPreview(
             previewData: {
@@ -1196,7 +1208,8 @@ class IsmChatPageController extends GetxController
   Future<bool> toggleCamera() async {
     areCamerasInitialized = false;
 
-    if (!IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (!IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       if (kIsWeb) {
         isFrontCameraSelected = false;
       } else {
@@ -1221,8 +1234,8 @@ class IsmChatPageController extends GetxController
     try {
       await cameraController.initialize();
     } on CameraException catch (e) {
-      if (IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!) &&
+      if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context) &&
           kIsWeb) {
         final state = await IsmChatBlob.checkPermission('microphone');
         if (state == 'denied') {
@@ -1246,7 +1259,8 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> checkCameraPermission() async {
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!) &&
+    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context) &&
         kIsWeb) {
       final state = await IsmChatBlob.checkPermission('camera');
       if (state == 'granted') {
@@ -1470,7 +1484,7 @@ class IsmChatPageController extends GetxController
     var file = await cameraController.takePicture();
     XFile? mainFile;
     if (IsmChatResponsive.isMobile(
-        IsmChatConfig.kNavigatorKey.currentContext!)) {
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       IsmChatRoute.goBack();
     }
 
@@ -1493,7 +1507,7 @@ class IsmChatPageController extends GetxController
 
     await updateImage(mainFile);
     if (IsmChatResponsive.isMobile(
-        IsmChatConfig.kNavigatorKey.currentContext!)) {
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       await IsmChatRoute.goToRoute(const IsmChatImageEditView());
     }
   }
@@ -1570,7 +1584,8 @@ class IsmChatPageController extends GetxController
         getMessageDeliverTime(message),
       ],
     ));
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       conversationController.message = message;
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.messgaeInfoView;
@@ -1652,7 +1667,8 @@ class IsmChatPageController extends GetxController
     if (IsmChatProperties.chatPageProperties.onCallBlockUnblock != null) {
       isUnblockUser =
           await IsmChatProperties.chatPageProperties.onCallBlockUnblock?.call(
-                IsmChatConfig.kNavigatorKey.currentContext!,
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context,
                 conversation!,
                 userBlockOrNot,
               ) ??
@@ -1776,7 +1792,7 @@ class IsmChatPageController extends GetxController
     }
     conversationController.contactDetails = user;
     conversationController.userConversationId = conversationId;
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.userInfoView;
     } else {
@@ -1915,14 +1931,14 @@ class IsmChatPageController extends GetxController
   }
 
   void showCloseLoaderForMoble({bool showLoader = true}) {
+    final isMobile = !IsmChatResponsive.isMobile(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context);
     if (showLoader) {
-      if (!IsmChatResponsive.isMobile(
-          IsmChatConfig.kNavigatorKey.currentContext!)) {
+      if (isMobile) {
         IsmChatUtility.showLoader();
       }
     } else {
-      if (!IsmChatResponsive.isMobile(
-          IsmChatConfig.kNavigatorKey.currentContext!)) {
+      if (isMobile) {
         IsmChatUtility.closeLoader();
       }
     }

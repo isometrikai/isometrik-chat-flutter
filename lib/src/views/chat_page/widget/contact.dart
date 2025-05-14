@@ -80,7 +80,8 @@ class IsmChatContactView extends StatelessWidget {
                     if (await IsmChatProperties.chatPageProperties
                             .messageAllowedConfig?.isMessgeAllowed
                             ?.call(
-                                IsmChatConfig.kNavigatorKey.currentContext!,
+                                IsmChatConfig.kNavigatorKey.currentContext ??
+                                    IsmChatConfig.context,
                                 controller.conversation!,
                                 IsmChatCustomMessageType.contact) ??
                         true) {

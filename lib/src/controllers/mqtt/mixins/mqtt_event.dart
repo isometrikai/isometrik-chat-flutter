@@ -243,7 +243,8 @@ mixin IsmChatMqttEventMixin {
     // To handle and show last message & unread count in conversation list
     conversation = conversation.copyWith(
       unreadMessagesCount: IsmChatResponsive.isWeb(
-                  IsmChatConfig.kNavigatorKey.currentContext!) &&
+                  IsmChatConfig.kNavigatorKey.currentContext ??
+                      IsmChatConfig.context) &&
               (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag) &&
                   Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                           .conversation
@@ -345,7 +346,8 @@ mixin IsmChatMqttEventMixin {
     // To handle and show last message & unread count in conversation list
     conversation = conversation.copyWith(
       unreadMessagesCount: IsmChatResponsive.isWeb(
-                  IsmChatConfig.kNavigatorKey.currentContext!) &&
+                  IsmChatConfig.kNavigatorKey.currentContext ??
+                      IsmChatConfig.context) &&
               (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag) &&
                   Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                           .conversation
@@ -432,7 +434,7 @@ mixin IsmChatMqttEventMixin {
             .trim();
 
     if (IsmChatResponsive.isMobile(
-        IsmChatConfig.kNavigatorKey.currentContext!)) {
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       if (isAppInBackground) {
         showPushNotification(
             title: notificationTitle.isNotEmpty

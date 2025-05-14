@@ -1027,7 +1027,8 @@ extension Conversation on IsmChatConversationType {
         break;
       case IsmChatConversationType.public:
         if (IsmChatResponsive.isWeb(
-            IsmChatConfig.kNavigatorKey.currentContext!)) {
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context)) {
           controller.isRenderScreen =
               IsRenderConversationScreen.publicConverationView;
           Scaffold.of(controller.isDrawerContext!).openDrawer();
@@ -1038,7 +1039,8 @@ extension Conversation on IsmChatConversationType {
         break;
       case IsmChatConversationType.open:
         if (IsmChatResponsive.isWeb(
-            IsmChatConfig.kNavigatorKey.currentContext!)) {
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context)) {
           controller.isRenderScreen =
               IsRenderConversationScreen.openConverationView;
           Scaffold.of(controller.isDrawerContext!).openDrawer();

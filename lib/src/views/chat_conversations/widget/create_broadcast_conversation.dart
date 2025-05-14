@@ -384,7 +384,8 @@ class _GetSuspensionTag extends StatelessWidget {
             SizedBox(
                 width: IsmChatDimens.percentWidth(
                   IsmChatResponsive.isWeb(
-                          IsmChatConfig.kNavigatorKey.currentContext!)
+                          IsmChatConfig.kNavigatorKey.currentContext ??
+                              IsmChatConfig.context)
                       ? .23
                       : .7,
                 ),

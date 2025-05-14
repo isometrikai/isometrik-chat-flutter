@@ -426,7 +426,8 @@ class _MicOrSendButton extends StatelessWidget {
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
-                              IsmChatConfig.kNavigatorKey.currentContext!,
+                              IsmChatConfig.kNavigatorKey.currentContext ??
+                                  IsmChatConfig.context,
                               controller.conversation!,
                               IsmChatCustomMessageType.audio) ??
                       true) {
@@ -479,7 +480,8 @@ class _MicOrSendButton extends StatelessWidget {
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
-                              IsmChatConfig.kNavigatorKey.currentContext!,
+                              IsmChatConfig.kNavigatorKey.currentContext ??
+                                  IsmChatConfig.context,
                               controller.conversation!,
                               controller.isreplying
                                   ? IsmChatCustomMessageType.reply

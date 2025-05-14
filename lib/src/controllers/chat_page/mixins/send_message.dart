@@ -21,7 +21,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool sendPushNotification = true,
   }) async {
     if (IsmChatConfig.sendPaidWalletMessage?.call(
-            IsmChatConfig.kNavigatorKey.currentContext!,
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             _controller.conversation!,
             IsmChatCustomMessageType.fromString(customType)) ??
         false) {
@@ -57,7 +57,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         await _controller.getMessagesFromDB(conversationId);
         if (kIsWeb &&
             IsmChatResponsive.isWeb(
-                IsmChatConfig.kNavigatorKey.currentContext!)) {
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context)) {
           await _controller.conversationController.getConversationsFromDB();
         }
       }
@@ -93,7 +94,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         await _controller.getMessagesFromDB(conversationId);
         if (kIsWeb &&
             IsmChatResponsive.isWeb(
-                IsmChatConfig.kNavigatorKey.currentContext!)) {
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context)) {
           await _controller.conversationController.getConversationsFromDB();
         }
       }
@@ -198,7 +200,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         if (await IsmChatProperties
                 .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
                 ?.call(
-                    IsmChatConfig.kNavigatorKey.currentContext!,
+                    IsmChatConfig.kNavigatorKey.currentContext ??
+                        IsmChatConfig.context,
                     Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                         .conversation!,
                     media.isVideo
@@ -317,8 +320,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper
           ?.saveMessage(audioMessage, IsmChatDbBox.pending);
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(audioMessage);
       }
     }
@@ -460,7 +463,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             .saveMessage(documentMessage, IsmChatDbBox.pending);
         if (kIsWeb &&
             IsmChatResponsive.isWeb(
-                IsmChatConfig.kNavigatorKey.currentContext!)) {
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context)) {
           _controller.updateLastMessagOnCurrentTime(documentMessage);
         }
       }
@@ -472,7 +476,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       if (await IsmChatProperties
               .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
               ?.call(
-                  IsmChatConfig.kNavigatorKey.currentContext!,
+                  IsmChatConfig.kNavigatorKey.currentContext ??
+                      IsmChatConfig.context,
                   Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
                       .conversation!,
                   IsmChatCustomMessageType.file) ??
@@ -508,8 +513,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     IsmChatMessageModel? videoMessage;
     Uint8List? bytes;
     var sentAt = DateTime.now().millisecondsSinceEpoch;
-    if (IsmChatResponsive.isMobile(
-            IsmChatConfig.kNavigatorKey.currentContext!) &
+    if (IsmChatResponsive.isMobile(IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context) &
         !kIsWeb) {
       final mediaInfo = await VideoCompress.compressVideo(
         webMediaModel.platformFile.path ?? '',
@@ -595,8 +600,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           .saveMessage(videoMessage, IsmChatDbBox.pending);
 
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(videoMessage);
       }
     }
@@ -696,8 +701,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           .saveMessage(imageMessage, IsmChatDbBox.pending);
 
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(imageMessage);
       }
     }
@@ -792,8 +797,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           .saveMessage(imageMessage, IsmChatDbBox.pending);
 
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(imageMessage);
       }
     }
@@ -890,8 +895,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           .saveMessage(locationMessage, IsmChatDbBox.pending);
 
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(locationMessage);
       }
     }
@@ -1068,8 +1073,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper
           ?.saveMessage(textMessage, IsmChatDbBox.pending);
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(textMessage);
       }
     }
@@ -1348,8 +1353,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper!
           .saveMessage(aboutTextMessage, IsmChatDbBox.pending);
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(aboutTextMessage);
       }
     }

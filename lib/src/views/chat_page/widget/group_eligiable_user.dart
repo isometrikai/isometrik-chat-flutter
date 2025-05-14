@@ -22,7 +22,8 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(IsmChatResponsive.isWeb(
-                        IsmChatConfig.kNavigatorKey.currentContext!)
+                        IsmChatConfig.kNavigatorKey.currentContext ??
+                            IsmChatConfig.context)
                     ? .24
                     : .7),
                 child: Divider(

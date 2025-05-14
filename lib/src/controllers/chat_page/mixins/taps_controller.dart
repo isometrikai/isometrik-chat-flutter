@@ -22,7 +22,8 @@ mixin IsmChatTapsController on GetxController {
           IsmChatCustomMessageType.video,
           IsmChatCustomMessageType.file,
           if (!IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext!))
+              IsmChatConfig.kNavigatorKey.currentContext ??
+                  IsmChatConfig.context))
             IsmChatCustomMessageType.contact,
         ].contains(
           message.metaData?.replyMessage?.parentMessageMessageType,
@@ -34,7 +35,8 @@ mixin IsmChatTapsController on GetxController {
         IsmChatCustomMessageType.video,
         IsmChatCustomMessageType.file,
         if (!IsmChatResponsive.isWeb(
-            IsmChatConfig.kNavigatorKey.currentContext!))
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context))
           IsmChatCustomMessageType.contact,
       ].contains(message.customType)) {
         _controller.tapForMediaPreview(message);

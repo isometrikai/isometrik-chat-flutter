@@ -25,7 +25,6 @@ class IsmChatDelegate {
     required GlobalKey<NavigatorState> kNavigatorKey,
     bool useDatabase = true,
     NotificaitonCallback? showNotification,
-    BuildContext? context,
     String databaseName = IsmChatStrings.dbname,
     bool shouldPendingMessageSend = true,
     SendMessageCallback? sendPaidWalletMessage,
@@ -38,7 +37,6 @@ class IsmChatDelegate {
     bool? isMonthFirst,
   }) async {
     IsmChatConfig.kNavigatorKey = kNavigatorKey;
-    IsmChatConfig.context = context;
     IsmChatConfig.dbName = databaseName;
     IsmChatConfig.useDatabase = !kIsWeb && useDatabase;
     IsmChatConfig.communicationConfig = communicationConfig;

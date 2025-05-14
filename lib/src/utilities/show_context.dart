@@ -16,7 +16,8 @@ class IsmChatContextWidget {
     TraversalEdgeBehavior? traversalEdgeBehavior,
   }) async =>
       await showDialog(
-        context: IsmChatConfig.kNavigatorKey.currentContext!,
+        context:
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
         builder: (context) => content,
         anchorPoint: anchorPoint,
         barrierColor: barrierColor,
@@ -48,7 +49,8 @@ class IsmChatContextWidget {
     AnimationStyle? sheetAnimationStyle,
   }) async =>
       await showModalBottomSheet(
-        context: IsmChatConfig.kNavigatorKey.currentContext!,
+        context:
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
         builder: (context) => content,
         anchorPoint: anchorPoint,
         barrierColor: barrierColor,
