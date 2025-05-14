@@ -60,9 +60,9 @@ enum IsmChatCustomMessageType {
   aboutText(26),
   oneToOneCall(27),
   bulkAction(28),
-  productLink(28),
-  socialLink(29),
-  collectionLink(30),
+  productLink(29),
+  socialLink(30),
+  collectionLink(31),
   date(100);
 
   const IsmChatCustomMessageType(this.number);
@@ -117,7 +117,6 @@ enum IsmChatCustomMessageType {
       'aboutText': IsmChatCustomMessageType.aboutText,
       'oneToOneCall': IsmChatCustomMessageType.oneToOneCall,
       'Bulk Action': IsmChatCustomMessageType.bulkAction,
-      'oneToOneCall': IsmChatCustomMessageType.oneToOneCall,
       'AttachmentMessage:ProductLink': IsmChatCustomMessageType.productLink,
       'AttachmentMessage:SocialLink': IsmChatCustomMessageType.socialLink,
       'AttachmentMessage:CollectionLink':

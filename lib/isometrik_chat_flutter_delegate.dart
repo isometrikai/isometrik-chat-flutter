@@ -682,22 +682,4 @@ class IsmChatDelegate {
     }
     await getMessagesFromDB(conversationId: message.conversationId ?? '');
   }
-
-  Future<void> searchConversation({required String searchValue}) async {
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      final controller = Get.find<IsmChatConversationsController>();
-      controller.debounce.run(() async {
-        switch (searchValue.trim().isNotEmpty) {
-          case true:
-            await controller.getChatConversations(
-              searchTag: searchValue,
-            );
-            break;
-          default:
-            await controller.getConversationsFromDB();
-        }
-      });
-      controller.update();
-    }
-  }
 }

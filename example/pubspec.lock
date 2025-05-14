@@ -306,7 +306,7 @@ packages:
     source: hosted
     version: "2.1.1"
   elegant_notification:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: elegant_notification
       sha256: "8e20c4f5378a639428cf3703707b67aec796ac009bdf58be559753fe9e852d26"

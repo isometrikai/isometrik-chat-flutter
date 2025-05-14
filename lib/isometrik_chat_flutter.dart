@@ -1052,7 +1052,4 @@ class IsmChat {
 
   Future<void> updateMessage({required IsmChatMessageModel message}) async =>
       await _delegate.updateMessage(message: message);
-
-  Future<void> searchConversation({required String searchValue}) async =>
-      await _delegate.searchConversation(searchValue: searchValue);
 }
