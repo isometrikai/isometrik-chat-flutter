@@ -14,7 +14,26 @@
 //   static const int port = 2052;
 // }
 
+/// Harshit Bro Chat App
+// class Constants {
+//   const Constants._();
+
+//   static const String licenseKey = 'lic-IMKzyMZPXgA3SShRu1+FXCeHFXA3cgyEkBw';
+//   static const String appSecret =
+//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY2ZmU2MDhkOTVkZGRjY2IyZTg3YjZjM20AAAAIa2V5c2V0SWRtAAAAJDUzMzIwZTFhLTIwZGMtNDkyNi1iY2M4LThlODRjMDEwOTNmYW0AAAAJcHJvamVjdElkbQAAACRkMTRiMTk4MS0xY2JmLTQ2NTAtOWVhMy1mYmUwMGQ1YTE0YTRkAAZzaWduZWRuBgD2NalRkgE.4Mqc7YYCCSUDi-pCeywZha-FWNaGziG-AnXKQA4AOls';
+//   static const String userSecret =
+//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY2ZmU2MDhkOTVkZGRjY2IyZTg3YjZjM20AAAAIa2V5c2V0SWRtAAAAJDUzMzIwZTFhLTIwZGMtNDkyNi1iY2M4LThlODRjMDEwOTNmYW0AAAAJcHJvamVjdElkbQAAACRkMTRiMTk4MS0xY2JmLTQ2NTAtOWVhMy1mYmUwMGQ1YTE0YTRkAAZzaWduZWRuBgD2NalRkgE.35RdlnIXuRwWFCyCl1lzGB-5NDnwCG1VF1Qzv6NN9oA';
+//   static const String accountId = '66fe608d95dddccb2e87b6c3';
+//   static const String keysetId = '53320e1a-20dc-4926-bcc8-8e84c01093fa';
+//   static const String projectId = 'd14b1981-1cbf-4650-9ea3-fbe00d5a14a4';
+
+//   static const String hostname = 'connections.isometrik.io';
+//   static const int port = 2052;
+// }
+
 /// Native Chat App
+library;
+
 class Constants {
   const Constants._();
   static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';

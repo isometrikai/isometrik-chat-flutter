@@ -85,7 +85,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                   (IsmChatProperties.chatPageProperties.shouldShowHoverHold
                           ?.call(context, controller.conversation!,
                               widget._message!) ??
-                      true)
+                      false)
               ? null
               : () async {
                   if (widget._message?.customType !=

@@ -28,7 +28,7 @@ class WebMediaPreview extends StatelessWidget {
                       color: IsmChatColors.blackColor,
                     ),
                     onTap: () {
-                      IsmChatRoute.goBack<void>();
+                      // IsmChatRoute.goBack<void>();
                       controller.webMedia.clear();
                       controller.isVideoVisible = false;
                       controller.isCameraView = false;

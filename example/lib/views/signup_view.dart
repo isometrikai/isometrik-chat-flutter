@@ -5,6 +5,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter_example/controllers/auth/auth_binding.dart';
 import 'package:isometrik_chat_flutter_example/controllers/auth/auth_controller.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
+import 'package:isometrik_chat_flutter_example/utilities/utility.dart';
 
 import '../res/dimens.dart';
 import '../widgets/widgets.dart';
@@ -55,102 +56,104 @@ class SignupView extends StatelessWidget {
                                     ImageSource.gallery,
                                   );
                                 } else {
-                                  Get.bottomSheet<void>(
-                                    Container(
-                                        padding: const EdgeInsets.all(20),
-                                        height: 180,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    Get.back<void>();
-                                                    controller.ismUploadImage(
-                                                        ImageSource.camera);
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        // padding: IsmDimens.edgeInsets8,
-                                                        decoration: const BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            50)),
-                                                            color: Colors
-                                                                .blueAccent),
-                                                        width: 50,
-                                                        height: 50,
-                                                        child: const Icon(
-                                                          Icons.camera_alt,
-                                                          color: Colors.white,
-                                                          size: 25,
-                                                        ),
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) => Container(
+                                      padding: const EdgeInsets.all(20),
+                                      height: 180,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  Get.back<void>();
+                                                  controller.ismUploadImage(
+                                                      ImageSource.camera);
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      // padding: IsmDimens.edgeInsets8,
+                                                      decoration: const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          50)),
+                                                          color: Colors
+                                                              .blueAccent),
+                                                      width: 50,
+                                                      height: 50,
+                                                      child: const Icon(
+                                                        Icons.camera_alt,
+                                                        color: Colors.white,
+                                                        size: 25,
                                                       ),
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      const Text(
-                                                        'Camera',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 20),
-                                                      )
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    const Text(
+                                                      'Camera',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 20),
+                                                    )
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            Row(
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    Get.back<void>();
-                                                    controller.ismUploadImage(
-                                                        ImageSource.gallery);
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        // padding: IsmDimens.edgeInsets8,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        50),
-                                                            color: Colors
-                                                                .purpleAccent),
-                                                        width: 50,
-                                                        height: 50,
-                                                        child: const Icon(
-                                                          Icons.photo,
-                                                          color: Colors.white,
-                                                          size: 25,
-                                                        ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Row(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  Utility.goBack();
+
+                                                  controller.ismUploadImage(
+                                                      ImageSource.gallery);
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      // padding: IsmDimens.edgeInsets8,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
+                                                          color: Colors
+                                                              .purpleAccent),
+                                                      width: 50,
+                                                      height: 50,
+                                                      child: const Icon(
+                                                        Icons.photo,
+                                                        color: Colors.white,
+                                                        size: 25,
                                                       ),
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      const Text(
-                                                        'Gallery',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 20),
-                                                      )
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    const Text(
+                                                      'Gallery',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 20),
+                                                    )
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          ],
-                                        )),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                     elevation: 25,
                                     enableDrag: true,
                                     backgroundColor: Colors.white,
@@ -278,14 +281,15 @@ class SignupView extends StatelessWidget {
                             onTap: controller.profileImage.isNotEmpty
                                 ? controller.validateSignUp
                                 : () {
-                                    Get.dialog(
-                                      AlertDialog(
+                                    showDialog(
+                                      context: context,
+                                      builder: (contex) => AlertDialog(
                                         title: const Text('Alert message...'),
                                         content: const Text(
                                             'All fields must be filled with Profile image'),
                                         actions: [
                                           TextButton(
-                                            onPressed: Get.back,
+                                            onPressed: Utility.goBack,
                                             child: const Text(
                                               'Okay',
                                               style: TextStyle(fontSize: 20),

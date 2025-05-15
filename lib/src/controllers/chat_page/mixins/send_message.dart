@@ -155,7 +155,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     }
     if (isMaxSize == false) {
       _controller.showCloseLoaderForMoble(showLoader: false);
-      IsmChatRoute.goBack<void>();
+      // IsmChatRoute.goBack();
       sendPhotoAndVideoForWeb();
     } else {
       IsmChatUtility.closeLoader();

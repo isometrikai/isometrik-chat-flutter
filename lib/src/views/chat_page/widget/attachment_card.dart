@@ -51,8 +51,11 @@ class IsmChatAttachmentCard extends StatelessWidget {
                   itemBuilder: (_, index) {
                     var attachment = allowedAttachments[index];
                     return IsmChatTapHandler(
-                      onTap: () => controller
-                          .onBottomAttachmentTapped(attachment.attachmentType),
+                      onTap: () {
+                        IsmChatRoute.goBack();
+                        controller.onBottomAttachmentTapped(
+                            attachment.attachmentType);
+                      },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,

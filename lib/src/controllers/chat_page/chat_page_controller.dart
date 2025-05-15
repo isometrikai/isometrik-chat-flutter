@@ -465,7 +465,6 @@ class IsmChatPageController extends GetxController
   void onBottomAttachmentTapped(
     IsmChatAttachmentType attachmentType,
   ) async {
-    IsmChatRoute.goBack();
     switch (attachmentType) {
       case IsmChatAttachmentType.camera:
         final initialize = await initializeCamera();
@@ -835,7 +834,7 @@ class IsmChatPageController extends GetxController
           await fabAnimationController?.reverse();
           if (fabAnimationController?.isDismissed == true) {
             attchmentOverlayEntry?.remove();
-            attchmentOverlayEntry = null;
+            // attchmentOverlayEntry = null;
           }
           showAttachment = false;
         }
@@ -1792,7 +1791,8 @@ class IsmChatPageController extends GetxController
     }
     conversationController.contactDetails = user;
     conversationController.userConversationId = conversationId;
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.userInfoView;
     } else {
