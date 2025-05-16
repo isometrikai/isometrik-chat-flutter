@@ -42,7 +42,6 @@ class WebMediaPreview extends StatelessWidget {
                             controller.webMedia.clear();
                             controller.isVideoVisible = false;
                             controller.isCameraView = false;
-                            IsmChatRoute.goBack<void>();
 
                             await controller.initializeCamera();
                             controller.isCameraView = true;

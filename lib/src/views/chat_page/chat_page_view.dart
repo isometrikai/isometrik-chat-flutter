@@ -113,13 +113,16 @@ class _IsmChatPageView extends StatelessWidget {
                 ? DecorationImage(
                     image: controller.backgroundImage.isValidUrl
                         ? NetworkImage(controller.backgroundImage)
-                        : controller.backgroundImage.contains(
-                                'packages/isometrik_chat_flutter/assets')
-                            ? AssetImage(controller.backgroundImage)
-                                as ImageProvider
-                            : FileImage(
-                                File(controller.backgroundImage),
-                              ),
+                        : IsmChatProperties.chatPageProperties
+                                .backgroundImageUrl.isNullOrEmpty
+                            ? controller.backgroundImage.contains(
+                                    'packages/isometrik_chat_flutter/assets')
+                                ? AssetImage(controller.backgroundImage)
+                                    as ImageProvider
+                                : FileImage(
+                                    File(controller.backgroundImage),
+                                  )
+                            : AssetImage(controller.backgroundImage),
                     fit: BoxFit.cover,
                   )
                 : null,

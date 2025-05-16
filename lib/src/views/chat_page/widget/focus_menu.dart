@@ -70,7 +70,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                                   var item = message.focusMenuList[index];
                                   return IsmChatTapHandler(
                                     onTap: () {
-                                      IsmChatRoute.goBack();
+                                      // IsmChatRoute.goBack();
                                       controller.closeOverlay();
                                       controller.onMenuItemSelected(
                                         item,
