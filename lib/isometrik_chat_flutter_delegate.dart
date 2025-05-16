@@ -460,7 +460,9 @@ class IsmChatDelegate {
     }
 
     (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
-        ?.call(Get.context!, conversation);
+        ?.call(
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+            conversation);
     controller.updateLocalConversation(conversation);
     if (storyMediaUrl == null) {
       await controller.goToChatPage();
@@ -497,7 +499,9 @@ class IsmChatDelegate {
     var controller = Get.find<IsmChatConversationsController>();
 
     (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
-        ?.call(Get.context!, ismChatConversation);
+        ?.call(
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+            ismChatConversation);
     controller.updateLocalConversation(ismChatConversation);
     await controller.goToChatPage();
   }
@@ -559,7 +563,9 @@ class IsmChatDelegate {
         pushNotifications: pushNotifications);
 
     (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
-        ?.call(Get.context!, conversation);
+        ?.call(
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+            conversation);
     controller.updateLocalConversation(conversation);
     await controller.goToChatPage();
   }

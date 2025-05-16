@@ -1,6 +1,5 @@
 // class Constants {
 //   const Constants._();
-
 //   static const String licenseKey = 'lic-IMKw4CVRR6IHZ26+FhU7S+eG2Egi9NIHjMB';
 //   static const String appSecret =
 //       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDYwYjFlZjcwZmZjZjc1MDAwMWQwNDQwZG0AAAAIa2V5c2V0SWRtAAAAJDJmN2QyMmQ3LWI3NDMtNDcxNC04MzdlLWFmMGIxMjliZDU0Mm0AAAAJcHJvamVjdElkbQAAACRmYzRiZmMwOC0zMjQzLTQyMGYtODg0ZC0xY2UzN2QzZjQ1M2JkAAZzaWduZWRuBgCTqH3aiQE.mfI7oJEXiUoUbB5BodtHliEph-1rzDnUyZgL9zFBaGg';
@@ -15,49 +14,47 @@
 // }
 
 /// Harshit Bro Chat App
-// class Constants {
-//   const Constants._();
-
-//   static const String licenseKey = 'lic-IMKzyMZPXgA3SShRu1+FXCeHFXA3cgyEkBw';
-//   static const String appSecret =
-//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY2ZmU2MDhkOTVkZGRjY2IyZTg3YjZjM20AAAAIa2V5c2V0SWRtAAAAJDUzMzIwZTFhLTIwZGMtNDkyNi1iY2M4LThlODRjMDEwOTNmYW0AAAAJcHJvamVjdElkbQAAACRkMTRiMTk4MS0xY2JmLTQ2NTAtOWVhMy1mYmUwMGQ1YTE0YTRkAAZzaWduZWRuBgD2NalRkgE.4Mqc7YYCCSUDi-pCeywZha-FWNaGziG-AnXKQA4AOls';
-//   static const String userSecret =
-//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY2ZmU2MDhkOTVkZGRjY2IyZTg3YjZjM20AAAAIa2V5c2V0SWRtAAAAJDUzMzIwZTFhLTIwZGMtNDkyNi1iY2M4LThlODRjMDEwOTNmYW0AAAAJcHJvamVjdElkbQAAACRkMTRiMTk4MS0xY2JmLTQ2NTAtOWVhMy1mYmUwMGQ1YTE0YTRkAAZzaWduZWRuBgD2NalRkgE.35RdlnIXuRwWFCyCl1lzGB-5NDnwCG1VF1Qzv6NN9oA';
-//   static const String accountId = '66fe608d95dddccb2e87b6c3';
-//   static const String keysetId = '53320e1a-20dc-4926-bcc8-8e84c01093fa';
-//   static const String projectId = 'd14b1981-1cbf-4650-9ea3-fbe00d5a14a4';
-
-//   static const String hostname = 'connections.isometrik.io';
-//   static const int port = 2052;
-// }
-
-/// Native Chat App
-library;
-
 class Constants {
   const Constants._();
-  static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';
+
+  static const String licenseKey = 'lic-IMK/KBlTO0xcAoU1abFhRSOyDk/eRMOOEwO';
   static const String appSecret =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgAyRZTfiQE.Cd8oTBl0_bylLMQ45YXxUYqyIhbxstGEwCRIgLlQC3Y';
+      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY4MjZkM2U3MGQxOTkyZWZlYjM4MjEzYW0AAAAIa2V5c2V0SWRtAAAAJGU5NzFmNWI5LTg4OGUtNDA3Yi05YzE3LWY3YzY0ODRlYTZlN20AAAAJcHJvamVjdElkbQAAACQ3YjNmZTFjNi0yYzZkLTQ0ZTMtODc3MS05NjU0YTg2MDRlNmRkAAZzaWduZWRuBgAE2KvXlgE.GUbUvKG94OYtZRIUEy5XKCKArzf7d_fTVcJnqmwKkhw';
   static const String userSecret =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgA2RZTfiQE.ci4LzhsWp_E8bTTFVymYqWrCfCBm92uJ1QlczU1PvbY';
-  static const String accountId = '5eb3db9ba9252000014f82ff';
-  static const String keysetId = '40063abb-5af1-4fd4-a7f0-adc4767810b1';
-  static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
+      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY4MjZkM2U3MGQxOTkyZWZlYjM4MjEzYW0AAAAIa2V5c2V0SWRtAAAAJGU5NzFmNWI5LTg4OGUtNDA3Yi05YzE3LWY3YzY0ODRlYTZlN20AAAAJcHJvamVjdElkbQAAACQ3YjNmZTFjNi0yYzZkLTQ0ZTMtODc3MS05NjU0YTg2MDRlNmRkAAZzaWduZWRuBgAE2KvXlgE.__ONbg9uSr4-dHFZErR7xdiXhwZOZLw7GeWWn4_zEp8';
+  static const String accountId = '6826d3e70d1992efeb38213a';
+  static const String keysetId = 'e971f5b9-888e-407b-9c17-f7c6484ea6e7';
+  static const String projectId = '7b3fe1c6-2c6d-44e3-8771-9654a8604e6d';
 
-  static const String hostname = 'connections.isometrik.ai';
-  static const int port = 2086;
-  static const String hostnameForWeb =
-      'wss://connections.isometrik.ai:2096/mqtt';
-  static const int portForWeb = 2096;
-
-  // static const String hostname = 'connections.isometrik.io';
-  // static const int port = 2052;
-
-  // static const String hostnameForWeb =
-  //     'wss://connections.isometrik.io:2053/mqtt';
-  // static const int portForWeb = 2053;
+  static const String hostname = 'connections.isometrik.io';
+  static const int port = 2052;
 }
+
+/// Native Chat App
+// class Constants {
+//   const Constants._();
+//   static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';
+//   static const String appSecret =
+//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgAyRZTfiQE.Cd8oTBl0_bylLMQ45YXxUYqyIhbxstGEwCRIgLlQC3Y';
+//   static const String userSecret =
+//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgA2RZTfiQE.ci4LzhsWp_E8bTTFVymYqWrCfCBm92uJ1QlczU1PvbY';
+//   static const String accountId = '5eb3db9ba9252000014f82ff';
+//   static const String keysetId = '40063abb-5af1-4fd4-a7f0-adc4767810b1';
+//   static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
+
+//   static const String hostname = 'connections.isometrik.ai';
+//   static const int port = 2086;
+//   static const String hostnameForWeb =
+//       'wss://connections.isometrik.ai:2096/mqtt';
+//   static const int portForWeb = 2096;
+
+//   // static const String hostname = 'connections.isometrik.io';
+//   // static const int port = 2052;
+
+//   // static const String hostnameForWeb =
+//   //     'wss://connections.isometrik.io:2053/mqtt';
+//   // static const int portForWeb = 2053;
+// }
 
 // Kanika Ma'am Chat app
 // class Constants {

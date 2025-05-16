@@ -91,12 +91,7 @@ class ChatList extends StatelessWidget {
                 //   controller.isBottomVisibile = !controller.isBottomVisibile;
                 //   controller.update();
                 // },
-                messageAllowedConfig: MessageAllowedConfig(
-                  isMessgeAllowed: (p0, p1, type) {
-                    IsmChatLog.error(type);
-                    return null;
-                  },
-                ),
+
                 placeholder: IsmChatEmptyView(
                   icon: Icon(
                     Icons.chat_outlined,

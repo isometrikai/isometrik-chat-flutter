@@ -126,7 +126,9 @@ class IsmChatMessageField extends StatelessWidget {
                               if (await IsmChatProperties.chatPageProperties
                                       .messageAllowedConfig?.isMessgeAllowed
                                       ?.call(
-                                          Get.context!,
+                                          IsmChatConfig.kNavigatorKey
+                                                  .currentContext ??
+                                              IsmChatConfig.context,
                                           controller.conversation!,
                                           controller.isreplying
                                               ? IsmChatCustomMessageType.reply
@@ -424,7 +426,10 @@ class _MicOrSendButton extends StatelessWidget {
                   WebMediaModel? webMediaModel;
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
-                          ?.call(Get.context!, controller.conversation!,
+                          ?.call(
+                              IsmChatConfig.kNavigatorKey.currentContext ??
+                                  IsmChatConfig.context,
+                              controller.conversation!,
                               IsmChatCustomMessageType.audio) ??
                       true) {
                     if (kIsWeb) {
@@ -476,7 +481,8 @@ class _MicOrSendButton extends StatelessWidget {
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
-                              Get.context!,
+                              IsmChatConfig.kNavigatorKey.currentContext ??
+                                  IsmChatConfig.context,
                               controller.conversation!,
                               controller.isreplying
                                   ? IsmChatCustomMessageType.reply
@@ -827,14 +833,13 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                         .chatPageProperties.isSendMediaAllowed
                         ?.call(context, controller.conversation!) ??
                     true) {
-                  await Get.bottomSheet(
-                    const IsmChatAttachmentCard(),
-                    enterBottomSheetDuration:
-                        IsmChatConstants.bottomSheetDuration,
-                    exitBottomSheetDuration:
-                        IsmChatConstants.bottomSheetDuration,
-                    elevation: 0,
-                  );
+                  if (context.mounted) {
+                    await showModalBottomSheet(
+                      context: context,
+                      builder: (context) => const IsmChatAttachmentCard(),
+                      elevation: 0,
+                    );
+                  }
                 }
               }
             },
