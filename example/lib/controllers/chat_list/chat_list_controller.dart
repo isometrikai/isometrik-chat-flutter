@@ -8,9 +8,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter_example/main.dart';
 import 'package:isometrik_chat_flutter_example/models/models.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
+import 'package:isometrik_chat_flutter_example/utilities/local_notice_service.dart';
 import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
-
-import '../../utilities/local_notice_service.dart';
 
 class ChatListController extends GetxController {
   UserDetailsModel userDetails = UserDetailsModel();
@@ -61,11 +60,11 @@ class ChatListController extends GetxController {
         autoReconnect: kIsWeb && kDebugMode ? false : true,
       ),
       showNotification: (title, body, data) {
-        if (IsmChatResponsive.isMobile(Get.context!)) {
+        if (IsmChatResponsive.isMobile(kNavigatorKey.currentContext!)) {
           LocalNoticeService().showFlutterNotification(
             title,
             body,
-            conversataionId: data['conversataionId'],
+            conversataionId: '',
           );
         } else {
           ElegantNotification(
@@ -85,7 +84,7 @@ class ChatListController extends GetxController {
             ),
             progressIndicatorColor:
                 IsmChatConfig.chatTheme.primaryColor ?? Colors.blue,
-          ).show(Get.context!);
+          ).show(kNavigatorKey.currentContext!);
         }
       },
     );
