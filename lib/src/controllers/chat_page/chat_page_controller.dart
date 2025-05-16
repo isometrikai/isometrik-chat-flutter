@@ -1378,6 +1378,8 @@ class IsmChatPageController extends GetxController
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       await Get.delete<IsmChatPageController>(force: true);
     }
+    unawaited(
+        Get.find<IsmChatMqttController>().getChatConversationsUnreadCount());
 
     return true;
   }
