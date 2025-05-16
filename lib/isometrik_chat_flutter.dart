@@ -1050,4 +1050,18 @@ class IsmChat {
 
   Future<void> updateMessage({required IsmChatMessageModel message}) async =>
       await _delegate.updateMessage(message: message);
+
+  Future<void> updateMessageMetaData({
+    required String messageId,
+    required String conversationId,
+    bool isOpponentMessage = false,
+    IsmChatMetaData? metaData,
+  }) async {
+    await _delegate.updateMessageMetaData(
+      messageId: messageId,
+      conversationId: conversationId,
+      isOpponentMessage: isOpponentMessage,
+      metaData: metaData,
+    );
+  }
 }

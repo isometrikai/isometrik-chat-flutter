@@ -686,4 +686,20 @@ class IsmChatDelegate {
     }
     await getMessagesFromDB(conversationId: message.conversationId ?? '');
   }
+
+  Future<void> updateMessageMetaData({
+    required String messageId,
+    required String conversationId,
+    bool isOpponentMessage = false,
+    IsmChatMetaData? metaData,
+  }) async {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      await Get.find<IsmChatPageController>().updateMessage(
+        messageId: messageId,
+        conversationId: conversationId,
+        isOpponentMessage: isOpponentMessage,
+        metaData: metaData,
+      );
+    }
+  }
 }
