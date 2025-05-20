@@ -21,6 +21,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.blueGreyColor,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {

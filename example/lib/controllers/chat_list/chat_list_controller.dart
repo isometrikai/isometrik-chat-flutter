@@ -41,8 +41,10 @@ class ChatListController extends GetxController {
           userProfile: '',
         ),
         mqttConfig: const IsmChatMqttConfig(
-          hostName: kIsWeb ? Constants.hostnameForWeb : Constants.hostname,
-          port: kIsWeb ? Constants.portForWeb : Constants.port,
+          hostName: kIsWeb
+              ? Constants.hostnameForWeb
+              : Constants.hostname, // Constants.hostname,
+          port: kIsWeb ? Constants.portForWeb : Constants.port, // Constants.app
           useWebSocket: kIsWeb,
           websocketProtocols: [if (kIsWeb) 'mqtt'],
         ),

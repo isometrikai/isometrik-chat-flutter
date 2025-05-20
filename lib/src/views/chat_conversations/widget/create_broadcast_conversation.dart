@@ -26,6 +26,7 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             title: controller.showSearchField
                 ? IsmChatInputField(
                     fillColor: IsmChatConfig.chatTheme.primaryColor,

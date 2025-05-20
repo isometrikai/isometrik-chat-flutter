@@ -412,7 +412,60 @@ final conversations = await IsmChat.i.getChatConversationApi(
 await IsmChat.i.getChatConversationsUnreadCount(isLoading: true);
 ```
 
-48. Get or set a tag associated with the chat instance.
+48. Sets the current conversation index in the chat interface.
+
+```dart
+  IsmChat.i.currentConversationIndex(index: 2);
+```
+
+49. Determines whether to show other elements on the chat page.
+
+```dart
+ IsmChat.i.shouldShowOtherOnChatPage();
+```
+
+50. Searches for conversations based on the provided search value.
+
+```dart
+await IsmChat.i.searchConversation(searchValue: "John");
+```
+
+51. Retrieves messages from the local database for a specific conversation.
+
+```dart
+await IsmChat.i.getMessagesFromDB(conversationId: "conv123");
+```
+
+53. Updates an existing message in the chat system.
+
+```dart
+final updatedMessage = IsmChatMessageModel();
+await IsmChat.i.updateMessage(message: updatedMessage);
+```
+
+54. Updates the metadata of a specific message in a conversation.
+
+```dart
+await IsmChat.i.updateMessageMetaData(
+  messageId: "msg123",
+  conversationId: "conv123",
+  isOpponentMessage: false,
+  metaData: IsmChatMetaData()
+);
+```
+
+55. Updates the metadata of a specific message in a conversation.
+
+```dart
+await IsmChat.i.updateMessageMetaData(
+  messageId: "msg123",
+  conversationId: "conv123",
+  isOpponentMessage: false,
+  metaData: IsmChatMetaData()
+);
+```
+
+56. Get or set a tag associated with the chat instance.
 
 ```dart
 // Get current tag

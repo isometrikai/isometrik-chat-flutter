@@ -34,9 +34,10 @@ class IsmChatPageHeaderProperties {
   /// This is optional parameter
   /// When you have use `profileImageBuilder` then you don't use tap handler on this widget
   final void Function(IsmChatConversationModel)? onProfileTap;
+
   final double? Function(
     BuildContext,
-    IsmChatConversationModel,
+    IsmChatConversationModel?,
   )? height;
   final ShapeBorder? shape;
 }

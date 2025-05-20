@@ -74,8 +74,9 @@ mixin IsmChatShowDialogMixin on GetxController {
     } else {
       await IsmChatContextWidget.showBottomsheetContext(
         content: const ProfileChange(),
-        isDismissible: false,
+        isDismissible: true,
         elevation: 0,
+        backgroundColor: IsmChatColors.transparent,
       );
     }
   }

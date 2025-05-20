@@ -43,6 +43,7 @@ class _IsmChatPublicConversationViewState
                     .conversationProperties.conversationPosition)
                 ? null
                 : IsmChatAppBar(
+                    height: IsmChatDimens.fiftyFive,
                     title: controller.showSearchField
                         ? IsmChatInputField(
                             fillColor: IsmChatConfig.chatTheme.primaryColor,

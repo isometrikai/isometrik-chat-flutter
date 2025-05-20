@@ -201,7 +201,8 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                               content: IsmChatClearConversationBottomSheet(
                                 widget.conversation,
                               ),
-                              isDismissible: false,
+                              backgroundColor: IsmChatColors.transparent,
+                              isDismissible: true,
                               elevation: 0,
                             );
                           },

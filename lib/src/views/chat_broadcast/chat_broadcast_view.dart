@@ -18,6 +18,7 @@ class IsmChatBroadCastView extends StatelessWidget {
       },
       builder: (controller) => Scaffold(
         appBar: IsmChatAppBar(
+          height: IsmChatDimens.fiftyFive,
           title: Text(
             IsmChatStrings.broadcastList,
             style: IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??

@@ -5,8 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmChatBoradcastMessagePage extends StatelessWidget {
-  const IsmChatBoradcastMessagePage({super.key});
+class IsmChatBoradcastMessagePage extends StatefulWidget {
+  const IsmChatBoradcastMessagePage({super.key, this.viewTag});
+
+  final String? viewTag;
+
+  @override
+  State<IsmChatBoradcastMessagePage> createState() =>
+      _IsmChatBoradcastMessagePageState();
+}
+
+class _IsmChatBoradcastMessagePageState
+    extends State<IsmChatBoradcastMessagePage> {
+  @override
+  void initState() {
+    super.initState();
+    IsmChat.i.tag = widget.viewTag;
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+      IsmChatPageBinding().dependencies();
+    }
+  }
+
+  @override
+  void dispose() {
+    IsmChat.i.tag = null;
+    super.dispose();
+  }
 
   Future<bool> _back(
     BuildContext context,
@@ -72,6 +96,7 @@ class _BroadCastMessage extends StatelessWidget {
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
                   IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             leading: IsmChatTapHandler(
               onTap: onBackTap,
               child: Padding(

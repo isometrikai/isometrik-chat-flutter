@@ -26,6 +26,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             title: controller.showSearchField
                 ? IsmChatInputField(
                     fillColor: IsmChatConfig.chatTheme.primaryColor,
@@ -528,20 +529,21 @@ class _GroupChatImageAndName extends StatelessWidget {
                       } else {
                         IsmChatRoute.goBack();
                         IsmChatContextWidget.showBottomsheetContext<void>(
-                          content: IsmChatProfilePhotoBottomSheet(
-                            onCameraTap: () async {
-                              IsmChatRoute.goBack();
-                              await controller
-                                  .ismUploadImage(ImageSource.camera);
-                            },
-                            onGalleryTap: () async {
-                              IsmChatRoute.goBack();
-                              await controller
-                                  .ismUploadImage(ImageSource.gallery);
-                            },
-                          ),
-                          elevation: 0,
-                        );
+                            content: IsmChatProfilePhotoBottomSheet(
+                              onCameraTap: () async {
+                                IsmChatRoute.goBack();
+                                await controller
+                                    .ismUploadImage(ImageSource.camera);
+                              },
+                              onGalleryTap: () async {
+                                IsmChatRoute.goBack();
+                                await controller
+                                    .ismUploadImage(ImageSource.gallery);
+                              },
+                            ),
+                            elevation: 0,
+                            isDismissible: true,
+                            backgroundColor: IsmChatColors.transparent);
                       }
                     },
                     child: IsmChatImage.profile(
@@ -571,6 +573,8 @@ class _GroupChatImageAndName extends StatelessWidget {
                             },
                           ),
                           elevation: 0,
+                          backgroundColor: IsmChatColors.transparent,
+                          isDismissible: true,
                         );
                       }
                     },

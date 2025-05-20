@@ -80,17 +80,18 @@ class IsmChatUserView extends StatelessWidget {
                             controller.ismUploadImage(ImageSource.gallery);
                           } else {
                             IsmChatContextWidget.showBottomsheetContext<void>(
-                              content: IsmChatProfilePhotoBottomSheet(
-                                onCameraTap: () async {
-                                  controller
-                                      .updateUserDetails(ImageSource.camera);
-                                },
-                                onGalleryTap: () async {
-                                  controller
-                                      .updateUserDetails(ImageSource.gallery);
-                                },
-                              ),
-                            );
+                                content: IsmChatProfilePhotoBottomSheet(
+                                  onCameraTap: () async {
+                                    controller
+                                        .updateUserDetails(ImageSource.camera);
+                                  },
+                                  onGalleryTap: () async {
+                                    controller
+                                        .updateUserDetails(ImageSource.gallery);
+                                  },
+                                ),
+                                isDismissible: true,
+                                backgroundColor: IsmChatColors.transparent);
                           }
                         },
                         child: Container(

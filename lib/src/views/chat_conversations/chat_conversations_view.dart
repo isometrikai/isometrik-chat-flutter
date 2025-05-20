@@ -200,7 +200,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           .conversationProperties.enableGroupChat) {
                         IsmChatContextWidget.showBottomsheetContext(
                           content: const _CreateChatBottomSheet(),
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: IsmChatColors.transparent,
+                          isDismissible: true,
                           elevation: 0,
                         );
                       } else {
