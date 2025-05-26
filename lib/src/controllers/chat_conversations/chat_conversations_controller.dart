@@ -846,12 +846,15 @@ class IsmChatConversationsController extends GetxController {
 
     conversations.clear();
     if (dbConversations.isEmpty == true) {
+      IsmChatProperties.conversationProperties.conversationListEmptyOrNot
+          ?.call(dbConversations.isEmpty);
       return;
     }
-
     conversations = dbConversations;
     isConversationsLoading = false;
     if (conversations.length <= 1) {
+      IsmChatProperties.conversationProperties.conversationListEmptyOrNot
+          ?.call(conversations.isEmpty);
       return;
     }
     conversations.sort((a, b) => (b.lastMessageDetails?.sentAt ?? 0)
