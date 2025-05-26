@@ -1152,5 +1152,5 @@ class IsmChat {
   Future<void> getChatConversationFromLocal({
     String? searchTag,
   }) async =>
-      _delegate.getChatConversationFromLocal(searchTag: searchTag);
+      await _delegate.getChatConversationFromLocal(searchTag: searchTag);
 }
