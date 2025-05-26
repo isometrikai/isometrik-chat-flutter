@@ -45,6 +45,7 @@ class IsmChatConversationList extends StatelessWidget {
                     child: _ConversationList(),
                   )
                 : SmartRefresher(
+                    footer: const RefreshFooter(),
                     physics: const ClampingScrollPhysics(),
                     controller: controller.refreshController,
                     enablePullDown: true,
