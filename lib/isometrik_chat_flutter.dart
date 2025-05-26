@@ -1148,4 +1148,9 @@ class IsmChat {
       metaData: metaData,
     );
   }
+
+  Future<void> getChatConversationFromLocal({
+    String? searchTag,
+  }) async =>
+      _delegate.getChatConversationFromLocal(searchTag: searchTag);
 }
