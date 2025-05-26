@@ -702,12 +702,4 @@ class IsmChatDelegate {
       );
     }
   }
-
-  List<IsmChatConversationModel> get conversations {
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      return Get.find<IsmChatConversationsController>().conversations;
-    } else {
-      return [];
-    }
-  }
 }

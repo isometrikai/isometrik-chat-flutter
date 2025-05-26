@@ -1148,6 +1148,4 @@ class IsmChat {
       metaData: metaData,
     );
   }
-
-  List<IsmChatConversationModel> get conversations => _delegate.conversations;
 }

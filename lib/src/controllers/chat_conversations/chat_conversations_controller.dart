@@ -895,6 +895,9 @@ class IsmChatConversationsController extends GetxController {
         return -1;
       });
     }
+
+    IsmChatProperties.conversationProperties.conversationListEmptyOrNot
+        ?.call(conversations.isEmpty);
   }
 
   /// Retrieves the conversation ID for a given user ID.

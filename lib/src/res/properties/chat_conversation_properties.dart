@@ -39,6 +39,7 @@ class IsmChatConversationProperties {
     this.ontherChatPagesWidget,
     this.refreshHeader,
     this.refreshFooter,
+    this.conversationListEmptyOrNot,
   }) {
     assert(
       (showCreateChatIcon && onCreateTap != null) || !showCreateChatIcon,
@@ -234,4 +235,6 @@ class IsmChatConversationProperties {
 
   final Widget? refreshHeader;
   final Widget? refreshFooter;
+
+  final ConditionCallback? conversationListEmptyOrNot;
 }
