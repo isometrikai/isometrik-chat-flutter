@@ -20,7 +20,6 @@ class IsmChatAudioPlayer extends StatelessWidget {
             children: [
               IsmChatAudioMessage(
                 message,
-                decoration: const BoxDecoration(),
               ),
               IconButton(
                   onPressed: Get.back,

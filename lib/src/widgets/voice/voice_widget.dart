@@ -15,24 +15,23 @@ class VoiceMessage extends StatefulWidget {
     this.duration,
     this.noiseCount = 27,
     this.meBgColor = Colors.green,
-    this.contactBgColor = const Color(0xffffffff),
+    this.opponentBgColor = const Color(0xffffffff),
     this.contactFgColor = Colors.orange,
     this.contactCircleColor = Colors.red,
     this.mePlayIconColor = Colors.black,
     this.contactPlayIconColor = Colors.black26,
     this.contactPlayIconBgColor = Colors.grey,
     this.meFgColor = const Color(0xffffffff),
-    this.decoration,
   });
 
   final String? audioSrc;
 
   final Duration? duration;
-  final BoxDecoration? decoration;
+
   final int noiseCount;
   final Color meBgColor,
       meFgColor,
-      contactBgColor,
+      opponentBgColor,
       contactFgColor,
       contactCircleColor,
       mePlayIconColor,
@@ -103,12 +102,7 @@ class VoiceMessageState extends State<VoiceMessage>
         alignment: Alignment.center,
         width: IsmChatDimens.twoHundred,
         height: IsmChatDimens.seventy,
-        decoration: widget.decoration,
-        color: widget.decoration == null
-            ? widget.me
-                ? widget.meBgColor
-                : widget.contactBgColor
-            : null,
+        color: widget.me ? widget.meBgColor : widget.opponentBgColor,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

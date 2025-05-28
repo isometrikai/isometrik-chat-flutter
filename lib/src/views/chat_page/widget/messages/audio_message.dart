@@ -6,7 +6,6 @@ class IsmChatAudioMessage extends StatelessWidget {
   IsmChatAudioMessage(
     this.message, {
     super.key,
-    this.decoration,
   })  : url = message.attachments?.first.mediaUrl ?? '',
         duration = message.metaData?.duration,
         noise = Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
@@ -16,7 +15,6 @@ class IsmChatAudioMessage extends StatelessWidget {
   final String url;
   final Duration? duration;
   final Widget noise;
-  final BoxDecoration? decoration;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -31,25 +29,19 @@ class IsmChatAudioMessage extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               VoiceMessage(
-                decoration: decoration,
                 audioSrc: url,
                 noise: noise,
                 me: message.sentByMe,
                 meBgColor: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.selfMessageTheme?.backgroundColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
-                mePlayIconColor: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.selfMessageTheme?.backgroundColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
-                contactBgColor: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.opponentMessageTheme?.backgroundColor ??
-                    IsmChatConfig.chatTheme.backgroundColor!,
-                contactPlayIconColor: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.opponentMessageTheme?.backgroundColor ??
-                    IsmChatConfig.chatTheme.backgroundColor!,
-                contactFgColor: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.opponentMessageTheme?.textColor ??
-                    IsmChatConfig.chatTheme.primaryColor!,
+                        ?.selfMessageTheme?.audioMessageBGColor ??
+                    IsmChatConfig.chatTheme.primaryColor ??
+                    IsmChatColors.primaryColorLight,
+                opponentBgColor: IsmChatConfig.chatTheme.chatPageTheme
+                        ?.opponentMessageTheme?.audioMessageBGColor ??
+                    IsmChatConfig.chatTheme.primaryColor ??
+                    IsmChatColors.primaryColorLight,
+                mePlayIconColor: IsmChatConfig.chatTheme.primaryColor ??
+                    IsmChatColors.primaryColorLight,
                 duration: duration,
               ),
               if (message.isUploading == true)

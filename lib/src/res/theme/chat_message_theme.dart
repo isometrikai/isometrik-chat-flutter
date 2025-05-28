@@ -8,6 +8,7 @@ class IsmChatMessageTheme {
     this.borderRadius,
     this.borderColor,
     this.showProfile,
+    this.audioMessageBGColor,
   });
 
   final Color? backgroundColor;
@@ -16,6 +17,7 @@ class IsmChatMessageTheme {
   final BorderRadius? borderRadius;
   final Color? borderColor;
   final ShowProfile? showProfile;
+  final Color? audioMessageBGColor;
 }
 
 class ShowProfile {
