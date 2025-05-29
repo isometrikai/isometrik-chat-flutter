@@ -36,10 +36,10 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (_) {
           var chatPageController =
-              Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+              Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
           chatPageController.groupEligibleUser.clear();
           chatPageController.canCallCurrentApi = false;
           chatPageController.isMemberSearch = false;
@@ -253,7 +253,7 @@ class _SelectedUsers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => SafeArea(
           child: Container(
             decoration: BoxDecoration(

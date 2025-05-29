@@ -80,7 +80,7 @@ class IsmChatPageController extends GetxController
   }
 
   bool get controllerIsRegister =>
-      Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   List<Map<String, List<IsmChatMessageModel>>> sortMediaList(
       List<IsmChatMessageModel> messages) {
@@ -796,7 +796,7 @@ class IsmChatPageController extends GetxController
             ? IsmChatProperties.chatPageProperties.header?.height?.call(
                     IsmChatConfig.kNavigatorKey.currentContext ??
                         IsmChatConfig.context,
-                    Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                    Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
                         .conversation!) ??
                 IsmChatDimens.appBarHeight
             : topPosition,
@@ -920,7 +920,7 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> scrollDown() async {
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       return;
     }
     await messagesScrollController.animateTo(
@@ -1375,7 +1375,7 @@ class IsmChatPageController extends GetxController
       await conversationController.getChatConversations();
     }
 
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       await Get.delete<IsmChatPageController>(force: true);
     }
     unawaited(
@@ -1601,7 +1601,8 @@ class IsmChatPageController extends GetxController
     conversationDetailsApTimer = Timer.periodic(
       const Duration(minutes: 1),
       (Timer t) {
-        if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+        if (!Get.isRegistered<IsmChatPageController>(
+            tag: IsmChat.i.chatPageTag)) {
           t.cancel();
           conversationDetailsApTimer?.cancel();
         }

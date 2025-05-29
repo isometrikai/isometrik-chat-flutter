@@ -122,7 +122,7 @@ class _IsmChatOpenConversationViewState
                                   IsmChatRoute.goBack();
 
                                   if (!Get.isRegistered<IsmChatPageController>(
-                                      tag: IsmChat.i.tag)) {
+                                      tag: IsmChat.i.chatPageTag)) {
                                     IsmChatPageBinding().dependencies();
                                   }
                                   controller.isRenderChatPageaScreen =
@@ -130,7 +130,7 @@ class _IsmChatOpenConversationViewState
                                           .openChatMessagePage;
                                   final chatPagecontroller =
                                       Get.find<IsmChatPageController>(
-                                          tag: IsmChat.i.tag);
+                                          tag: IsmChat.i.chatPageTag);
                                   chatPagecontroller.messages.clear();
                                   chatPagecontroller.startInit(
                                     isBroadcasts: true,

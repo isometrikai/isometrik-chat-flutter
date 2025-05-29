@@ -888,8 +888,20 @@ class IsmChat {
   /// print(tag); // prints the current tag value
   /// tag = 'new-tag'; // sets a new tag value
   /// ```
-  String? get tag => _delegate.tag;
-  set tag(String? value) => _delegate.tag = value;
+  String? get chatPageTag => _delegate.chatPageTag;
+  set chatPageTag(String? value) => _delegate.chatPageTag = value;
+
+  /// Gets or sets the tag associated with this object.
+  ///
+  /// @return The current tag value, or null if not set.
+  ///
+  /// Example:
+  /// ```dart
+  /// print(tag); // prints the current tag value
+  /// tag = 'new-tag'; // sets a new tag value
+  /// ```
+  String? get chatListPageTag => _delegate.chatListPageTag;
+  set chatListPageTag(String? value) => _delegate.chatListPageTag = value;
 
   /// Subscribes to the given list of topics in an MQTT broker.
   /// which is responsible for communicating with the MQTT broker.

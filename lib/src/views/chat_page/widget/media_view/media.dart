@@ -23,7 +23,7 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetMediaList = [];
 
   final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   TabController? _tabController;
 

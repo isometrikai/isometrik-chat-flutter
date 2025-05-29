@@ -35,8 +35,9 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   }
 
   void closeOverlay() {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      Get.find<IsmChatPageController>().closeOverlay();
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
+          .closeOverlay();
     }
   }
 

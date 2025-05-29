@@ -2,7 +2,7 @@ part of '../chat_page_controller.dart';
 
 mixin IsmChatPageGetMessageMixin on GetxController {
   IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   Future<void> getMessagesFromDB(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
@@ -70,7 +70,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     int? lastMessageTimestamp,
     bool isBroadcast = false,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       if (_controller.canCallCurrentApi) return;
       _controller.canCallCurrentApi = true;
 
@@ -114,7 +114,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     bool isBroadcast = false,
     bool forPagination = false,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       if (_controller.canCallCurrentApi) return;
       _controller.canCallCurrentApi = true;
       if (_controller.messages.isEmpty) {
@@ -200,7 +200,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
   Future<IsmChatConversationModel?> getConverstaionDetails(
       {bool? isLoading}) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       if (!_controller.isCoverationApiDetails) {
         return null;
       }

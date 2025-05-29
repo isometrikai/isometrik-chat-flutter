@@ -90,10 +90,13 @@ class IsmChatConversationModel {
       IsmChatMessageModel? message;
       if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
               IsmChatConfig.context) &&
-          Get.isRegistered<IsmChatPageController>()) {
-        final controller = Get.find<IsmChatPageController>();
+          Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+        final controller =
+            Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
         if (controller.messages.isNotEmpty) {
-          message = Get.find<IsmChatPageController>().messages.last;
+          message = Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
+              .messages
+              .last;
         }
       } else {
         message = model.messages?.values.toList().first;

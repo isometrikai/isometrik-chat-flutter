@@ -17,7 +17,7 @@ class _IsmLinksViewState extends State<IsmLinksView>
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetLinksList = [];
 
   final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   @override
   void initState() {

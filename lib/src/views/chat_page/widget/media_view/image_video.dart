@@ -17,7 +17,7 @@ class _IsmMediaViewState extends State<IsmMediaView>
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetMediaList = [];
 
   final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   @override
   void initState() {
@@ -89,7 +89,7 @@ class _IsmMediaViewState extends State<IsmMediaView>
 
                           return IsmChatTapHandler(
                             onTap: () => Get.find<IsmChatPageController>(
-                                    tag: IsmChat.i.tag)
+                                    tag: IsmChat.i.chatPageTag)
                                 .tapForMediaPreview(value[valueIndex]),
                             child: Stack(
                               alignment: Alignment.center,

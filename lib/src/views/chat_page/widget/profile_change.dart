@@ -16,7 +16,8 @@ class ProfileChange extends StatelessWidget {
                     onPressed: () async {
                       IsmChatRoute.goBack();
                       final chatpageController =
-                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+                          Get.find<IsmChatPageController>(
+                              tag: IsmChat.i.chatPageTag);
                       await controller.ismChangeImage(ImageSource.camera);
                       await chatpageController.changeGroupProfile(
                         conversationImageUrl: controller.profileImage,
@@ -55,7 +56,8 @@ class ProfileChange extends StatelessWidget {
                     onPressed: () async {
                       IsmChatRoute.goBack();
                       final chatpageController =
-                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+                          Get.find<IsmChatPageController>(
+                              tag: IsmChat.i.chatPageTag);
                       await controller.ismChangeImage(ImageSource.gallery);
                       await chatpageController.changeGroupProfile(
                         conversationImageUrl: controller.profileImage,

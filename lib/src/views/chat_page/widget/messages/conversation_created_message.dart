@@ -13,13 +13,15 @@ class IsmChatConversationCreatedMessage extends StatelessWidget {
     if (IsmChatProperties.chatPageProperties.messageSenderName?.call(
           context,
           message,
-          Get.find<IsmChatPageController>(tag: IsmChat.i.tag).conversation!,
+          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
+              .conversation!,
         ) !=
         null) {
       name = IsmChatProperties.chatPageProperties.messageSenderName?.call(
             context,
             message,
-            Get.find<IsmChatPageController>(tag: IsmChat.i.tag).conversation!,
+            Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
+                .conversation!,
           ) ??
           '';
     } else {

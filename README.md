@@ -469,10 +469,10 @@ await IsmChat.i.updateMessageMetaData(
 
 ```dart
 // Get current tag
-print(IsmChat.i.tag);
+print(IsmChat.i.chatPageTag);
 
 // Set new tag
-IsmChat.i.tag = 'new-tag';
+IsmChat.i..chatPageTag = 'new-tag';
 ```
 
 <!-- ## Contributing

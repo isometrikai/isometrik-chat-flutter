@@ -20,32 +20,35 @@ class _IsmChatBoradcastMessagePageState
   @override
   void initState() {
     super.initState();
-    IsmChat.i.tag = widget.viewTag;
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    IsmChat.i.chatPageTag = widget.viewTag;
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       IsmChatPageBinding().dependencies();
     }
   }
 
   @override
   void dispose() {
-    IsmChat.i.tag = null;
+    IsmChat.i.chatPageTag = null;
     super.dispose();
   }
 
   Future<bool> _back(
     BuildContext context,
   ) async {
-    var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+    var controller =
+        Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
     var conversationController = Get.find<IsmChatConversationsController>();
 
     if (IsmChatResponsive.isWeb(context)) {
-      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      var controller =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
       controller.isBroadcast = false;
       conversationController.currentConversation = null;
       conversationController.currentConversationId = '';
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.none;
-      await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
+      await Get.delete<IsmChatPageController>(
+          force: true, tag: IsmChat.i.chatPageTag);
     } else {
       if (controller.messages.isNotEmpty) {
         IsmChatRoute.goBack();
@@ -90,7 +93,7 @@ class _BroadCastMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => Scaffold(
           backgroundColor:
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??

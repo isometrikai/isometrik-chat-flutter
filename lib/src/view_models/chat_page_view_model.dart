@@ -36,7 +36,8 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.messageDetailsUpdated.name,
         ].contains(e.action));
     if (searchText == null || searchText.isEmpty) {
-      final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      final controller =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
       if (controller.messages.isNotEmpty) {
         messages.removeWhere(
             (e) => e.messageId == controller.messages.last.messageId);
@@ -113,7 +114,8 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.conversationDetailsUpdated.name,
         ].contains(e.action));
     if (searchText == null || searchText.isEmpty) {
-      final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      final controller =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
       if (controller.messages.isNotEmpty) {
         messages.removeWhere(
             (e) => e.messageId == controller.messages.last.messageId);
@@ -310,7 +312,7 @@ class IsmChatPageViewModel {
           ?.saveConversation(conversation: conversation);
     }
 
-    await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+    await Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
         .getMessagesFromDB(conversationId);
   }
 
@@ -355,7 +357,7 @@ class IsmChatPageViewModel {
       await IsmChatConfig.dbWrapper!
           .saveConversation(conversation: conversation);
     }
-    await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+    await Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
         .getMessagesFromDB(conversationId);
   }
 
@@ -455,7 +457,8 @@ class IsmChatPageViewModel {
         await IsmChatConfig.dbWrapper
             ?.saveConversation(conversation: conversation);
       }
-      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      var controller =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
       controller.didReactedLast = true;
       await controller.getMessagesFromDB(reaction.conversationId);
     }
@@ -504,7 +507,8 @@ class IsmChatPageViewModel {
         await IsmChatConfig.dbWrapper!
             .saveConversation(conversation: conversation);
       }
-      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      var controller =
+          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
       controller.didReactedLast = true;
       await controller.getMessagesFromDB(reaction.conversationId);
     }

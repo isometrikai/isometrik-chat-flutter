@@ -24,15 +24,15 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    IsmChat.i.tag = widget.viewTag;
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    IsmChat.i.chatPageTag = widget.viewTag;
+    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       IsmChatPageBinding().dependencies();
     }
   }
 
   @override
   void dispose() {
-    IsmChat.i.tag = null;
+    IsmChat.i.chatPageTag = null;
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -58,7 +58,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   }
 
   IsmChatPageController get controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   Future<bool> navigateBack() async {
     if (controller.isMessageSeleted) {
@@ -81,11 +81,11 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   Widget build(BuildContext context) => CustomWillPopScope(
         onWillPop: () async {
           if (!GetPlatform.isAndroid) return false;
-          return IsmChat.i.tag == null ? await navigateBack() : false;
+          return IsmChat.i.chatPageTag == null ? await navigateBack() : false;
         },
         child: GetPlatform.isIOS
             ? GestureDetector(
-                onHorizontalDragEnd: IsmChat.i.tag == null
+                onHorizontalDragEnd: IsmChat.i.chatPageTag == null
                     ? (details) {
                         if (details.velocity.pixelsPerSecond.dx > 50) {
                           navigateBack();
@@ -103,7 +103,7 @@ class _IsmChatPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => DecoratedBox(
           decoration: BoxDecoration(
             color: controller.backgroundColor.isNotEmpty

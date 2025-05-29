@@ -5,7 +5,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ReactionGrid extends StatelessWidget {
   ReactionGrid(this.message, {super.key})
-      : _controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      : _controller =
+            Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   final IsmChatMessageModel message;
   final IsmChatPageController _controller;

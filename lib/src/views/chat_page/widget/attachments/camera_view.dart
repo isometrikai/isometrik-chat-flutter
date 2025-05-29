@@ -15,7 +15,8 @@ class IsmChatCameraView extends StatefulWidget {
 }
 
 class _CameraScreenViewState extends State<IsmChatCameraView> {
-  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final controller =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   @override
   void dispose() {
@@ -36,7 +37,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => MediaQuery.removePadding(
           removeTop: true,
           context: context,

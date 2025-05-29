@@ -13,12 +13,12 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
       return Size.fromHeight(IsmChatProperties.chatPageProperties.header?.height
               ?.call(
                   IsmChatConfig.kNavigatorKey.currentContext ??
                       IsmChatConfig.context,
-                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+                  Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
                       .conversation) ??
           IsmChatDimens.appBarHeight);
     }
@@ -31,7 +31,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => PreferredSize(
           preferredSize: preferredSize,
           child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -68,7 +68,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                               onPressed: () async {
                                 var updateLastMessage = false;
                                 controller.closeOverlay();
-                                if (IsmChat.i.tag == null) {
+                                if (IsmChat.i.chatPageTag == null) {
                                   IsmChatRoute.goBack<void>();
                                   updateLastMessage =
                                       await controller.updateLastMessage();
@@ -82,7 +82,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                 }
                               },
                               icon: Icon(
-                                IsmChat.i.tag == null
+                                IsmChat.i.chatPageTag == null
                                     ? Icons.arrow_back_rounded
                                     : Icons.close_rounded,
                                 color: IsmChatConfig.chatTheme

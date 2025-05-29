@@ -18,7 +18,7 @@ class _IsmDocsViewState extends State<IsmDocsView>
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetDocsList = [];
 
   final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   @override
   void initState() {

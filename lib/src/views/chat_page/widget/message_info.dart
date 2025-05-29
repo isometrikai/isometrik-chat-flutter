@@ -14,7 +14,7 @@ class IsmChatMessageInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (chatController) => Scaffold(
           backgroundColor:
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??

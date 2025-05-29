@@ -13,9 +13,11 @@ class IsmChatFileMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     final memoryImage = message.attachments?.first.mediaUrl?.isValidUrl == true
         ? MemoryImage(Uint8List(0))
-        : Get.find<IsmChatPageController>(tag: IsmChat.i.tag).getMemoryImage(
-            message.sentAt,
-            (message.attachments?.first.thumbnailUrl ?? '').strigToUnit8List);
+        : Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
+            .getMemoryImage(
+                message.sentAt,
+                (message.attachments?.first.thumbnailUrl ?? '')
+                    .strigToUnit8List);
 
     return Stack(
       alignment: Alignment.center,

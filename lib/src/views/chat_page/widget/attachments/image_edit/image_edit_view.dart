@@ -9,7 +9,7 @@ class IsmChatImageEditView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (state) {
           state.controller?.textEditingController.clear();
         },

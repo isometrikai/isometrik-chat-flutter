@@ -12,7 +12,8 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
     required BuildContext context,
     required IsmChatPageController controller,
   }) async {
-    final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+    final controller =
+        Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
     final conversationController = Get.find<IsmChatConversationsController>();
     if (IsmChatResponsive.isWeb(context)) {
       controller.isBroadcast = false;
@@ -20,7 +21,8 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
       conversationController.currentConversationId = '';
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.none;
-      await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
+      await Get.delete<IsmChatPageController>(
+          force: true, tag: IsmChat.i.chatPageTag);
     } else {
       IsmChatRoute.goBack();
     }
@@ -32,7 +34,7 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => CustomWillPopScope(
           onWillPop: () async => await _back(
             context: context,

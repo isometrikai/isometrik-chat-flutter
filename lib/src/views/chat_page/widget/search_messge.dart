@@ -7,10 +7,10 @@ class IsmChatSearchMessgae extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (_) {
           final controller =
-              Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+              Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
           controller.searchMessages.clear();
           controller.textEditingController.clear();
           controller.canCallCurrentApi = false;

@@ -10,12 +10,13 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (_) async {
           conversationController.mediaList.clear();
           conversationController.mediaListLinks.clear();
           conversationController.mediaListDocs.clear();
-          var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+          var controller =
+              Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
           await controller.getConverstaionDetails();
         },
         builder: (controller) => Scaffold(

@@ -19,7 +19,7 @@ class MessageBubble extends StatelessWidget {
                 IsmChatConfig.kNavigatorKey.currentContext ??
                     IsmChatConfig.context)
             ? GlobalKey()
-            : Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+            : Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
                 .getGlobalKey(message?.sentAt ?? 0);
 
   final IsmChatMessageModel _message;
@@ -29,7 +29,7 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,

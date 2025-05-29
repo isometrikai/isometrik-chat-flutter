@@ -18,7 +18,7 @@ class IsmChatLocationWidget extends StatefulWidget {
 class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
   final Completer<GoogleMapController> mapController = Completer();
   final ismChatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(30.7046, 76.7179),
@@ -64,7 +64,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: AppBar(

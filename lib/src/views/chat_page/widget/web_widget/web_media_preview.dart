@@ -8,7 +8,7 @@ class WebMediaPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) {
           if (controller.webMedia.isNotEmpty) {
             return Scaffold(

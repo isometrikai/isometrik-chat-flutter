@@ -25,7 +25,8 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
 
   WebMediaModel? webMediaModel;
 
-  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final controller =
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
   @override
   void initState() {

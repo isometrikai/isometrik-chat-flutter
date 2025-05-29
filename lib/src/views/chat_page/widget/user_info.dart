@@ -67,7 +67,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-      tag: IsmChat.i.tag,
+      tag: IsmChat.i.chatPageTag,
       builder: (controller) => Scaffold(
             backgroundColor: IsmChatColors.whiteColor,
             appBar: IsmChatAppBar(

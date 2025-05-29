@@ -117,8 +117,8 @@ class IsmChatDBWrapper {
       conversation = conversation.copyWith(messages: {});
       await saveConversation(conversation: conversation);
     }
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
-      await Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+      await Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
           .getMessagesFromDB(conversationId);
     }
   }

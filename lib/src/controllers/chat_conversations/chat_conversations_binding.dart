@@ -10,7 +10,7 @@ class IsmChatConversationsBinding extends Bindings {
           IsmChatConversationsRepository(),
         ),
       ),
-      permanent: true,
+      permanent: IsmChat.i.chatListPageTag == null,
     );
   }
 }
