@@ -9,7 +9,7 @@ typedef IsmChatMessages = Map<String, IsmChatMessageModel>;
 
 typedef ConversationCardCallback = Widget Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   int,
 );
 
@@ -26,18 +26,18 @@ typedef UserDetailsWidgetCallback = Widget? Function(
 
 typedef WidgetCallback = Widget? Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   bool,
 );
 
 typedef PopupItemListCallback = List<IsmChatPopupMenuItem> Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
 );
 
 typedef ConversationVoidCallback = void Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
 );
 
 typedef FutureConversationVoidCallback = Future<bool> Function(
@@ -54,7 +54,7 @@ typedef ConversationStringCallback = String? Function(
 
 typedef UserDetailsStringCallback = String? Function(
   BuildContext,
-  UserDetails,
+  UserDetails?,
 );
 
 typedef MessageWidgetBuilder = Widget? Function(
@@ -67,31 +67,31 @@ typedef MessageWidgetBuilder = Widget? Function(
 typedef MessageSenderInfoBuilder = Widget? Function(
   BuildContext,
   IsmChatMessageModel,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
 );
 
 typedef MessageSenderInfoCallback = String? Function(
   BuildContext,
   IsmChatMessageModel,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
 );
 
 typedef ConversationWidgetBuilder = Widget? Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   bool,
 );
 
-typedef ConversationPredicate = bool Function(IsmChatConversationModel);
+typedef ConversationPredicate = bool Function(IsmChatConversationModel?);
 
 typedef MeessageFieldFocusNode = void Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   bool,
 );
 
 typedef ConversationParser = (IsmChatConversationModel, bool)? Function(
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   Map<String, dynamic>,
 );
 
@@ -101,7 +101,7 @@ typedef InternetFileProgress = void Function(
 );
 
 typedef IsmChatConversationModifier = Future<IsmChatConversationModel> Function(
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
 );
 
 typedef NotificaitonCallback = void Function(
@@ -119,7 +119,7 @@ typedef MessageFutureCallback = Future<
     Function(
   BuildContext,
   IsmChatMessageModel,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
 );
 
 typedef MessageCallback = bool Function(
@@ -129,7 +129,7 @@ typedef MessageCallback = bool Function(
 
 typedef ConversationCallback = bool Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
 );
 
 typedef ResponseCallback = void Function(
@@ -145,7 +145,7 @@ typedef ConnectionStateCallback = void Function(
 
 typedef SendMessageCallback = bool Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   IsmChatCustomMessageType,
 );
 
@@ -164,7 +164,7 @@ typedef WidgetConversationCallback = Widget Function(
 
 typedef ConditionConversationCustomeTypeCallback = Future<bool?>? Function(
   BuildContext,
-  IsmChatConversationModel,
+  IsmChatConversationModel?,
   IsmChatCustomMessageType,
 );
 

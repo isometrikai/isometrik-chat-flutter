@@ -362,8 +362,9 @@ class IsmChatForwardView extends StatelessWidget {
                                 if (await IsmChatProperties.chatPageProperties
                                         .messageAllowedConfig?.isMessgeAllowed
                                         ?.call(
-                                            IsmChatConfig
-                                                .kNavigatorKey.currentContext!,
+                                            IsmChatConfig.kNavigatorKey
+                                                    .currentContext ??
+                                                IsmChatConfig.context,
                                             Get.find<IsmChatPageController>(
                                                     tag: IsmChat.i.tag)
                                                 .conversation!,

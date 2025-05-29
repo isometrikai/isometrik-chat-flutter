@@ -197,7 +197,7 @@ class _IsmChatPageView extends StatelessWidget {
                             null
                         ? () => IsmChatProperties
                             .chatPageProperties.header?.onProfileTap
-                            ?.call(controller.conversation!)
+                            ?.call(controller.conversation)
                         : IsmChatProperties.chatPageProperties.header
                                     ?.profileImageBuilder !=
                                 null

@@ -159,7 +159,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                             ?.call(
                                 IsmChatConfig.kNavigatorKey.currentContext ??
                                     IsmChatConfig.context,
-                                controller.conversation!,
+                                controller.conversation,
                                 IsmChatCustomMessageType.video) ??
                         true) {
                       await controller.sendVideo(

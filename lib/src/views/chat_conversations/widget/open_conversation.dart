@@ -117,7 +117,8 @@ class _IsmChatOpenConversationViewState
                                 controller.updateLocalConversation(data);
 
                                 if (IsmChatResponsive.isWeb(IsmChatConfig
-                                    .kNavigatorKey.currentContext!)) {
+                                        .kNavigatorKey.currentContext ??
+                                    IsmChatConfig.context)) {
                                   IsmChatRoute.goBack();
 
                                   if (!Get.isRegistered<IsmChatPageController>(

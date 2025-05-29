@@ -137,7 +137,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                       showOwnUser = true;
                     }
 
-                    if (widget._controller.conversation!.isGroup!) {
+                    if (widget._controller.conversation?.isGroup ?? false) {
                       reactionUser = widget._controller.conversation?.members
                           ?.firstWhere((e) => e.userId == userId);
                     }
@@ -163,7 +163,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                       child: ListTile(
                         title: Text(showOwnUser
                             ? IsmChatStrings.you
-                            : widget._controller.conversation!.isGroup!
+                            : widget._controller.conversation?.isGroup ?? false
                                 ? reactionUser?.userName ?? ''
                                 : widget._controller.conversation?.chatName ??
                                     ''),
@@ -189,7 +189,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                         ),
                         subtitle: showOwnUser
                             ? const Text(IsmChatStrings.removeReaction)
-                            : widget._controller.conversation!.isGroup!
+                            : widget._controller.conversation?.isGroup ?? false
                                 ? Text(reactionUser?.userIdentifier ?? '')
                                 : Text(widget._controller.conversation
                                         ?.opponentDetails?.userIdentifier ??
@@ -204,7 +204,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                         .userDetails
                                         ?.userProfileImageUrl ??
                                     ''
-                            : widget._controller.conversation!.isGroup!
+                            : widget._controller.conversation?.isGroup ?? false
                                 ? reactionUser?.profileUrl ?? ''
                                 : widget._controller.conversation?.profileUrl ??
                                     ''),
@@ -221,7 +221,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                         UserDetails? reactionUser;
                         var userId = widget
                             .message.reactions?[index].userIds[indexUserId];
-                        if (widget._controller.conversation!.isGroup!) {
+                        if (widget._controller.conversation?.isGroup ?? false) {
                           reactionUser = widget
                               ._controller.conversation?.members
                               ?.firstWhere((e) => e.userId == userId);
@@ -249,14 +249,16 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                           child: ListTile(
                             title: Text(showOwnUser
                                 ? IsmChatStrings.you
-                                : widget._controller.conversation!.isGroup!
+                                : widget._controller.conversation?.isGroup ??
+                                        false
                                     ? reactionUser?.userName ?? ''
                                     : widget._controller.conversation
                                             ?.chatName ??
                                         ''),
                             subtitle: showOwnUser
                                 ? const Text(IsmChatStrings.removeReaction)
-                                : widget._controller.conversation!.isGroup!
+                                : widget._controller.conversation?.isGroup ??
+                                        false
                                     ? Text(reactionUser?.userIdentifier ?? '')
                                     : Text(widget._controller.conversation
                                             ?.opponentDetails?.userIdentifier ??
@@ -271,7 +273,8 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                             .userDetails
                                             ?.userProfileImageUrl ??
                                         ''
-                                : widget._controller.conversation!.isGroup!
+                                : widget._controller.conversation?.isGroup ??
+                                        false
                                     ? reactionUser?.profileUrl ?? ''
                                     : widget._controller.conversation
                                             ?.profileUrl ??

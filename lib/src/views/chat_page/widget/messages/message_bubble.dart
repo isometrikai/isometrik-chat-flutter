@@ -38,7 +38,7 @@ class MessageBubble extends StatelessWidget {
                 IsmChatResponsive.isWeb(context) &&
                 !showMessageInCenter &&
                 (IsmChatProperties.chatPageProperties.shouldShowHoverHold
-                        ?.call(context, controller.conversation!, _message) ??
+                        ?.call(context, controller.conversation, _message) ??
                     true)) ...[
               _OnMessageHoverWeb(
                 controller: controller,
@@ -125,7 +125,7 @@ class MessageBubble extends StatelessWidget {
                                             ?.call(
                                           context,
                                           _message,
-                                          controller.conversation!,
+                                          controller.conversation,
                                         ) !=
                                         null) {
                                       name = IsmChatProperties
@@ -134,7 +134,7 @@ class MessageBubble extends StatelessWidget {
                                               ?.call(
                                             context,
                                             _message,
-                                            controller.conversation!,
+                                            controller.conversation,
                                           ) ??
                                           '';
                                     } else {
@@ -146,7 +146,7 @@ class MessageBubble extends StatelessWidget {
                                             ?.call(
                                           context,
                                           _message,
-                                          controller.conversation!,
+                                          controller.conversation,
                                         ) ??
                                         Text(
                                           name.trim().isNotEmpty
@@ -295,7 +295,7 @@ class MessageBubble extends StatelessWidget {
                 IsmChatResponsive.isWeb(context) &&
                 !showMessageInCenter &&
                 (IsmChatProperties.chatPageProperties.shouldShowHoverHold
-                        ?.call(context, controller.conversation!, _message) ??
+                        ?.call(context, controller.conversation, _message) ??
                     true)) ...[
               IsmChatDimens.boxWidth8,
               _OnMessageHoverWeb(

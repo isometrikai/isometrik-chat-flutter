@@ -138,7 +138,7 @@ class IsmChatDelegate {
   void updateChatPageController() {
     if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
       final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
-      var conversationModel = controller.conversation!;
+      var conversationModel = controller.conversation;
       controller.conversation = null;
       controller.conversation = conversationModel;
     }

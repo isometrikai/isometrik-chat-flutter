@@ -264,8 +264,9 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
                                               IsmChatConfig.kNavigatorKey
-                                                  .currentContext!,
-                                              controller.conversation!,
+                                                      .currentContext ??
+                                                  IsmChatConfig.context,
+                                              controller.conversation,
                                               IsmChatCustomMessageType
                                                   .location) ??
                                       true) {}
@@ -317,8 +318,9 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
                                               IsmChatConfig.kNavigatorKey
-                                                  .currentContext!,
-                                              controller.conversation!,
+                                                      .currentContext ??
+                                                  IsmChatConfig.context,
+                                              controller.conversation,
                                               IsmChatCustomMessageType
                                                   .location) ??
                                       true) {

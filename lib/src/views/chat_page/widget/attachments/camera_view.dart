@@ -19,7 +19,8 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
 
   @override
   void dispose() {
-    if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext!)) {
+    if (IsmChatResponsive.isWeb(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       controller.cameraController.dispose();
     }
     super.dispose();

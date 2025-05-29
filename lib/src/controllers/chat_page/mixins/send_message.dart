@@ -22,13 +22,13 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   }) async {
     if (IsmChatConfig.sendPaidWalletMessage?.call(
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
-            _controller.conversation!,
+            _controller.conversation,
             IsmChatCustomMessageType.fromString(customType)) ??
         false) {
       var messageMetaData = metaData?.toMap() ?? {};
       if (IsmChatConfig.paidWalletModel?.customType != null) {
         final customType = await IsmChatConfig.paidWalletModel?.customType
-                ?.call(_controller.conversation!) ??
+                ?.call(_controller.conversation) ??
             {};
         messageMetaData['customType'] = customType;
       }

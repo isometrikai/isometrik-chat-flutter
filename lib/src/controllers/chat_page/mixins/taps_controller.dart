@@ -13,7 +13,7 @@ mixin IsmChatTapsController on GetxController {
         await IsmChatProperties.chatPageProperties.onMessageTap?.call(
       context,
       message,
-      _controller.conversation!,
+      _controller.conversation,
     );
     if (response?.shouldGoToMediaPreview ?? true) {
       if (message.messageType == IsmChatMessageType.reply) {

@@ -42,7 +42,8 @@ class ReactionGrid extends StatelessWidget {
                     reaction: Reaction(
                       reactionType: IsmChatEmoji.fromEmoji(reaciton),
                       messageId: message.messageId ?? '',
-                      conversationId: _controller.conversation!.conversationId!,
+                      conversationId:
+                          _controller.conversation?.conversationId ?? '',
                     ),
                   );
                 },

@@ -44,7 +44,8 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
           chatPageController.canCallCurrentApi = false;
           chatPageController.isMemberSearch = false;
           chatPageController.getEligibleMembers(
-              conversationId: chatPageController.conversation!.conversationId!,
+              conversationId:
+                  chatPageController.conversation?.conversationId ?? '',
               limit: 20);
         },
         builder: (controller) => Scaffold(
@@ -111,7 +112,8 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
                                     0.7) {
                               controller.getEligibleMembers(
                                 conversationId:
-                                    controller.conversation!.conversationId!,
+                                    controller.conversation?.conversationId ??
+                                        '',
                                 limit: 20,
                               );
                             }

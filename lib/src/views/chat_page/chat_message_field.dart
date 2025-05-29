@@ -129,7 +129,7 @@ class IsmChatMessageField extends StatelessWidget {
                                           IsmChatConfig.kNavigatorKey
                                                   .currentContext ??
                                               IsmChatConfig.context,
-                                          controller.conversation!,
+                                          controller.conversation,
                                           controller.isreplying
                                               ? IsmChatCustomMessageType.reply
                                               : IsmChatCustomMessageType
@@ -333,7 +333,7 @@ class _ReplyMessage extends StatelessWidget {
                     controller.replayMessage?.sentByMe ?? false
                         ? IsmChatStrings.you
                         : IsmChatProperties.chatPageProperties.header?.title
-                                ?.call(context, controller.conversation!,
+                                ?.call(context, controller.conversation,
                                     controller.conversation?.chatName ?? '') ??
                             controller.conversation?.chatName.capitalizeFirst ??
                             '',
@@ -429,7 +429,7 @@ class _MicOrSendButton extends StatelessWidget {
                           ?.call(
                               IsmChatConfig.kNavigatorKey.currentContext ??
                                   IsmChatConfig.context,
-                              controller.conversation!,
+                              controller.conversation,
                               IsmChatCustomMessageType.audio) ??
                       true) {
                     if (kIsWeb) {
@@ -483,7 +483,7 @@ class _MicOrSendButton extends StatelessWidget {
                           ?.call(
                               IsmChatConfig.kNavigatorKey.currentContext ??
                                   IsmChatConfig.context,
-                              controller.conversation!,
+                              controller.conversation,
                               controller.isreplying
                                   ? IsmChatCustomMessageType.reply
                                   : IsmChatCustomMessageType.text) ??
@@ -509,7 +509,7 @@ class _MicOrSendButton extends StatelessWidget {
                 }
                 if (!(await IsmChatProperties
                         .chatPageProperties.isSendMediaAllowed
-                        ?.call(context, controller.conversation!) ??
+                        ?.call(context, controller.conversation) ??
                     true)) {
                   return;
                 }
@@ -820,7 +820,7 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
               null) ...[
             IsmChatProperties.chatPageProperties.messageFieldSuffix?.call(
                     context,
-                    controller.conversation!,
+                    controller.conversation,
                     controller.conversation?.isChattingAllowed == true) ??
                 IsmChatDimens.box0
           ],
@@ -831,7 +831,7 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
               } else {
                 if (await IsmChatProperties
                         .chatPageProperties.isSendMediaAllowed
-                        ?.call(context, controller.conversation!) ??
+                        ?.call(context, controller.conversation) ??
                     true) {
                   if (context.mounted) {
                     await showModalBottomSheet(

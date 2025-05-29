@@ -12,7 +12,7 @@ class IsmChatPopupMenuItem {
   final String label;
   final IconData icon;
   final Color? color;
-  final void Function(IsmChatConversationModel) onTap;
+  final void Function(IsmChatConversationModel?) onTap;
 
   @override
   String toString() =>

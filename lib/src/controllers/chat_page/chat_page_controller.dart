@@ -1631,7 +1631,10 @@ class IsmChatPageController extends GetxController
     bool? blokedUser;
     if (IsmChatProperties.chatPageProperties.onCallBlockUnblock != null) {
       blokedUser = await IsmChatProperties.chatPageProperties.onCallBlockUnblock
-              ?.call(IsmChatConfig.kNavigatorKey.currentContext!, conversation!,
+              ?.call(
+                  IsmChatConfig.kNavigatorKey.currentContext ??
+                      IsmChatConfig.context,
+                  conversation!,
                   userBlockOrNot) ??
           false;
     } else {
