@@ -201,7 +201,8 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                     true
                                 ? IsmChatConfig
                                     .communicationConfig.userConfig.userProfile!
-                                : Get.find<IsmChatConversationsController>()
+                                : Get.find<IsmChatConversationsController>(
+                                            tag: IsmChat.i.chatListPageTag)
                                         .userDetails
                                         ?.userProfileImageUrl ??
                                     ''
@@ -270,7 +271,8 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                         true
                                     ? IsmChatConfig.communicationConfig
                                         .userConfig.userProfile!
-                                    : Get.find<IsmChatConversationsController>()
+                                    : Get.find<IsmChatConversationsController>(
+                                                tag: IsmChat.i.chatListPageTag)
                                             .userDetails
                                             ?.userProfileImageUrl ??
                                         ''

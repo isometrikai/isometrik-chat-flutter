@@ -63,7 +63,8 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
             leading: IconButton(
               onPressed: IsmChatResponsive.isWeb(context)
                   ? () {
-                      Get.find<IsmChatConversationsController>()
+                      Get.find<IsmChatConversationsController>(
+                                  tag: IsmChat.i.chatListPageTag)
                               .isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
                     }

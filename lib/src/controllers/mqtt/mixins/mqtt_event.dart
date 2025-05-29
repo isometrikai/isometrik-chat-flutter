@@ -218,8 +218,10 @@ mixin IsmChatMqttEventMixin {
               .getMessagesFromDB(actionModel.conversationId ?? '');
         }
       }
-      if (Get.isRegistered<IsmChatConversationsController>()) {
-        unawaited(Get.find<IsmChatConversationsController>()
+      if (Get.isRegistered<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag)) {
+        unawaited(Get.find<IsmChatConversationsController>(
+                tag: IsmChat.i.chatListPageTag)
             .getConversationsFromDB());
       }
     }
@@ -289,8 +291,10 @@ mixin IsmChatMqttEventMixin {
 
     conversation.messages?.addEntries({'${message.sentAt}': message}.entries);
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      var conversationController = Get.find<IsmChatConversationsController>();
+    if (Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      var conversationController = Get.find<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag);
       unawaited(conversationController.getConversationsFromDB());
       await conversationController.pingMessageDelivered(
         conversationId: actionModel.conversationId ?? '',
@@ -320,8 +324,12 @@ mixin IsmChatMqttEventMixin {
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     if (isSenderMe(message.senderInfo?.userId)) return;
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
-    if (!Get.isRegistered<IsmChatConversationsController>()) return;
-    var conversationController = Get.find<IsmChatConversationsController>();
+    if (!Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      return;
+    }
+    var conversationController = Get.find<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag);
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: message.conversationId);
 
@@ -550,8 +558,10 @@ mixin IsmChatMqttEventMixin {
             await Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
                 .getMessagesFromDB(action.conversationId ?? '');
           }
-          if (Get.isRegistered<IsmChatConversationsController>()) {
-            unawaited(Get.find<IsmChatConversationsController>()
+          if (Get.isRegistered<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)) {
+            unawaited(Get.find<IsmChatConversationsController>(
+                    tag: IsmChat.i.chatListPageTag)
                 .getConversationsFromDB());
           }
         }
@@ -604,8 +614,10 @@ mixin IsmChatMqttEventMixin {
             await Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
                 .getMessagesFromDB(action.conversationId ?? '');
           }
-          if (Get.isRegistered<IsmChatConversationsController>()) {
-            unawaited(Get.find<IsmChatConversationsController>()
+          if (Get.isRegistered<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)) {
+            unawaited(Get.find<IsmChatConversationsController>(
+                    tag: IsmChat.i.chatListPageTag)
                 .getConversationsFromDB());
           }
         }
@@ -695,8 +707,11 @@ mixin IsmChatMqttEventMixin {
         await controller.getMessagesFromDB(actionModel.conversationId ?? '');
       }
     }
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      await Get.find<IsmChatConversationsController>().getConversationsFromDB();
+    if (Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      await Get.find<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)
+          .getConversationsFromDB();
     }
   }
 
@@ -758,8 +773,10 @@ mixin IsmChatMqttEventMixin {
         );
       }
     }
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      var conversationController = Get.find<IsmChatConversationsController>();
+    if (Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      var conversationController = Get.find<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag);
       await conversationController.getBlockUser();
       await conversationController.getChatConversations();
     }
@@ -772,9 +789,13 @@ mixin IsmChatMqttEventMixin {
     if (isSenderMe(actionModel.initiatorId)) return;
     if (messageId == actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
-    if (!Get.isRegistered<IsmChatConversationsController>()) return;
+    if (!Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      return;
+    }
     unawaited(
-        Get.find<IsmChatConversationsController>().getChatConversations());
+        Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag)
+            .getChatConversations());
     if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag))
       return;
     var controller =
@@ -794,8 +815,12 @@ mixin IsmChatMqttEventMixin {
     if (messageId == actionModel.sentAt.toString()) return;
     messageId = actionModel.sentAt.toString();
 
-    if (!Get.isRegistered<IsmChatConversationsController>()) return;
-    var conversationController = Get.find<IsmChatConversationsController>();
+    if (!Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      return;
+    }
+    var conversationController = Get.find<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag);
     if (actionModel.action == IsmChatActionEvents.addMember) {
       await conversationController.getChatConversations();
     }
@@ -904,8 +929,11 @@ mixin IsmChatMqttEventMixin {
         );
       }
     }
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      await Get.find<IsmChatConversationsController>().getChatConversations();
+    if (Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      await Get.find<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)
+          .getChatConversations();
     }
   }
 
@@ -931,8 +959,11 @@ mixin IsmChatMqttEventMixin {
     }
     if (actionModel.memberId ==
             IsmChatConfig.communicationConfig.userConfig.userId &&
-        Get.isRegistered<IsmChatConversationsController>()) {
-      await Get.find<IsmChatConversationsController>().getChatConversations();
+        Get.isRegistered<IsmChatConversationsController>(
+            tag: IsmChat.i.chatListPageTag)) {
+      await Get.find<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)
+          .getChatConversations();
     }
   }
 
@@ -947,8 +978,11 @@ mixin IsmChatMqttEventMixin {
       body: 'Conversation Created',
       data: actionModel.toMap(),
     );
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      await Get.find<IsmChatConversationsController>().getChatConversations();
+    if (Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      await Get.find<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)
+          .getChatConversations();
     }
   }
 
@@ -1019,8 +1053,11 @@ mixin IsmChatMqttEventMixin {
         }
       }
     }
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      await Get.find<IsmChatConversationsController>().getChatConversations();
+    if (Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      await Get.find<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)
+          .getChatConversations();
     }
   }
 
@@ -1040,8 +1077,12 @@ mixin IsmChatMqttEventMixin {
       final deleteChat = await _controller.deleteChatFormDB('',
           conversationId: actionModel.conversationId ?? '');
 
-      if (deleteChat && Get.isRegistered<IsmChatConversationsController>()) {
-        await Get.find<IsmChatConversationsController>().getChatConversations();
+      if (deleteChat &&
+          Get.isRegistered<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)) {
+        await Get.find<IsmChatConversationsController>(
+                tag: IsmChat.i.chatListPageTag)
+            .getChatConversations();
       }
     }
   }
@@ -1066,8 +1107,11 @@ mixin IsmChatMqttEventMixin {
         }
       }
     }
-    if (Get.isRegistered<IsmChatConversationsController>()) {
-      await Get.find<IsmChatConversationsController>().getChatConversations();
+    if (Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
+      await Get.find<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)
+          .getChatConversations();
     }
   }
 }

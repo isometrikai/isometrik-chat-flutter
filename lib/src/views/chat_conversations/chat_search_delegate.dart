@@ -5,7 +5,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatSearchDelegate extends SearchDelegate<void> {
   IsmChatSearchDelegate({required this.onChatTap});
 
-  final _controller = Get.find<IsmChatConversationsController>();
+  final _controller =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
   final void Function(BuildContext, IsmChatConversationModel, bool) onChatTap;
   @override
   List<Widget> buildActions(BuildContext context) => [

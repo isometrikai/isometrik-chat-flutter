@@ -27,7 +27,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   final issmChatConversationsController =
-      Get.find<IsmChatConversationsController>();
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
@@ -480,7 +480,8 @@ class _PopupMenuWidget extends StatelessWidget {
             controller.addWallpaper();
           } else if (value == 1) {
             if (IsmChatResponsive.isWeb(context)) {
-              Get.find<IsmChatConversationsController>()
+              Get.find<IsmChatConversationsController>(
+                          tag: IsmChat.i.chatListPageTag)
                       .isRenderChatPageaScreen =
                   IsRenderChatPageScreen.messageSearchView;
             } else {

@@ -188,7 +188,8 @@ class IsmChatWallpaperPreview extends StatelessWidget {
                     final pageController = Get.find<IsmChatPageController>(
                         tag: IsmChat.i.chatPageTag);
                     final conversationController =
-                        Get.find<IsmChatConversationsController>();
+                        Get.find<IsmChatConversationsController>(
+                            tag: IsmChat.i.chatListPageTag);
                     if (imagePath?.path.isNotEmpty == true) {
                       IsmChatUtility.showLoader();
                       pageController.backgroundImage = imagePath?.path ?? '';

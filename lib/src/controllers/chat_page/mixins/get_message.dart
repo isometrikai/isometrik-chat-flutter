@@ -281,7 +281,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   }
 
   void updateLastMessagOnCurrentTime(IsmChatMessageModel message) async {
-    var conversationController = Get.find<IsmChatConversationsController>();
+    var conversationController = Get.find<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag);
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: message.conversationId);
 

@@ -10,6 +10,7 @@ class IsmChatBlockedMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) {
           var status = message.customType == IsmChatCustomMessageType.block
               ? 'blocked'

@@ -18,9 +18,11 @@ class IsmChatUserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (state) {
-          final controller =
-              state.controller ??= Get.find<IsmChatConversationsController>();
+          final controller = state.controller ??=
+              Get.find<IsmChatConversationsController>(
+                  tag: IsmChat.i.chatListPageTag);
           if (controller.profileImage.isEmpty) {
             controller.profileImage = controller.userDetails?.profileUrl ?? '';
           }

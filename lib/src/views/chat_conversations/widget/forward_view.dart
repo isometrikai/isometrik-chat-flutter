@@ -14,7 +14,8 @@ class IsmChatForwardView extends StatelessWidget {
 
   final IsmChatConversationModel conversation;
 
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
 
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,
@@ -47,6 +48,7 @@ class IsmChatForwardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (_) {
           converstaionController.callApiOrNot = true;
           converstaionController.forwardedList.clear();

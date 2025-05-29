@@ -371,7 +371,9 @@ class IsmChatPageViewModel {
     if (!response!.hasError) {
       await IsmChatConfig.dbWrapper
           ?.clearAllMessage(conversationId: conversationId);
-      await Get.find<IsmChatConversationsController>().getChatConversations();
+      await Get.find<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag)
+          .getChatConversations();
     }
   }
 

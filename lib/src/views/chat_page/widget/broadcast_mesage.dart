@@ -37,7 +37,8 @@ class _IsmChatBoradcastMessagePageState
   ) async {
     var controller =
         Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
-    var conversationController = Get.find<IsmChatConversationsController>();
+    var conversationController = Get.find<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag);
 
     if (IsmChatResponsive.isWeb(context)) {
       var controller =

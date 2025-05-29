@@ -6,7 +6,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatConverstaionInfoView extends StatelessWidget {
   IsmChatConverstaionInfoView({super.key});
 
-  final conversationController = Get.find<IsmChatConversationsController>();
+  final conversationController =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
@@ -26,7 +27,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {
-                    Get.find<IsmChatConversationsController>()
+                    Get.find<IsmChatConversationsController>(
+                            tag: IsmChat.i.chatListPageTag)
                         .isRenderChatPageaScreen = IsRenderChatPageScreen.none;
                   },
             title: Text(
@@ -213,7 +215,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           child: IsmChatTapHandler(
                             onTap: () {
                               if (IsmChatResponsive.isWeb(context)) {
-                                Get.find<IsmChatConversationsController>()
+                                Get.find<IsmChatConversationsController>(
+                                            tag: IsmChat.i.chatListPageTag)
                                         .isRenderChatPageaScreen =
                                     IsRenderChatPageScreen.coversationMediaView;
                               } else {
@@ -280,7 +283,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                 controller.participnatsEditingController
                                     .clear();
                                 if (IsmChatResponsive.isWeb(context)) {
-                                  Get.find<IsmChatConversationsController>()
+                                  Get.find<IsmChatConversationsController>(
+                                              tag: IsmChat.i.chatListPageTag)
                                           .isRenderChatPageaScreen =
                                       IsRenderChatPageScreen.groupEligibleView;
                                 } else {
@@ -517,7 +521,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                     ],
                                     callbackActions: [
                                       () => Get.find<
-                                              IsmChatConversationsController>()
+                                                  IsmChatConversationsController>(
+                                              tag: IsmChat.i.chatListPageTag)
                                           .deleteChat(
                                               '${controller.conversation?.conversationId}'),
                                     ],

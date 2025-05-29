@@ -13,7 +13,8 @@ class IsmChatObserverUsersView extends StatefulWidget {
 }
 
 class _IsmChatObserverUsersViewState extends State<IsmChatObserverUsersView> {
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
 
   Future<List<UserDetails>>? future;
   bool isSearch = false;

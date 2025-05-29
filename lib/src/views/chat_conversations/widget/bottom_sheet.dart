@@ -10,6 +10,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) => CupertinoActionSheet(
           actions: [
             CupertinoActionSheetAction(

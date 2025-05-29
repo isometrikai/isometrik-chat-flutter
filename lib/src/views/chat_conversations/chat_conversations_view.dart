@@ -25,6 +25,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     closeOverlay();
+    updateTagName();
     super.dispose();
   }
 
@@ -32,6 +33,11 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   void deactivate() {
     closeOverlay();
     super.deactivate();
+  }
+
+  void updateTagName() {
+    IsmChat.i.chatListPageTag = null;
+    IsmChat.i.chatPageTag = null;
   }
 
   void closeOverlay() {
@@ -49,11 +55,13 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
       IsmChatLog.info(
           'IsmMQttController initiliazing success from {IsmChatConversations view}');
     }
-    if (!Get.isRegistered<IsmChatConversationsController>()) {
+    if (!Get.isRegistered<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag)) {
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
-    var controller = Get.find<IsmChatConversationsController>();
+    var controller = Get.find<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag);
     controller.tabController = TabController(
       length:
           IsmChatProperties.conversationProperties.allowedConversations.length,
@@ -65,8 +73,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (AppLifecycleState.resumed == state) {
-      if (Get.isRegistered<IsmChatConversationsController>()) {
-        Get.find<IsmChatConversationsController>().getChatConversations();
+      if (Get.isRegistered<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag)) {
+        Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag)
+            .getChatConversations();
       }
       IsmChatLog.info('app in resumed');
     }
@@ -81,6 +91,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) {
           controller.context = context;
           return Scaffold(
@@ -264,7 +275,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
 class _IsmchatTabBar extends StatelessWidget {
   _IsmchatTabBar();
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
 
   @override
   Widget build(BuildContext context) => Container(
@@ -320,7 +332,8 @@ class _IsmchatTabBar extends StatelessWidget {
 class _IsmChatTabView extends StatelessWidget {
   _IsmChatTabView();
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
 
   @override
   Widget build(BuildContext context) => Expanded(

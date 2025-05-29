@@ -53,7 +53,8 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
           appBar: IsmChatAppBar(
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
-                : () => Get.find<IsmChatConversationsController>()
+                : () => Get.find<IsmChatConversationsController>(
+                            tag: IsmChat.i.chatListPageTag)
                         .isRenderChatPageaScreen =
                     IsRenderChatPageScreen.coversationInfoView,
             title: controller.isMemberSearch

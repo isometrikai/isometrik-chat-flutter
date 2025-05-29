@@ -32,7 +32,8 @@ class IsmChatMessageInfo extends StatelessWidget {
             leading: IconButton(
               onPressed: IsmChatResponsive.isWeb(context)
                   ? () {
-                      Get.find<IsmChatConversationsController>()
+                      Get.find<IsmChatConversationsController>(
+                                  tag: IsmChat.i.chatListPageTag)
                               .isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
                     }

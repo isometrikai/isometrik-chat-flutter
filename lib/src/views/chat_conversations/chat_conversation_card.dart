@@ -53,7 +53,8 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
       child: Container(
         decoration: BoxDecoration(
           color: IsmChatResponsive.isWeb(context)
-              ? Get.find<IsmChatConversationsController>()
+              ? Get.find<IsmChatConversationsController>(
+                              tag: IsmChat.i.chatListPageTag)
                           .currentConversationId ==
                       widget.conversation.conversationId
                   ? IsmChatConfig

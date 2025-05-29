@@ -10,9 +10,11 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (_) {
           final converstaionController =
-              Get.find<IsmChatConversationsController>();
+              Get.find<IsmChatConversationsController>(
+                  tag: IsmChat.i.chatListPageTag);
           converstaionController.callApiOrNot = true;
           converstaionController.forwardedList.clear();
           converstaionController.selectedUserList.clear();

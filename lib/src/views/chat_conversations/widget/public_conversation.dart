@@ -12,7 +12,8 @@ class IsmChatPublicConversationView extends StatefulWidget {
 
 class _IsmChatPublicConversationViewState
     extends State<IsmChatPublicConversationView> {
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
   var scrollController = ScrollController();
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _IsmChatPublicConversationViewState
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+      tag: IsmChat.i.chatListPageTag,
       builder: (controller) => Scaffold(
             appBar: [
               IsmChatConversationPosition.tabBar,

@@ -25,7 +25,8 @@ class IsmChatSearchMessgae extends StatelessWidget {
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {
-                    Get.find<IsmChatConversationsController>()
+                    Get.find<IsmChatConversationsController>(
+                            tag: IsmChat.i.chatListPageTag)
                         .isRenderChatPageaScreen = IsRenderChatPageScreen.none;
                   },
             backIcon: Icons.close_rounded,

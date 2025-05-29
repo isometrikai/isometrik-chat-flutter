@@ -13,7 +13,8 @@ class IsmChatOpenConversationView extends StatefulWidget {
 class _IsmChatOpenConversationViewState
     extends State<IsmChatOpenConversationView> {
   var scrollController = ScrollController();
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController =
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
   @override
   void initState() {
     super.initState();
@@ -35,6 +36,7 @@ class _IsmChatOpenConversationViewState
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) => Scaffold(
           appBar: [
             IsmChatConversationPosition.tabBar,

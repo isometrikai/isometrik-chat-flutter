@@ -219,7 +219,9 @@ class _IsmChatPageView extends StatelessWidget {
                                               IsmChatConfig.communicationConfig
                                                   .userConfig.userId)) {
                                         if (IsmChatResponsive.isWeb(context)) {
-                                          Get.find<IsmChatConversationsController>()
+                                          Get.find<IsmChatConversationsController>(
+                                                      tag: IsmChat
+                                                          .i.chatListPageTag)
                                                   .isRenderChatPageaScreen =
                                               IsRenderChatPageScreen
                                                   .coversationInfoView;
