@@ -1313,7 +1313,9 @@ class IsmChatConversationsController extends GetxController {
         chatPagecontroller.toggleEmojiBoard(false, false);
       }
     } else {
-      await IsmChatRoute.goToRoute(const IsmChatPageView());
+      await IsmChatRoute.goToRoute(IsmChatPageView(
+        viewTag: IsmChat.i.chatPageTag,
+      ));
     }
   }
 
