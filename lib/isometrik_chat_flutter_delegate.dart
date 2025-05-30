@@ -405,8 +405,6 @@ class IsmChatDelegate {
     String? storyMediaUrl,
     bool pushNotifications = true,
     bool isCreateGroupFromOutSide = false,
-    String? chatListPageTag,
-    String? chatPageTag,
   }) async {
     assert(
       [name, userId].every((e) => e.isNotEmpty),
@@ -414,9 +412,6 @@ class IsmChatDelegate {
       Name, and userId cannot be empty.''',
     );
     IsmChatUtility.showLoader();
-
-    IsmChat.i.chatListPageTag = chatListPageTag;
-    IsmChat.i.chatPageTag = chatPageTag;
 
     if (!IsmChatUtility.conversationControllerRegistered) {
       IsmChatCommonBinding().dependencies();
@@ -495,8 +490,6 @@ class IsmChatDelegate {
     void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
     Duration duration = const Duration(milliseconds: 100),
     bool isShowLoader = true,
-    String? chatListPageTag,
-    String? chatPageTag,
   }) async {
     if (isShowLoader) {
       IsmChatUtility.showLoader();
@@ -506,8 +499,6 @@ class IsmChatDelegate {
       IsmChatUtility.closeLoader();
     }
 
-    IsmChat.i.chatListPageTag = chatListPageTag;
-    IsmChat.i.chatPageTag = chatPageTag;
     if (!IsmChatUtility.conversationControllerRegistered) {
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();

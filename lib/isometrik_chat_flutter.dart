@@ -710,8 +710,6 @@ class IsmChat {
     String? storyMediaUrl,
     bool pushNotifications = true,
     bool isCreateGroupFromOutSide = false,
-    String? chatListPageTag,
-    String? chatPageTag,
   }) async {
     assert(
       [name, userId].every((e) => e.isNotEmpty),
@@ -732,8 +730,6 @@ class IsmChat {
       profileImageUrl: profileImageUrl,
       pushNotifications: pushNotifications,
       storyMediaUrl: storyMediaUrl,
-      chatListPageTag: chatListPageTag,
-      chatPageTag: chatPageTag,
     );
   }
 
@@ -775,16 +771,12 @@ class IsmChat {
     void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
     Duration duration = const Duration(milliseconds: 100),
     bool isShowLoader = true,
-    String? chatListPageTag,
-    String? chatPageTag,
   }) async {
     await _delegate.chatFromOutsideWithConversation(
       ismChatConversation: ismChatConversation,
       duration: duration,
       isShowLoader: isShowLoader,
       onNavigateToChat: onNavigateToChat,
-      chatListPageTag: chatListPageTag,
-      chatPageTag: chatPageTag,
     );
   }
 
