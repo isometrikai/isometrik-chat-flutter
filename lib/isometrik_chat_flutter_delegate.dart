@@ -718,4 +718,23 @@ class IsmChatDelegate {
       );
     }
   }
+
+  Future<void> deleteAllControllers({bool shouldDeleteAll = false}) async {
+    try {
+      if (shouldDeleteAll) {
+        await Get.delete<IsmChatPageController>(
+            tag: IsmChat.i.chatPageTag, force: true);
+      } else {
+        await Future.wait([
+          Get.delete<IsmChatConversationsController>(
+              tag: IsmChat.i.chatListPageTag, force: true),
+          Get.delete<IsmChatCommonController>(force: true),
+          Get.delete<IsmChatPageController>(
+              tag: IsmChat.i.chatPageTag, force: true),
+        ]);
+      }
+    } catch (e, st) {
+      IsmChatLog.error('Error $e stackTree $st');
+    }
+  }
 }

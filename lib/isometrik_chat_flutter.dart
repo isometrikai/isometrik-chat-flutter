@@ -1173,4 +1173,7 @@ class IsmChat {
     String? searchTag,
   }) async =>
       await _delegate.getChatConversationFromLocal(searchTag: searchTag);
+
+  Future<void> deleteAllControllers({bool shouldDeleteAll = false}) async =>
+      await _delegate.deleteAllControllers(shouldDeleteAll: shouldDeleteAll);
 }
