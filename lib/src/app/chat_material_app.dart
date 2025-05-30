@@ -15,15 +15,12 @@ class IsmChatApp extends StatelessWidget {
     this.fontFamily,
     this.conversationParser,
     this.conversationModifier,
-    this.chatListPageTag,
-    this.chatPageTag,
   }) {
     assert(IsmChatConfig.configInitilized,
         '''communicationConfig of type IsmChatCommunicationConfig must be initialized
     Either initialize using IsmChat.i.initialize() by passing  communicationConfig.
     ''');
-    IsmChat.i.chatListPageTag = chatListPageTag;
-    IsmChat.i.chatPageTag = chatPageTag;
+
     IsmChatConfig.fontFamily = fontFamily;
     IsmChatConfig.conversationParser = conversationParser;
     IsmChatProperties.loadingDialog = loadingDialog;
@@ -75,10 +72,6 @@ class IsmChatApp extends StatelessWidget {
 
   /// This callback is to be used if you want to make certain changes while conversation data is being parsed from the API
   final ConversationParser? conversationParser;
-
-  final String? chatListPageTag;
-
-  final String? chatPageTag;
 
   @override
   Widget build(BuildContext context) => const IsmChatConversations();
