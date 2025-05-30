@@ -733,8 +733,8 @@ class IsmChatDelegate {
   Future<void> deleteConversationController() async {
     try {
       if (IsmChatUtility.conversationControllerRegistered) {
-        await Get.delete<IsmChatPageController>(
-            tag: IsmChat.i.chatPageTag, force: true);
+        await Get.delete<IsmChatConversationsController>(
+            tag: IsmChat.i.chatListPageTag, force: true);
       }
     } catch (e, st) {
       IsmChatLog.error('Error $e stackTree $st');
