@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
     if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
@@ -25,8 +24,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
 
   WebMediaModel? webMediaModel;
 
-  final controller =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  final controller = IsmChatUtility.chatPageController;
 
   @override
   void initState() {

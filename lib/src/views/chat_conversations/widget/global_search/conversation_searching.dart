@@ -11,8 +11,7 @@ class IsmChatConversationSearchView extends StatelessWidget {
         tag: IsmChat.i.chatListPageTag,
         initState: (state) {
           IsmChatUtility.doLater(() async {
-            await Get.find<IsmChatConversationsController>(
-                    tag: IsmChat.i.chatListPageTag)
+            await IsmChatUtility.conversationController
                 .getChatSearchConversations();
           });
         },

@@ -124,8 +124,7 @@ class IsmChatBroadCastView extends StatelessWidget {
                                             userProfileImageUrl: ''))
                                         .toList() ??
                                     [];
-                                Get.find<IsmChatConversationsController>(
-                                        tag: IsmChat.i.chatListPageTag)
+                                IsmChatUtility.conversationController
                                     .goToBroadcastMessage(
                                         members, broadcast.groupcastId ?? '');
                               },

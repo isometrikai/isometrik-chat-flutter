@@ -439,8 +439,7 @@ extension BlockStatus on IsmChatConversationModel {
     if (isChattingAllowed) {
       return false;
     }
-    var controller = Get.find<IsmChatConversationsController>(
-        tag: IsmChat.i.chatListPageTag);
+    var controller = IsmChatUtility.conversationController;
     var blockedList = controller.blockUsers.map((e) => e.userId);
     return blockedList.contains(opponentDetails?.userId);
   }
@@ -775,9 +774,7 @@ extension ReactionLastMessgae on String {
   String get reactionString {
     var reactionValue = IsmChatEmoji.values.firstWhere((e) => e.value == this);
     var emoji = '';
-    for (var x in Get.find<IsmChatConversationsController>(
-            tag: IsmChat.i.chatListPageTag)
-        .reactions) {
+    for (var x in IsmChatUtility.conversationController.reactions) {
       if (x.name == reactionValue.emojiKeyword) {
         emoji = x.emoji;
         break;
@@ -853,8 +850,7 @@ extension MentionMessage on IsmChatMessageModel {
         .contains(IsmChatFeature.forward)) {
       menu.remove(IsmChatFocusMenuType.forward);
     }
-    if (Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-        .isBroadcast) {
+    if (IsmChatUtility.chatPageController.isBroadcast) {
       menu.removeWhere((e) => [
             IsmChatFocusMenuType.info,
             IsmChatFocusMenuType.delete,
@@ -1025,8 +1021,7 @@ extension Conversation on IsmChatConversationType {
   }
 
   void goToRoute() {
-    final controller = Get.find<IsmChatConversationsController>(
-        tag: IsmChat.i.chatListPageTag);
+    final controller = IsmChatUtility.conversationController;
     switch (this) {
       case IsmChatConversationType.private:
         break;

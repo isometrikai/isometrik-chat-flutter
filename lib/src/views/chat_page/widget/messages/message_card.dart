@@ -64,8 +64,7 @@ class _MessageCardState extends State<MessageCard>
     //Forward animation
     controllerAnimation?.forward().whenComplete(() {
       controllerAnimation?.reverse().whenComplete(() {
-        Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-            .onReplyTap(widget.message);
+        IsmChatUtility.chatPageController.onReplyTap(widget.message);
       });
     });
   }

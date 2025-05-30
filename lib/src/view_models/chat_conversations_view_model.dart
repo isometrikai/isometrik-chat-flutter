@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConversationsViewModel {
@@ -130,9 +129,7 @@ class IsmChatConversationsViewModel {
     if (!response!.hasError) {
       await IsmChatConfig.dbWrapper!
           .clearAllMessage(conversationId: conversationId);
-      await Get.find<IsmChatConversationsController>(
-              tag: IsmChat.i.chatListPageTag)
-          .getChatConversations();
+      await IsmChatUtility.conversationController.getChatConversations();
     }
   }
 

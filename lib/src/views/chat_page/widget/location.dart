@@ -17,8 +17,7 @@ class IsmChatLocationWidget extends StatefulWidget {
 
 class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
   final Completer<GoogleMapController> mapController = Completer();
-  final ismChatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  final ismChatPageController = IsmChatUtility.chatPageController;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(30.7046, 76.7179),

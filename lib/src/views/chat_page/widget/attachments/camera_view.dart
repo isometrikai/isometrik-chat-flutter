@@ -15,8 +15,7 @@ class IsmChatCameraView extends StatefulWidget {
 }
 
 class _CameraScreenViewState extends State<IsmChatCameraView> {
-  final controller =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  final controller = IsmChatUtility.chatPageController;
 
   @override
   void dispose() {

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConversationModel {
@@ -90,13 +89,10 @@ class IsmChatConversationModel {
       IsmChatMessageModel? message;
       if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
               IsmChatConfig.context) &&
-          Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
-        final controller =
-            Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+          IsmChatUtility.chatPageControllerRegistered) {
+        final controller = IsmChatUtility.chatPageController;
         if (controller.messages.isNotEmpty) {
-          message = Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-              .messages
-              .last;
+          message = IsmChatUtility.chatPageController.messages.last;
         }
       } else {
         message = model.messages?.values.toList().first;

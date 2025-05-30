@@ -1,8 +1,7 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatPageGetMessageMixin on GetxController {
-  IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
 
   Future<void> getMessagesFromDB(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
@@ -70,7 +69,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     int? lastMessageTimestamp,
     bool isBroadcast = false,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       if (_controller.canCallCurrentApi) return;
       _controller.canCallCurrentApi = true;
 
@@ -114,7 +113,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     bool isBroadcast = false,
     bool forPagination = false,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       if (_controller.canCallCurrentApi) return;
       _controller.canCallCurrentApi = true;
       if (_controller.messages.isEmpty) {
@@ -200,7 +199,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
   Future<IsmChatConversationModel?> getConverstaionDetails(
       {bool? isLoading}) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       if (!_controller.isCoverationApiDetails) {
         return null;
       }
@@ -281,8 +280,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   }
 
   void updateLastMessagOnCurrentTime(IsmChatMessageModel message) async {
-    var conversationController = Get.find<IsmChatConversationsController>(
-        tag: IsmChat.i.chatListPageTag);
+    var conversationController = IsmChatUtility.conversationController;
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: message.conversationId);
 

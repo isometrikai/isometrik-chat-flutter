@@ -302,7 +302,7 @@ class IsmChatMessageField extends StatelessWidget {
 class _ReplyMessage extends StatelessWidget {
   _ReplyMessage({
     required this.messageBody,
-  }) : controller = Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  }) : controller = IsmChatUtility.chatPageController;
 
   final String messageBody;
   final IsmChatPageController controller;
@@ -621,8 +621,7 @@ class _AttachmentIconForWeb extends StatefulWidget {
 
 class _AttachmentIconForWebState extends State<_AttachmentIconForWeb>
     with TickerProviderStateMixin {
-  final controller =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  final controller = IsmChatUtility.chatPageController;
   final layerLink = LayerLink();
 
   late Animation<double> curve;

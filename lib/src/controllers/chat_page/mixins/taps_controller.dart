@@ -1,8 +1,7 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatTapsController on GetxController {
-  IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
 
   void onMessageTap({
     required BuildContext context,

@@ -25,7 +25,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     IsmChat.i.chatPageTag = widget.viewTag;
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (!IsmChatUtility.chatPageControllerRegistered) {
       IsmChatPageBinding().dependencies();
     }
   }
@@ -57,8 +57,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     }
   }
 
-  IsmChatPageController get controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  IsmChatPageController get controller => IsmChatUtility.chatPageController;
 
   Future<bool> navigateBack() async {
     if (controller.isMessageSeleted) {
@@ -217,9 +216,7 @@ class _IsmChatPageView extends StatelessWidget {
                                               IsmChatConfig.communicationConfig
                                                   .userConfig.userId)) {
                                         if (IsmChatResponsive.isWeb(context)) {
-                                          Get.find<IsmChatConversationsController>(
-                                                      tag: IsmChat
-                                                          .i.chatListPageTag)
+                                          IsmChatUtility.conversationController
                                                   .isRenderChatPageaScreen =
                                               IsRenderChatPageScreen
                                                   .coversationInfoView;

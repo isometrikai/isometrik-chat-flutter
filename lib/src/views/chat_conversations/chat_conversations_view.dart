@@ -41,9 +41,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   }
 
   void closeOverlay() {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-          .closeOverlay();
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      IsmChatUtility.chatPageController.closeOverlay();
     }
   }
 
@@ -59,8 +58,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
-    var controller = Get.find<IsmChatConversationsController>(
-        tag: IsmChat.i.chatListPageTag);
+    var controller = IsmChatUtility.conversationController;
     controller.tabController = TabController(
       length:
           IsmChatProperties.conversationProperties.allowedConversations.length,
@@ -72,8 +70,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (AppLifecycleState.resumed == state) {
-      if (Get.isRegistered<IsmChatConversationsController>(
-          tag: IsmChat.i.chatListPageTag)) {
+      if (IsmChatUtility.conversationControllerRegistered) {
         IsmChatUtility.conversationController.getChatConversations();
       }
       IsmChatLog.info('app in resumed');

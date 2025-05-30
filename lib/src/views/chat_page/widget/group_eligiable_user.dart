@@ -38,8 +38,7 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
         initState: (_) {
-          var chatPageController =
-              Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+          var chatPageController = IsmChatUtility.chatPageController;
           chatPageController.groupEligibleUser.clear();
           chatPageController.canCallCurrentApi = false;
           chatPageController.isMemberSearch = false;
@@ -53,9 +52,8 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
           appBar: IsmChatAppBar(
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
-                : () => Get.find<IsmChatConversationsController>(
-                            tag: IsmChat.i.chatListPageTag)
-                        .isRenderChatPageaScreen =
+                : () => IsmChatUtility
+                        .conversationController.isRenderChatPageaScreen =
                     IsRenderChatPageScreen.coversationInfoView,
             title: controller.isMemberSearch
                 ? IsmChatInputField(

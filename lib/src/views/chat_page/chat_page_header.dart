@@ -13,13 +13,12 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       return Size.fromHeight(IsmChatProperties.chatPageProperties.header?.height
               ?.call(
                   IsmChatConfig.kNavigatorKey.currentContext ??
                       IsmChatConfig.context,
-                  Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-                      .conversation) ??
+                  IsmChatUtility.chatPageController.conversation) ??
           IsmChatDimens.appBarHeight);
     }
 
@@ -475,9 +474,7 @@ class _PopupMenuWidget extends StatelessWidget {
             controller.addWallpaper();
           } else if (value == 1) {
             if (IsmChatResponsive.isWeb(context)) {
-              Get.find<IsmChatConversationsController>(
-                          tag: IsmChat.i.chatListPageTag)
-                      .isRenderChatPageaScreen =
+              IsmChatUtility.conversationController.isRenderChatPageaScreen =
                   IsRenderChatPageScreen.messageSearchView;
             } else {
               IsmChatRoute.goToRoute(const IsmChatSearchMessgae());

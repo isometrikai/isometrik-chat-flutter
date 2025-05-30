@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -17,8 +16,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
   late TabController _tabController;
 
   final conversationController = IsmChatUtility.conversationController;
-  final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  final chatPageController = IsmChatUtility.chatPageController;
 
   @override
   void initState() {

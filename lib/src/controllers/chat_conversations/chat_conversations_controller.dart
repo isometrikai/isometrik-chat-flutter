@@ -618,10 +618,9 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// `opponentId`: The ID of the user to unblock.
   void unblockUserForWeb(String opponentId) {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       var conversationId = getConversationId(opponentId);
-      final chatPageController =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      final chatPageController = IsmChatUtility.chatPageController;
       if (conversationId == chatPageController.conversation?.conversationId) {
         chatPageController.unblockUser(
           opponentId: opponentId,
@@ -1299,14 +1298,12 @@ class IsmChatConversationsController extends GetxController {
     if (IsmChatResponsive.isWeb(
       IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
     )) {
-      if (!Get.isRegistered<IsmChatPageController>(
-          tag: IsmChat.i.chatPageTag)) {
+      if (!IsmChatUtility.chatPageControllerRegistered) {
         IsmChatPageBinding().dependencies();
         return;
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.none;
-      final chatPagecontroller =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      final chatPagecontroller = IsmChatUtility.chatPageController;
       chatPagecontroller.startInit();
       chatPagecontroller.closeOverlay();
       if (chatPagecontroller.showEmojiBoard) {
@@ -1458,16 +1455,12 @@ class IsmChatConversationsController extends GetxController {
         notificationTitle: notificationTitle,
         body: x.body,
         createdAt: x.sentAt,
-        isBroadcast:
-            Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-                ? Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-                    .isBroadcast
-                : false,
+        isBroadcast: IsmChatUtility.chatPageControllerRegistered
+            ? IsmChatUtility.chatPageController.isBroadcast
+            : false,
       );
-      if (isMessageSent &&
-          Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
-        final controller =
-            Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      if (isMessageSent && IsmChatUtility.chatPageControllerRegistered) {
+        final controller = IsmChatUtility.chatPageController;
         if (!controller.isBroadcast) {
           controller.didReactedLast = false;
           await controller.getMessagesFromDB(conversationId);
@@ -1898,13 +1891,11 @@ class IsmChatConversationsController extends GetxController {
     if (IsmChatResponsive.isWeb(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       IsmChatRoute.goBack();
-      if (!Get.isRegistered<IsmChatPageController>(
-          tag: IsmChat.i.chatPageTag)) {
+      if (!IsmChatUtility.chatPageControllerRegistered) {
         IsmChatPageBinding().dependencies();
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.boradcastChatMessagePage;
-      final chatPagecontroller =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      final chatPagecontroller = IsmChatUtility.chatPageController;
       chatPagecontroller.startInit(isBroadcasts: true);
       chatPagecontroller.closeOverlay();
     } else {

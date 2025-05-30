@@ -597,9 +597,15 @@ class IsmChatUtility {
   }
 
   static IsmChatConversationsController get conversationController =>
-      IsmChatUtility.conversationController;
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
 
   static bool get conversationControllerRegistered =>
       Get.isRegistered<IsmChatConversationsController>(
           tag: IsmChat.i.chatListPageTag);
+
+  static IsmChatPageController get chatPageController =>
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+
+  static bool get chatPageControllerRegistered =>
+      Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 }

@@ -79,8 +79,7 @@ class IsmChatPageController extends GetxController
     return memoryImage[sentAt] ?? MemoryImage(Uint8List(0));
   }
 
-  bool get controllerIsRegister =>
-      Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  bool get controllerIsRegister => IsmChatUtility.chatPageControllerRegistered;
 
   List<Map<String, List<IsmChatMessageModel>>> sortMediaList(
       List<IsmChatMessageModel> messages) {
@@ -796,8 +795,7 @@ class IsmChatPageController extends GetxController
             ? IsmChatProperties.chatPageProperties.header?.height?.call(
                     IsmChatConfig.kNavigatorKey.currentContext ??
                         IsmChatConfig.context,
-                    Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-                        .conversation!) ??
+                    IsmChatUtility.chatPageController.conversation!) ??
                 IsmChatDimens.appBarHeight
             : topPosition,
         child: Material(
@@ -920,7 +918,7 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> scrollDown() async {
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (!IsmChatUtility.chatPageControllerRegistered) {
       return;
     }
     await messagesScrollController.animateTo(
@@ -1375,8 +1373,9 @@ class IsmChatPageController extends GetxController
       await conversationController.getChatConversations();
     }
 
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
-      await Get.delete<IsmChatPageController>(force: true);
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      await Get.delete<IsmChatPageController>(
+          force: true, tag: IsmChat.i.chatPageTag);
     }
     unawaited(
         Get.find<IsmChatMqttController>().getChatConversationsUnreadCount());
@@ -1601,8 +1600,7 @@ class IsmChatPageController extends GetxController
     conversationDetailsApTimer = Timer.periodic(
       const Duration(minutes: 1),
       (Timer t) {
-        if (!Get.isRegistered<IsmChatPageController>(
-            tag: IsmChat.i.chatPageTag)) {
+        if (!IsmChatUtility.chatPageControllerRegistered) {
           t.cancel();
           conversationDetailsApTimer?.cancel();
         }

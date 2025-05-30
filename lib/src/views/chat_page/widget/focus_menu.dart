@@ -20,8 +20,7 @@ class IsmChatFocusMenu extends StatelessWidget {
   final Animation<double> animation;
   final bool canReact;
 
-  final controller =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  final controller = IsmChatUtility.chatPageController;
 
   @override
   Widget build(BuildContext context) => IsmChatResponsive.isWeb(context)
@@ -141,8 +140,7 @@ class IsmChatFocusMenu extends StatelessWidget {
       : IsmChatTapHandler(
           onTap: () {
             if (IsmChatResponsive.isWeb(context)) {
-              var controller =
-                  Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+              var controller = IsmChatUtility.chatPageController;
               controller.closeOverlay();
             } else {
               Navigator.pop(context);
