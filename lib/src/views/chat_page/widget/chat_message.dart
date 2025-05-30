@@ -36,8 +36,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
   @override
   bool get wantKeepAlive => mounted;
 
-  final coverstaionController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final coverstaionController = IsmChatUtility.conversationController;
 
   late bool showMessageInCenter;
   late bool isGroup;

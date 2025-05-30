@@ -16,8 +16,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
 
   final bool isGroupConversation;
   final IsmChatConversationType conversationType;
-  final converstaionController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final converstaionController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(

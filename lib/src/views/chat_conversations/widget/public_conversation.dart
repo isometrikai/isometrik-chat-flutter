@@ -12,8 +12,7 @@ class IsmChatPublicConversationView extends StatefulWidget {
 
 class _IsmChatPublicConversationViewState
     extends State<IsmChatPublicConversationView> {
-  final converstaionController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final converstaionController = IsmChatUtility.conversationController;
   var scrollController = ScrollController();
   @override
   void initState() {

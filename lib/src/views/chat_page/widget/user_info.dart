@@ -24,8 +24,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
   List<IsmChatMessageModel> mediaListLinks = [];
   List<IsmChatMessageModel> mediaListDocs = [];
 
-  final conversationController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final conversationController = IsmChatUtility.conversationController;
   bool isUserBlock = false;
   final argument = Get.arguments as Map<String, dynamic>? ?? {};
 

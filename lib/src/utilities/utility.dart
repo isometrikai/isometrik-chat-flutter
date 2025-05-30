@@ -595,4 +595,11 @@ class IsmChatUtility {
     final directory = await getTemporaryDirectory();
     return '${directory.path}/$filename';
   }
+
+  static IsmChatConversationsController get conversationController =>
+      IsmChatUtility.conversationController;
+
+  static bool get conversationControllerRegistered =>
+      Get.isRegistered<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag);
 }

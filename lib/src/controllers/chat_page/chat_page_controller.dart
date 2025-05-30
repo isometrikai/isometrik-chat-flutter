@@ -50,7 +50,7 @@ class IsmChatPageController extends GetxController
   final IsmChatPageViewModel viewModel;
 
   IsmChatConversationsController get conversationController =>
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+      IsmChatUtility.conversationController;
 
   IsmChatCommonController get commonController =>
       Get.find<IsmChatCommonController>();

@@ -133,8 +133,7 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
 class _StartMessage extends StatelessWidget {
   _StartMessage();
 
-  final controller =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => IconButton(
@@ -153,8 +152,7 @@ class _MoreIcon extends StatelessWidget {
   _MoreIcon(this.onSignOut);
 
   final VoidCallback? onSignOut;
-  final controller =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final controller = IsmChatUtility.conversationController;
   @override
   Widget build(BuildContext context) {
     var conversationTypeList =
@@ -323,8 +321,7 @@ class _SearchAction extends StatelessWidget {
 
   final void Function(BuildContext, IsmChatConversationModel, bool) onTap;
 
-  final controller =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => IconButton(

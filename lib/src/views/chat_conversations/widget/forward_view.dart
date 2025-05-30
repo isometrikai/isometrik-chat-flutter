@@ -14,8 +14,7 @@ class IsmChatForwardView extends StatelessWidget {
 
   final IsmChatConversationModel conversation;
 
-  final converstaionController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final converstaionController = IsmChatUtility.conversationController;
 
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,

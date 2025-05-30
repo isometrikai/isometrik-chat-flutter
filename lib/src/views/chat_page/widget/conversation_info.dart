@@ -6,8 +6,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatConverstaionInfoView extends StatelessWidget {
   IsmChatConverstaionInfoView({super.key});
 
-  final conversationController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final conversationController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(

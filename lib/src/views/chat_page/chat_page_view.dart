@@ -66,13 +66,11 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       controller.selectedMessage.clear();
       return false;
     } else {
-      IsmChatRoute.goBack<void>();
+      IsmChatRoute.goBack();
       controller.closeOverlay();
       final updateMessage = await controller.updateLastMessage();
-      if (IsmChatProperties.chatPageProperties.header?.onBackTap != null) {
-        IsmChatProperties.chatPageProperties.header?.onBackTap!
-            .call(updateMessage);
-      }
+      IsmChatProperties.chatPageProperties.header?.onBackTap
+          ?.call(updateMessage);
       return true;
     }
   }

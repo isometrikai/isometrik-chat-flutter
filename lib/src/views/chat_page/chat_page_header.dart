@@ -26,8 +26,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
     return Size.fromHeight(IsmChatDimens.appBarHeight);
   }
 
-  final issmChatConversationsController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final issmChatConversationsController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
@@ -73,13 +72,9 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                   updateLastMessage =
                                       await controller.updateLastMessage();
                                 }
-                                if (IsmChatProperties
-                                        .chatPageProperties.header?.onBackTap !=
-                                    null) {
-                                  IsmChatProperties
-                                      .chatPageProperties.header?.onBackTap!
-                                      .call(updateLastMessage);
-                                }
+                                IsmChatProperties
+                                    .chatPageProperties.header?.onBackTap
+                                    ?.call(updateLastMessage);
                               },
                               icon: Icon(
                                 IsmChat.i.chatPageTag == null

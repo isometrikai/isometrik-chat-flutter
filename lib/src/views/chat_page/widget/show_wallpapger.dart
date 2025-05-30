@@ -16,8 +16,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
     with TickerProviderStateMixin {
   late TabController _tabController;
 
-  final conversationController =
-      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+  final conversationController = IsmChatUtility.conversationController;
   final chatPageController =
       Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 
