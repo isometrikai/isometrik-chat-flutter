@@ -9,3 +9,15 @@ class AppRoutes {
   static const String messageInfo = '/messageInfo';
   static const String userListPage = '/userListPage';
 }
+
+class AppRouteName {
+  const AppRouteName._();
+  static const String initial = 'initial';
+  static const String login = 'login';
+  static const String signUp = 'signUp';
+  static const String register = 'register';
+  static const String chatList = 'chatList';
+  static const String chatView = 'chatView';
+  static const String messageInfo = 'messageInfo';
+  static const String userListPage = 'userListPage';
+}

@@ -1,6 +1,5 @@
 // class Constants {
 //   const Constants._();
-
 //   static const String licenseKey = 'lic-IMKw4CVRR6IHZ26+FhU7S+eG2Egi9NIHjMB';
 //   static const String appSecret =
 //       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDYwYjFlZjcwZmZjZjc1MDAwMWQwNDQwZG0AAAAIa2V5c2V0SWRtAAAAJDJmN2QyMmQ3LWI3NDMtNDcxNC04MzdlLWFmMGIxMjliZDU0Mm0AAAAJcHJvamVjdElkbQAAACRmYzRiZmMwOC0zMjQzLTQyMGYtODg0ZC0xY2UzN2QzZjQ1M2JkAAZzaWduZWRuBgCTqH3aiQE.mfI7oJEXiUoUbB5BodtHliEph-1rzDnUyZgL9zFBaGg';
@@ -14,7 +13,26 @@
 //   static const int port = 2052;
 // }
 
+/// Harshit Bro Chat App
+// class Constants {
+//   const Constants._();
+
+//   static const String licenseKey = 'lic-IMK/KBlTO0xcAoU1abFhRSOyDk/eRMOOEwO';
+//   static const String appSecret =
+//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY4MjZkM2U3MGQxOTkyZWZlYjM4MjEzYW0AAAAIa2V5c2V0SWRtAAAAJGU5NzFmNWI5LTg4OGUtNDA3Yi05YzE3LWY3YzY0ODRlYTZlN20AAAAJcHJvamVjdElkbQAAACQ3YjNmZTFjNi0yYzZkLTQ0ZTMtODc3MS05NjU0YTg2MDRlNmRkAAZzaWduZWRuBgAE2KvXlgE.GUbUvKG94OYtZRIUEy5XKCKArzf7d_fTVcJnqmwKkhw';
+//   static const String userSecret =
+//       'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY4MjZkM2U3MGQxOTkyZWZlYjM4MjEzYW0AAAAIa2V5c2V0SWRtAAAAJGU5NzFmNWI5LTg4OGUtNDA3Yi05YzE3LWY3YzY0ODRlYTZlN20AAAAJcHJvamVjdElkbQAAACQ3YjNmZTFjNi0yYzZkLTQ0ZTMtODc3MS05NjU0YTg2MDRlNmRkAAZzaWduZWRuBgAE2KvXlgE.__ONbg9uSr4-dHFZErR7xdiXhwZOZLw7GeWWn4_zEp8';
+//   static const String accountId = '6826d3e70d1992efeb38213a';
+//   static const String keysetId = 'e971f5b9-888e-407b-9c17-f7c6484ea6e7';
+//   static const String projectId = '7b3fe1c6-2c6d-44e3-8771-9654a8604e6d';
+
+//   static const String hostname = 'connections.isometrik.io';
+//   static const int port = 2052;
+// }
+
 /// Native Chat App
+library;
+
 class Constants {
   const Constants._();
   static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';
@@ -60,5 +78,5 @@ class AssetConstants {
   const AssetConstants._();
 
   static const String noImage = 'assets/images/noperson.png';
-  static const String image = 'assets/images/pexels-red-zeppelin-17445017.jpg';
+  static const String background = 'assets/images/image.png';
 }

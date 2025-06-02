@@ -1,11 +1,10 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ImsChatReaction extends StatefulWidget {
   ImsChatReaction({super.key, required this.message})
-      : _controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      : _controller = IsmChatUtility.chatPageController;
 
   final IsmChatMessageModel message;
   final IsmChatPageController _controller;

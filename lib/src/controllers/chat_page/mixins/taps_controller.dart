@@ -1,8 +1,7 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatTapsController on GetxController {
-  IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
 
   void onMessageTap({
     required BuildContext context,
@@ -13,7 +12,7 @@ mixin IsmChatTapsController on GetxController {
         await IsmChatProperties.chatPageProperties.onMessageTap?.call(
       context,
       message,
-      _controller.conversation!,
+      _controller.conversation,
     );
     if (response?.shouldGoToMediaPreview ?? true) {
       if (message.messageType == IsmChatMessageType.reply) {
@@ -21,7 +20,9 @@ mixin IsmChatTapsController on GetxController {
           IsmChatCustomMessageType.image,
           IsmChatCustomMessageType.video,
           IsmChatCustomMessageType.file,
-          if (!IsmChatResponsive.isWeb(Get.context!))
+          if (!IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext ??
+                  IsmChatConfig.context))
             IsmChatCustomMessageType.contact,
         ].contains(
           message.metaData?.replyMessage?.parentMessageMessageType,
@@ -32,7 +33,9 @@ mixin IsmChatTapsController on GetxController {
         IsmChatCustomMessageType.image,
         IsmChatCustomMessageType.video,
         IsmChatCustomMessageType.file,
-        if (!IsmChatResponsive.isWeb(Get.context!))
+        if (!IsmChatResponsive.isWeb(
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context))
           IsmChatCustomMessageType.contact,
       ].contains(message.customType)) {
         _controller.tapForMediaPreview(message);

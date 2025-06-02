@@ -7,9 +7,15 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 
 class IsmVideoTrimmerView extends StatefulWidget {
-  const IsmVideoTrimmerView({super.key});
+  const IsmVideoTrimmerView(
+      {super.key,
+      required this.maxVideoTrim,
+      required this.file,
+      required this.index});
 
-  static const String route = IsmPageRoutes.videoTrimView;
+  final XFile file;
+  final double maxVideoTrim;
+  final int index;
 
   @override
   State<IsmVideoTrimmerView> createState() => _VideoTrimmerViewState();
@@ -29,9 +35,9 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
   @override
   void initState() {
     super.initState();
-    endValue = (arguments['durationInSeconds'] as double? ?? 0).obs;
+    endValue = widget.maxVideoTrim.obs;
     durationInSeconds = endValue.value;
-    file = arguments['file'] as XFile? ?? XFile('');
+    file = widget.file;
     loadVideo(file.path);
   }
 

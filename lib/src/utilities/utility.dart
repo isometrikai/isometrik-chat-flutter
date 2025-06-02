@@ -5,7 +5,6 @@ import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,6 +24,8 @@ import 'package:url_launcher/url_launcher.dart';
 class IsmChatUtility {
   const IsmChatUtility._();
 
+  static bool isLoading = false;
+
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
   static void openKeyboard() =>
@@ -40,15 +41,17 @@ class IsmChatUtility {
   /// Show loader
   static void showLoader() async {
     closeLoader();
-    await Get.dialog<void>(
-      const IsmChatLoadingDialog(),
+    isLoading = true;
+    await IsmChatContextWidget.showDialogContext(
+      content: const IsmChatLoadingDialog(),
       barrierDismissible: false,
     );
   }
 
   static void closeLoader() {
-    if (Get.isDialogOpen == true) {
-      Get.back(closeOverlays: false, canPop: true);
+    if (isLoading) {
+      isLoading = false;
+      IsmChatRoute.goBack();
     }
   }
 
@@ -56,7 +59,7 @@ class IsmChatUtility {
   // static void showLoader() async {
   //   var isLoaderOpen = Get.isDialogOpen;
   //   if (isLoaderOpen != null) {
-  //     await Get.dialog<void>(
+  //     await IsmChatContextWidget.showDialogContext<void>(
   //       const IsmChatLoadingDialog(),
   //       barrierDismissible: false,
   //     );
@@ -66,7 +69,7 @@ class IsmChatUtility {
   // static void closeLoader() {
   //   var isLoaderOpen = Get.isDialogOpen;
   //   if (isLoaderOpen != null) {
-  //     Get.back(closeOverlays: false, canPop: true);
+  //     IsmChatRoute.goBack()(closeOverlays: false, canPop: true);
   //   }
   // }
 
@@ -81,68 +84,24 @@ class IsmChatUtility {
     if (Get.isDialogOpen ?? false) {
       return;
     }
-    await Get.dialog(
-      CupertinoAlertDialog(
-        title: Text(
-          title ?? (isSuccess ? 'Success' : 'Error'),
-        ),
-        content: Text(
-          jsonDecode(data.data)['message'] as String,
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: Get.back,
-            isDefaultAction: true,
-            child: Text(
-              'Okay',
-              style: IsmChatStyles.w400Black14,
-            ),
-          ),
-          if (label != null)
-            CupertinoDialogAction(
-              onPressed: () {
-                Get.back();
-                onTap?.call();
-              },
-              isDefaultAction: true,
-              child: Text(
-                label,
-                style: IsmChatStyles.w400Black14,
-              ),
-            ),
-        ],
+    await IsmChatContextWidget.showDialogContext(
+      content: const IsmChatAlertDialogBox(
+        title: IsmChatStrings.micePermissionBlock,
+        cancelLabel: IsmChatStrings.okay,
       ),
     );
   }
 
   static Future<void> showErrorDialog(String message,
       {void Function()? onCancel}) async {
-    await Get.dialog(
-      IsmChatAlertDialogBox(
+    await IsmChatContextWidget.showDialogContext(
+      content: IsmChatAlertDialogBox(
         title: message,
         cancelLabel: IsmChatStrings.okay,
         onCancel: onCancel,
       ),
     );
   }
-
-  static Future<T?> openFullScreenBottomSheet<T>(
-    Widget child, {
-    bool isDismissible = false,
-    bool ignoreSafeArea = false,
-    bool enableDrag = false,
-    Color? backgroundColor,
-    ShapeBorder? shape,
-  }) async =>
-      await Get.bottomSheet<T>(
-        child,
-        isDismissible: isDismissible,
-        isScrollControlled: true,
-        ignoreSafeArea: ignoreSafeArea,
-        enableDrag: enableDrag,
-        backgroundColor: backgroundColor,
-        shape: shape,
-      );
 
   /// Returns true if the internet connection is available.
   static Future<bool> get isNetworkAvailable async {
@@ -263,7 +222,8 @@ class IsmChatUtility {
           cropStyle: CropStyle.circle,
         ),
         WebUiSettings(
-          context: Get.context!,
+          context: IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context,
         ),
       ],
     );
@@ -590,7 +550,9 @@ class IsmChatUtility {
                     textScaler: const TextScaler.linear(1.5),
                     style: IsmChatStyles.w600Black14,
                   ),
-                  if (!IsmChatResponsive.isWeb(Get.context!))
+                  if (!IsmChatResponsive.isWeb(
+                      IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context))
                     SizedBox(
                         width: IsmChatDimens.percentWidth(.8),
                         child: Divider(
@@ -633,4 +595,17 @@ class IsmChatUtility {
     final directory = await getTemporaryDirectory();
     return '${directory.path}/$filename';
   }
+
+  static IsmChatConversationsController get conversationController =>
+      Get.find<IsmChatConversationsController>(tag: IsmChat.i.chatListPageTag);
+
+  static bool get conversationControllerRegistered =>
+      Get.isRegistered<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag);
+
+  static IsmChatPageController get chatPageController =>
+      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+
+  static bool get chatPageControllerRegistered =>
+      Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
 }

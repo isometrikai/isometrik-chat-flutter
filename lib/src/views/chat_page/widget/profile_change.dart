@@ -10,13 +10,15 @@ class ProfileChange extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag,
           builder: (controller) => CupertinoActionSheet(
                 actions: [
                   CupertinoActionSheetAction(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatRoute.goBack();
                       final chatpageController =
-                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+                          Get.find<IsmChatPageController>(
+                              tag: IsmChat.i.chatPageTag);
                       await controller.ismChangeImage(ImageSource.camera);
                       await chatpageController.changeGroupProfile(
                         conversationImageUrl: controller.profileImage,
@@ -53,9 +55,10 @@ class ProfileChange extends StatelessWidget {
                   ),
                   CupertinoActionSheetAction(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatRoute.goBack();
                       final chatpageController =
-                          Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+                          Get.find<IsmChatPageController>(
+                              tag: IsmChat.i.chatPageTag);
                       await controller.ismChangeImage(ImageSource.gallery);
                       await chatpageController.changeGroupProfile(
                         conversationImageUrl: controller.profileImage,
@@ -92,7 +95,7 @@ class ProfileChange extends StatelessWidget {
                   ),
                 ],
                 cancelButton: CupertinoActionSheetAction(
-                  onPressed: Get.back,
+                  onPressed: IsmChatRoute.goBack,
                   isDestructiveAction: true,
                   child: Text(
                     IsmChatStrings.cancel,

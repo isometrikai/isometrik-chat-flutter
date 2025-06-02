@@ -8,8 +8,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter_example/main.dart';
 import 'package:isometrik_chat_flutter_example/models/models.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
-import 'package:isometrik_chat_flutter_example/utilities/config.dart';
-import 'package:isometrik_chat_flutter_example/utilities/device_config.dart';
+import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
 
 import '../../utilities/local_notice_service.dart';
 
@@ -33,7 +32,8 @@ class ChatListController extends GetxController {
   void initialize() async {
     IsmChatLog.error(AppConfig.userDetail?.toJson());
     await IsmChat.i.initialize(
-      IsmChatCommunicationConfig(
+      kNavigatorKey: kNavigatorKey,
+      communicationConfig: IsmChatCommunicationConfig(
         userConfig: IsmChatUserConfig(
           userToken: AppConfig.userDetail?.userToken ?? '',
           userId: AppConfig.userDetail?.userId ?? '',
@@ -41,8 +41,10 @@ class ChatListController extends GetxController {
           userProfile: '',
         ),
         mqttConfig: const IsmChatMqttConfig(
-          hostName: kIsWeb ? Constants.hostnameForWeb : Constants.hostname,
-          port: kIsWeb ? Constants.portForWeb : Constants.port,
+          hostName: kIsWeb
+              ? Constants.hostnameForWeb
+              : Constants.hostname, // Constants.hostname,
+          port: kIsWeb ? Constants.portForWeb : Constants.port, // Constants.app
           useWebSocket: kIsWeb,
           websocketProtocols: [if (kIsWeb) 'mqtt'],
         ),
@@ -61,7 +63,7 @@ class ChatListController extends GetxController {
         autoReconnect: kIsWeb && kDebugMode ? false : true,
       ),
       showNotification: (title, body, data) {
-        if (IsmChatResponsive.isMobile(Get.context!)) {
+        if (IsmChatResponsive.isMobile(kNavigatorKey.currentContext!)) {
           LocalNoticeService().showFlutterNotification(
             title,
             body,
@@ -85,7 +87,7 @@ class ChatListController extends GetxController {
             ),
             progressIndicatorColor:
                 IsmChatConfig.chatTheme.primaryColor ?? Colors.blue,
-          ).show(Get.context!);
+          ).show(kNavigatorKey.currentContext!);
         }
       },
     );
@@ -112,7 +114,7 @@ class ChatListController extends GetxController {
     await dbWrapper?.deleteChatLocalDb();
     await IsmChat.i.logout();
     IsmChatUtility.closeLoader();
-    Get.offAllNamed(AppRoutes.login);
+    RouteManagement.offToLogin();
   }
 
   // void callFuncation() async {

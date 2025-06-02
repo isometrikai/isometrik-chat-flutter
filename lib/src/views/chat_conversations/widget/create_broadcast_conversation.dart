@@ -8,13 +8,13 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
     super.key,
   });
 
-  static const String route = IsmPageRoutes.createBroadcastView;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (_) {
           final converstaionController =
-              Get.find<IsmChatConversationsController>();
+              Get.find<IsmChatConversationsController>(
+                  tag: IsmChat.i.chatListPageTag);
           converstaionController.callApiOrNot = true;
           converstaionController.forwardedList.clear();
           converstaionController.selectedUserList.clear();
@@ -28,6 +28,7 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             title: controller.showSearchField
                 ? IsmChatInputField(
                     fillColor: IsmChatConfig.chatTheme.primaryColor,
@@ -344,8 +345,8 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                 controller.goToBroadcastMessage(
                     controller.selectedUserList, '');
               } else {
-                await Get.dialog(
-                  const IsmChatAlertDialogBox(
+                await IsmChatContextWidget.showDialogContext(
+                  content: const IsmChatAlertDialogBox(
                     title: IsmChatStrings.broadcastAlert,
                     cancelLabel: 'Okay',
                   ),
@@ -385,7 +386,11 @@ class _GetSuspensionTag extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(
-                  IsmChatResponsive.isWeb(Get.context!) ? .23 : .7,
+                  IsmChatResponsive.isWeb(
+                          IsmChatConfig.kNavigatorKey.currentContext ??
+                              IsmChatConfig.context)
+                      ? .23
+                      : .7,
                 ),
                 child: Divider(
                   height: .0,

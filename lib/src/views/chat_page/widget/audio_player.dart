@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatAudioPlayer extends StatelessWidget {
@@ -22,7 +21,7 @@ class IsmChatAudioPlayer extends StatelessWidget {
                 message,
               ),
               IconButton(
-                  onPressed: Get.back,
+                  onPressed: IsmChatRoute.goBack,
                   icon: Icon(
                     Icons.close,
                     color: IsmChatConfig.chatTheme.backgroundColor,

@@ -14,8 +14,6 @@ class IsmChatPageView extends StatefulWidget {
 
   final String? viewTag;
 
-  static const String route = IsmPageRoutes.chatPage;
-
   @override
   State<IsmChatPageView> createState() => _IsmChatPageViewState();
 }
@@ -26,15 +24,15 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    IsmChat.i.tag = widget.viewTag;
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    IsmChat.i.chatPageTag = widget.viewTag;
+    if (!IsmChatUtility.chatPageControllerRegistered) {
       IsmChatPageBinding().dependencies();
     }
   }
 
   @override
   void dispose() {
-    IsmChat.i.tag = null;
+    IsmChat.i.chatPageTag = null;
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -59,8 +57,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     }
   }
 
-  IsmChatPageController get controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  IsmChatPageController get controller => IsmChatUtility.chatPageController;
 
   Future<bool> navigateBack() async {
     if (controller.isMessageSeleted) {
@@ -68,13 +65,11 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       controller.selectedMessage.clear();
       return false;
     } else {
-      Get.back<void>();
+      IsmChatRoute.goBack();
       controller.closeOverlay();
       final updateMessage = await controller.updateLastMessage();
-      if (IsmChatProperties.chatPageProperties.header?.onBackTap != null) {
-        IsmChatProperties.chatPageProperties.header?.onBackTap!
-            .call(updateMessage);
-      }
+      IsmChatProperties.chatPageProperties.header?.onBackTap
+          ?.call(updateMessage);
       return true;
     }
   }
@@ -83,11 +78,11 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   Widget build(BuildContext context) => CustomWillPopScope(
         onWillPop: () async {
           if (!GetPlatform.isAndroid) return false;
-          return IsmChat.i.tag == null ? await navigateBack() : false;
+          return IsmChat.i.chatPageTag == null ? await navigateBack() : false;
         },
         child: GetPlatform.isIOS
             ? GestureDetector(
-                onHorizontalDragEnd: IsmChat.i.tag == null
+                onHorizontalDragEnd: IsmChat.i.chatPageTag == null
                     ? (details) {
                         if (details.velocity.pixelsPerSecond.dx > 50) {
                           navigateBack();
@@ -105,7 +100,7 @@ class _IsmChatPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => DecoratedBox(
           decoration: BoxDecoration(
             color: controller.backgroundColor.isNotEmpty
@@ -115,13 +110,16 @@ class _IsmChatPageView extends StatelessWidget {
                 ? DecorationImage(
                     image: controller.backgroundImage.isValidUrl
                         ? NetworkImage(controller.backgroundImage)
-                        : controller.backgroundImage.contains(
-                                'packages/isometrik_chat_flutter/assets')
-                            ? AssetImage(controller.backgroundImage)
-                                as ImageProvider
-                            : FileImage(
-                                File(controller.backgroundImage),
-                              ),
+                        : IsmChatProperties.chatPageProperties
+                                .backgroundImageUrl.isNullOrEmpty
+                            ? controller.backgroundImage.contains(
+                                    'packages/isometrik_chat_flutter/assets')
+                                ? AssetImage(controller.backgroundImage)
+                                    as ImageProvider
+                                : FileImage(
+                                    File(controller.backgroundImage),
+                                  )
+                            : AssetImage(controller.backgroundImage),
                     fit: BoxFit.cover,
                   )
                 : null,
@@ -196,7 +194,7 @@ class _IsmChatPageView extends StatelessWidget {
                             null
                         ? () => IsmChatProperties
                             .chatPageProperties.header?.onProfileTap
-                            ?.call(controller.conversation!)
+                            ?.call(controller.conversation)
                         : IsmChatProperties.chatPageProperties.header
                                     ?.profileImageBuilder !=
                                 null
@@ -218,13 +216,13 @@ class _IsmChatPageView extends StatelessWidget {
                                               IsmChatConfig.communicationConfig
                                                   .userConfig.userId)) {
                                         if (IsmChatResponsive.isWeb(context)) {
-                                          Get.find<IsmChatConversationsController>()
+                                          IsmChatUtility.conversationController
                                                   .isRenderChatPageaScreen =
                                               IsRenderChatPageScreen
                                                   .coversationInfoView;
                                         } else {
-                                          IsmChatRouteManagement
-                                              .goToConversationInfo();
+                                          IsmChatRoute.goToRoute(
+                                              IsmChatConverstaionInfoView());
                                         }
                                       }
                                     }

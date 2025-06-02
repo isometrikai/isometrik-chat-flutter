@@ -7,11 +7,9 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatImageEditView extends StatelessWidget {
   const IsmChatImageEditView({super.key});
 
-  static const String route = IsmPageRoutes.edittMedia;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (state) {
           state.controller?.textEditingController.clear();
         },
@@ -57,8 +55,8 @@ class IsmChatImageEditView extends StatelessWidget {
                 color: IsmChatColors.whiteColor,
               ),
               onPressed: () {
-                Get.back<void>();
-                Get.back<void>();
+                IsmChatRoute.goBack();
+                IsmChatRoute.goBack();
               },
             ),
           ),
@@ -94,10 +92,10 @@ class IsmChatImageEditView extends StatelessWidget {
                   backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                   onPressed: () async {
                     if (controller.webMedia.first.dataSize.size()) {
-                      Get.back<void>();
+                      IsmChatRoute.goBack();
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
-                              ?.call(context, controller.conversation!,
+                              ?.call(context, controller.conversation,
                                   IsmChatCustomMessageType.image) ??
                           true) {
                         await controller.sendImage(
@@ -110,8 +108,8 @@ class IsmChatImageEditView extends StatelessWidget {
                         );
                       }
                     } else {
-                      await Get.dialog(
-                        const IsmChatAlertDialogBox(
+                      await IsmChatContextWidget.showDialogContext(
+                        content: const IsmChatAlertDialogBox(
                           title: IsmChatStrings.youCanNotSend,
                           cancelLabel: IsmChatStrings.okay,
                         ),

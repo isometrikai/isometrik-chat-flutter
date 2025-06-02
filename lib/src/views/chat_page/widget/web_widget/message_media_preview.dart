@@ -10,11 +10,9 @@ import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
 import 'package:photo_view/photo_view.dart';
 
 class IsmWebMessageMediaPreview extends StatefulWidget {
-  const IsmWebMessageMediaPreview({
-    super.key,
-  });
+  const IsmWebMessageMediaPreview({super.key, required this.previewData});
 
-  static const String route = IsmPageRoutes.messageMediaPreivew;
+  final Map<String, dynamic> previewData;
 
   @override
   State<IsmWebMessageMediaPreview> createState() =>
@@ -23,16 +21,13 @@ class IsmWebMessageMediaPreview extends StatefulWidget {
 
 class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   PageController? pageController;
-  final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final chatPageController = IsmChatUtility.chatPageController;
 
   String mediaTime = '';
   String mediaSize = '';
   String mediaUserName = '';
   bool initiated = false;
   List<IsmChatMessageModel> messageData = [];
-
-  final argument = Get.arguments as Map<String, dynamic>? ?? {};
 
   @override
   void initState() {
@@ -41,12 +36,12 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
   }
 
   startInit() {
-    messageData = argument['messageData'] ?? [];
-    mediaUserName = argument['mediaUserName'] ?? '';
-    initiated = argument['initiated'] ?? false;
-    chatPageController.assetsIndex = argument['mediaIndex'] ?? 0;
+    messageData = widget.previewData['messageData'] ?? [];
+    mediaUserName = widget.previewData['mediaUserName'] ?? '';
+    initiated = widget.previewData['initiated'] ?? false;
+    chatPageController.assetsIndex = widget.previewData['mediaIndex'] ?? 0;
     final timeStamp = DateTime.fromMillisecondsSinceEpoch(
-      argument['mediaTime'] ?? 0,
+      widget.previewData['mediaTime'] ?? 0,
     );
     final time = DateFormat.jm().format(timeStamp);
     final monthDay = DateFormat.MMMd().format(timeStamp);
@@ -291,7 +286,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
               ),
             ),
             Container(
-              width: Get.width,
+              width: IsmChatDimens.percentWidth(1),
               alignment: Alignment.center,
               height: IsmChatDimens.sixty,
               margin: IsmChatDimens.edgeInsets10,

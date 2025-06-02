@@ -5,8 +5,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatPublicConversationView extends StatefulWidget {
   const IsmChatPublicConversationView({super.key});
 
-  static const String route = IsmPageRoutes.publicView;
-
   @override
   State<IsmChatPublicConversationView> createState() =>
       _IsmChatPublicConversationViewState();
@@ -14,7 +12,7 @@ class IsmChatPublicConversationView extends StatefulWidget {
 
 class _IsmChatPublicConversationViewState
     extends State<IsmChatPublicConversationView> {
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController = IsmChatUtility.conversationController;
   var scrollController = ScrollController();
   @override
   void initState() {
@@ -37,6 +35,7 @@ class _IsmChatPublicConversationViewState
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+      tag: IsmChat.i.chatListPageTag,
       builder: (controller) => Scaffold(
             appBar: [
               IsmChatConversationPosition.tabBar,
@@ -45,6 +44,7 @@ class _IsmChatPublicConversationViewState
                     .conversationProperties.conversationPosition)
                 ? null
                 : IsmChatAppBar(
+                    height: IsmChatDimens.fiftyFive,
                     title: controller.showSearchField
                         ? IsmChatInputField(
                             fillColor: IsmChatConfig.chatTheme.primaryColor,
@@ -94,7 +94,7 @@ class _IsmChatPublicConversationViewState
                       )
                     : const IsmChatLoadingDialog()
                 : SizedBox(
-                    height: Get.height,
+                    height: IsmChatDimens.percentHeight(1),
                     child: ListView.builder(
                       itemCount: controller.publicAndOpenConversation.length,
                       itemBuilder: (_, index) {

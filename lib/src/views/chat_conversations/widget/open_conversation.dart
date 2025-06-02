@@ -5,8 +5,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatOpenConversationView extends StatefulWidget {
   const IsmChatOpenConversationView({super.key});
 
-  static const String route = IsmPageRoutes.openView;
-
   @override
   State<IsmChatOpenConversationView> createState() =>
       _IsmChatOpenConversationViewState();
@@ -15,7 +13,7 @@ class IsmChatOpenConversationView extends StatefulWidget {
 class _IsmChatOpenConversationViewState
     extends State<IsmChatOpenConversationView> {
   var scrollController = ScrollController();
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController = IsmChatUtility.conversationController;
   @override
   void initState() {
     super.initState();
@@ -37,6 +35,7 @@ class _IsmChatOpenConversationViewState
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) => Scaffold(
           appBar: [
             IsmChatConversationPosition.tabBar,
@@ -45,6 +44,7 @@ class _IsmChatOpenConversationViewState
                   IsmChatProperties.conversationProperties.conversationPosition)
               ? null
               : IsmChatAppBar(
+                  height: IsmChatDimens.fiftyFive,
                   title: controller.showSearchField
                       ? IsmChatInputField(
                           fillColor: IsmChatConfig.chatTheme.primaryColor,
@@ -95,7 +95,7 @@ class _IsmChatOpenConversationViewState
                     )
                   : const IsmChatLoadingDialog()
               : SizedBox(
-                  height: Get.height,
+                  height: IsmChatDimens.percentHeight(1),
                   child: ListView.builder(
                     controller: scrollController,
                     itemCount: controller.publicAndOpenConversation.length,
@@ -109,28 +109,32 @@ class _IsmChatOpenConversationViewState
                                   conversationId: data.conversationId ?? '',
                                   isLoading: true);
                               if (response != null) {
-                                IsmChatProperties.conversationProperties
-                                    .onChatTap!(Get.context!, data);
+                                IsmChatProperties
+                                        .conversationProperties.onChatTap!(
+                                    IsmChatConfig
+                                            .kNavigatorKey.currentContext ??
+                                        IsmChatConfig.context,
+                                    data);
                                 controller.updateLocalConversation(data);
 
-                                if (IsmChatResponsive.isWeb(Get.context!)) {
-                                  Get.back();
+                                if (IsmChatResponsive.isWeb(IsmChatConfig
+                                        .kNavigatorKey.currentContext ??
+                                    IsmChatConfig.context)) {
+                                  IsmChatRoute.goBack();
 
-                                  if (!Get.isRegistered<IsmChatPageController>(
-                                      tag: IsmChat.i.tag)) {
+                                  if (!IsmChatUtility
+                                      .chatPageControllerRegistered) {
                                     IsmChatPageBinding().dependencies();
                                   }
                                   controller.isRenderChatPageaScreen =
                                       IsRenderChatPageScreen
                                           .openChatMessagePage;
                                   final chatPagecontroller =
-                                      Get.find<IsmChatPageController>(
-                                          tag: IsmChat.i.tag);
+                                      IsmChatUtility.chatPageController;
                                   chatPagecontroller.messages.clear();
                                   chatPagecontroller.startInit(
                                     isBroadcasts: true,
                                   );
-
                                   chatPagecontroller.closeOverlay();
                                   chatPagecontroller.messages.add(
                                     IsmChatMessageModel(
@@ -154,9 +158,8 @@ class _IsmChatOpenConversationViewState
                                     chatPagecontroller.messages,
                                   );
                                 } else {
-                                  IsmChatRouteManagement
-                                      .goToOpenChatMessagePage(
-                                    isBroadcast: true,
+                                  await IsmChatRoute.goToRoute(
+                                    const IsmChatOpenChatMessagePage(),
                                   );
                                 }
                               }

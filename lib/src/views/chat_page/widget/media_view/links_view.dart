@@ -16,8 +16,7 @@ class _IsmLinksViewState extends State<IsmLinksView>
     with TickerProviderStateMixin {
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetLinksList = [];
 
-  final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final chatPageController = IsmChatUtility.chatPageController;
 
   @override
   void initState() {

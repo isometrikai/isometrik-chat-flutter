@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatEligibleMembersView extends StatelessWidget {
-  IsmChatEligibleMembersView({super.key});
+  const IsmChatEligibleMembersView({super.key, required this.groupcastId});
 
-  static const String route = IsmPageRoutes.eligibleMemberstView;
-
-  final groupcastId = Get.arguments as String;
+  final String groupcastId;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatBroadcastController>(

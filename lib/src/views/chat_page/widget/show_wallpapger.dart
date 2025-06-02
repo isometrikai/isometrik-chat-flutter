@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -16,9 +15,8 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
     with TickerProviderStateMixin {
   late TabController _tabController;
 
-  final conversationController = Get.find<IsmChatConversationsController>();
-  final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final conversationController = IsmChatUtility.conversationController;
+  final chatPageController = IsmChatUtility.chatPageController;
 
   @override
   void initState() {
@@ -57,7 +55,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                             isLoading: true);
                         chatPageController.backgroundColor = '';
                         chatPageController.backgroundImage = '';
-                        Get.back();
+                        IsmChatRoute.goBack();
                       },
                       child: Row(
                         children: [
@@ -76,7 +74,7 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                     const Spacer()
                   ],
                   IconButton(
-                    onPressed: Get.back,
+                    onPressed: IsmChatRoute.goBack,
                     icon: Icon(
                       Icons.clear_rounded,
                       color: IsmChatConfig
@@ -128,25 +126,31 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                             if (index == 0) {
                               return IsmChatTapHandler(
                                 onTap: () async {
-                                  Get.back();
+                                  IsmChatRoute.goBack();
                                   var file = await IsmChatUtility.pickMedia(
                                     ImageSource.gallery,
                                   );
                                   if (file.isNotEmpty) {
-                                    if (IsmChatResponsive.isWeb(Get.context!)) {
-                                      await Get.dialog(IsmChatPageDailog(
+                                    if (IsmChatResponsive.isWeb(IsmChatConfig
+                                            .kNavigatorKey.currentContext ??
+                                        IsmChatConfig.context)) {
+                                      await IsmChatContextWidget
+                                          .showDialogContext(
+                                        content: IsmChatPageDailog(
                                           child: IsmChatWallpaperPreview(
-                                        assetSrNo: 100,
-                                        backgroundColor: '',
-                                        imagePath: file.first,
-                                      )));
-                                    } else {
-                                      IsmChatRouteManagement
-                                          .goToWallpaperPreview(
-                                        assetSrNo: 100,
-                                        backgroundColor: '',
-                                        imagePath: file.first,
+                                            assetSrNo: 100,
+                                            backgroundColor: '',
+                                            imagePath: file.first,
+                                          ),
+                                        ),
                                       );
+                                    } else {
+                                      await IsmChatRoute.goToRoute(
+                                          IsmChatWallpaperPreview(
+                                        assetSrNo: 100,
+                                        backgroundColor: '',
+                                        imagePath: file.first,
+                                      ));
                                     }
                                   }
                                 },
@@ -178,9 +182,11 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                 .backgroundImage[index - 1];
                             return IsmChatTapHandler(
                               onTap: () async {
-                                if (IsmChatResponsive.isWeb(Get.context!)) {
-                                  await Get.dialog(
-                                    IsmChatPageDailog(
+                                if (IsmChatResponsive.isWeb(IsmChatConfig
+                                        .kNavigatorKey.currentContext ??
+                                    IsmChatConfig.context)) {
+                                  await IsmChatContextWidget.showDialogContext(
+                                    content: IsmChatPageDailog(
                                       child: IsmChatWallpaperPreview(
                                         assetSrNo: image.srNo,
                                         backgroundColor: '',
@@ -190,12 +196,13 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                     ),
                                   );
                                 } else {
-                                  IsmChatRouteManagement.goToWallpaperPreview(
+                                  await IsmChatRoute.goToRoute(
+                                      IsmChatWallpaperPreview(
                                     assetSrNo: image.srNo,
                                     backgroundColor: '',
                                     imagePath: XFile(
                                         '${IsmChatAssets.backgroundImages}/${image.path!}'),
-                                  );
+                                  ));
                                 }
                               },
                               child: _BackgroundImage(image: image),
@@ -220,8 +227,8 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                             return IsmChatTapHandler(
                               onTap: () async {
                                 if (IsmChatResponsive.isWeb(context)) {
-                                  await Get.dialog(
-                                    IsmChatPageDailog(
+                                  await IsmChatContextWidget.showDialogContext(
+                                    content: IsmChatPageDailog(
                                       child: IsmChatWallpaperPreview(
                                         backgroundColor: color.color,
                                         imagePath: null,
@@ -230,10 +237,12 @@ class _ImsChatShowWallpaperState extends State<ImsChatShowWallpaper>
                                     ),
                                   );
                                 } else {
-                                  IsmChatRouteManagement.goToWallpaperPreview(
-                                    backgroundColor: color.color,
-                                    imagePath: null,
-                                    assetSrNo: color.srNo,
+                                  await IsmChatRoute.goToRoute(
+                                    IsmChatWallpaperPreview(
+                                      backgroundColor: color.color,
+                                      imagePath: null,
+                                      assetSrNo: color.srNo,
+                                    ),
                                   );
                                 }
                               },

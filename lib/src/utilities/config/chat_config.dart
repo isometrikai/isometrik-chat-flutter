@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_setters_without_getters
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -7,6 +5,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatConfig {
   const IsmChatConfig._();
   static late IsmChatCommunicationConfig communicationConfig;
+  static late GlobalKey<NavigatorState> kNavigatorKey;
+  static late BuildContext context;
   static bool configInitilized = false;
   static IsmChatThemeData? _chatLightTheme;
   static IsmChatThemeData? _chatDarkTheme;
@@ -29,12 +29,13 @@ class IsmChatConfig {
       ? _chatDarkTheme ?? IsmChatThemeData.light()
       : _chatLightTheme ?? IsmChatThemeData.dark();
 
+  // ignore: avoid_setters_without_getters
   static set chatLightTheme(IsmChatThemeData data) => _chatLightTheme = data;
 
+  // ignore: avoid_setters_without_getters
   static set chatDarkTheme(IsmChatThemeData data) => _chatDarkTheme = data;
   static String? fontFamily;
   static String? notificationIconPath;
-  static BuildContext? context;
   static SendMessageCallback? sendPaidWalletMessage;
   static IsmPaidWalletConfig? paidWalletModel;
   static ResponseCallback? paidWalletMessageApiResponse;
@@ -51,6 +52,6 @@ class IsmPaidWalletConfig {
   final String apiUrl;
   final String authToken;
   final Future<Map<String, dynamic>> Function(
-    IsmChatConversationModel,
+    IsmChatConversationModel?,
   )? customType;
 }

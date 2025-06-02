@@ -1,31 +1,38 @@
-import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter_example/controllers/controllers.dart';
+import 'package:go_router/go_router.dart';
+import 'package:isometrik_chat_flutter_example/main.dart';
+import 'package:isometrik_chat_flutter_example/utilities/config.dart';
 import 'package:isometrik_chat_flutter_example/views/signup_view.dart';
 import 'package:isometrik_chat_flutter_example/views/views.dart';
 
-class AppPages {
-  static final pages = [
-    GetPage(
-      name: LoginView.route,
-      page: LoginView.new,
-      binding: AuthBinding(),
-    ),
-    GetPage(
-      name: SignupView.route,
-      page: SignupView.new,
-      binding: AuthBinding(),
-    ),
-    GetPage(
-      name: ChatList.route,
-      page: ChatList.new,
-      binding: ChatConversationBinding(),
-    ),
-    GetPage(
-      name: UserListPageView.route,
-      page: UserListPageView.new,
-      binding: ChatConversationBinding(),
-    ),
-    ...IsmChatPages.pages
-  ];
+import 'res.dart';
+
+class AppRouter {
+  AppRouter._();
+  static GoRouter router = GoRouter(
+    navigatorKey: kNavigatorKey,
+    initialLocation:
+        AppConfig.userDetail != null ? AppRoutes.chatList : AppRoutes.login,
+    routes: [
+      GoRoute(
+        path: AppRoutes.login,
+        name: AppRouteName.login,
+        builder: (context, state) => LoginView(),
+      ),
+      GoRoute(
+        path: AppRoutes.signUp,
+        name: AppRouteName.signUp,
+        builder: (context, state) => SignupView(),
+      ),
+      GoRoute(
+        path: AppRoutes.chatList,
+        name: AppRouteName.chatList,
+        builder: (context, state) => ChatList(),
+      ),
+      GoRoute(
+        path: AppRoutes.userListPage,
+        name: AppRouteName.userListPage,
+        builder: (context, state) => UserListPageView(),
+      ),
+    ],
+  );
 }

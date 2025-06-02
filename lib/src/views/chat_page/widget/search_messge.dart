@@ -5,14 +5,11 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatSearchMessgae extends StatelessWidget {
   const IsmChatSearchMessgae({super.key});
 
-  static const String route = IsmPageRoutes.searchMessage;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (_) {
-          final controller =
-              Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+          final controller = IsmChatUtility.chatPageController;
           controller.searchMessages.clear();
           controller.textEditingController.clear();
           controller.canCallCurrentApi = false;
@@ -23,10 +20,12 @@ class IsmChatSearchMessgae extends StatelessWidget {
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
                   IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {
-                    Get.find<IsmChatConversationsController>()
+                    Get.find<IsmChatConversationsController>(
+                            tag: IsmChat.i.chatListPageTag)
                         .isRenderChatPageaScreen = IsRenderChatPageScreen.none;
                   },
             backIcon: Icons.close_rounded,
@@ -68,8 +67,8 @@ class IsmChatSearchMessgae extends StatelessWidget {
                     )
                   : SafeArea(
                       child: SizedBox(
-                        height: Get.height,
-                        width: Get.width,
+                        height: IsmChatDimens.percentHeight(1),
+                        width: IsmChatDimens.percentWidth(1),
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: ListView.builder(

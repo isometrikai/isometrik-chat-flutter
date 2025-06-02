@@ -9,7 +9,6 @@ class IsmChatUserView extends StatelessWidget {
   IsmChatUserView({super.key, this.signOutTap});
 
   final VoidCallback? signOutTap;
-  static const String route = IsmPageRoutes.userView;
 
   final FocusNode focusNode = FocusNode();
 
@@ -19,9 +18,10 @@ class IsmChatUserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (state) {
           final controller =
-              state.controller ??= Get.find<IsmChatConversationsController>();
+              state.controller ??= IsmChatUtility.conversationController;
           if (controller.profileImage.isEmpty) {
             controller.profileImage = controller.userDetails?.profileUrl ?? '';
           }
@@ -36,7 +36,7 @@ class IsmChatUserView extends StatelessWidget {
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
-            onBack: Get.back,
+            onBack: IsmChatRoute.goBack,
             title: Text(
               IsmChatStrings.userInfo,
               style: IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
@@ -80,19 +80,19 @@ class IsmChatUserView extends StatelessWidget {
                           if (IsmChatResponsive.isWeb(context)) {
                             controller.ismUploadImage(ImageSource.gallery);
                           } else {
-                            Get.bottomSheet<void>(
-                              IsmChatProfilePhotoBottomSheet(
-                                onCameraTap: () async {
-                                  controller
-                                      .updateUserDetails(ImageSource.camera);
-                                },
-                                onGalleryTap: () async {
-                                  controller
-                                      .updateUserDetails(ImageSource.gallery);
-                                },
-                              ),
-                              elevation: 0,
-                            );
+                            IsmChatContextWidget.showBottomsheetContext<void>(
+                                content: IsmChatProfilePhotoBottomSheet(
+                                  onCameraTap: () async {
+                                    controller
+                                        .updateUserDetails(ImageSource.camera);
+                                  },
+                                  onGalleryTap: () async {
+                                    controller
+                                        .updateUserDetails(ImageSource.gallery);
+                                  },
+                                ),
+                                isDismissible: true,
+                                backgroundColor: IsmChatColors.transparent);
                           }
                         },
                         child: Container(
@@ -240,7 +240,7 @@ class IsmChatUserView extends StatelessWidget {
                   ),
                 ] else ...[
                   SizedBox(
-                    height: Get.height,
+                    height: IsmChatDimens.percentHeight(1),
                     child: ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: controller.blockUsers.length,
@@ -264,7 +264,7 @@ class IsmChatUserView extends StatelessWidget {
                               } else {
                                 controller.unblockUserForWeb(user.userId);
 
-                                Get.back();
+                                IsmChatRoute.goBack();
                               }
                               unawaited(controller.getChatConversations());
                             },

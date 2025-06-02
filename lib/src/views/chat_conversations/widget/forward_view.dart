@@ -6,22 +6,15 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatForwardView extends StatelessWidget {
   IsmChatForwardView({
     super.key,
-    IsmChatMessageModel? message,
-    IsmChatConversationModel? conversation,
-  })  : _conversation = conversation ??
-            (Get.arguments as Map<String, dynamic>?)?['conversation'],
-        _message =
-            message ?? (Get.arguments as Map<String, dynamic>?)?['message'];
+    required this.message,
+    required this.conversation,
+  });
 
-  /// The selected [_message] which is to be forwarded
-  final IsmChatMessageModel? _message;
+  final IsmChatMessageModel message;
 
-  /// The [_conversation] to which the selected [_message] is to be forwarded
-  final IsmChatConversationModel? _conversation;
+  final IsmChatConversationModel conversation;
 
-  final converstaionController = Get.find<IsmChatConversationsController>();
-
-  static const String route = IsmPageRoutes.forwardView;
+  final converstaionController = IsmChatUtility.conversationController;
 
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,
@@ -38,7 +31,11 @@ class IsmChatForwardView extends StatelessWidget {
             ),
             SizedBox(
                 width: IsmChatDimens.percentWidth(
-                  IsmChatResponsive.isWeb(Get.context!) ? .23 : .7,
+                  IsmChatResponsive.isWeb(
+                          IsmChatConfig.kNavigatorKey.currentContext ??
+                              IsmChatConfig.context)
+                      ? .23
+                      : .7,
                 ),
                 child: Divider(
                   height: .0,
@@ -50,6 +47,7 @@ class IsmChatForwardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (_) {
           converstaionController.callApiOrNot = true;
           converstaionController.forwardedList.clear();
@@ -58,7 +56,7 @@ class IsmChatForwardView extends StatelessWidget {
           converstaionController.showSearchField = false;
           converstaionController.isLoadResponse = false;
           converstaionController.getNonBlockUserList(
-            opponentId: _conversation?.opponentDetails?.userId,
+            opponentId: conversation.opponentDetails?.userId,
           );
         },
         builder: (controller) => Scaffold(
@@ -263,16 +261,19 @@ class IsmChatForwardView extends StatelessWidget {
                                                           .length >
                                                       4
                                               ? () {
-                                                  Get.dialog(
-                                                    AlertDialog(
-                                                      title: const Text(
+                                                  IsmChatContextWidget
+                                                      .showDialogContext(
+                                                    content: const AlertDialog(
+                                                      title: Text(
                                                           'Alert message...'),
-                                                      content: const Text(
+                                                      content: Text(
                                                           'You can only share with up to 5 chats'),
                                                       actions: [
                                                         TextButton(
-                                                          onPressed: Get.back,
-                                                          child: const Text(
+                                                          onPressed:
+                                                              IsmChatRoute
+                                                                  .goBack,
+                                                          child: Text(
                                                             'Okay',
                                                             style: TextStyle(
                                                                 fontSize: 15),
@@ -362,21 +363,21 @@ class IsmChatForwardView extends StatelessWidget {
                                 if (await IsmChatProperties.chatPageProperties
                                         .messageAllowedConfig?.isMessgeAllowed
                                         ?.call(
-                                            Get.context!,
-                                            Get.find<IsmChatPageController>(
-                                                    tag: IsmChat.i.tag)
+                                            IsmChatConfig.kNavigatorKey
+                                                    .currentContext ??
+                                                IsmChatConfig.context,
+                                            IsmChatUtility.chatPageController
                                                 .conversation!,
                                             IsmChatCustomMessageType.forward) ??
                                     true) {
                                   await controller.sendForwardMessage(
-                                    customType:
-                                        _message?.customType?.name ?? '',
+                                    customType: message.customType?.name ?? '',
                                     userIds: controller.selectedUserList
                                         .map((e) => e.userId)
                                         .toList(),
-                                    body: _message?.body ?? '',
-                                    metaData: _message?.metaData,
-                                    attachments: _message?.attachments
+                                    body: message.body,
+                                    metaData: message.metaData,
+                                    attachments: message.attachments
                                         ?.map((e) => e.toMap())
                                         .toList(),
                                     isLoading: true,

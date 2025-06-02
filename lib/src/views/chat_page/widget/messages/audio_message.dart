@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatAudioMessage extends StatelessWidget {
@@ -8,7 +7,7 @@ class IsmChatAudioMessage extends StatelessWidget {
     super.key,
   })  : url = message.attachments?.first.mediaUrl ?? '',
         duration = message.metaData?.duration,
-        noise = Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+        noise = IsmChatUtility.chatPageController
             .getNoise(message.sentAt, message.sentByMe);
 
   final IsmChatMessageModel message;

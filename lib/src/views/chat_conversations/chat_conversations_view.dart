@@ -8,8 +8,6 @@ class IsmChatConversations extends StatefulWidget {
     super.key,
   });
 
-  static const String route = IsmPageRoutes.chatlist;
-
   @override
   State<IsmChatConversations> createState() => _IsmChatConversationsState();
 }
@@ -27,6 +25,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     closeOverlay();
+    updateTagName();
     super.dispose();
   }
 
@@ -36,9 +35,14 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
     super.deactivate();
   }
 
+  void updateTagName() {
+    IsmChat.i.chatListPageTag = null;
+    IsmChat.i.chatPageTag = null;
+  }
+
   void closeOverlay() {
-    if (Get.isRegistered<IsmChatPageController>()) {
-      Get.find<IsmChatPageController>().closeOverlay();
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      IsmChatUtility.chatPageController.closeOverlay();
     }
   }
 
@@ -50,11 +54,11 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
       IsmChatLog.info(
           'IsmMQttController initiliazing success from {IsmChatConversations view}');
     }
-    if (!Get.isRegistered<IsmChatConversationsController>()) {
+    if (!IsmChatUtility.conversationControllerRegistered) {
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
-    var controller = Get.find<IsmChatConversationsController>();
+    var controller = IsmChatUtility.conversationController;
     controller.tabController = TabController(
       length:
           IsmChatProperties.conversationProperties.allowedConversations.length,
@@ -66,8 +70,8 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (AppLifecycleState.resumed == state) {
-      if (Get.isRegistered<IsmChatConversationsController>()) {
-        Get.find<IsmChatConversationsController>().getChatConversations();
+      if (IsmChatUtility.conversationControllerRegistered) {
+        IsmChatUtility.conversationController.getChatConversations();
       }
       IsmChatLog.info('app in resumed');
     }
@@ -82,6 +86,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) {
           controller.context = context;
           return Scaffold(
@@ -91,7 +96,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
             appBar: (IsmChatProperties.conversationProperties.shouldShowAppBar
                 ? PreferredSize(
                     preferredSize: Size(
-                      Get.width,
+                      IsmChatDimens.percentWidth(1),
                       IsmChatProperties.conversationProperties.headerHeight ??
                           IsmChatDimens.sixty,
                     ),
@@ -200,17 +205,19 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                     onTap: () {
                       if (IsmChatProperties
                           .conversationProperties.enableGroupChat) {
-                        Get.bottomSheet(
-                          const _CreateChatBottomSheet(),
-                          backgroundColor: Colors.transparent,
+                        IsmChatContextWidget.showBottomsheetContext(
+                          content: const _CreateChatBottomSheet(),
+                          backgroundColor: IsmChatColors.transparent,
+                          isDismissible: true,
                           elevation: 0,
                         );
                       } else {
                         IsmChatProperties.conversationProperties.onCreateTap
                             ?.call();
-                        IsmChatRouteManagement.goToCreateChat(
+                        IsmChatRoute.goToRoute(IsmChatCreateConversationView(
                           isGroupConversation: false,
-                        );
+                          conversationType: IsmChatConversationType.private,
+                        ));
                       }
                     },
                   )
@@ -263,7 +270,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
 class _IsmchatTabBar extends StatelessWidget {
   _IsmchatTabBar();
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -319,7 +326,7 @@ class _IsmchatTabBar extends StatelessWidget {
 class _IsmChatTabView extends StatelessWidget {
   _IsmChatTabView();
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => Expanded(
@@ -345,21 +352,19 @@ class _CreateChatBottomSheet extends StatelessWidget {
       [bool isGroup = false,
       IsmChatConversationType conversationType =
           IsmChatConversationType.private]) {
-    Get.back();
-    IsmChatRouteManagement.goToCreateChat(
+    IsmChatRoute.goBack();
+    Future.delayed(const Duration(milliseconds: 500));
+    IsmChatRoute.goToRoute(IsmChatCreateConversationView(
       isGroupConversation: isGroup,
       conversationType: conversationType,
-    );
+    ));
   }
 
   @override
   Widget build(BuildContext context) => CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
-            onPressed: () {
-              Get.back();
-              _startConversation();
-            },
+            onPressed: _startConversation,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -383,7 +388,6 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              Get.back();
               _startConversation(true);
             },
             child: Row(
@@ -409,7 +413,6 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              Get.back();
               _startConversation(
                 true,
                 IsmChatConversationType.public,
@@ -438,7 +441,6 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              Get.back();
               _startConversation(
                 true,
                 IsmChatConversationType.open,
@@ -467,8 +469,7 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              Get.back();
-              IsmChatRouteManagement.goToCreteBroadcastView();
+              IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -492,10 +493,10 @@ class _CreateChatBottomSheet extends StatelessWidget {
             ),
           ),
         ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: Get.back,
+        cancelButton: const CupertinoActionSheetAction(
+          onPressed: IsmChatRoute.goBack,
           isDestructiveAction: true,
-          child: const Text('Cancel'),
+          child: Text('Cancel'),
         ),
       );
 }

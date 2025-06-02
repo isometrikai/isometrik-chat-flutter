@@ -9,15 +9,11 @@ class IsmChatMessage extends StatefulWidget {
     bool isIgnorTap = false,
     bool isFromSearchMessage = false,
     super.key,
-  })  : _message = Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)
+  })  : _message = IsmChatUtility.chatPageControllerRegistered
             ? isFromSearchMessage
-                ? Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                    .searchMessages
-                    .reversed
+                ? IsmChatUtility.chatPageController.searchMessages.reversed
                     .toList()[index]
-                : Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                    .messages
-                    .reversed
+                : IsmChatUtility.chatPageController.messages.reversed
                     .toList()[index]
             : message,
         _isIgnorTap = isIgnorTap;
@@ -35,7 +31,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
   @override
   bool get wantKeepAlive => mounted;
 
-  final coverstaionController = Get.find<IsmChatConversationsController>();
+  final coverstaionController = IsmChatUtility.conversationController;
 
   late bool showMessageInCenter;
   late bool isGroup;
@@ -77,15 +73,15 @@ class _IsmChatMessageState extends State<IsmChatMessage>
     super.build(context);
     var theme = IsmChatConfig.chatTheme.chatPageTheme;
     return GetBuilder<IsmChatPageController>(
-      tag: IsmChat.i.tag,
+      tag: IsmChat.i.chatPageTag,
       builder: (controller) => IgnorePointer(
         ignoring: showMessageInCenter || widget._isIgnorTap!,
         child: IsmChatTapHandler(
           onLongPress: showMessageInCenter ||
                   (IsmChatProperties.chatPageProperties.shouldShowHoverHold
-                          ?.call(context, controller.conversation!,
+                          ?.call(context, controller.conversation,
                               widget._message!) ??
-                      true)
+                      false)
               ? null
               : () async {
                   if (widget._message?.customType !=
@@ -151,7 +147,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                 ?.call(
                               context,
                               widget._message!,
-                              controller.conversation!,
+                              controller.conversation,
                             ) ??
                             IsmChatTapHandler(
                               onTap: () async {
@@ -165,7 +161,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                         ?.call(
                                       context,
                                       widget._message!,
-                                      controller.conversation!,
+                                      controller.conversation,
                                     ) ??
                                     widget._message?.senderInfo?.profileUrl ??
                                     '',
@@ -189,7 +185,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                     .chatPageProperties.header?.profileImageUrl
                                     ?.call(
                                         context,
-                                        controller.conversation!,
+                                        controller.conversation,
                                         controller.conversation?.profileUrl ??
                                             '') ??
                                 controller.conversation?.profileUrl ??
@@ -198,7 +194,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                     .chatPageProperties.header?.title
                                     ?.call(
                                         context,
-                                        controller.conversation!,
+                                        controller.conversation,
                                         controller.conversation?.chatName ??
                                             '') ??
                                 controller.conversation?.chatName,
@@ -215,8 +211,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                       ] else ...[
                         IsmChatDimens.boxWidth4,
                       ],
-                      if (Get.isRegistered<IsmChatPageController>(
-                          tag: IsmChat.i.tag)) ...[
+                      if (IsmChatUtility.chatPageControllerRegistered) ...[
                         MessageCard(
                           message: widget._message!,
                           showMessageInCenter: showMessageInCenter,

@@ -5,30 +5,53 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmChatBoradcastMessagePage extends StatelessWidget {
-  const IsmChatBoradcastMessagePage({super.key});
+class IsmChatBoradcastMessagePage extends StatefulWidget {
+  const IsmChatBoradcastMessagePage({super.key, this.viewTag});
 
-  static const String route = IsmPageRoutes.boradCastMessagePage;
+  final String? viewTag;
+
+  @override
+  State<IsmChatBoradcastMessagePage> createState() =>
+      _IsmChatBoradcastMessagePageState();
+}
+
+class _IsmChatBoradcastMessagePageState
+    extends State<IsmChatBoradcastMessagePage> {
+  @override
+  void initState() {
+    super.initState();
+    IsmChat.i.chatPageTag = widget.viewTag;
+    if (!IsmChatUtility.chatPageControllerRegistered) {
+      IsmChatPageBinding().dependencies();
+    }
+  }
+
+  @override
+  void dispose() {
+    IsmChat.i.chatPageTag = null;
+    super.dispose();
+  }
 
   Future<bool> _back(
     BuildContext context,
   ) async {
-    var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
-    var conversationController = Get.find<IsmChatConversationsController>();
+    var controller = IsmChatUtility.chatPageController;
+    var conversationController = IsmChatUtility.conversationController;
 
     if (IsmChatResponsive.isWeb(context)) {
-      var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      var controller = IsmChatUtility.chatPageController;
       controller.isBroadcast = false;
       conversationController.currentConversation = null;
       conversationController.currentConversationId = '';
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.none;
-      await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
+      await Get.delete<IsmChatPageController>(
+          force: true, tag: IsmChat.i.chatPageTag);
     } else {
       if (controller.messages.isNotEmpty) {
-        Get.back();
+        IsmChatRoute.goBack();
       }
-      Get.back();
+      IsmChatRoute.goBack();
     }
     if (controller.messages.isNotEmpty) {
       unawaited(conversationController.getChatConversations());
@@ -68,12 +91,13 @@ class _BroadCastMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => Scaffold(
           backgroundColor:
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
                   IsmChatColors.whiteColor,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             leading: IsmChatTapHandler(
               onTap: onBackTap,
               child: Padding(

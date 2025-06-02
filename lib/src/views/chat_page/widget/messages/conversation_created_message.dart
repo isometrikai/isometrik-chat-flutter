@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConversationCreatedMessage extends StatelessWidget {
@@ -13,13 +12,13 @@ class IsmChatConversationCreatedMessage extends StatelessWidget {
     if (IsmChatProperties.chatPageProperties.messageSenderName?.call(
           context,
           message,
-          Get.find<IsmChatPageController>(tag: IsmChat.i.tag).conversation!,
+          IsmChatUtility.chatPageController.conversation!,
         ) !=
         null) {
       name = IsmChatProperties.chatPageProperties.messageSenderName?.call(
             context,
             message,
-            Get.find<IsmChatPageController>(tag: IsmChat.i.tag).conversation!,
+            IsmChatUtility.chatPageController.conversation!,
           ) ??
           '';
     } else {

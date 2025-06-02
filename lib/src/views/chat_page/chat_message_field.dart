@@ -23,7 +23,7 @@ class IsmChatMessageField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) {
           var messageBody = controller.getMessageBody(controller.replayMessage);
           return Row(
@@ -126,8 +126,10 @@ class IsmChatMessageField extends StatelessWidget {
                               if (await IsmChatProperties.chatPageProperties
                                       .messageAllowedConfig?.isMessgeAllowed
                                       ?.call(
-                                          Get.context!,
-                                          controller.conversation!,
+                                          IsmChatConfig.kNavigatorKey
+                                                  .currentContext ??
+                                              IsmChatConfig.context,
+                                          controller.conversation,
                                           controller.isreplying
                                               ? IsmChatCustomMessageType.reply
                                               : IsmChatCustomMessageType
@@ -300,7 +302,7 @@ class IsmChatMessageField extends StatelessWidget {
 class _ReplyMessage extends StatelessWidget {
   _ReplyMessage({
     required this.messageBody,
-  }) : controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  }) : controller = IsmChatUtility.chatPageController;
 
   final String messageBody;
   final IsmChatPageController controller;
@@ -311,7 +313,7 @@ class _ReplyMessage extends StatelessWidget {
           bottom: IsmChatDimens.zero,
         ),
         padding: IsmChatDimens.edgeInsets8,
-        width: Get.width,
+        width: IsmChatDimens.percentWidth(1),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(
             IsmChatDimens.sixteen,
@@ -331,7 +333,7 @@ class _ReplyMessage extends StatelessWidget {
                     controller.replayMessage?.sentByMe ?? false
                         ? IsmChatStrings.you
                         : IsmChatProperties.chatPageProperties.header?.title
-                                ?.call(context, controller.conversation!,
+                                ?.call(context, controller.conversation,
                                     controller.conversation?.chatName ?? '') ??
                             controller.conversation?.chatName.capitalizeFirst ??
                             '',
@@ -364,7 +366,7 @@ class _EmojiButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => IconButton(
           color: color ?? IsmChatConfig.chatTheme.primaryColor,
           icon: AnimatedSwitcher(
@@ -399,7 +401,7 @@ class _MicOrSendButton extends StatelessWidget {
   const _MicOrSendButton();
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -424,7 +426,10 @@ class _MicOrSendButton extends StatelessWidget {
                   WebMediaModel? webMediaModel;
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
-                          ?.call(Get.context!, controller.conversation!,
+                          ?.call(
+                              IsmChatConfig.kNavigatorKey.currentContext ??
+                                  IsmChatConfig.context,
+                              controller.conversation,
                               IsmChatCustomMessageType.audio) ??
                       true) {
                     if (kIsWeb) {
@@ -476,8 +481,9 @@ class _MicOrSendButton extends StatelessWidget {
                   if (await IsmChatProperties.chatPageProperties
                           .messageAllowedConfig?.isMessgeAllowed
                           ?.call(
-                              Get.context!,
-                              controller.conversation!,
+                              IsmChatConfig.kNavigatorKey.currentContext ??
+                                  IsmChatConfig.context,
+                              controller.conversation,
                               controller.isreplying
                                   ? IsmChatCustomMessageType.reply
                                   : IsmChatCustomMessageType.text) ??
@@ -503,7 +509,7 @@ class _MicOrSendButton extends StatelessWidget {
                 }
                 if (!(await IsmChatProperties
                         .chatPageProperties.isSendMediaAllowed
-                        ?.call(context, controller.conversation!) ??
+                        ?.call(context, controller.conversation) ??
                     true)) {
                   return;
                 }
@@ -615,7 +621,7 @@ class _AttachmentIconForWeb extends StatefulWidget {
 
 class _AttachmentIconForWebState extends State<_AttachmentIconForWeb>
     with TickerProviderStateMixin {
-  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final controller = IsmChatUtility.chatPageController;
   final layerLink = LayerLink();
 
   late Animation<double> curve;
@@ -769,7 +775,7 @@ class _AttachmentIconForWebState extends State<_AttachmentIconForWeb>
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => CompositedTransformTarget(
           link: layerLink,
           child: IconButton(
@@ -814,7 +820,7 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
               null) ...[
             IsmChatProperties.chatPageProperties.messageFieldSuffix?.call(
                     context,
-                    controller.conversation!,
+                    controller.conversation,
                     controller.conversation?.isChattingAllowed == true) ??
                 IsmChatDimens.box0
           ],
@@ -825,16 +831,15 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
               } else {
                 if (await IsmChatProperties
                         .chatPageProperties.isSendMediaAllowed
-                        ?.call(context, controller.conversation!) ??
+                        ?.call(context, controller.conversation) ??
                     true) {
-                  await Get.bottomSheet(
-                    const IsmChatAttachmentCard(),
-                    enterBottomSheetDuration:
-                        IsmChatConstants.bottomSheetDuration,
-                    exitBottomSheetDuration:
-                        IsmChatConstants.bottomSheetDuration,
-                    elevation: 0,
-                  );
+                  if (context.mounted) {
+                    await showModalBottomSheet(
+                      context: context,
+                      builder: (context) => const IsmChatAttachmentCard(),
+                      elevation: 0,
+                    );
+                  }
                 }
               }
             },

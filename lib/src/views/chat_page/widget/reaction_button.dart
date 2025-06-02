@@ -1,11 +1,10 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ReactionGrid extends StatelessWidget {
   ReactionGrid(this.message, {super.key})
-      : _controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+      : _controller = IsmChatUtility.chatPageController;
 
   final IsmChatMessageModel message;
   final IsmChatPageController _controller;
@@ -36,13 +35,14 @@ class ReactionGrid extends StatelessWidget {
                 emoji: reaciton,
                 emojiSize: IsmChatDimens.twenty,
                 onEmojiSelected: (_, emoji) {
-                  Get.back();
+                  IsmChatRoute.goBack();
                   _controller.closeOverlay();
                   _controller.addReacton(
                     reaction: Reaction(
                       reactionType: IsmChatEmoji.fromEmoji(reaciton),
                       messageId: message.messageId ?? '',
-                      conversationId: _controller.conversation!.conversationId!,
+                      conversationId:
+                          _controller.conversation?.conversationId ?? '',
                     ),
                   );
                 },

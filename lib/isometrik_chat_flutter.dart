@@ -72,12 +72,12 @@ class IsmChat {
   /// `showNotification` is the callback for showing notifications.
   /// `context` is the build context.
   /// `mqttProperties` is whether to set up MQTT. Defaults to `true`.
-  Future<void> initialize(
-    IsmChatCommunicationConfig communicationConfig, {
+  Future<void> initialize({
+    required IsmChatCommunicationConfig communicationConfig,
+    required GlobalKey<NavigatorState> kNavigatorKey,
     bool useDatabase = true,
     String databaseName = IsmChatStrings.dbname,
     NotificaitonCallback? showNotification,
-    BuildContext? context,
     bool shouldPendingMessageSend = true,
     SendMessageCallback? sendPaidWalletMessage,
     IsmPaidWalletConfig? paidWalletConfig,
@@ -98,10 +98,10 @@ class IsmChat {
     }
 
     await _delegate.initialize(
-      communicationConfig,
+      kNavigatorKey: kNavigatorKey,
+      communicationConfig: communicationConfig,
       useDatabase: useDatabase,
       showNotification: showNotification,
-      context: context,
       databaseName: databaseName,
       shouldPendingMessageSend: shouldPendingMessageSend,
       sendPaidWalletMessage: sendPaidWalletMessage,
@@ -888,8 +888,20 @@ class IsmChat {
   /// print(tag); // prints the current tag value
   /// tag = 'new-tag'; // sets a new tag value
   /// ```
-  String? get tag => _delegate.tag;
-  set tag(String? value) => _delegate.tag = value;
+  String? get chatPageTag => _delegate.chatPageTag;
+  set chatPageTag(String? value) => _delegate.chatPageTag = value;
+
+  /// Gets or sets the tag associated with this object.
+  ///
+  /// @return The current tag value, or null if not set.
+  ///
+  /// Example:
+  /// ```dart
+  /// print(tag); // prints the current tag value
+  /// tag = 'new-tag'; // sets a new tag value
+  /// ```
+  String? get chatListPageTag => _delegate.chatListPageTag;
+  set chatListPageTag(String? value) => _delegate.chatListPageTag = value;
 
   /// Subscribes to the given list of topics in an MQTT broker.
   /// which is responsible for communicating with the MQTT broker.
@@ -1037,17 +1049,126 @@ class IsmChat {
   }) async =>
       await _delegate.getChatConversationsUnreadCount(isLoading: isLoading);
 
+  /// Sets the current conversation index in the chat interface.
+  ///
+  /// This method updates the index of the currently active conversation in the chat interface.
+  ///
+  /// Parameters:
+  /// - `index`: The index of the conversation to set as current. Defaults to 0.
+  ///
+  /// Example:
+  /// ```dart
+  /// IsmChat.i.currentConversationIndex(index: 2);
+  /// ```
   void currentConversationIndex({int index = 0}) =>
       _delegate.currentConversationIndex(index: index);
 
+  /// Determines whether to show other elements on the chat page.
+  ///
+  /// UI elements should be displayed on the chat page.
+  ///
+  /// Example:
+  /// ```dart
+  /// IsmChat.i.shouldShowOtherOnChatPage();
+  /// ```
   void shouldShowOtherOnChatPage() => _delegate.shouldShowOtherOnChatPage();
 
+  /// Searches for conversations based on the provided search value.
+  ///
+  /// This method performs a search operation on conversations using the given search value.
+  ///
+  /// Parameters:
+  /// - `searchValue`: The text to search for in conversations.
+  ///
+  /// Returns:
+  /// - Future<void>: A future that completes when the search operation is finished.
+  ///
+  /// Example:
+  /// ```dart
+  /// await IsmChat.i.searchConversation(searchValue: "John");
+  /// ```
+  Future<void> searchConversation({required String searchValue}) async =>
+      await _delegate.searchConversation(searchValue: searchValue);
+
+  /// Retrieves messages from the local database for a specific conversation.
+  ///
+  /// This method fetches all messages associated with the given conversation ID
+  ///
+  /// Parameters:
+  /// - `conversationId`: The ID of the conversation to retrieve messages for.
+  ///
+  /// Returns:
+  /// - Future<void>: A future that completes when the messages have been retrieved.
+  ///
+  /// Example:
+  /// ```dart
+  /// await IsmChat.i.getMessagesFromDB(conversationId: "conv123");
+  /// ```
   Future<void> getMessagesFromDB({required String conversationId}) async =>
       await _delegate.getMessagesFromDB(conversationId: conversationId);
 
+  /// Updates an existing message in the chat system.
+  ///
+  /// This method updates the content or properties of an existing message.
+  ///
+  /// Parameters:
+  /// - `message`: The updated message model containing the new information.
+  ///
+  /// Returns:
+  /// - Future<void>: A future that completes when the message has been updated.
+  ///
+  /// Example:
+  /// ```dart
+  /// final updatedMessage = IsmChatMessageModel();
+  /// await IsmChat.i.updateMessage(message: updatedMessage);
+  /// ```
   Future<void> updateMessage({required IsmChatMessageModel message}) async =>
       await _delegate.updateMessage(message: message);
 
-  Future<void> searchConversation({required String searchValue}) async =>
-      await _delegate.searchConversation(searchValue: searchValue);
+  /// Updates the metadata of a specific message in a conversation.
+  ///
+  /// This method allows updating the metadata associated with a message,
+  ///
+  /// Parameters:
+  /// - `messageId`: The ID of the message to update.
+  /// - `conversationId`: The ID of the conversation containing the message.
+  /// - `isOpponentMessage`: Whether the message is from the opponent. Defaults to false.
+  /// - `metaData`: The new metadata to associate with the message. Can be null.
+  ///
+  /// Returns:
+  /// - Future<void>: A future that completes when the metadata has been updated.
+  ///
+  /// Example:
+  /// ```dart
+  /// await IsmChat.i.updateMessageMetaData(
+  ///   messageId: "msg123",
+  ///   conversationId: "conv123",
+  ///   isOpponentMessage: false,
+  ///   metaData: IsmChatMetaData()
+  /// );
+  /// ```
+  Future<void> updateMessageMetaData({
+    required String messageId,
+    required String conversationId,
+    bool isOpponentMessage = false,
+    IsmChatMetaData? metaData,
+  }) async {
+    await _delegate.updateMessageMetaData(
+      messageId: messageId,
+      conversationId: conversationId,
+      isOpponentMessage: isOpponentMessage,
+      metaData: metaData,
+    );
+  }
+
+  Future<void> getChatConversationFromLocal({
+    String? searchTag,
+  }) async =>
+      await _delegate.getChatConversationFromLocal(searchTag: searchTag);
+
+  Future<void> deleteConversationController() async =>
+      await _delegate.deleteConversationController();
+
+  Future<void> deleteChatPageController() async =>
+      await _delegate.deleteChatPageController();
 }

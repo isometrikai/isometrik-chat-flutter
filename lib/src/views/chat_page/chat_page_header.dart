@@ -13,24 +13,23 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       return Size.fromHeight(IsmChatProperties.chatPageProperties.header?.height
               ?.call(
-                  Get.context!,
-                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-                      .conversation!) ??
+                  IsmChatConfig.kNavigatorKey.currentContext ??
+                      IsmChatConfig.context,
+                  IsmChatUtility.chatPageController.conversation) ??
           IsmChatDimens.appBarHeight);
     }
 
     return Size.fromHeight(IsmChatDimens.appBarHeight);
   }
 
-  final issmChatConversationsController =
-      Get.find<IsmChatConversationsController>();
+  final issmChatConversationsController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => PreferredSize(
           preferredSize: preferredSize,
           child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -67,21 +66,17 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                               onPressed: () async {
                                 var updateLastMessage = false;
                                 controller.closeOverlay();
-                                if (IsmChat.i.tag == null) {
-                                  Get.back<void>();
+                                if (IsmChat.i.chatPageTag == null) {
+                                  IsmChatRoute.goBack<void>();
                                   updateLastMessage =
                                       await controller.updateLastMessage();
                                 }
-                                if (IsmChatProperties
-                                        .chatPageProperties.header?.onBackTap !=
-                                    null) {
-                                  IsmChatProperties
-                                      .chatPageProperties.header?.onBackTap!
-                                      .call(updateLastMessage);
-                                }
+                                IsmChatProperties
+                                    .chatPageProperties.header?.onBackTap
+                                    ?.call(updateLastMessage);
                               },
                               icon: Icon(
-                                IsmChat.i.tag == null
+                                IsmChat.i.chatPageTag == null
                                     ? Icons.arrow_back_rounded
                                     : Icons.close_rounded,
                                 color: IsmChatConfig.chatTheme
@@ -147,7 +142,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                               null) ...[
                             IsmChatProperties
                                     .chatPageProperties.header?.actionBuilder
-                                    ?.call(context, controller.conversation!,
+                                    ?.call(context, controller.conversation,
                                         false) ??
                                 const SizedBox.square()
                           ],
@@ -158,7 +153,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     IsmChatProperties.chatPageProperties.header?.bottom
-                            ?.call(context, controller.conversation!, false) ??
+                            ?.call(context, controller.conversation, false) ??
                         const SizedBox.shrink(),
                   ],
                 ),
@@ -186,12 +181,12 @@ class _TitleSubTitleWidget extends StatelessWidget {
             children: [
               Flexible(
                 child: IsmChatProperties.chatPageProperties.header?.titleBuilder
-                        ?.call(context, controller.conversation!,
+                        ?.call(context, controller.conversation,
                             controller.conversation?.chatName ?? '') ??
                     Text(
                       IsmChatProperties.chatPageProperties.header?.title?.call(
                               context,
-                              controller.conversation!,
+                              controller.conversation,
                               controller.conversation?.chatName ?? '') ??
                           controller.conversation?.chatName ??
                           '',
@@ -211,7 +206,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                           .chatPageProperties.header?.subtitleBuilder
                           ?.call(
                         context,
-                        controller.conversation!,
+                        controller.conversation,
                         controller.conversation?.isSomeoneTyping == true,
                       ) ??
                       IsmChatDimens.box0,
@@ -441,12 +436,12 @@ class _PopupMenuWidget extends StatelessWidget {
               IsmChatProperties.chatPageProperties.header?.popupItems !=
                   null) ...[
             ...IsmChatProperties.chatPageProperties.header!
-                .popupItems!(context, controller.conversation!)
+                .popupItems!(context, controller.conversation)
                 .map(
               (e) => PopupMenuItem(
                 value:
                     (IsmChatProperties.chatPageProperties.header?.popupItems!(
-                                    context, controller.conversation!) ??
+                                    context, controller.conversation) ??
                                 [])
                             .indexOf(e) +
                         6,
@@ -479,26 +474,15 @@ class _PopupMenuWidget extends StatelessWidget {
             controller.addWallpaper();
           } else if (value == 1) {
             if (IsmChatResponsive.isWeb(context)) {
-              Get.find<IsmChatConversationsController>()
-                      .isRenderChatPageaScreen =
+              IsmChatUtility.conversationController.isRenderChatPageaScreen =
                   IsRenderChatPageScreen.messageSearchView;
             } else {
-              IsmChatRouteManagement.goToSearchMessageView();
+              IsmChatRoute.goToRoute(const IsmChatSearchMessgae());
             }
           } else {
-            if (IsmChatProperties.chatPageProperties.header == null) {
-              return;
-            }
-            if (IsmChatProperties.chatPageProperties.header?.popupItems !=
-                    null ||
-                IsmChatProperties.chatPageProperties.header?.popupItems
-                        ?.call(context, controller.conversation!)
-                        .isNotEmpty ==
-                    true) {
-              IsmChatProperties.chatPageProperties.header!.popupItems!
-                  .call(context, controller.conversation!)[value - 6]
-                  .onTap(controller.conversation!);
-            }
+            IsmChatProperties.chatPageProperties.header?.popupItems
+                ?.call(context, controller.conversation)[value - 6]
+                .onTap(controller.conversation);
           }
         },
       );

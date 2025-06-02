@@ -8,23 +8,22 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatOpenChatMessagePage extends StatelessWidget {
   const IsmChatOpenChatMessagePage({super.key});
 
-  static const String route = IsmPageRoutes.openChatMessagePage;
-
   Future<bool> _back({
     required BuildContext context,
     required IsmChatPageController controller,
   }) async {
-    final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
-    final conversationController = Get.find<IsmChatConversationsController>();
+    final controller = IsmChatUtility.chatPageController;
+    final conversationController = IsmChatUtility.conversationController;
     if (IsmChatResponsive.isWeb(context)) {
       controller.isBroadcast = false;
       conversationController.currentConversation = null;
       conversationController.currentConversationId = '';
       conversationController.isRenderChatPageaScreen =
           IsRenderChatPageScreen.none;
-      await Get.delete<IsmChatPageController>(force: true, tag: IsmChat.i.tag);
+      await Get.delete<IsmChatPageController>(
+          force: true, tag: IsmChat.i.chatPageTag);
     } else {
-      Get.back();
+      IsmChatRoute.goBack();
     }
     unawaited(conversationController.leaveObserver(
       conversationId: controller.conversation?.conversationId ?? '',
@@ -34,7 +33,7 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => CustomWillPopScope(
           onWillPop: () async => await _back(
             context: context,
@@ -97,15 +96,19 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
                 IconButton(
                   onPressed: () async {
                     if (IsmChatResponsive.isWeb(context)) {
-                      await Get.dialog(IsmChatPageDailog(
-                        child: IsmChatObserverUsersView(
-                          conversationId:
-                              controller.conversation?.conversationId ?? '',
+                      await IsmChatContextWidget.showDialogContext(
+                        content: IsmChatPageDailog(
+                          child: IsmChatObserverUsersView(
+                            conversationId:
+                                controller.conversation?.conversationId ?? '',
+                          ),
                         ),
-                      ));
+                      );
                     } else {
-                      IsmChatRouteManagement.goToObserverView(
-                          controller.conversation?.conversationId ?? '');
+                      await IsmChatRoute.goToRoute(IsmChatObserverUsersView(
+                        conversationId:
+                            controller.conversation?.conversationId ?? '',
+                      ));
                     }
                   },
                   icon: Icon(

@@ -37,6 +37,7 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) => AppBar(
           automaticallyImplyLeading: false,
           elevation: IsmChatDimens.appBarElevation,
@@ -47,22 +48,27 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                         IsRenderConversationScreen.userView;
                     Scaffold.of(context).openDrawer();
                   }
-                : () => IsmChatUtility.openFullScreenBottomSheet(
-                      IsmChatUserView(
+                : () => IsmChatContextWidget.showBottomsheetContext(
+                      content: IsmChatUserView(
                         signOutTap: () async {
-                          await Get.dialog(IsmChatAlertDialogBox(
-                            title: '${IsmChatStrings.logout}?',
-                            content: const Text(IsmChatStrings.logoutMessage),
-                            actionLabels: const [
-                              IsmChatStrings.logout,
-                            ],
-                            callbackActions: [
-                              () {
-                                Get.back();
-                                onSignOut?.call();
-                              },
-                            ],
-                          ));
+                          await showDialog(
+                            context:
+                                IsmChatConfig.kNavigatorKey.currentContext ??
+                                    IsmChatConfig.context,
+                            builder: (context) => IsmChatAlertDialogBox(
+                              title: '${IsmChatStrings.logout}?',
+                              content: const Text(IsmChatStrings.logoutMessage),
+                              actionLabels: const [
+                                IsmChatStrings.logout,
+                              ],
+                              callbackActions: [
+                                () {
+                                  IsmChatRoute.goBack();
+                                  onSignOut?.call();
+                                },
+                              ],
+                            ),
+                          );
                         },
                       ),
                       enableDrag: true,
@@ -127,7 +133,7 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
 class _StartMessage extends StatelessWidget {
   _StartMessage();
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => IconButton(
@@ -146,7 +152,7 @@ class _MoreIcon extends StatelessWidget {
   _MoreIcon(this.onSignOut);
 
   final VoidCallback? onSignOut;
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
   @override
   Widget build(BuildContext context) {
     var conversationTypeList =
@@ -172,14 +178,14 @@ class _MoreIcon extends StatelessWidget {
                 IsRenderConversationScreen.broadcastView;
             Scaffold.of(context).openDrawer();
           } else {
-            IsmChatRouteManagement.goToCreteBroadcastView();
+            await IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
           }
         } else if (index == 2) {
           if (IsmChatResponsive.isWeb(context)) {
             controller.isRenderScreen = IsRenderConversationScreen.blockView;
             Scaffold.of(context).openDrawer();
           } else {
-            IsmChatRouteManagement.goToBlockView();
+            await IsmChatRoute.goToRoute(const IsmChatBlockedUsersView());
           }
         } else if (index == 3) {
           if (IsmChatResponsive.isWeb(context)) {
@@ -187,24 +193,26 @@ class _MoreIcon extends StatelessWidget {
                 IsRenderConversationScreen.broadCastListView;
             Scaffold.of(context).openDrawer();
           } else {
-            IsmChatRouteManagement.goToBroadcastListView();
+            await IsmChatRoute.goToRoute(const IsmChatBroadCastView());
           }
         } else if (index == 4) {
           controller.isRenderScreen = IsRenderConversationScreen.groupUserView;
           Scaffold.of(context).openDrawer();
         } else if (index == 5) {
-          await Get.dialog(IsmChatAlertDialogBox(
-            title: '${IsmChatStrings.logout}?',
-            content: const Text(IsmChatStrings.logoutMessage),
-            actionLabels: const [
-              IsmChatStrings.logout,
-            ],
-            callbackActions: [
-              () {
-                onSignOut?.call();
-              },
-            ],
-          ));
+          await IsmChatContextWidget.showDialogContext(
+            content: IsmChatAlertDialogBox(
+              title: '${IsmChatStrings.logout}?',
+              content: const Text(IsmChatStrings.logoutMessage),
+              actionLabels: const [
+                IsmChatStrings.logout,
+              ],
+              callbackActions: [
+                () {
+                  onSignOut?.call();
+                },
+              ],
+            ),
+          );
         } else if (IsmChatProperties
                     .conversationProperties.conversationPosition ==
                 IsmChatConversationPosition.menu &&
@@ -313,7 +321,7 @@ class _SearchAction extends StatelessWidget {
 
   final void Function(BuildContext, IsmChatConversationModel, bool) onTap;
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => IconButton(
@@ -321,7 +329,7 @@ class _SearchAction extends StatelessWidget {
         onPressed: () {
           controller.isConversationsLoading = true;
           controller.searchConversationList.clear();
-          IsmChatRouteManagement.goToGlobalSearchView();
+          IsmChatRoute.goToRoute(const IsmChatGlobalSearchView());
         },
         icon: const Icon(Icons.search_rounded),
       );

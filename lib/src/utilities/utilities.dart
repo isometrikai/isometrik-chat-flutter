@@ -3,5 +3,6 @@ export 'config/config.dart';
 export 'debouncer.dart';
 export 'enums.dart';
 export 'extensions.dart';
+export 'show_context.dart';
 export 'typedef.dart';
 export 'utility.dart';

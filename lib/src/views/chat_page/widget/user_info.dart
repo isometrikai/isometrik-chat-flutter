@@ -4,23 +4,16 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatUserInfo extends StatefulWidget {
-  IsmChatUserInfo({
+  const IsmChatUserInfo({
     super.key,
-    UserDetails? user,
-    String? conversationId,
-    bool? fromMessagePage,
-  })  : _conversationId = conversationId ??
-            (Get.arguments as Map<String, dynamic>?)?['conversationId'] ??
-            '',
-        _user = user ?? (Get.arguments as Map<String, dynamic>?)?['user'],
-        _fromMessagePage = fromMessagePage ??
-            (Get.arguments as Map<String, dynamic>?)?['fromMessagePage'];
+    required this.user,
+    required this.conversationId,
+    required this.fromMessagePage,
+  });
 
-  final UserDetails? _user;
-  final String _conversationId;
-  final bool _fromMessagePage;
-
-  static const String route = IsmPageRoutes.userInfoView;
+  final UserDetails? user;
+  final String conversationId;
+  final bool fromMessagePage;
 
   @override
   State<IsmChatUserInfo> createState() => _IsmChatUserInfoState();
@@ -31,25 +24,25 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
   List<IsmChatMessageModel> mediaListLinks = [];
   List<IsmChatMessageModel> mediaListDocs = [];
 
-  final conversationController = Get.find<IsmChatConversationsController>();
+  final conversationController = IsmChatUtility.conversationController;
   bool isUserBlock = false;
   final argument = Get.arguments as Map<String, dynamic>? ?? {};
 
   @override
   void initState() {
-    if (widget._conversationId.isNotEmpty) {
+    if (widget.conversationId.isNotEmpty) {
       getMessages();
     }
     if (!conversationController.blockUsers.isNullOrEmpty) {
       isUserBlock = conversationController.blockUsers
-          .any((e) => e.userId == widget._user?.userId);
+          .any((e) => e.userId == widget.user?.userId);
     }
     super.initState();
   }
 
   void getMessages() async {
     var messages =
-        await IsmChatConfig.dbWrapper?.getMessage(widget._conversationId);
+        await IsmChatConfig.dbWrapper?.getMessage(widget.conversationId);
     if (messages != null) {
       mediaList = messages.values
           .where((e) => [
@@ -74,7 +67,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-      tag: IsmChat.i.tag,
+      tag: IsmChat.i.chatPageTag,
       builder: (controller) => Scaffold(
             backgroundColor: IsmChatColors.whiteColor,
             appBar: IsmChatAppBar(
@@ -103,16 +96,16 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                     children: [
                       IsmChatDimens.boxHeight16,
                       IsmChatImage.profile(
-                        widget._user?.profileUrl ?? '',
+                        widget.user?.profileUrl ?? '',
                         dimensions: IsmChatDimens.oneHundredFifty,
                       ),
                       IsmChatDimens.boxHeight5,
                       Text(
-                        widget._user?.userName ?? '',
+                        widget.user?.userName ?? '',
                         style: IsmChatStyles.w600Black27,
                       ),
                       Text(
-                        widget._user?.userIdentifier ?? '',
+                        widget.user?.userIdentifier ?? '',
                         style: IsmChatStyles.w500GreyLight17,
                       ),
                       IsmChatDimens.boxHeight16,
@@ -127,10 +120,12 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                             conversationController.isRenderChatPageaScreen =
                                 IsRenderChatPageScreen.coversationMediaView;
                           } else {
-                            IsmChatRouteManagement.goToMedia(
-                              mediaList: mediaList,
-                              mediaListLinks: mediaListLinks,
-                              mediaListDocs: mediaListDocs,
+                            IsmChatRoute.goToRoute(
+                              IsmMedia(
+                                mediaList: mediaList,
+                                mediaListLinks: mediaListLinks,
+                                mediaListDocs: mediaListDocs,
+                              ),
                             );
                           }
                         },
@@ -163,21 +158,21 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           IsmChatConversationModel? conversationModel;
                           final conversation = await IsmChatConfig.dbWrapper!
                               .getConversation(
-                                  conversationId: widget._user?.userId ?? '');
+                                  conversationId: widget.user?.userId ?? '');
                           if (conversation != null) {
                             conversationModel = conversation;
                           } else {
                             conversationModel = IsmChatConversationModel(
                               messagingDisabled: false,
                               isGroup: false,
-                              opponentDetails: widget._user,
+                              opponentDetails: widget.user,
                               unreadMessagesCount: 0,
                               lastMessageDetails: null,
                               lastMessageSentAt: 0,
                               membersCount: 1,
                               conversationId:
                                   conversationController.getConversationId(
-                                widget._user?.userId ?? '',
+                                widget.user?.userId ?? '',
                               ),
                             );
                           }
@@ -185,11 +180,11 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           conversationController
                               .updateLocalConversation(conversationModel);
                           controller.messages.clear();
-                          if (widget._fromMessagePage) {
-                            Get.back();
+                          if (widget.fromMessagePage) {
+                            IsmChatRoute.goBack();
                           } else {
-                            Get.back();
-                            Get.back();
+                            IsmChatRoute.goBack();
+                            IsmChatRoute.goBack();
                           }
 
                           IsmChatUtility.closeLoader();
@@ -221,11 +216,11 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                         ),
                       ),
                       if (IsmChatConfig.communicationConfig.userConfig.userId !=
-                          widget._user?.userId) ...[
+                          widget.user?.userId) ...[
                         ListTile(
                           onTap: () async {
-                            await Get.dialog(
-                              IsmChatAlertDialogBox(
+                            await IsmChatContextWidget.showDialogContext(
+                              content: IsmChatAlertDialogBox(
                                 title: isUserBlock
                                     ? IsmChatStrings.doWantUnBlckUser
                                     : IsmChatStrings.doWantBlckUser,
@@ -236,17 +231,17 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                                 ],
                                 callbackActions: [
                                   () {
-                                    Get.back();
+                                    IsmChatRoute.goBack();
                                     isUserBlock
                                         ? controller.unblockUser(
                                             opponentId:
-                                                widget._user?.userId ?? '',
+                                                widget.user?.userId ?? '',
                                             fromUser: true,
                                             userBlockOrNot: isUserBlock,
                                           )
                                         : controller.blockUser(
                                             opponentId:
-                                                widget._user?.userId ?? '',
+                                                widget.user?.userId ?? '',
                                             userBlockOrNot: isUserBlock,
                                           );
                                   },

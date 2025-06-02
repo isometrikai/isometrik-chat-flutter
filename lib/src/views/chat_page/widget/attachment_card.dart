@@ -33,7 +33,7 @@ class IsmChatAttachmentCard extends StatelessWidget {
             height: getWidgetHight(),
             alignment: Alignment.center,
             child: GetBuilder<IsmChatPageController>(
-              tag: IsmChat.i.tag,
+              tag: IsmChat.i.chatPageTag,
               builder: (controller) {
                 var allowedAttachments = controller.attachments
                     .where((e) => IsmChatProperties
@@ -51,8 +51,11 @@ class IsmChatAttachmentCard extends StatelessWidget {
                   itemBuilder: (_, index) {
                     var attachment = allowedAttachments[index];
                     return IsmChatTapHandler(
-                      onTap: () => controller
-                          .onBottomAttachmentTapped(attachment.attachmentType),
+                      onTap: () {
+                        IsmChatRoute.goBack();
+                        controller.onBottomAttachmentTapped(
+                            attachment.attachmentType);
+                      },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,

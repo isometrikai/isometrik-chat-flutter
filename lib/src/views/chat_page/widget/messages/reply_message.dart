@@ -39,7 +39,7 @@ class _ReplyMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) {
           var replyingMyMessage = message.sentByMe ==
               (message.metaData?.replyMessage?.parentMessageInitiator ?? false);

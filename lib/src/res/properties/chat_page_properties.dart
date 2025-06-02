@@ -31,6 +31,7 @@ class IsmChatPageProperties {
     this.messageStatus,
     this.textFieldActions,
     this.shouldShowHoverHold,
+    this.backgroundImageUrl,
   });
 
   final Widget? placeholder;
@@ -122,7 +123,7 @@ class IsmChatPageProperties {
   ///
   final IsmChatPageMessageAcknowldgeProperties? messageInfoAcknowldge;
 
-  final Future<bool?>? Function(BuildContext, IsmChatConversationModel)?
+  final Future<bool?>? Function(BuildContext, IsmChatConversationModel?)?
       isSendMediaAllowed;
 
   final MessageFutureCallback? onMessageTap;
@@ -136,6 +137,8 @@ class IsmChatPageProperties {
   final Widget? textFieldActions;
 
   final bool? Function(
-          BuildContext, IsmChatConversationModel, IsmChatMessageModel)?
+          BuildContext, IsmChatConversationModel?, IsmChatMessageModel)?
       shouldShowHoverHold;
+
+  final String? backgroundImageUrl;
 }

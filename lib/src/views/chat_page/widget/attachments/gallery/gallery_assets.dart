@@ -9,17 +9,13 @@ import 'package:photo_view/photo_view.dart';
 import 'package:video_compress/video_compress.dart';
 
 class IsmChatGalleryAssetsView extends StatelessWidget {
-  IsmChatGalleryAssetsView({
-    super.key,
-  });
+  const IsmChatGalleryAssetsView({super.key, required this.mediaXFile});
 
-  static const String route = IsmPageRoutes.alleryAssetsView;
-
-  final mediaXFile = Get.arguments['fileList'] as List<XFile?>? ?? [];
+  final List<XFile?> mediaXFile;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (state) {
           state.controller?.selectAssets(mediaXFile);
         },
@@ -43,7 +39,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                         IsmChatColors.whiteColor,
                   ),
                   onTap: () {
-                    Get.back<void>();
+                    IsmChatRoute.goBack<void>();
                     controller.webMedia.clear();
                     controller.isVideoVisible = false;
                   },
@@ -102,7 +98,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                 controller.assetsIndex =
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
-                                  Get.back<void>();
+                                  IsmChatRoute.goBack<void>();
                                 }
                               },
                               child: Icon(
@@ -119,8 +115,9 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                             IconButton(
                               onPressed: () async {
                                 controller.isVideoVisible = true;
-                                var mediaFile = await IsmChatRouteManagement
-                                    .goToVideoTrimeView(
+                                var mediaFile =
+                                    await IsmChatRoute.goToRoute<XFile>(
+                                        IsmVideoTrimmerView(
                                   index: controller.assetsIndex,
                                   file: XFile(
                                     controller.webMedia[controller.assetsIndex]
@@ -128,9 +125,10 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                         '',
                                   ),
                                   maxVideoTrim: 30,
-                                );
+                                ));
+                                if (mediaFile == null) return;
 
-                                final thumbnailBytes =
+                                final thumb =
                                     await VideoCompress.getByteThumbnail(
                                         mediaFile.path,
                                         quality: 50,
@@ -150,7 +148,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                     path: mediaFile.path,
                                     size: bytes.length,
                                     extension: mediaFile.mimeType,
-                                    thumbnailBytes: thumbnailBytes,
+                                    thumbnailBytes: thumb,
                                   ),
                                 );
                               },
@@ -169,7 +167,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                     controller.webMedia.length - 1;
                                 if (controller.webMedia.isEmpty) {
                                   controller.assetsIndex = 0;
-                                  Get.back<void>();
+                                  IsmChatRoute.goBack<void>();
                                 }
                               },
                               icon: Icon(
@@ -225,7 +223,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                   children: [
                     IsmChatDimens.boxHeight10,
                     Container(
-                      width: Get.width,
+                      width: IsmChatDimens.percentWidth(1),
                       alignment: Alignment.center,
                       height: IsmChatDimens.sixty,
                       child: ListView.separated(

@@ -5,13 +5,13 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatBlockedUsersView extends StatelessWidget {
   const IsmChatBlockedUsersView({super.key});
 
-  static const String route = IsmPageRoutes.blockView;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+      tag: IsmChat.i.chatListPageTag,
       initState: (state) {
         IsmChatUtility.doLater(() async {
-          await Get.find<IsmChatConversationsController>()
+          await Get.find<IsmChatConversationsController>(
+                  tag: IsmChat.i.chatListPageTag)
               .getBlockUser(isLoading: true);
         });
       },
@@ -50,7 +50,7 @@ class IsmChatBlockedUsersView extends StatelessWidget {
                                   opponentId: user.userId, isLoading: true);
                             } else {
                               controller.unblockUserForWeb(user.userId);
-                              Get.back();
+                              IsmChatRoute.goBack();
                             }
                           },
                           child: const Text(

@@ -20,7 +20,7 @@ class IsmChatFocusMenu extends StatelessWidget {
   final Animation<double> animation;
   final bool canReact;
 
-  final controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final controller = IsmChatUtility.chatPageController;
 
   @override
   Widget build(BuildContext context) => IsmChatResponsive.isWeb(context)
@@ -62,7 +62,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                           BorderRadius.circular(IsmChatDimens.sixteen),
                       clipBehavior: Clip.antiAlias,
                       child: GetBuilder<IsmChatPageController>(
-                          tag: IsmChat.i.tag,
+                          tag: IsmChat.i.chatPageTag,
                           builder: (controller) => ListView.builder(
                                 itemCount: message.focusMenuList.length,
                                 shrinkWrap: true,
@@ -70,7 +70,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                                   var item = message.focusMenuList[index];
                                   return IsmChatTapHandler(
                                     onTap: () {
-                                      Get.back();
+                                      // IsmChatRoute.goBack();
                                       controller.closeOverlay();
                                       controller.onMenuItemSelected(
                                         item,
@@ -140,8 +140,7 @@ class IsmChatFocusMenu extends StatelessWidget {
       : IsmChatTapHandler(
           onTap: () {
             if (IsmChatResponsive.isWeb(context)) {
-              var controller =
-                  Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+              var controller = IsmChatUtility.chatPageController;
               controller.closeOverlay();
             } else {
               Navigator.pop(context);
@@ -207,7 +206,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                               ),
                               clipBehavior: Clip.antiAlias,
                               child: GetBuilder<IsmChatPageController>(
-                                  tag: IsmChat.i.tag,
+                                  tag: IsmChat.i.chatPageTag,
                                   builder: (controller) => ListView.builder(
                                         itemCount: message.focusMenuList.length,
                                         shrinkWrap: true,
@@ -216,7 +215,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                                               message.focusMenuList[index];
                                           return IsmChatTapHandler(
                                             onTap: () {
-                                              Get.back();
+                                              IsmChatRoute.goBack();
                                               controller.closeOverlay();
                                               controller.onMenuItemSelected(
                                                 item,

@@ -10,48 +10,31 @@ import 'package:photo_view/photo_view.dart';
 
 /// show the All media Preview view page
 class IsmMediaPreview extends StatefulWidget {
-  IsmMediaPreview({
+  const IsmMediaPreview({
     super.key,
-    List<IsmChatMessageModel>? messageData,
-    int? mediaIndex,
-    String? mediaUserName,
-    bool? initiated,
-    int? mediaTime,
-  })  : _mediaIndex = mediaIndex ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaIndex'] ??
-            0,
-        _mediaTime = mediaTime ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaTime'] ??
-            0,
-        _mediaUserName = mediaUserName ??
-            (Get.arguments as Map<String, dynamic>?)?['mediaUserName'] ??
-            '',
-        _messageData = messageData ??
-            (Get.arguments as Map<String, dynamic>?)?['messageData'] ??
-            [],
-        _initiated = initiated ??
-            (Get.arguments as Map<String, dynamic>?)?['initiated'] ??
-            false;
+    required this.messageData,
+    required this.mediaIndex,
+    required this.mediaUserName,
+    required this.initiated,
+    required this.mediaTime,
+  });
 
-  final List<IsmChatMessageModel>? _messageData;
+  final List<IsmChatMessageModel> messageData;
 
-  final String? _mediaUserName;
+  final String mediaUserName;
 
-  final bool? _initiated;
+  final bool initiated;
 
-  final int? _mediaTime;
+  final int mediaTime;
 
-  final int? _mediaIndex;
-
-  static const String route = IsmPageRoutes.mediaPreviewView;
+  final int mediaIndex;
 
   @override
   State<IsmMediaPreview> createState() => _MediaPreviewState();
 }
 
 class _MediaPreviewState extends State<IsmMediaPreview> {
-  final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final chatPageController = IsmChatUtility.chatPageController;
 
   String mediaTime = '';
 
@@ -63,9 +46,9 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
 
   @override
   void initState() {
-    initiated = widget._initiated ?? false;
-    mediaIndex = widget._mediaIndex ?? 0;
-    mediaTime = (widget._mediaTime ?? 0).getTime;
+    initiated = widget.initiated;
+    mediaIndex = widget.mediaIndex;
+    mediaTime = widget.mediaTime.getTime;
     pageController = PageController(
       initialPage: mediaIndex,
     );
@@ -94,7 +77,7 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
               Text(
                 initiated
                     ? IsmChatStrings.you
-                    : widget._mediaUserName.toString(),
+                    : widget.mediaUserName.toString(),
                 style: IsmChatStyles.w400White16,
               ),
               Text(
@@ -110,7 +93,7 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
               color: IsmChatColors.whiteColor,
             ),
             onTap: () {
-              Get.back<void>();
+              IsmChatRoute.goBack<void>();
             },
           ),
           actions: [
@@ -167,13 +150,13 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
                 onSelected: (value) async {
                   if (value == 1) {
                     await chatPageController
-                        .shareMedia(widget._messageData![mediaIndex]);
+                        .shareMedia(widget.messageData[mediaIndex]);
                   } else if (value == 2) {
                     await chatPageController
-                        .saveMedia(widget._messageData![mediaIndex]);
+                        .saveMedia(widget.messageData[mediaIndex]);
                   } else if (value == 3) {
                     await chatPageController.showDialogForMessageDelete(
-                        widget._messageData![mediaIndex],
+                        widget.messageData[mediaIndex],
                         fromMediaPrivew: true);
                   }
                 },
@@ -187,11 +170,11 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
           child: PageView.builder(
             controller: pageController,
             itemBuilder: (BuildContext context, int index) {
-              final media = widget._messageData?[index];
-              var url = media?.attachments?.first.mediaUrl ?? '';
-              var customType = (media?.messageType == IsmChatMessageType.normal)
-                  ? media?.customType
-                  : media?.metaData?.replyMessage?.parentMessageMessageType;
+              final media = widget.messageData[index];
+              var url = media.attachments?.first.mediaUrl ?? '';
+              var customType = (media.messageType == IsmChatMessageType.normal)
+                  ? media.customType
+                  : media.metaData?.replyMessage?.parentMessageMessageType;
               return customType == IsmChatCustomMessageType.image
                   ? PhotoView(
                       imageProvider: url.isValidUrl
@@ -208,17 +191,17 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
             },
             onPageChanged: (index) {
               final timeStamp = DateTime.fromMillisecondsSinceEpoch(
-                  widget._messageData![index].sentAt);
+                  widget.messageData[index].sentAt);
               final time = DateFormat.jm().format(timeStamp);
               final monthDay = DateFormat.MMMd().format(timeStamp);
               setState(
                 () {
-                  initiated = widget._messageData![index].sentByMe;
+                  initiated = widget.messageData[index].sentByMe;
                   mediaTime = '$monthDay, $time';
                 },
               );
             },
-            itemCount: widget._messageData?.length ?? 0,
+            itemCount: widget.messageData.length,
           ),
         ),
       );
@@ -231,7 +214,7 @@ class AudioPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-      tag: IsmChat.i.tag,
+      tag: IsmChat.i.chatPageTag,
       builder: (controller) => Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -243,7 +226,7 @@ class AudioPreview extends StatelessWidget {
                 children: [
                   TextButton.icon(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatRoute.goBack();
                       await controller.shareMedia(message);
                     },
                     icon: const Icon(
@@ -257,7 +240,7 @@ class AudioPreview extends StatelessWidget {
                   ),
                   TextButton.icon(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatRoute.goBack();
                       await controller.saveMedia(message);
                     },
                     icon: const Icon(
@@ -271,7 +254,7 @@ class AudioPreview extends StatelessWidget {
                   ),
                   TextButton.icon(
                     onPressed: () async {
-                      Get.back();
+                      IsmChatRoute.goBack();
                       await controller.showDialogForMessageDelete(message,
                           fromMediaPrivew: true);
                     },

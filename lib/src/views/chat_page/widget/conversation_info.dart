@@ -6,27 +6,26 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatConverstaionInfoView extends StatelessWidget {
   IsmChatConverstaionInfoView({super.key});
 
-  static const String route = IsmPageRoutes.converstaionInfoView;
-
-  final conversationController = Get.find<IsmChatConversationsController>();
+  final conversationController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (_) async {
           conversationController.mediaList.clear();
           conversationController.mediaListLinks.clear();
           conversationController.mediaListDocs.clear();
-          var controller = Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+          var controller = IsmChatUtility.chatPageController;
           await controller.getConverstaionDetails();
         },
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.blueGreyColor,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {
-                    Get.find<IsmChatConversationsController>()
+                    IsmChatUtility.conversationController
                         .isRenderChatPageaScreen = IsRenderChatPageScreen.none;
                   },
             title: Text(
@@ -108,8 +107,9 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                         children: [
                           IsmChatTapHandler(
                             onTap: () {
-                              IsmChatRouteManagement.goToProfilePicView(
-                                  controller.conversation!.opponentDetails!);
+                              IsmChatRoute.goToRoute(IsmChatProfilePicView(
+                                user: controller.conversation?.opponentDetails,
+                              ));
                             },
                             child: IsmChatImage.profile(
                               controller.conversation?.profileUrl ?? '',
@@ -132,7 +132,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                         onTap: controller.conversation?.isGroup ?? false
                             ? () {
                                 controller.groupTitleController.text =
-                                    controller.conversation!.chatName;
+                                    controller.conversation?.chatName ?? '';
                                 controller.showDialogForChangeGroupTitle();
                               }
                             : null,
@@ -193,8 +193,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                           .opponentSubTitle
                                           ?.call(
                                               context,
-                                              controller.conversation!
-                                                  .opponentDetails!) ??
+                                              controller.conversation
+                                                  ?.opponentDetails) ??
                                       '',
                                 ),
                               ],
@@ -212,16 +212,18 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           child: IsmChatTapHandler(
                             onTap: () {
                               if (IsmChatResponsive.isWeb(context)) {
-                                Get.find<IsmChatConversationsController>()
+                                IsmChatUtility.conversationController
                                         .isRenderChatPageaScreen =
                                     IsRenderChatPageScreen.coversationMediaView;
                               } else {
-                                IsmChatRouteManagement.goToMedia(
-                                  mediaList: conversationController.mediaList,
-                                  mediaListLinks:
-                                      conversationController.mediaListLinks,
-                                  mediaListDocs:
-                                      conversationController.mediaListDocs,
+                                IsmChatRoute.goToRoute(
+                                  IsmMedia(
+                                    mediaList: conversationController.mediaList,
+                                    mediaListLinks:
+                                        conversationController.mediaListLinks,
+                                    mediaListDocs:
+                                        conversationController.mediaListDocs,
+                                  ),
                                 );
                               }
                             },
@@ -257,7 +259,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (controller.conversation!.isGroup ?? false) ...[
+                    if (controller.conversation?.isGroup ?? false) ...[
                       IsmChatDimens.boxHeight10,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -277,11 +279,12 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                 controller.participnatsEditingController
                                     .clear();
                                 if (IsmChatResponsive.isWeb(context)) {
-                                  Get.find<IsmChatConversationsController>()
+                                  IsmChatUtility.conversationController
                                           .isRenderChatPageaScreen =
                                       IsRenderChatPageScreen.groupEligibleView;
                                 } else {
-                                  IsmChatRouteManagement.goToEligibleUser();
+                                  IsmChatRoute.goToRoute(
+                                      const IsmChatGroupEligibleUser());
                                 }
                               },
                               icon: Icon(
@@ -331,15 +334,16 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                             var member = controller.groupMembers[index];
                             return ListTile(
                               onTap: member.isAdmin
-                                  ? (controller.conversation!.usersOwnDetails
+                                  ? (controller.conversation?.usersOwnDetails
                                                   ?.isAdmin ??
                                               false) &&
-                                          controller.conversation!
-                                                  .usersOwnDetails?.memberId !=
+                                          controller.conversation
+                                                  ?.usersOwnDetails?.memberId !=
                                               member.userId
                                       ? () {
-                                          Get.dialog(
-                                            IsmChatGroupAdminDialog(
+                                          IsmChatContextWidget
+                                              .showDialogContext(
+                                            content: IsmChatGroupAdminDialog(
                                                 user: member,
                                                 isAdmin: true,
                                                 groupName: controller
@@ -358,12 +362,13 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                                 fromMessagePage: false,
                                               );
                                             }
-                                  : controller.conversation!.usersOwnDetails
+                                  : controller.conversation?.usersOwnDetails
                                               ?.isAdmin ??
                                           false
                                       ? () {
-                                          Get.dialog(
-                                            IsmChatGroupAdminDialog(
+                                          IsmChatContextWidget
+                                              .showDialogContext(
+                                            content: IsmChatGroupAdminDialog(
                                               user: member,
                                               groupName: controller.conversation
                                                       ?.conversationTitle ??
@@ -388,7 +393,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                           color: IsmChatConfig
                                               .chatTheme.primaryColor),
                                     )
-                                  : controller.conversation!.usersOwnDetails
+                                  : controller.conversation?.usersOwnDetails
                                               ?.isAdmin ??
                                           false
                                       ? const Icon(
@@ -472,8 +477,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           children: [
                             TextButton.icon(
                               onPressed: () async {
-                                await Get.dialog(
-                                  IsmChatAlertDialogBox(
+                                await IsmChatContextWidget.showDialogContext(
+                                  content: IsmChatAlertDialogBox(
                                     title: IsmChatStrings.deleteAllMessage,
                                     actionLabels: const [
                                       IsmChatStrings.clearChat
@@ -484,7 +489,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                     ],
                                   ),
                                 );
-                                Get.back();
+                                IsmChatRoute.goBack();
                               },
                               icon: const Icon(
                                 Icons.clear_all_outlined,
@@ -503,22 +508,22 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                             ),
                             TextButton.icon(
                               onPressed: () async {
-                                await Get.dialog(
-                                  IsmChatAlertDialogBox(
+                                await IsmChatContextWidget.showDialogContext(
+                                  content: IsmChatAlertDialogBox(
                                     title: '${IsmChatStrings.deleteChat}?',
                                     actionLabels: const [
                                       IsmChatStrings.deleteChat
                                     ],
                                     callbackActions: [
-                                      () => Get.find<
-                                              IsmChatConversationsController>()
+                                      () => IsmChatUtility
+                                          .conversationController
                                           .deleteChat(
                                               '${controller.conversation?.conversationId}'),
                                     ],
                                   ),
                                 );
-                                Get.back();
-                                Get.back();
+                                IsmChatRoute.goBack();
+                                IsmChatRoute.goBack();
                               },
                               icon: const Icon(
                                 Icons.delete_forever_outlined,

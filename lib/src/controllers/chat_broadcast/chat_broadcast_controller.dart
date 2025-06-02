@@ -157,7 +157,7 @@ class IsmChatBroadcastController extends GetxController {
         isShowLoader: false,
         isloading: false,
       ));
-      Get.back();
+      IsmChatRoute.goBack();
     }
   }
 
@@ -381,7 +381,7 @@ class IsmChatBroadcastController extends GetxController {
         );
       }
     } catch (_) {
-      Get.back();
+      IsmChatRoute.goBack();
     }
   }
 }

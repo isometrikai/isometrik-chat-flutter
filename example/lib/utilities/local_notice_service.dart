@@ -172,8 +172,6 @@ class LocalNoticeService {
 
     await _localNotificationsPlugin.zonedSchedule(
         id, title, body, scheduleTime, noticeDetail,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         payload: jsonEncode(payload));
   }

@@ -107,21 +107,15 @@ IsmChatApp(
 9. Initialize Chat and MQTT: The initialize method sets up the necessary configurations for using the `Isometrik Chat Flutter SDK` in your Flutter project. This method must be called before using any other features of the Isometrik Chat Flutter SDK.And Manually initializes the MQTT (Message Queuing Telemetry Transport) protocol for real-time messaging. .
 
 ```dart
-    IsmChat.i.initialize(
-        IsmChatCommunicationConfig communicationConfig, {
+    IsmChat.i.initialize({
+        required IsmChatCommunicationConfig communicationConfig,
+        required GlobalKey<NavigatorState> kNavigatorKey,
         bool useDatabase = true,
         String databaseName = IsmChatStrings.dbname,
         NotificaitonCallback? showNotification,
         BuildContext? context,
+         IsmMqttProperties? mqttProperties,
     })
-```
-
-10. The IsmChatPages class provides additional `pages` for the Isometrik chat package. The `pages` list contains additional routes provided by the Isometrik chat package. So you must add your project routing pages
-
-```dart
-    [
-    ...IsmChat.i.IsmChatPages.pages
-    ]
 ```
 
 11. Add listener for MQTT events: Adds a listener to handle MQTT events. This is useful for responding to real-time message updates and other events.
@@ -418,14 +412,67 @@ final conversations = await IsmChat.i.getChatConversationApi(
 await IsmChat.i.getChatConversationsUnreadCount(isLoading: true);
 ```
 
-48. Get or set a tag associated with the chat instance.
+48. Sets the current conversation index in the chat interface.
+
+```dart
+  IsmChat.i.currentConversationIndex(index: 2);
+```
+
+49. Determines whether to show other elements on the chat page.
+
+```dart
+ IsmChat.i.shouldShowOtherOnChatPage();
+```
+
+50. Searches for conversations based on the provided search value.
+
+```dart
+await IsmChat.i.searchConversation(searchValue: "John");
+```
+
+51. Retrieves messages from the local database for a specific conversation.
+
+```dart
+await IsmChat.i.getMessagesFromDB(conversationId: "conv123");
+```
+
+53. Updates an existing message in the chat system.
+
+```dart
+final updatedMessage = IsmChatMessageModel();
+await IsmChat.i.updateMessage(message: updatedMessage);
+```
+
+54. Updates the metadata of a specific message in a conversation.
+
+```dart
+await IsmChat.i.updateMessageMetaData(
+  messageId: "msg123",
+  conversationId: "conv123",
+  isOpponentMessage: false,
+  metaData: IsmChatMetaData()
+);
+```
+
+55. Updates the metadata of a specific message in a conversation.
+
+```dart
+await IsmChat.i.updateMessageMetaData(
+  messageId: "msg123",
+  conversationId: "conv123",
+  isOpponentMessage: false,
+  metaData: IsmChatMetaData()
+);
+```
+
+56. Get or set a tag associated with the chat instance.
 
 ```dart
 // Get current tag
-print(IsmChat.i.tag);
+print(IsmChat.i.chatPageTag);
 
 // Set new tag
-IsmChat.i.tag = 'new-tag';
+IsmChat.i..chatPageTag = 'new-tag';
 ```
 
 <!-- ## Contributing

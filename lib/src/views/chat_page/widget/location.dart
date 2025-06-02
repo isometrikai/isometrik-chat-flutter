@@ -11,16 +11,13 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatLocationWidget extends StatefulWidget {
   const IsmChatLocationWidget({super.key});
 
-  static const String route = IsmPageRoutes.location;
-
   @override
   State<IsmChatLocationWidget> createState() => _IsmLocationWidgetViewState();
 }
 
 class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
   final Completer<GoogleMapController> mapController = Completer();
-  final ismChatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final ismChatPageController = IsmChatUtility.chatPageController;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(30.7046, 76.7179),
@@ -66,7 +63,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
           appBar: AppBar(
@@ -155,7 +152,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
               onPressed: () {
                 controller.isSearchSelect
                     ? controller.isSearchSelect = false
-                    : Get.back<void>();
+                    : IsmChatRoute.goBack<void>();
               },
               icon: Icon(
                 Icons.adaptive.arrow_back,
@@ -171,7 +168,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
               Stack(children: [
                 SizedBox(
                     height: IsmChatDimens.percentHeight(.35),
-                    width: Get.width,
+                    width: IsmChatDimens.percentWidth(1),
                     child: GoogleMap(
                       initialCameraPosition: _kGooglePlex,
                       markers: Set<Marker>.of(_markers),
@@ -261,12 +258,14 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                   );
 
                                   IsmChatUtility.closeLoader();
-                                  Get.back<void>();
+                                  IsmChatRoute.goBack<void>();
                                   if (await IsmChatProperties.chatPageProperties
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
-                                              Get.context!,
-                                              controller.conversation!,
+                                              IsmChatConfig.kNavigatorKey
+                                                      .currentContext ??
+                                                  IsmChatConfig.context,
+                                              controller.conversation,
                                               IsmChatCustomMessageType
                                                   .location) ??
                                       true) {}
@@ -313,12 +312,14 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
 
                               return IsmChatTapHandler(
                                 onTap: () async {
-                                  Get.back<void>();
+                                  IsmChatRoute.goBack<void>();
                                   if (await IsmChatProperties.chatPageProperties
                                           .messageAllowedConfig?.isMessgeAllowed
                                           ?.call(
-                                              Get.context!,
-                                              controller.conversation!,
+                                              IsmChatConfig.kNavigatorKey
+                                                      .currentContext ??
+                                                  IsmChatConfig.context,
+                                              controller.conversation,
                                               IsmChatCustomMessageType
                                                   .location) ??
                                       true) {
@@ -353,7 +354,7 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                                     Icons.house_siding,
                                   ),
                                   title: SizedBox(
-                                    width: Get.width - 100,
+                                    width: IsmChatDimens.percentWidth(1) - 100,
                                     child: Text(
                                       prediction.name ?? '',
                                       maxLines: 3,

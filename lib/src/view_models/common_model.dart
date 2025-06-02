@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCommonViewModel {
@@ -120,8 +119,7 @@ class IsmChatCommonViewModel {
       if (messageId == null || messageId.isEmpty) return false;
       if (!isUpdateMesage) return false;
       if (isBroadcast) {
-        final chatPageController =
-            Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+        final chatPageController = IsmChatUtility.chatPageController;
         for (var x = 0; x < chatPageController.messages.length; x++) {
           var messages = chatPageController.messages[x];
           if (messages.messageId?.isNotEmpty == true ||

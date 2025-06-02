@@ -8,32 +8,26 @@ import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatCreateConversationView extends StatelessWidget {
-  IsmChatCreateConversationView(
-      {super.key,
-      bool? isGroupConversation,
-      IsmChatConversationType? conversationType})
-      : _isGroupConversation = isGroupConversation ??
-            (Get.arguments as Map<String, dynamic>?)?['isGroupConversation'] ??
-            false,
-        _conversationType = conversationType ??
-            (Get.arguments as Map<String, dynamic>?)?['conversationType'] ??
-            IsmChatConversationType.private;
+  IsmChatCreateConversationView({
+    super.key,
+    required this.isGroupConversation,
+    required this.conversationType,
+  });
 
-  final bool? _isGroupConversation;
-  final IsmChatConversationType? _conversationType;
-  final converstaionController = Get.find<IsmChatConversationsController>();
-
-  static const String route = IsmPageRoutes.createChat;
+  final bool isGroupConversation;
+  final IsmChatConversationType conversationType;
+  final converstaionController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (_) async {
-          converstaionController
-              .initCreateConversation(_isGroupConversation ?? false);
+          converstaionController.initCreateConversation(isGroupConversation);
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: IsmChatAppBar(
+            height: IsmChatDimens.fiftyFive,
             title: controller.showSearchField
                 ? IsmChatInputField(
                     fillColor: IsmChatConfig.chatTheme.primaryColor,
@@ -66,15 +60,15 @@ class IsmChatCreateConversationView extends StatelessWidget {
                           opponentId: IsmChatConfig
                               .communicationConfig.userConfig.userId,
                         );
-                        if (_isGroupConversation == false) {
+                        if (isGroupConversation == false) {
                           controller.searchOnLocalContacts(value);
                         }
                       });
                     },
                   )
                 : Text(
-                    _isGroupConversation ?? false
-                        ? '${IsmChatStrings.newString}  ${_conversationType == IsmChatConversationType.public ? 'Public' : _conversationType == IsmChatConversationType.open ? 'Open' : 'Group'} Conversation'
+                    isGroupConversation
+                        ? '${IsmChatStrings.newString}  ${conversationType == IsmChatConversationType.public ? 'Public' : conversationType == IsmChatConversationType.open ? 'Open' : 'Group'} Conversation'
                         : IsmChatStrings.newConversation,
                     style: IsmChatConfig
                             .chatTheme.chatPageHeaderTheme?.titleStyle ??
@@ -126,9 +120,9 @@ class IsmChatCreateConversationView extends StatelessWidget {
                   : const IsmChatLoadingDialog()
               : Column(
                   children: [
-                    if (_isGroupConversation ?? false) ...[
+                    if (isGroupConversation) ...[
                       Container(
-                          width: Get.width,
+                          width: IsmChatDimens.percentWidth(1),
                           color: IsmChatColors.whiteColor,
                           child: const _GroupChatImageAndName()),
                     ],
@@ -143,8 +137,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                       0.3) {
                                 /// call the api only on down scroll
                                 unawaited(controller.getNonBlockUserList(
-                                  isGroupConversation:
-                                      _isGroupConversation ?? false,
+                                  isGroupConversation: isGroupConversation,
                                   opponentId: IsmChatConfig
                                       .communicationConfig.userConfig.userId,
                                 ));
@@ -173,7 +166,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          indexBarData: _isGroupConversation ?? false
+                          indexBarData: isGroupConversation
                               ? const []
                               : SuspensionUtil.getTagIndexList(
                                   controller.forwardedList),
@@ -204,7 +197,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                             return Column(
                               children: [
                                 if (index == 0 &&
-                                    !_isGroupConversation! &&
+                                    !isGroupConversation &&
                                     IsmChatConfig.communicationConfig.userConfig
                                             .accessToken !=
                                         null)
@@ -220,7 +213,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                       : Colors.transparent,
                                   child: ListTile(
                                     onTap: () async {
-                                      if (_isGroupConversation) {
+                                      if (isGroupConversation) {
                                         controller.onForwardUserTap(index);
                                         controller
                                             .isSelectedUser(user.userDetails);
@@ -259,7 +252,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                                 lastMessageSentAt: 0,
                                                 membersCount: 1,
                                                 conversationType:
-                                                    _conversationType);
+                                                    conversationType);
                                         ismChatConversation =
                                             ismChatConversation.copyWith(
                                           conversationId:
@@ -267,7 +260,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                             user.userDetails.userId,
                                           ),
                                         );
-                                        Get.back<void>();
+                                        IsmChatRoute.goBack<void>();
                                         IsmChatProperties
                                             .conversationProperties.onChatTap
                                             ?.call(_, ismChatConversation);
@@ -296,7 +289,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: IsmChatStyles.w400Black12,
                                     ),
-                                    trailing: !_isGroupConversation!
+                                    trailing: !isGroupConversation
                                         ? null
                                         : Container(
                                             padding:
@@ -329,7 +322,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                       ),
                     ),
                     if (controller.selectedUserList.isNotEmpty &&
-                        _isGroupConversation!)
+                        isGroupConversation)
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -438,8 +431,8 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                     controller.profileImage.isEmpty ||
                                     controller
                                         .addGrouNameController.text.isEmpty) {
-                                  await Get.dialog(
-                                    const IsmChatAlertDialogBox(
+                                  await IsmChatContextWidget.showDialogContext(
+                                    content: const IsmChatAlertDialogBox(
                                       cancelLabel: IsmChatStrings.okay,
                                       title: IsmChatStrings.createGroupAlert,
                                     ),
@@ -481,12 +474,12 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                     body: '',
                                   ),
                                   lastMessageSentAt: 0,
-                                  conversationType: _conversationType,
+                                  conversationType: conversationType,
                                   membersCount:
                                       controller.selectedUserList.length + 1,
                                 );
 
-                                Get.back<void>();
+                                IsmChatRoute.goBack<void>();
                                 IsmChatProperties
                                     .conversationProperties.onChatTap
                                     ?.call(context, conversation);
@@ -510,6 +503,7 @@ class _GroupChatImageAndName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) => Column(
           children: [
             IsmChatDimens.boxHeight10,
@@ -535,22 +529,23 @@ class _GroupChatImageAndName extends StatelessWidget {
                       if (kIsWeb) {
                         controller.ismUploadImage(ImageSource.gallery);
                       } else {
-                        Get.back();
-                        Get.bottomSheet<void>(
-                          IsmChatProfilePhotoBottomSheet(
-                            onCameraTap: () async {
-                              Get.back();
-                              await controller
-                                  .ismUploadImage(ImageSource.camera);
-                            },
-                            onGalleryTap: () async {
-                              Get.back();
-                              await controller
-                                  .ismUploadImage(ImageSource.gallery);
-                            },
-                          ),
-                          elevation: 0,
-                        );
+                        IsmChatRoute.goBack();
+                        IsmChatContextWidget.showBottomsheetContext<void>(
+                            content: IsmChatProfilePhotoBottomSheet(
+                              onCameraTap: () async {
+                                IsmChatRoute.goBack();
+                                await controller
+                                    .ismUploadImage(ImageSource.camera);
+                              },
+                              onGalleryTap: () async {
+                                IsmChatRoute.goBack();
+                                await controller
+                                    .ismUploadImage(ImageSource.gallery);
+                              },
+                            ),
+                            elevation: 0,
+                            isDismissible: true,
+                            backgroundColor: IsmChatColors.transparent);
                       }
                     },
                     child: IsmChatImage.profile(
@@ -566,20 +561,22 @@ class _GroupChatImageAndName extends StatelessWidget {
                       if (IsmChatResponsive.isWeb(context)) {
                         controller.ismUploadImage(ImageSource.gallery);
                       } else {
-                        Get.bottomSheet<void>(
-                          IsmChatProfilePhotoBottomSheet(
+                        IsmChatContextWidget.showBottomsheetContext<void>(
+                          content: IsmChatProfilePhotoBottomSheet(
                             onCameraTap: () async {
-                              Get.back();
+                              IsmChatRoute.goBack();
                               await controller
                                   .ismUploadImage(ImageSource.camera);
                             },
                             onGalleryTap: () async {
-                              Get.back();
+                              IsmChatRoute.goBack();
                               await controller
                                   .ismUploadImage(ImageSource.gallery);
                             },
                           ),
                           elevation: 0,
+                          backgroundColor: IsmChatColors.transparent,
+                          isDismissible: true,
                         );
                       }
                     },
@@ -618,12 +615,12 @@ class ChatModes extends StatelessWidget {
           if (IsmChatProperties.conversationProperties.enableGroupChat)
             ListTile(
               onTap: () async {
-                Get.back();
+                IsmChatRoute.goBack();
                 await Future.delayed(Durations.extralong1);
-                IsmChatRouteManagement.goToCreateChat(
+                await IsmChatRoute.goToRoute(IsmChatCreateConversationView(
                   isGroupConversation: true,
                   conversationType: IsmChatConversationType.private,
-                );
+                ));
               },
               contentPadding: IsmChatDimens.edgeInsets10,
               horizontalTitleGap: IsmChatDimens.ten,
@@ -680,9 +677,9 @@ class ChatModes extends StatelessWidget {
           // ),
           ListTile(
             onTap: () async {
-              Get.back();
+              IsmChatRoute.goBack();
               await Future.delayed(Durations.extralong1);
-              IsmChatRouteManagement.goToCreteBroadcastView();
+              await IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
             },
             contentPadding: IsmChatDimens.edgeInsets10,
             horizontalTitleGap: IsmChatDimens.ten,

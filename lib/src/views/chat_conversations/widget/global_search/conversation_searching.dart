@@ -6,13 +6,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class IsmChatConversationSearchView extends StatelessWidget {
   const IsmChatConversationSearchView({super.key});
 
-  static const String route = IsmPageRoutes.userSearch;
-
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (state) {
           IsmChatUtility.doLater(() async {
-            await Get.find<IsmChatConversationsController>()
+            await IsmChatUtility.conversationController
                 .getChatSearchConversations();
           });
         },
@@ -39,7 +38,7 @@ class IsmChatConversationSearchView extends StatelessWidget {
                   },
                   child: SizedBox(
                     height: IsmChatProperties.conversationProperties.height ??
-                        Get.height,
+                        IsmChatDimens.percentHeight(1),
                     child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: controller.searchConversationList.length,

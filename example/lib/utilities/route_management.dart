@@ -1,15 +1,20 @@
-import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter_example/views/login_view.dart';
-import 'package:isometrik_chat_flutter_example/views/signup_view.dart';
+import 'package:go_router/go_router.dart';
+import 'package:isometrik_chat_flutter_example/main.dart';
+
+import '../res/routes.dart';
 
 class RouteManagement {
   const RouteManagement._();
 
   static void offToLogin() {
-    Get.offAllNamed(LoginView.route);
+    kNavigatorKey.currentContext?.goNamed(AppRouteName.login);
   }
 
   static void goToSignPage() {
-    Get.toNamed(SignupView.route);
+    kNavigatorKey.currentContext?.goNamed(AppRouteName.signUp);
+  }
+
+  static void goToChatList() {
+    kNavigatorKey.currentContext?.goNamed(AppRouteName.chatList);
   }
 }

@@ -6,8 +6,6 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatGroupEligibleUser extends StatelessWidget {
   const IsmChatGroupEligibleUser({super.key});
 
-  static const String route = IsmPageRoutes.groupEligiableView;
-
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,
         height: IsmChatDimens.forty,
@@ -23,8 +21,11 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
               style: IsmChatStyles.w600Black14,
             ),
             SizedBox(
-                width: IsmChatDimens.percentWidth(
-                    IsmChatResponsive.isWeb(Get.context!) ? .24 : .7),
+                width: IsmChatDimens.percentWidth(IsmChatResponsive.isWeb(
+                        IsmChatConfig.kNavigatorKey.currentContext ??
+                            IsmChatConfig.context)
+                    ? .24
+                    : .7),
                 child: Divider(
                   height: .0,
                   indent: IsmChatDimens.ten,
@@ -35,15 +36,15 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         initState: (_) {
-          var chatPageController =
-              Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+          var chatPageController = IsmChatUtility.chatPageController;
           chatPageController.groupEligibleUser.clear();
           chatPageController.canCallCurrentApi = false;
           chatPageController.isMemberSearch = false;
           chatPageController.getEligibleMembers(
-              conversationId: chatPageController.conversation!.conversationId!,
+              conversationId:
+                  chatPageController.conversation?.conversationId ?? '',
               limit: 20);
         },
         builder: (controller) => Scaffold(
@@ -51,8 +52,8 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
           appBar: IsmChatAppBar(
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
-                : () => Get.find<IsmChatConversationsController>()
-                        .isRenderChatPageaScreen =
+                : () => IsmChatUtility
+                        .conversationController.isRenderChatPageaScreen =
                     IsRenderChatPageScreen.coversationInfoView,
             title: controller.isMemberSearch
                 ? IsmChatInputField(
@@ -110,7 +111,8 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
                                     0.7) {
                               controller.getEligibleMembers(
                                 conversationId:
-                                    controller.conversation!.conversationId!,
+                                    controller.conversation?.conversationId ??
+                                        '',
                                 limit: 20,
                               );
                             }
@@ -250,7 +252,7 @@ class _SelectedUsers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => SafeArea(
           child: Container(
             decoration: BoxDecoration(
@@ -343,7 +345,7 @@ class _SelectedUsers extends StatelessWidget {
                         memberIds.add(x.userDetails.userId);
                       }
                     }
-                    Get.back<void>();
+                    IsmChatRoute.goBack<void>();
                     await controller.addMembers(
                         isLoading: true, memberIds: memberIds);
                   },

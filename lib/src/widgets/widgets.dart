@@ -13,6 +13,7 @@ export 'link_preview/link_preview.dart';
 export 'loading_dialog.dart';
 export 'no_message.dart';
 export 'page_dailog.dart';
+export 'refresh_head_footer.dart';
 export 'responsive_builder_view.dart';
 export 'statusbar_transparent.dart';
 export 'tap_handler.dart';

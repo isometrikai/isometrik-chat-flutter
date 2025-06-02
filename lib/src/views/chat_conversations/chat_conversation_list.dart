@@ -13,6 +13,7 @@ class IsmChatConversationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) {
           if (controller.isConversationsLoading) {
             return const IsmChatLoadingDialog();
@@ -38,13 +39,14 @@ class IsmChatConversationList extends StatelessWidget {
             );
           }
           return SizedBox(
-            height:
-                IsmChatProperties.conversationProperties.height ?? Get.height,
+            height: IsmChatProperties.conversationProperties.height ??
+                IsmChatDimens.percentHeight(1),
             child: kIsWeb
                 ? SlidableAutoCloseBehavior(
                     child: _ConversationList(),
                   )
                 : SmartRefresher(
+                    footer: const RefreshFooter(),
                     physics: const ClampingScrollPhysics(),
                     controller: controller.refreshController,
                     enablePullDown: true,
@@ -74,7 +76,7 @@ class IsmChatConversationList extends StatelessWidget {
 class _ConversationList extends StatelessWidget {
   _ConversationList();
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => ListView.separated(
@@ -120,7 +122,7 @@ class _SlidableWidgetState extends State<_SlidableWidget>
     with SingleTickerProviderStateMixin {
   SlidableController? slidableController;
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   void initState() {
@@ -197,11 +199,12 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                       if (IsmChatProperties.conversationProperties.allowDelete)
                         SlidableAction(
                           onPressed: (_) async {
-                            await Get.bottomSheet(
-                              IsmChatClearConversationBottomSheet(
+                            await IsmChatContextWidget.showBottomsheetContext(
+                              content: IsmChatClearConversationBottomSheet(
                                 widget.conversation,
                               ),
-                              isDismissible: false,
+                              backgroundColor: IsmChatColors.transparent,
+                              isDismissible: true,
                               elevation: 0,
                             );
                           },
@@ -261,6 +264,7 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                       ?.call(context, widget.conversation) ??
                   true) {
                 controller.updateLocalConversation(widget.conversation);
+
                 await controller.goToChatPage();
               }
             },

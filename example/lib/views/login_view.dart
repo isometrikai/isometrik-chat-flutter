@@ -14,6 +14,9 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!Get.isRegistered<AuthController>()) {
+      AuthBinding().dependencies();
+    }
     return GetX<AuthController>(builder: (controller) {
       return Scaffold(
         resizeToAvoidBottomInset: false,

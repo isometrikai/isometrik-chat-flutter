@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 @protected
@@ -69,7 +68,7 @@ class IsmChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             IsmChatConfig.chatTheme.primaryColor,
         leading: leading ??
             IconButton(
-              onPressed: onBack ?? Get.back,
+              onPressed: onBack ?? IsmChatRoute.goBack,
               icon: Icon(
                 IsmChatResponsive.isWeb(context)
                     ? Icons.close_rounded

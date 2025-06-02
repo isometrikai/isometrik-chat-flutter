@@ -15,9 +15,11 @@ class MessageBubble extends StatelessWidget {
               customType: IsmChatCustomMessageType.text,
               sentByMe: true,
             ),
-        _globalKey = IsmChatResponsive.isWeb(Get.context!)
+        _globalKey = IsmChatResponsive.isWeb(
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context)
             ? GlobalKey()
-            : Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
+            : IsmChatUtility.chatPageController
                 .getGlobalKey(message?.sentAt ?? 0);
 
   final IsmChatMessageModel _message;
@@ -27,7 +29,7 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -36,7 +38,7 @@ class MessageBubble extends StatelessWidget {
                 IsmChatResponsive.isWeb(context) &&
                 !showMessageInCenter &&
                 (IsmChatProperties.chatPageProperties.shouldShowHoverHold
-                        ?.call(context, controller.conversation!, _message) ??
+                        ?.call(context, controller.conversation, _message) ??
                     true)) ...[
               _OnMessageHoverWeb(
                 controller: controller,
@@ -123,7 +125,7 @@ class MessageBubble extends StatelessWidget {
                                             ?.call(
                                           context,
                                           _message,
-                                          controller.conversation!,
+                                          controller.conversation,
                                         ) !=
                                         null) {
                                       name = IsmChatProperties
@@ -132,7 +134,7 @@ class MessageBubble extends StatelessWidget {
                                               ?.call(
                                             context,
                                             _message,
-                                            controller.conversation!,
+                                            controller.conversation,
                                           ) ??
                                           '';
                                     } else {
@@ -144,7 +146,7 @@ class MessageBubble extends StatelessWidget {
                                             ?.call(
                                           context,
                                           _message,
-                                          controller.conversation!,
+                                          controller.conversation,
                                         ) ??
                                         Text(
                                           name.trim().isNotEmpty
@@ -293,7 +295,7 @@ class MessageBubble extends StatelessWidget {
                 IsmChatResponsive.isWeb(context) &&
                 !showMessageInCenter &&
                 (IsmChatProperties.chatPageProperties.shouldShowHoverHold
-                        ?.call(context, controller.conversation!, _message) ??
+                        ?.call(context, controller.conversation, _message) ??
                     true)) ...[
               IsmChatDimens.boxWidth8,
               _OnMessageHoverWeb(
@@ -338,7 +340,7 @@ class _OnMessageHoverWeb extends StatelessWidget {
                     } else {
                       controller.holdController?.forward();
                       controller.showOverlayWeb(
-                        globalKey.currentContext ?? Get.context!,
+                        globalKey.currentContext ?? context,
                         message,
                         controller.holdAnimation!,
                       );

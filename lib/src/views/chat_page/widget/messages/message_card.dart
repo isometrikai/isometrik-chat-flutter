@@ -64,15 +64,14 @@ class _MessageCardState extends State<MessageCard>
     //Forward animation
     controllerAnimation?.forward().whenComplete(() {
       controllerAnimation?.reverse().whenComplete(() {
-        Get.find<IsmChatPageController>(tag: IsmChat.i.tag)
-            .onReplyTap(widget.message);
+        IsmChatUtility.chatPageController.onReplyTap(widget.message);
       });
     });
   }
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => GestureDetector(
           onHorizontalDragUpdate: widget.showMessageInCenter
               ? null

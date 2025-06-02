@@ -4,11 +4,9 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatEditBroadcastView extends StatelessWidget {
-  IsmChatEditBroadcastView({super.key});
+  const IsmChatEditBroadcastView({super.key, required this.broadcast});
 
-  static const String route = IsmPageRoutes.editBroadcastView;
-
-  final broadcast = Get.arguments as BroadcastModel;
+  final BroadcastModel broadcast;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatBroadcastController>(
@@ -58,9 +56,9 @@ class IsmChatEditBroadcastView extends StatelessWidget {
           ),
           bottomSheet: GestureDetector(
             onTap: () {
-              IsmChatRouteManagement.goToEligibleMembersView(
-                broadcast.groupcastId ?? '',
-              );
+              IsmChatRoute.goToRoute(IsmChatEligibleMembersView(
+                groupcastId: broadcast.groupcastId ?? '',
+              ));
             },
             child: Container(
               margin: IsmChatDimens.edgeInsets20_10,

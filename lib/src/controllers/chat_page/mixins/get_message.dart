@@ -1,8 +1,7 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatPageGetMessageMixin on GetxController {
-  IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
 
   Future<void> getMessagesFromDB(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
@@ -70,7 +69,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     int? lastMessageTimestamp,
     bool isBroadcast = false,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       if (_controller.canCallCurrentApi) return;
       _controller.canCallCurrentApi = true;
 
@@ -114,7 +113,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     bool isBroadcast = false,
     bool forPagination = false,
   }) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       if (_controller.canCallCurrentApi) return;
       _controller.canCallCurrentApi = true;
       if (_controller.messages.isEmpty) {
@@ -200,7 +199,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
   Future<IsmChatConversationModel?> getConverstaionDetails(
       {bool? isLoading}) async {
-    if (Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.tag)) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       if (!_controller.isCoverationApiDetails) {
         return null;
       }
@@ -225,8 +224,9 @@ mixin IsmChatPageGetMessageMixin on GetxController {
               '${message.sentAt}': message
           },
         );
-        IsmChatProperties.chatPageProperties.onCoverstaionStatus
-            ?.call(Get.context!, _controller.conversation!);
+        IsmChatProperties.chatPageProperties.onCoverstaionStatus?.call(
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+            _controller.conversation);
 
         // controller.medialist is storing media i.e. Image, Video and Audio. //
         _controller.conversationController.mediaList = _controller.messages
@@ -280,7 +280,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   }
 
   void updateLastMessagOnCurrentTime(IsmChatMessageModel message) async {
-    var conversationController = Get.find<IsmChatConversationsController>();
+    var conversationController = IsmChatUtility.conversationController;
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(conversationId: message.conversationId);
 
@@ -344,14 +344,16 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   UserDetails getUser() => UserDetails(
         userProfileImageUrl:
             IsmChatProperties.chatPageProperties.header?.profileImageUrl?.call(
-                    Get.context!,
-                    _controller.conversation!,
+                    IsmChatConfig.kNavigatorKey.currentContext ??
+                        IsmChatConfig.context,
+                    _controller.conversation,
                     _controller.conversation?.profileUrl ?? '') ??
                 _controller.conversation?.profileUrl ??
                 '',
         userName: IsmChatProperties.chatPageProperties.header?.title?.call(
-                Get.context!,
-                _controller.conversation!,
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context,
+                _controller.conversation,
                 _controller.conversation?.chatName ?? '') ??
             _controller.conversation?.chatName ??
             '',

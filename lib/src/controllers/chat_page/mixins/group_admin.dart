@@ -1,8 +1,7 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatGroupAdminMixin on GetxController {
-  IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
 
   /// This variable use for get all method and varibles from IsmChatCommonController
   IsmChatCommonController get _commonController =>

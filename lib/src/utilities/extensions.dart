@@ -439,7 +439,7 @@ extension BlockStatus on IsmChatConversationModel {
     if (isChattingAllowed) {
       return false;
     }
-    var controller = Get.find<IsmChatConversationsController>();
+    var controller = IsmChatUtility.conversationController;
     var blockedList = controller.blockUsers.map((e) => e.userId);
     return blockedList.contains(opponentDetails?.userId);
   }
@@ -774,7 +774,7 @@ extension ReactionLastMessgae on String {
   String get reactionString {
     var reactionValue = IsmChatEmoji.values.firstWhere((e) => e.value == this);
     var emoji = '';
-    for (var x in Get.find<IsmChatConversationsController>().reactions) {
+    for (var x in IsmChatUtility.conversationController.reactions) {
       if (x.name == reactionValue.emojiKeyword) {
         emoji = x.emoji;
         break;
@@ -850,7 +850,7 @@ extension MentionMessage on IsmChatMessageModel {
         .contains(IsmChatFeature.forward)) {
       menu.remove(IsmChatFocusMenuType.forward);
     }
-    if (Get.find<IsmChatPageController>(tag: IsmChat.i.tag).isBroadcast) {
+    if (IsmChatUtility.chatPageController.isBroadcast) {
       menu.removeWhere((e) => [
             IsmChatFocusMenuType.info,
             IsmChatFocusMenuType.delete,
@@ -1021,27 +1021,31 @@ extension Conversation on IsmChatConversationType {
   }
 
   void goToRoute() {
-    final controller = Get.find<IsmChatConversationsController>();
+    final controller = IsmChatUtility.conversationController;
     switch (this) {
       case IsmChatConversationType.private:
         break;
       case IsmChatConversationType.public:
-        if (IsmChatResponsive.isWeb(Get.context!)) {
+        if (IsmChatResponsive.isWeb(
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context)) {
           controller.isRenderScreen =
               IsRenderConversationScreen.publicConverationView;
           Scaffold.of(controller.isDrawerContext!).openDrawer();
         } else {
-          IsmChatRouteManagement.goToPublicView();
+          IsmChatRoute.goToRoute(const IsmChatPublicConversationView());
         }
 
         break;
       case IsmChatConversationType.open:
-        if (IsmChatResponsive.isWeb(Get.context!)) {
+        if (IsmChatResponsive.isWeb(
+            IsmChatConfig.kNavigatorKey.currentContext ??
+                IsmChatConfig.context)) {
           controller.isRenderScreen =
               IsRenderConversationScreen.openConverationView;
           Scaffold.of(controller.isDrawerContext!).openDrawer();
         } else {
-          IsmChatRouteManagement.goToOpenView();
+          IsmChatRoute.goToRoute(const IsmChatOpenConversationView());
         }
 
         break;

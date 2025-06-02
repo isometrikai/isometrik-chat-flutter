@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatAlertDialogBox extends StatelessWidget {
@@ -54,7 +53,9 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                 shape: IsmChatConfig.chatTheme.dialogTheme?.shape ?? shape,
                 actions: [
                   IsmChatTapHandler(
-                    onTap: onCancel ?? Get.back,
+                    onTap: () {
+                      onCancel ?? IsmChatRoute.goBack();
+                    },
                     child: Text(
                       cancelLabel,
                       style: IsmChatConfig
@@ -66,7 +67,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                     IsmChatDimens.boxWidth8,
                     IsmChatTapHandler(
                       onTap: () {
-                        Get.back();
+                        IsmChatRoute.goBack();
                         callbackActions?.first();
                       },
                       child: Text(
@@ -95,8 +96,8 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                         return SimpleDialogOption(
                           child: IsmChatTapHandler(
                             onTap: () {
-                              Get.back();
-                              action();
+                              IsmChatRoute.goBack();
+                              action.call();
                             },
                             child: Text(
                               label,
@@ -109,7 +110,9 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                       }),
                       SimpleDialogOption(
                         child: IsmChatTapHandler(
-                          onTap: onCancel ?? Get.back,
+                          onTap: () {
+                            onCancel ?? IsmChatRoute.goBack();
+                          },
                           child: Text(
                             cancelLabel,
                             style: IsmChatConfig

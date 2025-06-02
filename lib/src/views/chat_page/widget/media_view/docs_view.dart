@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// IsmMedia class is for showing the conversation media
@@ -17,8 +16,7 @@ class _IsmDocsViewState extends State<IsmDocsView>
     with TickerProviderStateMixin {
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetDocsList = [];
 
-  final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  final chatPageController = IsmChatUtility.chatPageController;
 
   @override
   void initState() {

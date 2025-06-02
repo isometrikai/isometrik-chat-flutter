@@ -1,13 +1,12 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatShowDialogMixin on GetxController {
-  IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.tag);
+  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
 
   void showDialogForClearChatAndDeleteGroup({isGroupDelete = false}) async {
     if (!isGroupDelete) {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.deleteAllMessage,
           actionLabels: const [IsmChatStrings.clearChat],
           callbackActions: [
@@ -27,8 +26,8 @@ mixin IsmChatShowDialogMixin on GetxController {
         ),
       );
     } else {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.deleteThiGroup,
           actionLabels: const [IsmChatStrings.deleteGroup],
           callbackActions: [
@@ -39,14 +38,16 @@ mixin IsmChatShowDialogMixin on GetxController {
           ],
         ),
       );
-      Get.back();
+      IsmChatRoute.goBack();
     }
   }
 
   /// function to show dialog for changing the group title
   void showDialogForChangeGroupTitle() async {
-    _controller.groupTitleController.text = _controller.conversation!.chatName;
-    await Get.dialog(IsmChatAlertDialogBox(
+    _controller.groupTitleController.text =
+        _controller.conversation?.chatName ?? '';
+    await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
       title: IsmChatStrings.enterNewGroupTitle,
       content: TextFormField(
         controller: _controller.groupTitleController,
@@ -71,10 +72,11 @@ mixin IsmChatShowDialogMixin on GetxController {
           conversationId: _controller.conversation?.conversationId ?? '',
           isLoading: true);
     } else {
-      await Get.bottomSheet(
-        const ProfileChange(),
-        isDismissible: false,
+      await IsmChatContextWidget.showBottomsheetContext(
+        content: const ProfileChange(),
+        isDismissible: true,
         elevation: 0,
+        backgroundColor: IsmChatColors.transparent,
       );
     }
   }
@@ -83,8 +85,8 @@ mixin IsmChatShowDialogMixin on GetxController {
     bool userBlockOrNot, [
     bool includeMembers = false,
   ]) async {
-    await Get.dialog(
-      IsmChatAlertDialogBox(
+    await IsmChatContextWidget.showDialogContext(
+      content: IsmChatAlertDialogBox(
         title: userBlockOrNot
             ? IsmChatStrings.doWantUnBlckUser
             : IsmChatStrings.doWantBlckUser,
@@ -114,8 +116,8 @@ mixin IsmChatShowDialogMixin on GetxController {
 
   void showDialogCheckBlockUnBlock() async {
     if (_controller.conversation?.isBlockedByMe ?? false) {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.youBlockUser,
           actionLabels: const [IsmChatStrings.unblock],
           callbackActions: [
@@ -128,8 +130,8 @@ mixin IsmChatShowDialogMixin on GetxController {
         ),
       );
     } else {
-      await Get.dialog(
-        const IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: const IsmChatAlertDialogBox(
           title: IsmChatStrings.cannotBlock,
           cancelLabel: IsmChatStrings.okay,
         ),
@@ -140,8 +142,8 @@ mixin IsmChatShowDialogMixin on GetxController {
   Future<void> showDialogForMessageDelete(IsmChatMessageModel message,
       {bool fromMediaPrivew = false}) async {
     if (message.sentByMe) {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.deleteMessage,
           actionLabels: const [
             IsmChatStrings.deleteForEvery,
@@ -153,10 +155,10 @@ mixin IsmChatShowDialogMixin on GetxController {
           ],
         ),
       );
-      if (fromMediaPrivew) Get.back();
+      if (fromMediaPrivew) IsmChatRoute.goBack();
     } else {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title:
               '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
           actionLabels: const [IsmChatStrings.deleteForMe],
@@ -165,15 +167,15 @@ mixin IsmChatShowDialogMixin on GetxController {
           ],
         ),
       );
-      if (fromMediaPrivew) Get.back();
+      if (fromMediaPrivew) IsmChatRoute.goBack();
     }
   }
 
   void showDialogForDeleteMultipleMessage(
       bool sentByMe, IsmChatMessages messages) async {
     if (sentByMe) {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.deleteMessage,
           actionLabels: const [
             IsmChatStrings.deleteForEvery,
@@ -184,15 +186,15 @@ mixin IsmChatShowDialogMixin on GetxController {
             () => _controller.deleteMessageForMe(messages),
           ],
           onCancel: () {
-            Get.back<void>();
+            IsmChatRoute.goBack<void>();
             _controller.selectedMessage.clear();
             _controller.isMessageSeleted = false;
           },
         ),
       );
     } else {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title:
               '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
           actionLabels: const [IsmChatStrings.deleteForMe],
@@ -200,7 +202,7 @@ mixin IsmChatShowDialogMixin on GetxController {
             () => _controller.deleteMessageForMe(messages),
           ],
           onCancel: () {
-            Get.back<void>();
+            IsmChatRoute.goBack<void>();
             _controller.selectedMessage.clear();
             _controller.isMessageSeleted = false;
           },
@@ -222,8 +224,8 @@ mixin IsmChatShowDialogMixin on GetxController {
     }
 
     // This means chatting is not allowed and opponent has blocked the user
-    await Get.dialog(
-      const IsmChatAlertDialogBox(
+    await IsmChatContextWidget.showDialogContext(
+      content: const IsmChatAlertDialogBox(
         title: IsmChatStrings.cannotBlock,
         cancelLabel: 'Okay',
       ),
@@ -236,8 +238,8 @@ mixin IsmChatShowDialogMixin on GetxController {
         e.userId == IsmChatConfig.communicationConfig.userConfig.userId &&
         e.isAdmin);
     if (adminCount == 1 && !askToLeave && isUserAdmin) {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.areYouSure,
           content: const Text(IsmChatStrings.youAreOnlyAdmin),
           contentTextStyle: IsmChatStyles.w400Grey14,
@@ -249,8 +251,8 @@ mixin IsmChatShowDialogMixin on GetxController {
         ),
       );
     } else {
-      await Get.dialog(
-        IsmChatAlertDialogBox(
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
           title: 'Exit ${_controller.conversation?.chatName ?? ''}?',
           content: const Text(
             'Only group admins will be notified that you left the group',

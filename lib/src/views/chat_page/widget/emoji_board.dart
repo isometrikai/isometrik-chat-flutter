@@ -12,7 +12,7 @@ class EmojiBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.tag,
+        tag: IsmChat.i.chatPageTag,
         builder: (controller) => SizedBox(
           height: IsmChatDimens.twoHundredFifty,
           child: EmojiPicker(
