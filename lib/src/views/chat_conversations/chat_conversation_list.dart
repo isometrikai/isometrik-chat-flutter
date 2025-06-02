@@ -13,6 +13,7 @@ class IsmChatConversationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) {
           if (controller.isConversationsLoading) {
             return const IsmChatLoadingDialog();
@@ -75,7 +76,7 @@ class IsmChatConversationList extends StatelessWidget {
 class _ConversationList extends StatelessWidget {
   _ConversationList();
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => ListView.separated(
@@ -121,7 +122,7 @@ class _SlidableWidgetState extends State<_SlidableWidget>
     with SingleTickerProviderStateMixin {
   SlidableController? slidableController;
 
-  final controller = Get.find<IsmChatConversationsController>();
+  final controller = IsmChatUtility.conversationController;
 
   @override
   void initState() {

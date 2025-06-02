@@ -1165,4 +1165,10 @@ class IsmChat {
     String? searchTag,
   }) async =>
       await _delegate.getChatConversationFromLocal(searchTag: searchTag);
+
+  Future<void> deleteConversationController() async =>
+      await _delegate.deleteConversationController();
+
+  Future<void> deleteChatPageController() async =>
+      await _delegate.deleteChatPageController();
 }

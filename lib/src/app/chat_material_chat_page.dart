@@ -81,14 +81,14 @@ class _IsmChatPageState extends State<IsmChatPage> {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatMqttBinding().dependencies();
     }
-    if (!Get.isRegistered<IsmChatConversationsController>()) {
+    if (!IsmChatUtility.conversationControllerRegistered) {
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
-    while (!Get.isRegistered<IsmChatConversationsController>()) {
+    while (!IsmChatUtility.conversationControllerRegistered) {
       await Future.delayed(const Duration(milliseconds: 500));
     }
-    final conversationController = Get.find<IsmChatConversationsController>();
+    final conversationController = IsmChatUtility.conversationController;
     conversationController.updateLocalConversation(widget.conversation);
   }
 

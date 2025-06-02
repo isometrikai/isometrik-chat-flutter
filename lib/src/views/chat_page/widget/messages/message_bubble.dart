@@ -19,7 +19,7 @@ class MessageBubble extends StatelessWidget {
                 IsmChatConfig.kNavigatorKey.currentContext ??
                     IsmChatConfig.context)
             ? GlobalKey()
-            : Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
+            : IsmChatUtility.chatPageController
                 .getGlobalKey(message?.sentAt ?? 0);
 
   final IsmChatMessageModel _message;

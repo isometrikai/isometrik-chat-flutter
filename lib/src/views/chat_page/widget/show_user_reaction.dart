@@ -1,6 +1,5 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class ImsChatShowUserReaction extends StatefulWidget {
@@ -9,8 +8,7 @@ class ImsChatShowUserReaction extends StatefulWidget {
       required this.reactionType,
       required this.message,
       required this.index})
-      : _controller =
-            Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      : _controller = IsmChatUtility.chatPageController;
 
   final IsmChatMessageModel message;
   final String reactionType;
@@ -201,9 +199,8 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                     true
                                 ? IsmChatConfig
                                     .communicationConfig.userConfig.userProfile!
-                                : Get.find<IsmChatConversationsController>()
-                                        .userDetails
-                                        ?.userProfileImageUrl ??
+                                : IsmChatUtility.conversationController
+                                        .userDetails?.userProfileImageUrl ??
                                     ''
                             : widget._controller.conversation?.isGroup ?? false
                                 ? reactionUser?.profileUrl ?? ''
@@ -270,9 +267,8 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                         true
                                     ? IsmChatConfig.communicationConfig
                                         .userConfig.userProfile!
-                                    : Get.find<IsmChatConversationsController>()
-                                            .userDetails
-                                            ?.userProfileImageUrl ??
+                                    : IsmChatUtility.conversationController
+                                            .userDetails?.userProfileImageUrl ??
                                         ''
                                 : widget._controller.conversation?.isGroup ??
                                         false

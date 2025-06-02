@@ -21,7 +21,7 @@ class _IsmChatBoradcastMessagePageState
   void initState() {
     super.initState();
     IsmChat.i.chatPageTag = widget.viewTag;
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (!IsmChatUtility.chatPageControllerRegistered) {
       IsmChatPageBinding().dependencies();
     }
   }
@@ -35,13 +35,11 @@ class _IsmChatBoradcastMessagePageState
   Future<bool> _back(
     BuildContext context,
   ) async {
-    var controller =
-        Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
-    var conversationController = Get.find<IsmChatConversationsController>();
+    var controller = IsmChatUtility.chatPageController;
+    var conversationController = IsmChatUtility.conversationController;
 
     if (IsmChatResponsive.isWeb(context)) {
-      var controller =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      var controller = IsmChatUtility.chatPageController;
       controller.isBroadcast = false;
       conversationController.currentConversation = null;
       conversationController.currentConversationId = '';

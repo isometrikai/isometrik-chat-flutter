@@ -14,7 +14,7 @@ class IsmChatForwardView extends StatelessWidget {
 
   final IsmChatConversationModel conversation;
 
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController = IsmChatUtility.conversationController;
 
   Widget _buildSusWidget(String susTag) => Container(
         padding: IsmChatDimens.edgeInsets10_0,
@@ -47,6 +47,7 @@ class IsmChatForwardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (_) {
           converstaionController.callApiOrNot = true;
           converstaionController.forwardedList.clear();
@@ -365,8 +366,7 @@ class IsmChatForwardView extends StatelessWidget {
                                             IsmChatConfig.kNavigatorKey
                                                     .currentContext ??
                                                 IsmChatConfig.context,
-                                            Get.find<IsmChatPageController>(
-                                                    tag: IsmChat.i.chatPageTag)
+                                            IsmChatUtility.chatPageController
                                                 .conversation!,
                                             IsmChatCustomMessageType.forward) ??
                                     true) {

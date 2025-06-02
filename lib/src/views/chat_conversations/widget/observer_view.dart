@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatObserverUsersView extends StatefulWidget {
@@ -13,7 +12,7 @@ class IsmChatObserverUsersView extends StatefulWidget {
 }
 
 class _IsmChatObserverUsersViewState extends State<IsmChatObserverUsersView> {
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController = IsmChatUtility.conversationController;
 
   Future<List<UserDetails>>? future;
   bool isSearch = false;

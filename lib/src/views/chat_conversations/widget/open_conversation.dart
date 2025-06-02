@@ -13,7 +13,7 @@ class IsmChatOpenConversationView extends StatefulWidget {
 class _IsmChatOpenConversationViewState
     extends State<IsmChatOpenConversationView> {
   var scrollController = ScrollController();
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController = IsmChatUtility.conversationController;
   @override
   void initState() {
     super.initState();
@@ -35,6 +35,7 @@ class _IsmChatOpenConversationViewState
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) => Scaffold(
           appBar: [
             IsmChatConversationPosition.tabBar,
@@ -121,16 +122,15 @@ class _IsmChatOpenConversationViewState
                                     IsmChatConfig.context)) {
                                   IsmChatRoute.goBack();
 
-                                  if (!Get.isRegistered<IsmChatPageController>(
-                                      tag: IsmChat.i.chatPageTag)) {
+                                  if (!IsmChatUtility
+                                      .chatPageControllerRegistered) {
                                     IsmChatPageBinding().dependencies();
                                   }
                                   controller.isRenderChatPageaScreen =
                                       IsRenderChatPageScreen
                                           .openChatMessagePage;
                                   final chatPagecontroller =
-                                      Get.find<IsmChatPageController>(
-                                          tag: IsmChat.i.chatPageTag);
+                                      IsmChatUtility.chatPageController;
                                   chatPagecontroller.messages.clear();
                                   chatPagecontroller.startInit(
                                     isBroadcasts: true,

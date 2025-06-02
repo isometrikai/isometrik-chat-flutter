@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConversationCard extends StatefulWidget {
@@ -53,8 +52,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
       child: Container(
         decoration: BoxDecoration(
           color: IsmChatResponsive.isWeb(context)
-              ? Get.find<IsmChatConversationsController>()
-                          .currentConversationId ==
+              ? IsmChatUtility.conversationController.currentConversationId ==
                       widget.conversation.conversationId
                   ? IsmChatConfig
                           .chatTheme.chatListCardThemData?.backgroundColor ??

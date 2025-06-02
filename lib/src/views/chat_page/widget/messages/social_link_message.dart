@@ -98,8 +98,8 @@ class IsmChatSocialLinkMessage extends StatelessWidget {
                                       .toList();
 
                                   if (!user.isNullOrEmpty) {
-                                    var conversationcontroller = Get.find<
-                                        IsmChatConversationsController>();
+                                    var conversationcontroller =
+                                        IsmChatUtility.conversationController;
                                     var conversationId = conversationcontroller
                                         .getConversationId(user!.first.userId);
                                     conversationcontroller.contactDetails =

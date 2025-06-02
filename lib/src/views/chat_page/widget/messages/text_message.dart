@@ -119,8 +119,8 @@ class IsmChatTextMessage extends StatelessWidget {
 
                                               if (!user.isNullOrEmpty) {
                                                 var conversationcontroller =
-                                                    Get.find<
-                                                        IsmChatConversationsController>();
+                                                    IsmChatUtility
+                                                        .conversationController;
                                                 var conversationId =
                                                     conversationcontroller
                                                         .getConversationId(

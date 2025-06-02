@@ -22,8 +22,7 @@ class IsmMedia extends StatefulWidget {
 class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
   List<Map<String, List<IsmChatMessageModel>>> storeWidgetMediaList = [];
 
-  final chatPageController =
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  final chatPageController = IsmChatUtility.chatPageController;
 
   TabController? _tabController;
 
@@ -63,8 +62,8 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
             leading: IconButton(
               onPressed: IsmChatResponsive.isWeb(context)
                   ? () {
-                      Get.find<IsmChatConversationsController>()
-                              .isRenderChatPageaScreen =
+                      IsmChatUtility
+                              .conversationController.isRenderChatPageaScreen =
                           IsRenderChatPageScreen.none;
                     }
                   : IsmChatRoute.goBack,

@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPageViewModel {
@@ -36,8 +35,7 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.messageDetailsUpdated.name,
         ].contains(e.action));
     if (searchText == null || searchText.isEmpty) {
-      final controller =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      final controller = IsmChatUtility.chatPageController;
       if (controller.messages.isNotEmpty) {
         messages.removeWhere(
             (e) => e.messageId == controller.messages.last.messageId);
@@ -114,8 +112,7 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.conversationDetailsUpdated.name,
         ].contains(e.action));
     if (searchText == null || searchText.isEmpty) {
-      final controller =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      final controller = IsmChatUtility.chatPageController;
       if (controller.messages.isNotEmpty) {
         messages.removeWhere(
             (e) => e.messageId == controller.messages.last.messageId);
@@ -312,8 +309,7 @@ class IsmChatPageViewModel {
           ?.saveConversation(conversation: conversation);
     }
 
-    await Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-        .getMessagesFromDB(conversationId);
+    await IsmChatUtility.chatPageController.getMessagesFromDB(conversationId);
   }
 
   Future<void> deleteMessageForEveryone(
@@ -357,8 +353,7 @@ class IsmChatPageViewModel {
       await IsmChatConfig.dbWrapper!
           .saveConversation(conversation: conversation);
     }
-    await Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-        .getMessagesFromDB(conversationId);
+    await IsmChatUtility.chatPageController.getMessagesFromDB(conversationId);
   }
 
   Future<void> clearAllMessages({
@@ -371,7 +366,7 @@ class IsmChatPageViewModel {
     if (!response!.hasError) {
       await IsmChatConfig.dbWrapper
           ?.clearAllMessage(conversationId: conversationId);
-      await Get.find<IsmChatConversationsController>().getChatConversations();
+      await IsmChatUtility.conversationController.getChatConversations();
     }
   }
 
@@ -457,8 +452,7 @@ class IsmChatPageViewModel {
         await IsmChatConfig.dbWrapper
             ?.saveConversation(conversation: conversation);
       }
-      var controller =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      var controller = IsmChatUtility.chatPageController;
       controller.didReactedLast = true;
       await controller.getMessagesFromDB(reaction.conversationId);
     }
@@ -507,8 +501,7 @@ class IsmChatPageViewModel {
         await IsmChatConfig.dbWrapper!
             .saveConversation(conversation: conversation);
       }
-      var controller =
-          Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+      var controller = IsmChatUtility.chatPageController;
       controller.didReactedLast = true;
       await controller.getMessagesFromDB(reaction.conversationId);
     }

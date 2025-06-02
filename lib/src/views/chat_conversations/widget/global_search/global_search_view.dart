@@ -23,6 +23,7 @@ class _IsmChatGlobalSearchViewState extends State<IsmChatGlobalSearchView>
   @override
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
+          tag: IsmChat.i.chatListPageTag,
           builder: (controller) => Scaffold(
                 appBar: IsmChatAppBar(
                   title: Text(

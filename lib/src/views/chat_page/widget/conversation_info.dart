@@ -6,7 +6,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatConverstaionInfoView extends StatelessWidget {
   IsmChatConverstaionInfoView({super.key});
 
-  final conversationController = Get.find<IsmChatConversationsController>();
+  final conversationController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
@@ -15,8 +15,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
           conversationController.mediaList.clear();
           conversationController.mediaListLinks.clear();
           conversationController.mediaListDocs.clear();
-          var controller =
-              Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+          var controller = IsmChatUtility.chatPageController;
           await controller.getConverstaionDetails();
         },
         builder: (controller) => Scaffold(
@@ -26,7 +25,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
             onBack: !IsmChatResponsive.isWeb(context)
                 ? null
                 : () {
-                    Get.find<IsmChatConversationsController>()
+                    IsmChatUtility.conversationController
                         .isRenderChatPageaScreen = IsRenderChatPageScreen.none;
                   },
             title: Text(
@@ -213,7 +212,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           child: IsmChatTapHandler(
                             onTap: () {
                               if (IsmChatResponsive.isWeb(context)) {
-                                Get.find<IsmChatConversationsController>()
+                                IsmChatUtility.conversationController
                                         .isRenderChatPageaScreen =
                                     IsRenderChatPageScreen.coversationMediaView;
                               } else {
@@ -280,7 +279,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                 controller.participnatsEditingController
                                     .clear();
                                 if (IsmChatResponsive.isWeb(context)) {
-                                  Get.find<IsmChatConversationsController>()
+                                  IsmChatUtility.conversationController
                                           .isRenderChatPageaScreen =
                                       IsRenderChatPageScreen.groupEligibleView;
                                 } else {
@@ -516,8 +515,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                       IsmChatStrings.deleteChat
                                     ],
                                     callbackActions: [
-                                      () => Get.find<
-                                              IsmChatConversationsController>()
+                                      () => IsmChatUtility
+                                          .conversationController
                                           .deleteChat(
                                               '${controller.conversation?.conversationId}'),
                                     ],

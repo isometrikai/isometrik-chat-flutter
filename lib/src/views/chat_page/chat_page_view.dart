@@ -25,7 +25,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     IsmChat.i.chatPageTag = widget.viewTag;
-    if (!Get.isRegistered<IsmChatPageController>(tag: IsmChat.i.chatPageTag)) {
+    if (!IsmChatUtility.chatPageControllerRegistered) {
       IsmChatPageBinding().dependencies();
     }
   }
@@ -57,8 +57,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     }
   }
 
-  IsmChatPageController get controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  IsmChatPageController get controller => IsmChatUtility.chatPageController;
 
   Future<bool> navigateBack() async {
     if (controller.isMessageSeleted) {
@@ -66,13 +65,11 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       controller.selectedMessage.clear();
       return false;
     } else {
-      IsmChatRoute.goBack<void>();
+      IsmChatRoute.goBack();
       controller.closeOverlay();
       final updateMessage = await controller.updateLastMessage();
-      if (IsmChatProperties.chatPageProperties.header?.onBackTap != null) {
-        IsmChatProperties.chatPageProperties.header?.onBackTap!
-            .call(updateMessage);
-      }
+      IsmChatProperties.chatPageProperties.header?.onBackTap
+          ?.call(updateMessage);
       return true;
     }
   }
@@ -219,7 +216,7 @@ class _IsmChatPageView extends StatelessWidget {
                                               IsmChatConfig.communicationConfig
                                                   .userConfig.userId)) {
                                         if (IsmChatResponsive.isWeb(context)) {
-                                          Get.find<IsmChatConversationsController>()
+                                          IsmChatUtility.conversationController
                                                   .isRenderChatPageaScreen =
                                               IsRenderChatPageScreen
                                                   .coversationInfoView;

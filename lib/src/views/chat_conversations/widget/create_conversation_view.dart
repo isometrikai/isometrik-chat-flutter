@@ -16,10 +16,11 @@ class IsmChatCreateConversationView extends StatelessWidget {
 
   final bool isGroupConversation;
   final IsmChatConversationType conversationType;
-  final converstaionController = Get.find<IsmChatConversationsController>();
+  final converstaionController = IsmChatUtility.conversationController;
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         initState: (_) async {
           converstaionController.initCreateConversation(isGroupConversation);
         },
@@ -502,6 +503,7 @@ class _GroupChatImageAndName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+        tag: IsmChat.i.chatListPageTag,
         builder: (controller) => Column(
           children: [
             IsmChatDimens.boxHeight10,

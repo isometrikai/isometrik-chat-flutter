@@ -1,8 +1,7 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatPageSendMessageMixin on GetxController {
-  IsmChatPageController get _controller =>
-      Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag);
+  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
 
   void sendMessage({
     required int messageType,
@@ -202,8 +201,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
                 ?.call(
                     IsmChatConfig.kNavigatorKey.currentContext ??
                         IsmChatConfig.context,
-                    Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-                        .conversation!,
+                    IsmChatUtility.chatPageController.conversation!,
                     media.isVideo
                         ? IsmChatCustomMessageType.video
                         : IsmChatCustomMessageType.image) ??
@@ -478,8 +476,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
               ?.call(
                   IsmChatConfig.kNavigatorKey.currentContext ??
                       IsmChatConfig.context,
-                  Get.find<IsmChatPageController>(tag: IsmChat.i.chatPageTag)
-                      .conversation!,
+                  IsmChatUtility.chatPageController.conversation!,
                   IsmChatCustomMessageType.file) ??
           true) {
         await ismPostMediaUrl(

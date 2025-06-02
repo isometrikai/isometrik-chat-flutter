@@ -7,9 +7,11 @@ class IsmChatBlockedUsersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
+      tag: IsmChat.i.chatListPageTag,
       initState: (state) {
         IsmChatUtility.doLater(() async {
-          await Get.find<IsmChatConversationsController>()
+          await Get.find<IsmChatConversationsController>(
+                  tag: IsmChat.i.chatListPageTag)
               .getBlockUser(isLoading: true);
         });
       },

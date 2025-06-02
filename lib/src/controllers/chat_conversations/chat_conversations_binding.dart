@@ -5,12 +5,12 @@ class IsmChatConversationsBinding extends Bindings {
   @override
   void dependencies() {
     Get.put(
-      IsmChatConversationsController(
-        IsmChatConversationsViewModel(
-          IsmChatConversationsRepository(),
+        IsmChatConversationsController(
+          IsmChatConversationsViewModel(
+            IsmChatConversationsRepository(),
+          ),
         ),
-      ),
-      permanent: IsmChat.i.chatListPageTag == null,
-    );
+        permanent: IsmChat.i.chatListPageTag == null,
+        tag: IsmChat.i.chatListPageTag);
   }
 }
