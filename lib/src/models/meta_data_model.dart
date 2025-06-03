@@ -39,7 +39,7 @@ class IsmChatMetaData {
           ? {'${map['customType']}': map['customType']}
           : map['customType'] as Map<String, dynamic>? ?? {},
       customMetaData: map['customMetaData'] != null
-          ? map['customMetaData'] as Map<String, dynamic>
+          ? map['customMetaData'] as Map<String, dynamic>? ?? {}
           : map,
       assetList: map['assetList'] == null
           ? []

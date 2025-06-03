@@ -100,7 +100,7 @@ class IsmChatCommonViewModel {
     bool isUpdateMesage = true,
   }) async {
     try {
-      var messageId = await _repository.sendMessage(
+      var response = await _repository.sendMessage(
         showInConversation: showInConversation,
         attachments: attachments,
         events: events,
@@ -116,8 +116,9 @@ class IsmChatCommonViewModel {
         notificationTitle: notificationTitle,
         body: body,
       );
-      if (messageId == null || messageId.isEmpty) return false;
+      if (response == null) return false;
       if (!isUpdateMesage) return false;
+      if (response.messageId.isEmpty && response.respone.errorCode == 403) {}
       if (isBroadcast) {
         final chatPageController = IsmChatUtility.chatPageController;
         for (var x = 0; x < chatPageController.messages.length; x++) {
@@ -126,7 +127,7 @@ class IsmChatCommonViewModel {
               messages.sentAt != createdAt) {
             continue;
           }
-          messages.messageId = messageId;
+          messages.messageId = response.messageId;
           messages.deliveredToAll = false;
           messages.readByAll = false;
           messages.isUploading = false;
@@ -141,10 +142,15 @@ class IsmChatCommonViewModel {
         }
         var pendingMessage = chatPendingMessages?.messages?['$createdAt'];
         if (pendingMessage != null) {
-          pendingMessage.messageId = messageId;
-          pendingMessage.deliveredToAll = false;
-          pendingMessage.readByAll = false;
-          pendingMessage.isUploading = false;
+          if (response.messageId.isNotEmpty) {
+            pendingMessage.messageId = response.messageId;
+            pendingMessage.deliveredToAll = false;
+            pendingMessage.readByAll = false;
+            pendingMessage.isUploading = false;
+          } else {
+            pendingMessage.messageId = '';
+            pendingMessage.isInvalid = true;
+          }
           chatPendingMessages?.messages
               ?.removeWhere((key, value) => key == '$createdAt');
           await dbBox?.saveConversation(

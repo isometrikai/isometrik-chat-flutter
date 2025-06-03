@@ -118,6 +118,29 @@ IsmChatApp(
     })
 ```
 
+### Required Parameters
+
+- `communicationConfig`: The configuration for the MQTT communication.
+- `kNavigatorKey`: A global key for the navigator state that is used for navigation and context management throughout the chat application. This key is essential for:
+  - Managing navigation between different chat screens
+  - Showing dialogs and bottom sheets
+  - Accessing the current context for UI operations
+  - Handling back navigation
+  - Managing route transitions
+
+Example usage:
+
+```dart
+final GlobalKey<NavigatorState> kNavigatorKey = GlobalKey<NavigatorState>();
+
+// In your MaterialApp
+MaterialApp(
+  navigatorKey: kNavigatorKey,
+)
+```
+
+Note: Make sure to use the same `kNavigatorKey` instance in both your `MaterialApp` and the `IsmChat.initialize()` call to ensure proper navigation and context management throughout the chat application.
+
 11. Add listener for MQTT events: Adds a listener to handle MQTT events. This is useful for responding to real-time message updates and other events.
 
 ```dart

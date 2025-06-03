@@ -242,18 +242,33 @@ class MessageBubble extends StatelessWidget {
                                         .deletedForEveryone) ...[
                               if (_message.messageId?.isEmpty == true) ...[
                                 IsmChatDimens.boxWidth2,
-                                Icon(
-                                  Icons.watch_later_outlined,
-                                  color: IsmChatConfig
-                                          .chatTheme
-                                          .chatPageTheme
-                                          ?.messageStatusTheme
-                                          ?.unreadCheckColor ??
-                                      Colors.white,
-                                  size: IsmChatConfig.chatTheme.chatPageTheme
-                                          ?.messageStatusTheme?.checkSize ??
-                                      IsmChatDimens.forteen,
-                                ),
+                                if (_message.isInvalid == true) ...[
+                                  Icon(
+                                    Icons.error_outlined,
+                                    color: IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
+                                            ?.inValidIconColor ??
+                                        IsmChatColors.redColor,
+                                    size: IsmChatConfig.chatTheme.chatPageTheme
+                                            ?.messageStatusTheme?.checkSize ??
+                                        IsmChatDimens.forteen,
+                                  ),
+                                ] else ...[
+                                  Icon(
+                                    Icons.watch_later_outlined,
+                                    color: IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.messageStatusTheme
+                                            ?.unreadCheckColor ??
+                                        IsmChatColors.whiteColor,
+                                    size: IsmChatConfig.chatTheme.chatPageTheme
+                                            ?.messageStatusTheme?.checkSize ??
+                                        IsmChatDimens.forteen,
+                                  ),
+                                ]
                               ] else if (IsmChatProperties
                                   .chatPageProperties.features
                                   .contains(
@@ -276,7 +291,7 @@ class MessageBubble extends StatelessWidget {
                                               .chatPageTheme
                                               ?.messageStatusTheme
                                               ?.unreadCheckColor ??
-                                          Colors.white,
+                                          IsmChatColors.whiteColor,
                                   size: IsmChatConfig.chatTheme.chatPageTheme
                                           ?.messageStatusTheme?.checkSize ??
                                       IsmChatDimens.forteen,

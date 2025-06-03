@@ -53,7 +53,7 @@ class IsmChatCommonRepository {
     }
   }
 
-  Future<String?> sendMessage({
+  Future<({String messageId, IsmChatResponseModel respone})?> sendMessage({
     required bool showInConversation,
     required int messageType,
     required bool encrypted,
@@ -94,11 +94,11 @@ class IsmChatCommonRepository {
         headers: IsmChatUtility.tokenCommonHeader(),
       );
       if (response.hasError) {
-        return null;
+        return (messageId: '', respone: response);
       }
       var data = jsonDecode(response.data);
-      var messageId = data['messageId'] as String;
-      return messageId;
+      var messageId = data['messageId'] as String? ?? '';
+      return (messageId: messageId, respone: response);
     } catch (e, st) {
       IsmChatLog.error('Send Message $e', st);
       return null;
