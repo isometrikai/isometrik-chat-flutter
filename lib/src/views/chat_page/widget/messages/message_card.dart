@@ -201,18 +201,33 @@ class _MessageCardState extends State<MessageCard>
                                       .deletedForEveryone) ...[
                             if (widget.message.messageId?.isEmpty == true) ...[
                               IsmChatDimens.boxWidth2,
-                              Icon(
-                                Icons.watch_later_outlined,
-                                color: IsmChatConfig
-                                        .chatTheme
-                                        .chatPageTheme
-                                        ?.messageStatusTheme
-                                        ?.unreadCheckColor ??
-                                    Colors.black,
-                                size: IsmChatConfig.chatTheme.chatPageTheme
-                                        ?.messageStatusTheme?.checkSize ??
-                                    IsmChatDimens.forteen,
-                              ),
+                              if (widget.message.isInvalidMessage == true) ...[
+                                Icon(
+                                  Icons.error_outlined,
+                                  color: IsmChatConfig
+                                          .chatTheme
+                                          .chatPageTheme
+                                          ?.messageStatusTheme
+                                          ?.inValidIconColor ??
+                                      IsmChatColors.redColor,
+                                  size: IsmChatConfig.chatTheme.chatPageTheme
+                                          ?.messageStatusTheme?.checkSize ??
+                                      IsmChatDimens.forteen,
+                                ),
+                              ] else ...[
+                                Icon(
+                                  Icons.watch_later_outlined,
+                                  color: IsmChatConfig
+                                          .chatTheme
+                                          .chatPageTheme
+                                          ?.messageStatusTheme
+                                          ?.unreadCheckColor ??
+                                      IsmChatColors.whiteColor,
+                                  size: IsmChatConfig.chatTheme.chatPageTheme
+                                          ?.messageStatusTheme?.checkSize ??
+                                      IsmChatDimens.forteen,
+                                ),
+                              ]
                             ] else if (IsmChatProperties
                                 .chatPageProperties.features
                                 .contains(

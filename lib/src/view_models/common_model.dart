@@ -149,7 +149,7 @@ class IsmChatCommonViewModel {
             pendingMessage.isUploading = false;
           } else {
             pendingMessage.messageId = '';
-            pendingMessage.isInvalid = true;
+            pendingMessage.isInvalidMessage = true;
           }
           chatPendingMessages?.messages
               ?.removeWhere((key, value) => key == '$createdAt');

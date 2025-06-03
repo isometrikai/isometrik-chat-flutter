@@ -581,14 +581,25 @@ extension ModelConversion on IsmChatConversationModel {
       }
 
       return lastMessageDetails?.messageId.isEmpty == true
-          ? Icon(
-              Icons.watch_later_outlined,
-              color: IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme
-                      ?.unreadCheckColor ??
-                  IsmChatColors.greyColor,
-              size: IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
-                  IsmChatDimens.sixteen,
-            )
+          ? lastMessageDetails?.isInvalidMessage == true
+              ? Icon(
+                  Icons.error_outlined,
+                  color: IsmChatConfig.chatTheme.chatPageTheme
+                          ?.messageStatusTheme?.inValidIconColor ??
+                      IsmChatColors.greyColor,
+                  size:
+                      IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
+                          IsmChatDimens.sixteen,
+                )
+              : Icon(
+                  Icons.watch_later_outlined,
+                  color: IsmChatConfig.chatTheme.chatPageTheme
+                          ?.messageStatusTheme?.unreadCheckColor ??
+                      IsmChatColors.greyColor,
+                  size:
+                      IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
+                          IsmChatDimens.sixteen,
+                )
           : IsmChatProperties.chatPageProperties.features.contains(
               IsmChatFeature.showMessageStatus,
             )

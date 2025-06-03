@@ -77,6 +77,7 @@ class LastMessageDetails {
       memberName: map['memberName'] as String? ?? '',
       memberId: map['memberId'] as String? ?? '',
       audioOnly: map['audioOnly'] as bool? ?? false,
+      isInvalidMessage: map['isInvalidMessage'] as bool? ?? false,
       callDurations: map['callDurations'] == null
           ? []
           : List<CallDuration>.from(
@@ -132,6 +133,7 @@ class LastMessageDetails {
     this.callDurations,
     this.meetingId,
     this.meetingType,
+    this.isInvalidMessage,
   });
 
   final bool showInConversation;
@@ -160,6 +162,7 @@ class LastMessageDetails {
   final String? meetingId;
   final int? meetingType;
   final bool? audioOnly;
+  final bool? isInvalidMessage;
 
   String get adminOpponentName =>
       memberId == IsmChatConfig.communicationConfig.userConfig.userId
@@ -193,6 +196,7 @@ class LastMessageDetails {
     String? meetingId,
     int? meetingType,
     bool? audioOnly,
+    bool? isInvalidMessage,
   }) =>
       LastMessageDetails(
         showInConversation: showInConversation ?? this.showInConversation,
@@ -220,6 +224,7 @@ class LastMessageDetails {
         meetingId: meetingId ?? this.meetingId,
         meetingType: meetingType ?? this.meetingType,
         audioOnly: audioOnly ?? this.audioOnly,
+        isInvalidMessage: isInvalidMessage ?? this.isInvalidMessage,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -247,14 +252,15 @@ class LastMessageDetails {
         'callDurations': callDurations?.map((e) => e.toMap()).toList(),
         'meetingId': meetingId,
         'meetingType': meetingType,
-        'audioOnly': audioOnly
+        'audioOnly': audioOnly,
+        'isInvalidMessage': isInvalidMessage,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'LastMessageDetails(showInConversation: $showInConversation, sentAt: $sentAt, senderName: $senderName, senderId: $senderId, messageType: $messageType, messageId: $messageId, conversationId: $conversationId, body: $body, customType: $customType, deliverCount: $deliverCount, readCount: $readCount, sentByMe: $sentByMe, members: $members,  reactionType : $reactionType, action : $action, deliveredTo :$deliveredTo, readBy : $readBy, initiatorId : $initiatorId, memberName : $memberName, memberId : $memberId, metaData : $metaData, callDurations:$callDurations, meetingId:$meetingId, meetingType:$meetingType, audioOnly:$audioOnly)';
+      'LastMessageDetails(showInConversation: $showInConversation, sentAt: $sentAt, senderName: $senderName, senderId: $senderId, messageType: $messageType, messageId: $messageId, conversationId: $conversationId, body: $body, customType: $customType, deliverCount: $deliverCount, readCount: $readCount, sentByMe: $sentByMe, members: $members,  reactionType : $reactionType, action : $action, deliveredTo :$deliveredTo, readBy : $readBy, initiatorId : $initiatorId, memberName : $memberName, memberId : $memberId, metaData : $metaData, callDurations:$callDurations, meetingId:$meetingId, meetingType:$meetingType, audioOnly:$audioOnly, isInvalidMessage :$isInvalidMessage)';
 
   @override
   bool operator ==(covariant LastMessageDetails other) {
@@ -284,7 +290,8 @@ class LastMessageDetails {
         other.callDurations == callDurations &&
         other.meetingId == meetingId &&
         other.meetingType == meetingType &&
-        other.audioOnly == audioOnly;
+        other.audioOnly == audioOnly &&
+        other.isInvalidMessage == isInvalidMessage;
   }
 
   @override
@@ -313,5 +320,6 @@ class LastMessageDetails {
       callDurations.hashCode ^
       meetingId.hashCode ^
       meetingType.hashCode ^
+      isInvalidMessage.hashCode ^
       audioOnly.hashCode;
 }

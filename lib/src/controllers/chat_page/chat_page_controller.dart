@@ -1298,68 +1298,70 @@ class IsmChatPageController extends GetxController
       if (chatConversation != null) {
         if (messages.isNotEmpty &&
             messages.last.customType != IsmChatCustomMessageType.removeMember) {
+          final lastMessage = messages.last;
           chatConversation = chatConversation.copyWith(
             lastMessageDetails: chatConversation.lastMessageDetails?.copyWith(
-              audioOnly: messages.last.audioOnly,
-              meetingId: messages.last.meetingId,
-              meetingType: messages.last.meetingType,
-              callDurations: messages.last.callDurations,
-              sentByMe: messages.last.sentByMe,
+              audioOnly: lastMessage.audioOnly,
+              meetingId: lastMessage.meetingId,
+              meetingType: lastMessage.meetingType,
+              callDurations: lastMessage.callDurations,
+              sentByMe: lastMessage.sentByMe,
               showInConversation: true,
-              senderId: messages.last.senderInfo?.userId ?? '',
+              senderId: lastMessage.senderInfo?.userId ?? '',
               sentAt: chatConversation
                           .lastMessageDetails?.reactionType?.isNotEmpty ==
                       true
                   ? chatConversation.lastMessageDetails?.sentAt
-                  : messages.last.sentAt,
+                  : lastMessage.sentAt,
               senderName: [
                 IsmChatCustomMessageType.removeAdmin,
                 IsmChatCustomMessageType.addAdmin,
                 IsmChatCustomMessageType.memberJoin,
                 IsmChatCustomMessageType.memberLeave,
-              ].contains(messages.last.customType)
-                  ? messages.last.userName?.isNotEmpty == true
-                      ? messages.last.userName
-                      : messages.last.initiatorName ?? ''
+              ].contains(lastMessage.customType)
+                  ? lastMessage.userName?.isNotEmpty == true
+                      ? lastMessage.userName
+                      : lastMessage.initiatorName ?? ''
                   : chatConversation.isGroup ?? false
-                      ? messages.last.senderInfo?.userName
-                      : messages.last.chatName,
-              messageType: messages.last.messageType?.value ?? 0,
-              messageId: messages.last.messageId ?? '',
-              conversationId: messages.last.conversationId ?? '',
-              body: messages.last.body,
-              action: messages.last.action,
-              customType: messages.last.customType,
-              readCount: messages.last.messageId?.isNotEmpty == true
+                      ? lastMessage.senderInfo?.userName
+                      : lastMessage.chatName,
+              messageType: lastMessage.messageType?.value ?? 0,
+              messageId: lastMessage.messageId ?? '',
+              conversationId: lastMessage.conversationId ?? '',
+              body: lastMessage.body,
+              action: lastMessage.action,
+              customType: lastMessage.customType,
+              readCount: lastMessage.messageId?.isNotEmpty == true
                   ? chatConversation.isGroup ?? false
-                      ? messages.last.readByAll ?? false
+                      ? lastMessage.readByAll ?? false
                           ? chatConversation.membersCount
-                          : messages.last.lastReadAt?.length
-                      : messages.last.readByAll ?? false
+                          : lastMessage.lastReadAt?.length
+                      : lastMessage.readByAll ?? false
                           ? 1
                           : 0
                   : 0,
-              deliveredTo: messages.last.messageId?.isNotEmpty == true
-                  ? messages.last.deliveredTo
+              deliveredTo: lastMessage.messageId?.isNotEmpty == true
+                  ? lastMessage.deliveredTo
                   : [],
-              readBy: messages.last.messageId?.isNotEmpty == true
-                  ? messages.last.readBy
+              readBy: lastMessage.messageId?.isNotEmpty == true
+                  ? lastMessage.readBy
                   : [],
-              deliverCount: messages.last.messageId?.isNotEmpty == true
+              deliverCount: lastMessage.messageId?.isNotEmpty == true
                   ? chatConversation.isGroup ?? false
-                      ? messages.last.deliveredToAll ?? false
+                      ? lastMessage.deliveredToAll ?? false
                           ? chatConversation.membersCount
                           : 0
-                      : messages.last.deliveredToAll ?? false
+                      : lastMessage.deliveredToAll ?? false
                           ? 1
                           : 0
                   : 0,
-              members: messages.last.members
+              members: lastMessage.members
                       ?.map((e) => e.memberName ?? '')
                       .toList() ??
                   [],
-              initiatorId: messages.last.initiatorId,
-              metaData: messages.last.metaData,
+              initiatorId: lastMessage.initiatorId,
+              metaData: lastMessage.metaData,
+              isInvalidMessage: lastMessage.isInvalidMessage,
             ),
             unreadMessagesCount: 0,
           );

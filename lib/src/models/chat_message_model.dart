@@ -58,7 +58,7 @@ class IsmChatMessageModel {
     this.meetingId,
     this.meetingType,
     this.audioOnly,
-    this.isInvalid,
+    this.isInvalidMessage,
   });
   factory IsmChatMessageModel.fromJson(String source) =>
       IsmChatMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -227,7 +227,7 @@ class IsmChatMessageModel {
           : null,
       meetingId: map['meetingId'] as String? ?? '',
       audioOnly: map['audioOnly'] as bool? ?? false,
-      isInvalid: map['isInvalid'] as bool? ?? false,
+      isInvalidMessage: map['isInvalidMessage'] as bool? ?? false,
       meetingType:
           map['meetingType'] == null ? null : map['meetingType'] as int? ?? 0,
     );
@@ -314,7 +314,7 @@ class IsmChatMessageModel {
         meetingId: '',
         meetingType: null,
         audioOnly: null,
-        isInvalid: null,
+        isInvalidMessage: null,
       );
 
   factory IsmChatMessageModel.fromMonth(int sentAt) => IsmChatMessageModel(
@@ -366,7 +366,7 @@ class IsmChatMessageModel {
         meetingId: '',
         meetingType: null,
         audioOnly: null,
-        isInvalid: null,
+        isInvalidMessage: null,
       );
 
   List<IsmChatContactMetaDatModel> get contacts {
@@ -450,7 +450,7 @@ class IsmChatMessageModel {
         'meetingId': meetingId,
         'meetingType': meetingType,
         'audioOnly': audioOnly,
-        'isInvalid': isInvalid,
+        'isInvalid': isInvalidMessage,
       }.removeNullValues();
 
   String body;
@@ -505,7 +505,7 @@ class IsmChatMessageModel {
   String? meetingId;
   int? meetingType;
   bool? audioOnly;
-  bool? isInvalid;
+  bool? isInvalidMessage;
 
   String get chatName => conversationTitle ?? senderInfo?.userName ?? '';
 
@@ -570,7 +570,7 @@ class IsmChatMessageModel {
     String? meetingId,
     int? meetingType,
     bool? audioOnly,
-    bool? isInvalid,
+    bool? isInvalidMessage,
   }) =>
       IsmChatMessageModel(
         body: body ?? this.body,
@@ -626,14 +626,14 @@ class IsmChatMessageModel {
         meetingId: meetingId ?? this.meetingId,
         meetingType: meetingType ?? this.meetingType,
         audioOnly: audioOnly ?? this.audioOnly,
-        isInvalid: isInvalid ?? this.isInvalid,
+        isInvalidMessage: isInvalidMessage ?? this.isInvalidMessage,
       );
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatMessageModel(body: $body, action: $action, updatedAt: $updatedAt, sentAt: $sentAt, unreadMessagesCount: $unreadMessagesCount, userName: $userName, userId: $userId, searchableTags: $searchableTags, privateOneToOne: $privateOneToOne, showInConversation: $showInConversation, readByAll: $readByAll, senderInfo: $senderInfo, metaData: $metaData, messagingDisabled: $messagingDisabled, membersCount: $membersCount, lastReadAt: $lastReadAt, attachments: $attachments, lastMessageSentAt: $lastMessageSentAt, isGroup: $isGroup, deliveredToAll: $deliveredToAll, customType: $customType, createdByUserName: $createdByUserName, createdByUserImageUrl: $createdByUserImageUrl, createdBy: $createdBy, conversationType: $conversationType, conversationTitle: $conversationTitle, conversationImageUrl: $conversationImageUrl, conversationId: $conversationId, parentMessageId: $parentMessageId, initiatorId : $initiatorId  messageId: $messageId, deviceId: $deviceId, adminCount: $adminCount, messageType: $messageType, sentByMe: $sentByMe, mentionedUsers: $mentionedUsers, initiatorName : $initiatorName, members: $members, memberId: $memberId, memberName: $memberName, reactions : $reactions, readBy : $readBy, deliveredTo : $deliveredTo, isUploading : $isUploading, conversationDetails : $conversationDetails, events : $events, callDurations:$callDurations, meetingId :$meetingId, meetingType :$meetingType ,audioOnly:$audioOnly, isInvalid: $isInvalid)';
+      'IsmChatMessageModel(body: $body, action: $action, updatedAt: $updatedAt, sentAt: $sentAt, unreadMessagesCount: $unreadMessagesCount, userName: $userName, userId: $userId, searchableTags: $searchableTags, privateOneToOne: $privateOneToOne, showInConversation: $showInConversation, readByAll: $readByAll, senderInfo: $senderInfo, metaData: $metaData, messagingDisabled: $messagingDisabled, membersCount: $membersCount, lastReadAt: $lastReadAt, attachments: $attachments, lastMessageSentAt: $lastMessageSentAt, isGroup: $isGroup, deliveredToAll: $deliveredToAll, customType: $customType, createdByUserName: $createdByUserName, createdByUserImageUrl: $createdByUserImageUrl, createdBy: $createdBy, conversationType: $conversationType, conversationTitle: $conversationTitle, conversationImageUrl: $conversationImageUrl, conversationId: $conversationId, parentMessageId: $parentMessageId, initiatorId : $initiatorId  messageId: $messageId, deviceId: $deviceId, adminCount: $adminCount, messageType: $messageType, sentByMe: $sentByMe, mentionedUsers: $mentionedUsers, initiatorName : $initiatorName, members: $members, memberId: $memberId, memberName: $memberName, reactions : $reactions, readBy : $readBy, deliveredTo : $deliveredTo, isUploading : $isUploading, conversationDetails : $conversationDetails, events : $events, callDurations:$callDurations, meetingId :$meetingId, meetingType :$meetingType ,audioOnly:$audioOnly, isInvalidMessage: $isInvalidMessage)';
 
   @override
   bool operator ==(Object other) {
@@ -689,7 +689,7 @@ class IsmChatMessageModel {
         other.callDurations == callDurations &&
         other.meetingId == meetingId &&
         other.meetingType == meetingType &&
-        other.isInvalid == isInvalid &&
+        other.isInvalidMessage == isInvalidMessage &&
         other.audioOnly == audioOnly;
   }
 
@@ -745,7 +745,7 @@ class IsmChatMessageModel {
       meetingId.hashCode ^
       meetingType.hashCode ^
       audioOnly.hashCode ^
-      isInvalid.hashCode;
+      isInvalidMessage.hashCode;
 }
 
 class MessageStatus {

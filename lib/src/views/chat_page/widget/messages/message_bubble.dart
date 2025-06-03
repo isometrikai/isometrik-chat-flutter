@@ -242,7 +242,7 @@ class MessageBubble extends StatelessWidget {
                                         .deletedForEveryone) ...[
                               if (_message.messageId?.isEmpty == true) ...[
                                 IsmChatDimens.boxWidth2,
-                                if (_message.isInvalid == true) ...[
+                                if (_message.isInvalidMessage == true) ...[
                                   Icon(
                                     Icons.error_outlined,
                                     color: IsmChatConfig
