@@ -115,6 +115,8 @@ class ChatList extends StatelessWidget {
                 // features: [
                 //   IsmChatFeature.reply,
                 //   IsmChatFeature.showMessageStatus,
+                //   IsmChatFeature.audioMessage,
+                //   IsmChatFeature.emojiIcon,
                 // ],
               ),
 

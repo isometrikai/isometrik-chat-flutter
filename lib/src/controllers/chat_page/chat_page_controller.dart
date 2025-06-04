@@ -865,9 +865,15 @@ class IsmChatPageController extends GetxController
   }
 
   void _intputAndFocustNode() {
-    chatInputController.addListener(() {
-      showSendButton = chatInputController.text.isNotEmpty;
-    });
+    if (IsmChatProperties.chatPageProperties.features
+        .contains(IsmChatFeature.audioMessage)) {
+      chatInputController.addListener(() {
+        showSendButton = chatInputController.text.isNotEmpty;
+      });
+    } else {
+      showSendButton = true;
+    }
+
     messageFocusNode.addListener(
       () {
         if (messageFocusNode.hasFocus) {

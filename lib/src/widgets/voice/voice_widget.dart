@@ -15,13 +15,13 @@ class VoiceMessage extends StatefulWidget {
     this.duration,
     this.noiseCount = 27,
     this.meBgColor = Colors.green,
-    this.opponentBgColor = const Color(0xffffffff),
-    this.contactFgColor = Colors.orange,
+    this.opponentBgColor = Colors.white,
+    this.contactFgColor = Colors.grey,
     this.contactCircleColor = Colors.red,
     this.mePlayIconColor = Colors.black,
     this.contactPlayIconColor = Colors.black26,
     this.contactPlayIconBgColor = Colors.grey,
-    this.meFgColor = const Color(0xffffffff),
+    this.meFgColor = Colors.white,
   });
 
   final String? audioSrc;
@@ -102,7 +102,20 @@ class VoiceMessageState extends State<VoiceMessage>
         alignment: Alignment.center,
         width: IsmChatDimens.twoHundred,
         height: IsmChatDimens.seventy,
-        color: widget.me ? widget.meBgColor : widget.opponentBgColor,
+        decoration: BoxDecoration(
+          color: widget.me ? widget.meBgColor : widget.opponentBgColor,
+          borderRadius: widget.me
+              ? IsmChatConfig.chatTheme.chatPageTheme?.selfMessageTheme
+                      ?.borderRadius ??
+                  BorderRadius.circular(IsmChatDimens.twelve).copyWith(
+                    bottomRight: Radius.circular(IsmChatDimens.four),
+                  )
+              : IsmChatConfig.chatTheme.chatPageTheme?.opponentMessageTheme
+                      ?.borderRadius ??
+                  BorderRadius.circular(IsmChatDimens.twelve).copyWith(
+                    topLeft: Radius.circular(IsmChatDimens.four),
+                  ),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

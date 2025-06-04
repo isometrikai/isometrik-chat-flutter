@@ -703,7 +703,9 @@ enum IsmChatFeature {
   clearChat,
   deleteMessage,
   copyMessage,
-  selectMessage;
+  selectMessage,
+  emojiIcon,
+  audioMessage;
 }
 
 enum IsmChatDbBox { main, pending }

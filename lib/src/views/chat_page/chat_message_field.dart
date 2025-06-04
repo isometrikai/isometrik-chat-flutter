@@ -84,14 +84,17 @@ class IsmChatMessageField extends StatelessWidget {
                         IsmChatDimens.box0,
                   ],
                   IsmChatDimens.boxWidth8,
-                  Container(
-                    margin: IsmChatDimens.edgeInsetsBottom4,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: IsmChatConfig.chatTheme.primaryColor,
-                    ),
-                    child: const _EmojiButton(IsmChatColors.whiteColor),
-                  ),
+                  if (IsmChatProperties.chatPageProperties.features
+                      .contains(IsmChatFeature.emojiIcon)) ...[
+                    Container(
+                      margin: IsmChatDimens.edgeInsetsBottom4,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: IsmChatConfig.chatTheme.primaryColor,
+                      ),
+                      child: const _EmojiButton(IsmChatColors.whiteColor),
+                    )
+                  ],
                   IsmChatDimens.boxWidth8,
                   if (IsmChatProperties
                       .chatPageProperties.attachments.isNotEmpty)
@@ -234,11 +237,19 @@ class IsmChatMessageField extends StatelessWidget {
                                                 : IsmChatProperties
                                                         .chatPageProperties
                                                         .loggedInUser ??
-                                                    _EmojiButton(IsmChatConfig
-                                                        .chatTheme
-                                                        .chatPageTheme
-                                                        ?.textFiledTheme
-                                                        ?.emojiColor),
+                                                    ((IsmChatProperties
+                                                            .chatPageProperties
+                                                            .features
+                                                            .contains(
+                                                                IsmChatFeature
+                                                                    .emojiIcon))
+                                                        ? _EmojiButton(
+                                                            IsmChatConfig
+                                                                .chatTheme
+                                                                .chatPageTheme
+                                                                ?.textFiledTheme
+                                                                ?.emojiColor)
+                                                        : null),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(
                                               IsmChatDimens.twenty),
@@ -415,7 +426,6 @@ class _MicOrSendButton extends StatelessWidget {
                 controller.showDialogCheckBlockUnBlock();
                 return;
               }
-
               if (controller.showSendButton) {
                 if (controller.isEnableRecordingAudio) {
                   var audioPath = await controller.recordVoice.stop() ?? '';
@@ -503,7 +513,8 @@ class _MicOrSendButton extends StatelessWidget {
                     }
                   }
                 }
-              } else {
+              } else if (IsmChatProperties.chatPageProperties.features
+                  .contains(IsmChatFeature.audioMessage)) {
                 if (controller.showEmojiBoard) {
                   controller.toggleEmojiBoard();
                 }
@@ -594,16 +605,20 @@ class _MicOrSendButton extends StatelessWidget {
                 child: child,
               ),
               child: controller.showSendButton
-                  ? Icon(
+                  ? const Icon(
                       Icons.send_rounded,
-                      key: UniqueKey(),
                       color: IsmChatColors.whiteColor,
                     )
-                  : Icon(
-                      Icons.mic_rounded,
-                      key: UniqueKey(),
-                      color: IsmChatColors.whiteColor,
-                    ),
+                  : IsmChatProperties.chatPageProperties.features
+                          .contains(IsmChatFeature.audioMessage)
+                      ? const Icon(
+                          Icons.mic_rounded,
+                          color: IsmChatColors.whiteColor,
+                        )
+                      : const Icon(
+                          Icons.send_rounded,
+                          color: IsmChatColors.whiteColor,
+                        ),
             ),
           ),
         ),
