@@ -23,7 +23,7 @@ class IsmChatConversationsViewModel {
       return [];
     }
     if (searchTag == null) {
-      var dbConversations =
+      final dbConversations =
           await IsmChatConfig.dbWrapper?.getAllConversations() ?? [];
 
       for (var conversation in conversations) {
@@ -78,13 +78,13 @@ class IsmChatConversationsViewModel {
     int? count,
     String? opponentId,
   }) async {
-    var response =
+    final response =
         await _repository.getUserList(count: count, pageToken: pageToken);
 
     if (response == null) {
       return null;
     }
-    var data = [...response.users];
+    final data = [...response.users];
     data.removeWhere(
         (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
 
@@ -101,7 +101,7 @@ class IsmChatConversationsViewModel {
     String searchTag = '',
     bool isLoading = false,
   }) async {
-    var response = await _repository.getNonBlockUserList(
+    final response = await _repository.getNonBlockUserList(
       sort: sort,
       skip: skip,
       limit: limit,
@@ -112,7 +112,7 @@ class IsmChatConversationsViewModel {
     if (response == null) {
       return null;
     }
-    var data = [...response.users];
+    final data = [...response.users];
     data.removeWhere(
         (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
     return IsmChatUserListModel(users: data, pageToken: response.pageToken);
@@ -123,7 +123,7 @@ class IsmChatConversationsViewModel {
 
   Future<void> clearAllMessages(String conversationId,
       {bool fromServer = true}) async {
-    var response = await _repository.clearAllMessages(
+    final response = await _repository.clearAllMessages(
       conversationId: conversationId,
     );
     if (!response!.hasError) {
@@ -137,7 +137,7 @@ class IsmChatConversationsViewModel {
     required String opponentId,
     required bool isLoading,
   }) async {
-    var response = await _repository.unblockUser(
+    final response = await _repository.unblockUser(
       opponentId: opponentId,
       isLoading: isLoading,
     );
@@ -280,7 +280,7 @@ class IsmChatConversationsViewModel {
     int? sort = -1,
     bool isLoading = false,
   }) async {
-    var messages = await _repository.getUserMessges(
+    final messages = await _repository.getUserMessges(
       attachmentTypes: attachmentTypes,
       conversationStatusMessage: conversationStatusMessage,
       customTypes: customTypes,

@@ -684,7 +684,7 @@ class IsmChatDelegate {
       final messages = conversation.messages ?? {};
       messages[message.key] = message;
       var dbConversations = await IsmChatConfig.dbWrapper
-          ?.getConversation(conversationId: message.conversationId);
+          ?.getConversation(message.conversationId ?? '');
       if (dbConversations != null) {
         dbConversations = dbConversations.copyWith(messages: messages);
         await IsmChatConfig.dbWrapper

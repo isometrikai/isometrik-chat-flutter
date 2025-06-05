@@ -156,9 +156,8 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                         onTap: () async {
                           IsmChatUtility.showLoader();
                           IsmChatConversationModel? conversationModel;
-                          final conversation = await IsmChatConfig.dbWrapper!
-                              .getConversation(
-                                  conversationId: widget.user?.userId ?? '');
+                          final conversation = await IsmChatConfig.dbWrapper
+                              ?.getConversation(widget.user?.userId ?? '');
                           if (conversation != null) {
                             conversationModel = conversation;
                           } else {

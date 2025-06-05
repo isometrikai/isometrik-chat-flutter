@@ -7,7 +7,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
     _controller.closeOverlay();
 
-    var messages =
+    final messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
     if (messages == null) {
       _controller.messages.clear();
@@ -76,16 +76,16 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = true;
       }
-      var timeStamp = lastMessageTimestamp ??
+      final timeStamp = lastMessageTimestamp ??
           (_controller.messages.isEmpty
               ? 0
               : _controller.messages.last.sentAt + 7000);
-      var messagesList = List<IsmChatMessageModel>.from(_controller.messages);
+      final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
       messagesList.removeWhere(
           (element) => element.customType == IsmChatCustomMessageType.date);
-      var conversationID = _controller.conversation?.conversationId ?? '';
+      final conversationID = _controller.conversation?.conversationId ?? '';
 
-      var data = await _controller.viewModel.getChatMessages(
+      final data = await _controller.viewModel.getChatMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
         conversationId: conversationID,
         lastMessageTimestamp: timeStamp,
@@ -119,17 +119,17 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = true;
       }
-      var timeStamp = lastMessageTimestamp ??
+      final timeStamp = lastMessageTimestamp ??
           (_controller.messages.isEmpty
               ? 0
               : _controller.messages.last.sentAt + 7000);
-      var messagesList = List<IsmChatMessageModel>.from(_controller.messages);
+      final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
       messagesList.removeWhere(
           (element) => element.customType == IsmChatCustomMessageType.date);
-      var groupcastID = groupcastId.isNotEmpty
+      final groupcastID = groupcastId.isNotEmpty
           ? groupcastId
           : _controller.conversation?.conversationId ?? '';
-      var data = await _controller.viewModel.getBroadcastMessages(
+      final data = await _controller.viewModel.getBroadcastMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
         groupcastId: groupcastID,
         lastMessageTimestamp: timeStamp,
@@ -151,7 +151,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     if (_controller.canCallCurrentApi) return;
     _controller.canCallCurrentApi = true;
 
-    var messages = await _controller.viewModel.getChatMessages(
+    final messages = await _controller.viewModel.getChatMessages(
       skip: !fromScrolling ? 0 : _controller.searchMessages.length.pagination(),
       conversationId: _controller.conversation?.conversationId ?? '',
       lastMessageTimestamp: 0,
@@ -173,7 +173,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
   Future<void> getMessageDeliverTime(IsmChatMessageModel message) async {
     _controller.deliverdMessageMembers.clear();
-    var response = await _controller.viewModel.getMessageDeliverTime(
+    final response = await _controller.viewModel.getMessageDeliverTime(
       conversationId: message.conversationId ?? '',
       messageId: message.messageId ?? '',
     );
@@ -186,7 +186,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
   Future<void> getMessageReadTime(IsmChatMessageModel message) async {
     _controller.readMessageMembers.clear();
-    var response = await _controller.viewModel.getMessageReadTime(
+    final response = await _controller.viewModel.getMessageReadTime(
       conversationId: message.conversationId ?? '',
       messageId: message.messageId ?? '',
     );
@@ -205,7 +205,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       }
       _controller.isCoverationApiDetails = false;
       final conversationId = _controller.conversation?.conversationId ?? '';
-      var data = await _controller.viewModel.getConverstaionDetails(
+      final data = await _controller.viewModel.getConverstaionDetails(
         conversationId: conversationId,
         includeMembers:
             _controller.conversation?.isGroup == true ? true : false,
@@ -275,14 +275,14 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   }
 
   Future<void> getReacton({required Reaction reaction}) async {
-    var response = await _controller.viewModel.getReacton(reaction: reaction);
+    final response = await _controller.viewModel.getReacton(reaction: reaction);
     _controller.userReactionList = response ?? [];
   }
 
   void updateLastMessagOnCurrentTime(IsmChatMessageModel message) async {
-    var conversationController = IsmChatUtility.conversationController;
+    final conversationController = IsmChatUtility.conversationController;
     var conversation = await IsmChatConfig.dbWrapper
-        ?.getConversation(conversationId: message.conversationId);
+        ?.getConversation(message.conversationId ?? '');
 
     if (conversation == null) {
       return;
@@ -379,10 +379,11 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         await _controller.getMessagesFromDB(conversationId);
       }
     } else {
-      var allMessages =
-          await IsmChatConfig.dbWrapper?.getMessage(conversationId);
+      var conversation =
+          await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+      final allMessages = conversation?.messages;
       if (allMessages == null) return;
-      var message = allMessages.values
+      final message = allMessages.values
           .cast<IsmChatMessageModel?>()
           .firstWhere((e) => e?.messageId == messageId, orElse: () => null);
       if (message != null) {
@@ -394,8 +395,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           );
         }
         allMessages[message.key] = message;
-        var conversation = await IsmChatConfig.dbWrapper
-            ?.getConversation(conversationId: conversationId);
+
         if (conversation != null) {
           conversation = conversation.copyWith(messages: allMessages);
           await IsmChatConfig.dbWrapper
@@ -407,9 +407,9 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   }
 
   Future<void> getMessageForStatus() async {
-    var messageIds = <String>[];
+    final messageIds = <String>[];
     final conversationId = _controller.conversation?.conversationId ?? '';
-    for (var message in _controller.messages) {
+    for (final message in _controller.messages) {
       if (((message.deliveredToAll == false) || (message.readByAll == false)) &&
           !message.messageId.isNullOrEmpty) {
         messageIds.add(message.messageId ?? '');
@@ -423,8 +423,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         isLoading: false,
       );
       if (response != null) {
-        var conversation = await IsmChatConfig.dbWrapper
-            ?.getConversation(conversationId: conversationId);
+        final conversation =
+            await IsmChatConfig.dbWrapper?.getConversation(conversationId);
 
         final dbMessages = conversation?.messages?.values.toList() ?? [];
         for (var dbmessage in dbMessages) {

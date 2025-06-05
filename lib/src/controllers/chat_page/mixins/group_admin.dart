@@ -10,8 +10,8 @@ mixin IsmChatGroupAdminMixin on GetxController {
   /// Add members to a conversation
   Future<void> addMembers(
       {required List<String> memberIds, bool isLoading = false}) async {
-    var conversationId = _controller.conversation?.conversationId ?? '';
-    var response = await _controller.viewModel.addMembers(
+    final conversationId = _controller.conversation?.conversationId ?? '';
+    final response = await _controller.viewModel.addMembers(
         memberList: memberIds,
         conversationId: conversationId,
         isLoading: isLoading);
@@ -30,7 +30,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
     required String conversationId,
     required bool isLoading,
   }) async {
-    var response = await _controller.viewModel.changeGroupTitle(
+    final response = await _controller.viewModel.changeGroupTitle(
       conversationTitle: conversationTitle,
       conversationId: conversationId,
       isLoading: isLoading,
@@ -54,7 +54,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
     required String conversationId,
     required bool isLoading,
   }) async {
-    var response = await _controller.viewModel.changeGroupProfile(
+    final response = await _controller.viewModel.changeGroupProfile(
         conversationImageUrl: conversationImageUrl,
         conversationId: conversationId,
         isLoading: isLoading);
@@ -73,7 +73,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
 
   ///Remove members from conversation
   Future<void> removeMember(String userId) async {
-    var response = await _controller.viewModel.removeMember(
+    final response = await _controller.viewModel.removeMember(
       conversationId: _controller.conversation?.conversationId ?? '',
       userId: userId,
     );
@@ -96,7 +96,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
     if (_controller.canCallCurrentApi) return;
     _controller.canCallCurrentApi = true;
 
-    var response = await _controller.viewModel.getEligibleMembers(
+    final response = await _controller.viewModel.getEligibleMembers(
         conversationId: conversationId,
         isLoading: isLoading,
         limit: limit,
@@ -104,7 +104,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
     if (response == null) {
       return;
     }
-    var users = response;
+    final users = response;
     _controller.groupEligibleUser.addAll(List.from(users)
         .map((e) => SelectedMembers(
               isUserSelected: false,
@@ -124,7 +124,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
 
   /// Remove members from conversation
   Future<bool> leaveConversation(String conversationId) async {
-    var response =
+    final response =
         await _controller.viewModel.leaveConversation(conversationId, true);
 
     if (response?.hasError ?? true) {
@@ -139,7 +139,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
     String userName, [
     bool updateConversation = true,
   ]) async {
-    var response = await _controller.viewModel.makeAdmin(
+    final response = await _controller.viewModel.makeAdmin(
         memberId: memberId,
         conversationId: _controller.conversation?.conversationId ?? '');
     if (response?.hasError ?? true) {
@@ -156,7 +156,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
 
   ///Remove member as admin from conversation
   Future<void> removeAdmin(String memberId, String userName) async {
-    var response = await _controller.viewModel.removeAdmin(
+    final response = await _controller.viewModel.removeAdmin(
       conversationId: _controller.conversation?.conversationId ?? '',
       memberId: memberId,
     );

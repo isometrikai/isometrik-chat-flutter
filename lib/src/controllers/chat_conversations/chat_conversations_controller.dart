@@ -539,9 +539,9 @@ class IsmChatConversationsController extends GetxController {
 
   /// Fetches the list of asset files from a JSON file.
   Future<AssetsModel?> getAssetFilesList() async {
-    var jsonString = await rootBundle.loadString(
+    final jsonString = await rootBundle.loadString(
         'packages/isometrik_chat_flutter/assets/assets_backgroundAssets.json');
-    var filesList = jsonDecode(jsonString);
+    final filesList = jsonDecode(jsonString);
     if (filesList != null) {
       return AssetsModel.fromMap(filesList);
     }
@@ -599,7 +599,7 @@ class IsmChatConversationsController extends GetxController {
     required bool isLoading,
     bool fromUser = false,
   }) async {
-    var data = await _viewModel.unblockUser(
+    final data = await _viewModel.unblockUser(
       opponentId: opponentId,
       isLoading: isLoading,
     );
@@ -665,9 +665,9 @@ class IsmChatConversationsController extends GetxController {
       return;
     }
 
-    var bytes = await file.first?.readAsBytes();
-    var fileExtension = file.first?.path.split('.').last;
-    await getPresignedUrl(fileExtension!, bytes!);
+    final bytes = await file.first?.readAsBytes();
+    final fileExtension = file.first?.path.split('.').last;
+    await getPresignedUrl(fileExtension ?? '', bytes ?? Uint8List(0));
   }
 
   /// Retrieves a presigned URL for uploading media.
@@ -680,7 +680,7 @@ class IsmChatConversationsController extends GetxController {
     Uint8List bytes, [
     bool isLoading = false,
   ]) async {
-    var response = await commonController.getPresignedUrl(
+    final response = await commonController.getPresignedUrl(
         isLoading: true,
         userIdentifier: userDetails?.userIdentifier ?? '',
         mediaExtension: mediaExtension,
@@ -689,7 +689,7 @@ class IsmChatConversationsController extends GetxController {
     if (response == null) {
       return '';
     }
-    var responseCode = await commonController.updatePresignedUrl(
+    final responseCode = await commonController.updatePresignedUrl(
       presignedUrl: response.presignedUrl,
       bytes: bytes,
       isLoading: isLoading,
@@ -721,7 +721,7 @@ class IsmChatConversationsController extends GetxController {
   }) async {
     if (!callApiOrNot) return null;
     callApiOrNot = false;
-    var response = await _viewModel.getNonBlockUserList(
+    final response = await _viewModel.getNonBlockUserList(
       sort: sort,
       skip: searchTag.isNotEmpty
           ? 0
@@ -733,7 +733,7 @@ class IsmChatConversationsController extends GetxController {
       isLoading: isLoading,
     );
 
-    var users = response?.users ?? [];
+    final users = response?.users ?? [];
     if (users.isEmpty) {
       isLoadResponse = true;
     }
@@ -822,7 +822,7 @@ class IsmChatConversationsController extends GetxController {
     if (conversationId.isNullOrEmpty) return;
 
     if (deleteFromServer) {
-      var response = await _viewModel.deleteChat(conversationId ?? '');
+      final response = await _viewModel.deleteChat(conversationId ?? '');
       if (response?.hasError ?? true) return;
     }
     if (shouldUpdateLocal) {
@@ -840,7 +840,7 @@ class IsmChatConversationsController extends GetxController {
   Future<void> getConversationsFromDB({
     String? searchTag,
   }) async {
-    var dbConversations =
+    final dbConversations =
         await IsmChatConfig.dbWrapper?.getAllConversations() ?? [];
 
     conversations.clear();
@@ -906,7 +906,7 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// `userId`: The ID of the user to find the conversation for.
   String getConversationId(String userId) {
-    var conversation = conversations.firstWhere(
+    final conversation = conversations.firstWhere(
         (element) => element.opponentDetails?.userId == userId,
         orElse: IsmChatConversationModel.new);
 
@@ -920,7 +920,7 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// `conversationId`: The ID of the conversation to retrieve.
   IsmChatConversationModel? getConversation(String conversationId) {
-    var conversation = conversations.firstWhere(
+    final conversation = conversations.firstWhere(
         (element) => element.conversationId == conversationId,
         orElse: IsmChatConversationModel.new);
 
@@ -1002,7 +1002,7 @@ class IsmChatConversationsController extends GetxController {
       isConversationsLoading = true;
     }
 
-    var response = await _viewModel.getChatConversations(
+    final response = await _viewModel.getChatConversations(
       skip: skip,
       chatLimit: chatLimit,
     );
@@ -1023,7 +1023,7 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// `isLoading`: Indicates if loading should be shown.
   Future<List<UserDetails>> getBlockUser({bool isLoading = false}) async {
-    var users = await _viewModel.getBlockUser(
+    final users = await _viewModel.getBlockUser(
       skip: 0,
       limit: 20,
       isLoading: isLoading,
@@ -1040,7 +1040,7 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// `isLoading`: Indicates if loading should be shown.
   Future<void> getUserData({bool isLoading = false}) async {
-    var user = await _viewModel.getUserData(isLoading: isLoading);
+    final user = await _viewModel.getUserData(isLoading: isLoading);
     if (user != null) {
       userDetails = user;
       if (!kIsWeb) {
@@ -1056,7 +1056,7 @@ class IsmChatConversationsController extends GetxController {
                     ?.split('/')
                     .last ??
                 '';
-            var filePath = await IsmChatUtility.makeDirectoryWithUrl(
+            final filePath = await IsmChatUtility.makeDirectoryWithUrl(
                 urlPath: assetList[indexOfAsset].values.first.imageUrl ?? '',
                 fileName: pathName);
             assetList[indexOfAsset] = {
@@ -1143,7 +1143,7 @@ class IsmChatConversationsController extends GetxController {
     required IsmChatMetaData metaData,
     bool isLoading = false,
   }) async {
-    var response = await _viewModel.updateConversation(
+    final response = await _viewModel.updateConversation(
       conversationId: conversationId,
       metaData: metaData,
       isLoading: isLoading,
@@ -1186,7 +1186,7 @@ class IsmChatConversationsController extends GetxController {
     bool isLoading = false,
     IsmChatMetaData? metaData,
   }) async {
-    var response = await _viewModel.sendForwardMessage(
+    final response = await _viewModel.sendForwardMessage(
       userIds: userIds,
       showInConversation: true,
       messageType: IsmChatMessageType.forward.value,
@@ -1241,7 +1241,7 @@ class IsmChatConversationsController extends GetxController {
   }) async {
     if (!callApiOrNot) return;
     callApiOrNot = false;
-    var response = await _viewModel.getPublicAndOpenConversation(
+    final response = await _viewModel.getPublicAndOpenConversation(
       searchTag: searchTag,
       sort: sort,
       skip: skip,
@@ -1265,7 +1265,7 @@ class IsmChatConversationsController extends GetxController {
     required String conversationId,
     bool isloading = false,
   }) async {
-    var response = await _viewModel.joinConversation(
+    final response = await _viewModel.joinConversation(
         conversationId: conversationId, isLoading: isloading);
     if (response != null) {
       IsmChatRoute.goBack();
@@ -1288,7 +1288,7 @@ class IsmChatConversationsController extends GetxController {
   /// `isLoading`: Indicates if loading should be shown.
   Future<void> leaveObserver(
       {required String conversationId, bool isLoading = false}) async {
-    var response = await _viewModel.leaveObserver(
+    final response = await _viewModel.leaveObserver(
         conversationId: conversationId, isLoading: isLoading);
     if (response != null) {}
   }
@@ -1330,7 +1330,7 @@ class IsmChatConversationsController extends GetxController {
     bool isLoading = false,
     String? searchText,
   }) async {
-    var res = await _viewModel.getObservationUser(
+    final res = await _viewModel.getObservationUser(
       conversationId: conversationId,
       isLoading: isLoading,
       limit: limit,
@@ -1350,7 +1350,7 @@ class IsmChatConversationsController extends GetxController {
     var messages = IsmChatMessages.from({});
 
     if (conversationId.isEmpty) {
-      var pendingMessages =
+      final pendingMessages =
           await IsmChatConfig.dbWrapper?.getAllPendingMessages();
 
       messages.addAll(pendingMessages ?? {});
@@ -1362,12 +1362,12 @@ class IsmChatConversationsController extends GetxController {
     if (messages.isEmpty) {
       return;
     }
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             userDetails?.userName ??
             '';
 
-    for (var x in messages.values) {
+    for (final x in messages.values) {
       List<Map<String, dynamic>>? attachments;
       if ([
         IsmChatCustomMessageType.image,
@@ -1375,8 +1375,8 @@ class IsmChatConversationsController extends GetxController {
         IsmChatCustomMessageType.video,
         IsmChatCustomMessageType.file
       ].contains(x.customType)) {
-        var attachment = x.attachments?.first;
-        var bytes = File(attachment?.mediaUrl ?? '').readAsBytesSync();
+        final attachment = x.attachments?.first;
+        final bytes = File(attachment?.mediaUrl ?? '').readAsBytesSync();
         PresignedUrlModel? presignedUrlModel;
         presignedUrlModel = await commonController.postMediaUrl(
           conversationId: x.conversationId ?? '',
@@ -1401,8 +1401,8 @@ class IsmChatConversationsController extends GetxController {
         var thumbnailUrlPath = '';
         if (IsmChatCustomMessageType.video == x.customType) {
           PresignedUrlModel? presignedUrlModel;
-          var nameWithExtension = attachment?.thumbnailUrl?.split('/').last;
-          var bytes = File(attachment?.thumbnailUrl ?? '').readAsBytesSync();
+          final nameWithExtension = attachment?.thumbnailUrl?.split('/').last;
+          final bytes = File(attachment?.thumbnailUrl ?? '').readAsBytesSync();
           presignedUrlModel = await commonController.postMediaUrl(
             conversationId: x.conversationId ?? '',
             nameWithExtension: nameWithExtension ?? '',
@@ -1412,7 +1412,7 @@ class IsmChatConversationsController extends GetxController {
             bytes: bytes,
           );
           if (presignedUrlModel != null) {
-            var response = await commonController.updatePresignedUrl(
+            final response = await commonController.updatePresignedUrl(
               presignedUrl: presignedUrlModel.thumbnailPresignedUrl,
               bytes: bytes,
               isLoading: false,
@@ -1439,7 +1439,7 @@ class IsmChatConversationsController extends GetxController {
           ];
         }
       }
-      var isMessageSent = await commonController.sendMessage(
+      final isMessageSent = await commonController.sendMessage(
         showInConversation: true,
         encrypted: true,
         events: {'updateUnreadCount': true, 'sendPushNotification': true},
@@ -1530,8 +1530,8 @@ class IsmChatConversationsController extends GetxController {
     );
     if (response != null) {
       userMeessages = response.reversed.toList();
-      for (var message in userMeessages) {
-        var isSender =
+      for (final message in userMeessages) {
+        final isSender =
             message.deliveredTo?.any((e) => e.userId == senderIds?.first);
         if (isSender == false) {
           await Future.delayed(
@@ -1603,7 +1603,7 @@ class IsmChatConversationsController extends GetxController {
     var contacts = await FlutterContacts.getContacts(
         withProperties: true, withPhoto: true);
     hashMapSendContactSync.clear();
-    for (var x in contacts) {
+    for (final x in contacts) {
       if (x.phones.isNotEmpty) {
         final phone = x.phones.first.number;
         if (!((phone.contains('@')) && (phone.contains('.com'))) &&
@@ -1679,7 +1679,7 @@ class IsmChatConversationsController extends GetxController {
       if (res != null && (res.data ?? []).isNotEmpty) {
         getContactSyncUser.addAll(res.data ?? []);
         await removeDBUser();
-        var forwardedListLocalList = <SelectedMembers>[];
+        final forwardedListLocalList = <SelectedMembers>[];
         for (var e in getContactSyncUser) {
           if (hashMapSendContactSync[e.contactNo ?? ''] != null) {
             forwardedListLocalList.add(
@@ -1789,8 +1789,8 @@ class IsmChatConversationsController extends GetxController {
     String? caption,
     bool sendPushNotification = false,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper
-        ?.getConversation(conversationId: conversationId);
+    final chatConversationResponse =
+        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
     if (chatConversationResponse == null) {
       final conversation = await commonController.createConversation(
         conversation: currentConversation!,
@@ -1805,7 +1805,7 @@ class IsmChatConversationsController extends GetxController {
       conversationId = conversation?.conversationId ?? '';
     }
     IsmChatMessageModel? imageMessage;
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
     final bytes = await IsmChatUtility.getUint8ListFromUrl(storyMediaUrl ?? '');
     final nameWithExtension = storyMediaUrl?.split('/').last ?? '';
     final mediaId = nameWithExtension.replaceAll(RegExp(r'[^0-9]'), '');
@@ -1850,7 +1850,7 @@ class IsmChatConversationsController extends GetxController {
       ),
     );
 
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             userDetails.userName;
     await commonController.sendMessage(
@@ -1880,7 +1880,7 @@ class IsmChatConversationsController extends GetxController {
   /// `members`: List of members to include in the broadcast.
   /// `conversationId`: The ID of the conversation for the broadcast.
   void goToBroadcastMessage(List<UserDetails> members, String conversationId) {
-    var conversation = IsmChatConversationModel(
+    final conversation = IsmChatConversationModel(
       members: members,
       conversationImageUrl: IsmChatAssets.noImage,
       customType: IsmChatStrings.broadcast,

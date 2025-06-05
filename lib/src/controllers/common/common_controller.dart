@@ -230,7 +230,7 @@ class IsmChatCommonController extends GetxController {
     if (isGroup) {
       userId = conversation.userIds ?? [];
     }
-    var response = await viewModel.createConversation(
+    final response = await viewModel.createConversation(
       isLoading: isLoading,
       typingEvents: true,
       readEvents: true,
@@ -246,11 +246,11 @@ class IsmChatCommonController extends GetxController {
     );
 
     if (response != null) {
-      var data = jsonDecode(response.data);
-      var conversationId = data['conversationId'];
+      final data = jsonDecode(response.data);
+      final conversationId = data['conversationId'];
       conversation =
           conversation.copyWith(conversationId: conversationId ?? '');
-      var dbConversationModel = IsmChatConversationModel(
+      final dbConversationModel = IsmChatConversationModel(
           conversationId: conversationId ?? '',
           conversationImageUrl: conversation.conversationImageUrl,
           conversationTitle: conversation.conversationTitle,

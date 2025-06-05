@@ -13,7 +13,7 @@ class IsmChatCommonViewModel {
     Uint8List? bytes,
     bool isLoading = false,
   }) async {
-    var respone = await _repository.updatePresignedUrl(
+    final respone = await _repository.updatePresignedUrl(
       presignedUrl: presignedUrl,
       bytes: bytes,
       isLoading: isLoading,
@@ -100,7 +100,7 @@ class IsmChatCommonViewModel {
     bool isUpdateMesage = true,
   }) async {
     try {
-      var response = await _repository.sendMessage(
+      final response = await _repository.sendMessage(
         showInConversation: showInConversation,
         attachments: attachments,
         events: events,
@@ -134,13 +134,13 @@ class IsmChatCommonViewModel {
           chatPageController.messages[x] = messages;
         }
       } else {
-        var dbBox = IsmChatConfig.dbWrapper;
-        final chatPendingMessagesData = await dbBox?.getConversation(
-            conversationId: conversationId, dbBox: IsmChatDbBox.pending);
+        final dbBox = IsmChatConfig.dbWrapper;
+        final chatPendingMessagesData = await dbBox
+            ?.getConversation(conversationId, dbBox: IsmChatDbBox.pending);
         if (chatPendingMessagesData != null) {
           chatPendingMessages = chatPendingMessagesData;
         }
-        var pendingMessage = chatPendingMessages?.messages?['$createdAt'];
+        final pendingMessage = chatPendingMessages?.messages?['$createdAt'];
         if (pendingMessage != null) {
           if (response.messageId.isNotEmpty) {
             pendingMessage.messageId = response.messageId;
@@ -159,8 +159,7 @@ class IsmChatCommonViewModel {
             await dbBox?.pendingMessageBox
                 .delete(chatPendingMessages?.conversationId ?? '');
           }
-          var conversationModel =
-              await dbBox?.getConversation(conversationId: conversationId);
+          var conversationModel = await dbBox?.getConversation(conversationId);
           if (conversationModel != null) {
             final messages = conversationModel.messages ?? {};
             messages.addEntries({'$createdAt': pendingMessage}.entries);
@@ -220,14 +219,14 @@ class IsmChatCommonViewModel {
         metaData: metaData,
       );
       if (response == null) return (false, response?.$2);
-      var dbBox = IsmChatConfig.dbWrapper;
-      final chatPendingMessagesData = await dbBox?.getConversation(
-          conversationId: conversationId, dbBox: IsmChatDbBox.pending);
+      final dbBox = IsmChatConfig.dbWrapper;
+      final chatPendingMessagesData = await dbBox
+          ?.getConversation(conversationId, dbBox: IsmChatDbBox.pending);
       if (chatPendingMessagesData != null) {
         chatPendingMessages = chatPendingMessagesData;
       }
 
-      var pendingMessage = chatPendingMessages?.messages?['$createdAt'];
+      final pendingMessage = chatPendingMessages?.messages?['$createdAt'];
       if (pendingMessage != null) {
         pendingMessage.messageId = response.$1;
         pendingMessage.deliveredToAll = false;
@@ -241,8 +240,7 @@ class IsmChatCommonViewModel {
           await dbBox?.pendingMessageBox
               .delete(chatPendingMessages?.conversationId ?? '');
         }
-        var conversationModel =
-            await dbBox?.getConversation(conversationId: conversationId);
+        var conversationModel = await dbBox?.getConversation(conversationId);
         if (conversationModel != null) {
           final messages = conversationModel.messages ?? {};
           messages.addEntries({'$createdAt': pendingMessage}.entries);

@@ -17,7 +17,7 @@ class IsmChatMqttViewModel {
   Future<String> getChatConversationsUnreadCount({
     bool isLoading = false,
   }) async {
-    var response = await _repository.getChatConversationsUnreadCount(
+    final response = await _repository.getChatConversationsUnreadCount(
       isLoading: isLoading,
     );
     if (response == null) {
@@ -39,7 +39,7 @@ class IsmChatMqttViewModel {
   Future<String> getChatConversationsCount({
     bool isLoading = false,
   }) async {
-    var response = await _repository.getChatConversationsCount(
+    final response = await _repository.getChatConversationsCount(
       isLoading: isLoading,
     );
     if (response == null) {
@@ -55,7 +55,7 @@ class IsmChatMqttViewModel {
     required senderIdsExclusive,
     required lastMessageTimestamp,
   }) async {
-    var response = await _repository.getChatConversationsMessageCount(
+    final response = await _repository.getChatConversationsMessageCount(
       isLoading: isLoading,
       conversationId: conversationId,
       senderIds: senderIds,

@@ -189,8 +189,9 @@ class IsmChatPageController extends GetxController
   }
 
   _getBackGroundAsset() {
-    var assets = conversationController.userDetails?.metaData?.assetList ?? [];
-    var asset = assets
+    final assets =
+        conversationController.userDetails?.metaData?.assetList ?? [];
+    final asset = assets
         .where((e) => e.keys.contains(conversation?.conversationId))
         .toList();
     if (asset.isNotEmpty) {
@@ -315,9 +316,9 @@ class IsmChatPageController extends GetxController
   }
 
   void updateMentionUser(String value) {
-    var tempList = chatInputController.text.split('@');
-    var remainingText = tempList.sublist(0, tempList.length - 1).join('@');
-    var updatedText = '$remainingText@${value.capitalizeFirst} ';
+    final tempList = chatInputController.text.split('@');
+    final remainingText = tempList.sublist(0, tempList.length - 1).join('@');
+    final updatedText = '$remainingText@${value.capitalizeFirst} ';
     showMentionUserList = false;
     chatInputController.value = chatInputController.value.copyWith(
       text: updatedText,
@@ -383,7 +384,7 @@ class IsmChatPageController extends GetxController
 
   Future<void> getMentionedUserList(String data) async {
     userMentionedList.clear();
-    var mentionedList = data.split('@').toList();
+    final mentionedList = data.split('@').toList();
 
     mentionedList.removeWhere((e) => e.trim().isEmpty);
 
@@ -391,7 +392,7 @@ class IsmChatPageController extends GetxController
       final checkerLength =
           groupMembers[x].userName.trim().split(' ').first.length;
       if (mentionedList.isNotEmpty) {
-        var isMember = mentionedList.where(
+        final isMember = mentionedList.where(
           (e) =>
               checkerLength == e.trim().length &&
               groupMembers[x].userName.trim().toLowerCase().contains(
@@ -539,10 +540,10 @@ class IsmChatPageController extends GetxController
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       IsmChatUtility.showLoader();
       for (var x in result) {
-        var bytes = await x?.readAsBytes();
-        var extension = x?.mimeType?.split('/').last;
-        var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
-        var platformFile = IsmchPlatformFile(
+        final bytes = await x?.readAsBytes();
+        final extension = x?.mimeType?.split('/').last;
+        final dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+        final platformFile = IsmchPlatformFile(
           name: x?.name ?? '',
           size: bytes?.length,
           bytes: bytes,
@@ -551,7 +552,7 @@ class IsmChatPageController extends GetxController
         );
 
         if (IsmChatConstants.videoExtensions.contains(extension)) {
-          var thumbnailBytes =
+          final thumbnailBytes =
               await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
           if (thumbnailBytes != null) {
             platformFile.thumbnailBytes = thumbnailBytes;
@@ -587,7 +588,7 @@ class IsmChatPageController extends GetxController
     webMedia.clear();
     assetsIndex = 0;
     for (var file in assetList) {
-      var bytes = await file?.readAsBytes();
+      final bytes = await file?.readAsBytes();
       var name = '';
       if (kIsWeb) {
         name = file?.name ?? '';
@@ -595,8 +596,8 @@ class IsmChatPageController extends GetxController
         name = (file?.path ?? '').split('/').last;
       }
       final extension = name.split('.').last;
-      var dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
-      var platformFile = IsmchPlatformFile(
+      final dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+      final platformFile = IsmchPlatformFile(
         name: name,
         size: bytes?.length,
         bytes: bytes,
@@ -633,36 +634,6 @@ class IsmChatPageController extends GetxController
           ),
         );
       }
-
-      // if (IsmChatConstants.imageExtensions
-      //     .contains(file?.path.split('.').last)) {
-      //   listOfAssetsPath.add(
-      //     AttachmentCaptionModel(
-      //       caption: '',
-      //       attachmentModel: AttachmentModel(
-      //         mediaUrl: file?.path,
-      //         attachmentType: IsmChatMediaType.image,
-      //       ),
-      //     ),
-      //   );
-      // } else {
-      //   var thumbTempPath = await VideoCompress.getFileThumbnail(
-      //     file?.path ?? '',
-      //     quality: 50,
-      //     position: -1,
-      //   );
-
-      //   listOfAssetsPath.add(
-      //     AttachmentCaptionModel(
-      //       caption: '',
-      //       attachmentModel: AttachmentModel(
-      //         thumbnailUrl: thumbTempPath.path,
-      //         mediaUrl: file?.path ?? '',
-      //         attachmentType: IsmChatMediaType.video,
-      //       ),
-      //     ),
-      //   );
-      // }
     }
   }
 
@@ -1003,11 +974,11 @@ class IsmChatPageController extends GetxController
     required bool isUserAdmin,
   }) async {
     if (adminCount == 1 && isUserAdmin) {
-      var members = groupMembers.where((e) => !e.isAdmin).toList();
-      var member = members[Random().nextInt(members.length)];
+      final members = groupMembers.where((e) => !e.isAdmin).toList();
+      final member = members[Random().nextInt(members.length)];
       await makeAdmin(member.userId, member.userName, false);
     }
-    var didLeft = await leaveConversation(conversation!.conversationId!);
+    final didLeft = await leaveConversation(conversation!.conversationId!);
     if (didLeft) {
       IsmChatRoute.goBack(); // to Chat Page
       IsmChatRoute.goBack(); // to Conversation Page
@@ -1039,7 +1010,7 @@ class IsmChatPageController extends GetxController
   void tapForMediaPreview(IsmChatMessageModel message) async {
     if ([IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
         .contains(message.customType)) {
-      var mediaList = messages
+      final mediaList = messages
           .where((item) =>
               [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
                   .contains(item.customType) &&
@@ -1051,7 +1022,7 @@ class IsmChatPageController extends GetxController
                   false))
           .toList();
       if (mediaList.isNotEmpty) {
-        var selectedMediaIndex = mediaList.indexOf(message);
+        final selectedMediaIndex = mediaList.indexOf(message);
         if (IsmChatResponsive.isWeb(
             IsmChatConfig.kNavigatorKey.currentContext ??
                 IsmChatConfig.context)) {
@@ -1125,7 +1096,7 @@ class IsmChatPageController extends GetxController
   void tapForMediaPreviewWithMetaData(IsmChatMessageModel message) async {
     if ([IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
         .contains(message.metaData?.replyMessage?.parentMessageMessageType)) {
-      var mediaList = messages
+      final mediaList = messages
           .where((item) =>
               [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
                   .contains(
@@ -1137,7 +1108,7 @@ class IsmChatPageController extends GetxController
                           item) ??
                   false))
           .toList();
-      var selectedMediaIndex = mediaList.indexOf(message);
+      final selectedMediaIndex = mediaList.indexOf(message);
       if (IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
           IsmChatConfig.context)) {
         {
@@ -1300,7 +1271,7 @@ class IsmChatPageController extends GetxController
   Future<bool> updateLastMessage() async {
     if (!didReactedLast) {
       var chatConversation = await IsmChatConfig.dbWrapper
-          ?.getConversation(conversationId: conversation?.conversationId ?? '');
+          ?.getConversation(conversation?.conversationId ?? '');
       if (chatConversation != null) {
         if (messages.isNotEmpty &&
             messages.last.customType != IsmChatCustomMessageType.removeMember) {
@@ -1392,8 +1363,8 @@ class IsmChatPageController extends GetxController
   }
 
   Future<void> updateUnreadMessgaeCount() async {
-    var chatConversation = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversation?.conversationId ?? '');
+    var chatConversation = await IsmChatConfig.dbWrapper
+        ?.getConversation(conversation?.conversationId ?? '');
     if (chatConversation != null) {
       chatConversation = chatConversation.copyWith(
         unreadMessagesCount: 0,
@@ -1409,7 +1380,7 @@ class IsmChatPageController extends GetxController
     required int selectedIndex,
   }) async {
     IsmChatUtility.showLoader();
-    var bytes = await file.readAsBytes();
+    final bytes = await file.readAsBytes();
     final fileSize = IsmChatUtility.formatBytes(
       int.parse(bytes.length.toString()),
     );
@@ -1487,7 +1458,7 @@ class IsmChatPageController extends GetxController
   }
 
   void takePhoto() async {
-    var file = await cameraController.takePicture();
+    final file = await cameraController.takePicture();
     XFile? mainFile;
     if (IsmChatResponsive.isMobile(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
@@ -1496,11 +1467,11 @@ class IsmChatPageController extends GetxController
 
     if (cameraController.description.lensDirection ==
         CameraLensDirection.front) {
-      var imageBytes = await file.readAsBytes();
-      var file2 = File(file.path);
-      var originalImage = img.decodeImage(imageBytes);
-      var fixedImage = img.flipHorizontal(originalImage!);
-      var fixedFile = await file2.writeAsBytes(
+      final imageBytes = await file.readAsBytes();
+      final file2 = File(file.path);
+      final originalImage = img.decodeImage(imageBytes);
+      final fixedImage = img.flipHorizontal(originalImage!);
+      final fixedFile = await file2.writeAsBytes(
         img.encodeJpg(fixedImage),
         flush: true,
       );
@@ -1714,7 +1685,7 @@ class IsmChatPageController extends GetxController
   Future<void> deleteMessageForEveryone(
     IsmChatMessages messages,
   ) async {
-    var pendingMessges = IsmChatMessages.from(messages);
+    final pendingMessges = IsmChatMessages.from(messages);
     await viewModel.deleteMessageForEveryone(messages);
     selectedMessage.clear();
     pendingMessges.entries.where((e) => e.value.messageId == '');
@@ -1731,7 +1702,7 @@ class IsmChatPageController extends GetxController
   Future<void> deleteMessageForMe(
     IsmChatMessages messages,
   ) async {
-    var pendingMessges = IsmChatMessages.from(messages);
+    final pendingMessges = IsmChatMessages.from(messages);
     await viewModel.deleteMessageForMe(messages);
     selectedMessage.clear();
     pendingMessges.entries.where((e) => e.value.messageId == '');
@@ -1767,7 +1738,7 @@ class IsmChatPageController extends GetxController
       String searchKeyword = ''}) async {
     predictionList.clear();
     isLocaionSearch = true;
-    var response = await viewModel.getLocation(
+    final response = await viewModel.getLocation(
       latitude: latitude,
       longitude: longitude,
       searchKeyword: searchKeyword,
@@ -1788,11 +1759,11 @@ class IsmChatPageController extends GetxController
 
   Future<void> showUserDetails(UserDetails userDetails,
       {bool fromMessagePage = true}) async {
-    var conversationId = conversationController.getConversationId(
+    final conversationId = conversationController.getConversationId(
       userDetails.userId,
     );
-    var conversationUser = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
+    final conversationUser =
+        await IsmChatConfig.dbWrapper!.getConversation(conversationId);
     UserDetails? user;
     if (conversationUser != null) {
       user = conversationUser.opponentDetails;
@@ -1822,7 +1793,7 @@ class IsmChatPageController extends GetxController
         urlPath: message.attachments?.first.mediaUrl ?? '',
         fileName: message.attachments?.first.name ?? '');
     if (path.path.isNotEmpty) {
-      var file = XFile(path.path);
+      final file = XFile(path.path);
       IsmChatUtility.closeLoader();
       final result = await SharePlus.instance.share(ShareParams(
         files: [file],

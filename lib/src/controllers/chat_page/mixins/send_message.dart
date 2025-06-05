@@ -24,7 +24,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             _controller.conversation,
             IsmChatCustomMessageType.fromString(customType)) ??
         false) {
-      var messageMetaData = metaData?.toMap() ?? {};
+      final messageMetaData = metaData?.toMap() ?? {};
       if (IsmChatConfig.paidWalletModel?.customType != null) {
         final customType = await IsmChatConfig.paidWalletModel?.customType
                 ?.call(_controller.conversation) ??
@@ -67,7 +67,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       );
     } else if (_controller.conversation?.customType !=
         IsmChatStrings.broadcast) {
-      var isMessageSent = await _controller.commonController.sendMessage(
+      final isMessageSent = await _controller.commonController.sendMessage(
         showInConversation: true,
         encrypted: true,
         events: {
@@ -146,7 +146,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     var isMaxSize = false;
     _controller.showCloseLoaderForMoble();
 
-    for (var x in _controller.webMedia) {
+    for (final x in _controller.webMedia) {
       if (!x.dataSize.size()) {
         isMaxSize = true;
         break;
@@ -241,7 +241,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     String? mediaId;
 
     String? extension;
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
     if (path == null || path.isEmpty) {
       return;
     }
@@ -324,7 +324,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
 
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -351,7 +351,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     Uint8List? thumbnailBytes;
     String? thumbnailNameWithExtension;
     String? thumbnailMediaId;
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
@@ -365,7 +365,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       final resultFiles = result?.files ?? [];
 
       for (var x in resultFiles) {
-        var sizeMedia = kIsWeb
+        final sizeMedia = kIsWeb
             ? IsmChatUtility.formatBytes(
                 int.parse((x.bytes?.length ?? 0).toString()),
               )
@@ -467,7 +467,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         }
       }
 
-      var notificationTitle =
+      final notificationTitle =
           IsmChatConfig.communicationConfig.userConfig.userName ??
               _controller.conversationController.userDetails?.userName ??
               '';
@@ -603,7 +603,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
 
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -632,7 +632,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     conversationId = await createConversation(
         conversationId: conversationId, userId: userId);
     IsmChatMessageModel? imageMessage;
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
     final bytes = webMediaModel.platformFile.bytes;
     final nameWithExtension = webMediaModel.platformFile.name;
     final mediaId = sentAt.toString();
@@ -704,7 +704,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
 
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -728,8 +728,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     String? caption,
     bool sendPushNotification = false,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
+    final chatConversationResponse =
+        await IsmChatConfig.dbWrapper!.getConversation(conversationId);
     if (chatConversationResponse == null && !_controller.isBroadcast) {
       _controller.conversation =
           await _controller.commonController.createConversation(
@@ -749,7 +749,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       );
     }
     IsmChatMessageModel? imageMessage;
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
     final bytes = await IsmChatUtility.getUint8ListFromUrl(imageUrl);
     final nameWithExtension = imageUrl.split('/').last;
     final mediaId = nameWithExtension.replaceAll(RegExp(r'[^0-9]'), '');
@@ -799,7 +799,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         _controller.updateLastMessagOnCurrentTime(imageMessage);
       }
     }
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -833,8 +833,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   }) async {
     conversationId = await createConversation(
         conversationId: conversationId, userId: userId);
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
-    var locationMessage = IsmChatMessageModel(
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
+    final locationMessage = IsmChatMessageModel(
       body: IsmChatStrings.location,
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
@@ -898,7 +898,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
 
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -927,8 +927,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   }) async {
     conversationId = await createConversation(
         conversationId: conversationId, userId: userId);
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
-    var contactMessage = IsmChatMessageModel(
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
+    final contactMessage = IsmChatMessageModel(
       body: IsmChatStrings.contact,
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
@@ -985,7 +985,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           .saveMessage(contactMessage, IsmChatDbBox.pending);
     }
 
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -1011,8 +1011,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   }) async {
     conversationId = await createConversation(
         conversationId: conversationId, userId: userId);
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
-    var textMessage = IsmChatMessageModel(
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
+    final textMessage = IsmChatMessageModel(
       body: _controller.chatInputController.text.trim(),
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
@@ -1076,7 +1076,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
 
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -1168,7 +1168,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             : presignedUrlModel?.thumbnailUrl ?? '';
       }
       if (mediaUrlPath.isNotEmpty) {
-        var attachment = [
+        final attachment = [
           AttachmentModel(
             thumbnailUrl:
                 !(imageAndFile ?? false) ? thumbnailUrlPath : mediaUrlPath,
@@ -1208,7 +1208,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     if (reaction.messageId.isEmpty) {
       return;
     }
-    var response = await _controller.viewModel.addReacton(reaction: reaction);
+    final response = await _controller.viewModel.addReacton(reaction: reaction);
     if (response != null && !response.hasError) {
       await _controller.conversationController.getChatConversations();
     }
@@ -1232,7 +1232,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool sendPushNotification = true,
   }) async {
     metaData = metaData?.copyWith(customType: {'broadcastMessage': true});
-    var response = await _controller.viewModel.sendBroadcastMessage(
+    final response = await _controller.viewModel.sendBroadcastMessage(
       showInConversation: true,
       notifyOnCompletion: false,
       hideNewConversationsForSender: false,
@@ -1284,8 +1284,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required OutSideMessage? outSideMessage,
     bool pushNotifications = true,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper!
-        .getConversation(conversationId: conversationId);
+    final chatConversationResponse =
+        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
     if (chatConversationResponse == null && !_controller.isBroadcast) {
       _controller.conversation =
           await _controller.commonController.createConversation(
@@ -1305,8 +1305,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         _controller.getConverstaionDetails(),
       );
     }
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
-    var aboutTextMessage = IsmChatMessageModel(
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
+    final aboutTextMessage = IsmChatMessageModel(
       body: outSideMessage?.messageFromOutSide ?? '',
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
@@ -1355,7 +1355,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         _controller.updateLastMessagOnCurrentTime(aboutTextMessage);
       }
     }
-    var notificationTitle =
+    final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
@@ -1398,8 +1398,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     required String conversationId,
     String? userId,
   }) async {
-    final chatConversationResponse = await IsmChatConfig.dbWrapper
-        ?.getConversation(conversationId: conversationId);
+    final chatConversationResponse =
+        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
     if (chatConversationResponse == null && _controller.isBroadcast == false) {
       _controller.conversation =
           await _controller.commonController.createConversation(

@@ -248,7 +248,7 @@ class IsmChatBroadcastController extends GetxController {
       limit: limit,
       searchTag: searchTag,
     );
-    var users = response ?? [];
+    final users = response ?? [];
 
     if (searchTag.isNullOrEmpty) {
       eligibleMembers.addAll(List.from(users)
@@ -288,8 +288,8 @@ class IsmChatBroadcastController extends GetxController {
   void handleList(List<SelectedMembers> list) {
     if (list.isEmpty) return;
     for (var i = 0, length = list.length; i < length; i++) {
-      var tag = list[i].userDetails.userName[0].toUpperCase();
-      var isLocal = list[i].localContacts ?? false;
+      final tag = list[i].userDetails.userName[0].toUpperCase();
+      final isLocal = list[i].localContacts ?? false;
       if (RegExp('[A-Z]').hasMatch(tag) && isLocal == false) {
         list[i].tagIndex = tag;
       } else {

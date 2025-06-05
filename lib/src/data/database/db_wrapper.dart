@@ -112,7 +112,7 @@ class IsmChatDBWrapper {
 
   ///  clear all messages for perticular user
   Future<void> clearAllMessage({required String conversationId}) async {
-    var conversation = await getConversation(conversationId: conversationId);
+    var conversation = await getConversation(conversationId);
     if (conversation != null) {
       conversation = conversation.copyWith(messages: {});
       await saveConversation(conversation: conversation);
@@ -143,13 +143,11 @@ class IsmChatDBWrapper {
     return pendingMessages.first?.messageMap ?? {};
   }
 
-  Future<IsmChatConversationModel?> getConversation({
-    String? conversationId,
+  Future<IsmChatConversationModel?> getConversation(
+    String conversationId, {
     IsmChatDbBox dbBox = IsmChatDbBox.main,
   }) async {
-    if (conversationId == null || conversationId.trim().isEmpty) {
-      return null;
-    }
+    if (conversationId.isEmpty) return null;
     IsmChatConversationModel? conversations;
     String? map;
     Map<dynamic, dynamic>? messageMap;
@@ -224,14 +222,14 @@ class IsmChatDBWrapper {
     switch (dbBox) {
       case IsmChatDbBox.main:
         var mainConversation =
-            await getConversation(conversationId: conversationId, dbBox: dbBox);
+            await getConversation(conversationId, dbBox: dbBox);
         if (mainConversation != null) {
           messgges = mainConversation.messages;
         }
         break;
       case IsmChatDbBox.pending:
         var pendingConversation =
-            await getConversation(conversationId: conversationId, dbBox: dbBox);
+            await getConversation(conversationId, dbBox: dbBox);
         if (pendingConversation != null) {
           messgges = pendingConversation.messages;
         }
@@ -253,8 +251,8 @@ class IsmChatDBWrapper {
     var messageMap = {message.key: message};
     switch (dbBox) {
       case IsmChatDbBox.main:
-        var conversationMain = await getConversation(
-            conversationId: message.conversationId, dbBox: dbBox);
+        var conversationMain =
+            await getConversation(message.conversationId ?? '', dbBox: dbBox);
         if (conversationMain == null) return;
         final mesasges = conversationMain.messages ?? {};
         mesasges.addEntries(messageMap.entries);
@@ -264,8 +262,8 @@ class IsmChatDBWrapper {
         await saveConversation(conversation: conversationMain, dbBox: dbBox);
         break;
       case IsmChatDbBox.pending:
-        var conversationPending = await getConversation(
-            conversationId: message.conversationId, dbBox: dbBox);
+        var conversationPending =
+            await getConversation(message.conversationId ?? '', dbBox: dbBox);
         if (conversationPending == null) {
           var pendingConversation = IsmChatConversationModel(
               conversationId: message.conversationId, messages: messageMap);
@@ -296,8 +294,8 @@ class IsmChatDBWrapper {
           conversationModel.toJson(),
         );
       } else {
-        var conversation = await getConversation(
-            conversationId: conversationModel.conversationId);
+        var conversation =
+            await getConversation(conversationModel.conversationId ?? '');
         if (conversation == null) {
           await saveConversation(conversation: conversationModel);
           return;
@@ -332,7 +330,7 @@ class IsmChatDBWrapper {
   ]) async {
     if (dbBox == IsmChatDbBox.pending) {
       var pendingMessge = await getConversation(
-        conversationId: conversationId,
+        conversationId,
         dbBox: dbBox,
       );
 
@@ -348,7 +346,7 @@ class IsmChatDBWrapper {
       }
     } else {
       var forwardMessge = await getConversation(
-        conversationId: conversationId,
+        conversationId,
         dbBox: dbBox,
       );
       if (forwardMessge != null) {
@@ -368,8 +366,7 @@ class IsmChatDBWrapper {
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
     switch (dbBox) {
       case IsmChatDbBox.main:
-        var conversation =
-            await getConversation(conversationId: conversationId, dbBox: dbBox);
+        var conversation = await getConversation(conversationId, dbBox: dbBox);
 
         if (conversation != null) {
           await chatConversationBox.delete(conversationId);
@@ -378,7 +375,7 @@ class IsmChatDBWrapper {
         break;
       case IsmChatDbBox.pending:
         var pendingConversation =
-            await getConversation(conversationId: conversationId, dbBox: dbBox);
+            await getConversation(conversationId, dbBox: dbBox);
         if (pendingConversation != null) {
           await pendingMessageBox.delete(conversationId);
         }
