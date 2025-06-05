@@ -705,7 +705,9 @@ mixin IsmChatMqttEventMixin {
             .firstWhere((e) => e?.messageId == x, orElse: () => null);
         if (message != null) {
           allMessages[message.key] = message.copyWith(
-              customType: IsmChatCustomMessageType.deletedForEveryone);
+            customType: IsmChatCustomMessageType.deletedForEveryone,
+            reactions: [],
+          );
         }
       }
     }

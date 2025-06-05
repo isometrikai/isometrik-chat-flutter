@@ -342,16 +342,17 @@ class IsmChatPageViewModel {
                 orElse: () => null,
               );
       if (gotMessage != null) {
-        allMessages[gotMessage.key]?.customType =
-            IsmChatCustomMessageType.deletedForEveryone;
-        allMessages[gotMessage.key]?.reactions = [];
+        allMessages[gotMessage.key] = gotMessage.copyWith(
+          customType: IsmChatCustomMessageType.deletedForEveryone,
+          reactions: [],
+        );
       }
     }
 
     if (conversation != null) {
       conversation = conversation.copyWith(messages: allMessages);
-      await IsmChatConfig.dbWrapper!
-          .saveConversation(conversation: conversation);
+      await IsmChatConfig.dbWrapper
+          ?.saveConversation(conversation: conversation);
     }
     await IsmChatUtility.chatPageController.getMessagesFromDB(conversationId);
   }
