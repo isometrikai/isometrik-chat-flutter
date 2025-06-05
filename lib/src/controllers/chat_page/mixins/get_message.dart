@@ -24,25 +24,40 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
-    final localMessages = messages.values.toList();
+    var localMessages = messages.values.toList();
+    if (localMessages.isNotEmpty) {
+      localMessages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
+    }
     if (localMessages.isEmpty) {
-      localMessages.clear();
-      localMessages.add(
-        IsmChatMessageModel(
-          body: '',
-          customType: IsmChatCustomMessageType.conversationCreated,
-          sentAt: DateTime.now().millisecondsSinceEpoch,
-          sentByMe: true,
-        ),
+      localMessages = insertEndtoEndMessage(
+        timeStamp: DateTime.now().millisecondsSinceEpoch,
+        messages: localMessages,
+      );
+    } else if (localMessages.first.customType !=
+        IsmChatCustomMessageType.conversationCreated) {
+      localMessages = insertEndtoEndMessage(
+        timeStamp: localMessages.first.sentAt - 5,
+        messages: localMessages,
       );
     }
     _controller.messages = _controller.commonController
         .sortMessages(filterMessages(localMessages));
-    if (_controller.messages.isEmpty) {
-      return;
-    }
     _controller.isMessagesLoading = false;
     _controller._generateIndexedMessageList();
+  }
+
+  List<IsmChatMessageModel> insertEndtoEndMessage(
+      {required int timeStamp, required List<IsmChatMessageModel> messages}) {
+    messages.insert(
+      0,
+      IsmChatMessageModel(
+        body: '',
+        customType: IsmChatCustomMessageType.conversationCreated,
+        sentAt: timeStamp,
+        sentByMe: true,
+      ),
+    );
+    return messages;
   }
 
   List<IsmChatMessageModel> filterMessages(List<IsmChatMessageModel> messages) {
@@ -89,7 +104,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         _controller.isMessagesLoading = true;
       }
       final timeStamp = lastMessageTimestamp ??
-          (_controller.messages.isEmpty
+          (_controller.messages.last.customType ==
+                  IsmChatCustomMessageType.conversationCreated
               ? 0
               : _controller.messages.last.sentAt + 7000);
       final messagesList = List<IsmChatMessageModel>.from(_controller.messages);

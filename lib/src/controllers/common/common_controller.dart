@@ -247,11 +247,10 @@ class IsmChatCommonController extends GetxController {
 
     if (response != null) {
       final data = jsonDecode(response.data);
-      final conversationId = data['conversationId'];
-      conversation =
-          conversation.copyWith(conversationId: conversationId ?? '');
+      final conversationId = data['conversationId'] as String? ?? '';
+      conversation = conversation.copyWith(conversationId: conversationId);
       final dbConversationModel = IsmChatConversationModel(
-          conversationId: conversationId ?? '',
+          conversationId: conversationId,
           conversationImageUrl: conversation.conversationImageUrl,
           conversationTitle: conversation.conversationTitle,
           isGroup: isGroup,
@@ -259,16 +258,7 @@ class IsmChatCommonController extends GetxController {
           messagingDisabled: conversation.messagingDisabled,
           membersCount: conversation.membersCount,
           unreadMessagesCount: conversation.unreadMessagesCount,
-          messages: {
-            '${DateTime.now().millisecondsSinceEpoch}': IsmChatMessageModel(
-              body: '',
-              customType: IsmChatCustomMessageType.conversationCreated,
-              sentAt: DateTime.now().millisecondsSinceEpoch,
-              sentByMe: false,
-              conversationId: conversationId,
-              action: 'conversationCreated',
-            )
-          },
+          messages: {},
           opponentDetails: conversation.opponentDetails,
           lastMessageDetails:
               conversation.lastMessageDetails?.copyWith(deliverCount: 0),
