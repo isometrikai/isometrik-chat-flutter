@@ -82,6 +82,7 @@ mixin IsmChatMqttEventMixin {
   /// This method is called when the event queue is not empty and event processing is not in progress.
   void _eventProcessQueue() async {
     if (_isEventProcessing) return;
+
     _isEventProcessing = true;
     try {
       while (_eventQueue.isNotEmpty) {
@@ -284,7 +285,7 @@ mixin IsmChatMqttEventMixin {
       ),
     );
 
-    conversation.messages?.addEntries({'${message.sentAt}': message}.entries);
+    conversation.messages?.addEntries({message.key: message}.entries);
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
     if (IsmChatUtility.conversationControllerRegistered) {
       var conversationController = IsmChatUtility.conversationController;
@@ -319,13 +320,10 @@ mixin IsmChatMqttEventMixin {
     if (!IsmChatUtility.conversationControllerRegistered) {
       return;
     }
-    final conversationController = IsmChatUtility.conversationController;
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(message.conversationId ?? '');
-
-    if (conversation == null && IsmChatUtility.chatPageControllerRegistered) {
+    if (IsmChatUtility.chatPageControllerRegistered) {
       final controller = IsmChatUtility.chatPageController;
-
       if (message.conversationId == controller.conversation?.conversationId) {
         if (controller.messages.isEmpty) {
           controller.messages =
@@ -336,11 +334,8 @@ mixin IsmChatMqttEventMixin {
         return;
       }
     }
-
-    if (conversation == null ||
-        conversation.lastMessageDetails?.messageId == message.messageId) {
-      return;
-    }
+    if (conversation == null) return;
+    if (conversation.lastMessageDetails?.messageId == message.messageId) return;
 
     // To handle and show last message & unread count in conversation list
     conversation = conversation.copyWith(
@@ -372,22 +367,16 @@ mixin IsmChatMqttEventMixin {
         reactionType: '',
       ),
     );
-    if (IsmChatUtility.chatPageControllerRegistered) {
-      var chatController = IsmChatUtility.chatPageController;
-      if (chatController.conversation?.conversationId ==
-          message.conversationId) {
-        conversation.messages
-            ?.addEntries({'${message.sentAt}': message}.entries);
-      }
+    if (message.conversationId == conversation.conversationId) {
+      conversation.messages?.addEntries({message.key: message}.entries);
     }
-
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
+    final conversationController = IsmChatUtility.conversationController;
     unawaited(conversationController.getConversationsFromDB());
     await conversationController.pingMessageDelivered(
       conversationId: message.conversationId ?? '',
       messageId: message.messageId ?? '',
     );
-
     if (!IsmChatUtility.chatPageControllerRegistered) {
       return;
     }
@@ -432,7 +421,6 @@ mixin IsmChatMqttEventMixin {
     final notificationTitle =
         '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}'
             .trim();
-
     if (IsmChatResponsive.isMobile(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       if (isAppInBackground) {
@@ -451,12 +439,14 @@ mixin IsmChatMqttEventMixin {
         return;
       }
     }
-    showPushNotification(
-        title: notificationTitle.isNotEmpty
-            ? notificationTitle
-            : message.notificationTitle ?? '',
-        body: mqttMessage ?? '',
-        data: message.toMap());
+    try {
+      showPushNotification(
+          title: notificationTitle.isNotEmpty
+              ? notificationTitle
+              : message.notificationTitle ?? '',
+          body: mqttMessage ?? '',
+          data: message.toMap());
+    } catch (_) {}
   }
 
   /// Shows a push notification.
@@ -469,13 +459,12 @@ mixin IsmChatMqttEventMixin {
     required String body,
     required Map<String, dynamic> data,
   }) {
-    if (IsmChatConfig.showNotification != null) {
-      IsmChatConfig.showNotification?.call(
-        title,
-        body,
-        data,
-      );
-    }
+    if (IsmChatConfig.showNotification == null) return;
+    IsmChatConfig.showNotification?.call(
+      title,
+      body,
+      data,
+    );
   }
 
   /// Handles a typing event.

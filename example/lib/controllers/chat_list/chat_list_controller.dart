@@ -8,9 +8,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter_example/main.dart';
 import 'package:isometrik_chat_flutter_example/models/models.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
+import 'package:isometrik_chat_flutter_example/utilities/local_notice_service.dart';
 import 'package:isometrik_chat_flutter_example/utilities/utilities.dart';
-
-import '../../utilities/local_notice_service.dart';
 
 class ChatListController extends GetxController {
   UserDetailsModel userDetails = UserDetailsModel();
@@ -67,7 +66,7 @@ class ChatListController extends GetxController {
           LocalNoticeService().showFlutterNotification(
             title,
             body,
-            conversataionId: data['conversataionId'],
+            conversataionId: data['conversataionId'] as String? ?? '',
           );
         } else {
           ElegantNotification(

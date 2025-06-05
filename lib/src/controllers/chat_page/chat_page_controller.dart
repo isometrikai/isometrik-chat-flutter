@@ -242,6 +242,19 @@ class IsmChatPageController extends GetxController
       await getConverstaionDetails();
       await getMessagesFromAPI();
       checkUserStatus();
+    } else {
+      if (messages.isEmpty) {
+        messages.add(
+          IsmChatMessageModel(
+            body: '',
+            customType: IsmChatCustomMessageType.conversationCreated,
+            sentAt: DateTime.now().millisecondsSinceEpoch,
+            sentByMe: true,
+          ),
+        );
+        messages =
+            _controller.commonController.sortMessages(filterMessages(messages));
+      }
     }
     isMessagesLoading = false;
   }
@@ -1272,7 +1285,8 @@ class IsmChatPageController extends GetxController
     if (!didReactedLast) {
       var chatConversation = await IsmChatConfig.dbWrapper
           ?.getConversation(conversation?.conversationId ?? '');
-      if (chatConversation != null) {
+      if (chatConversation != null &&
+          chatConversation.messages?.isNotEmpty == true) {
         if (messages.isNotEmpty &&
             messages.last.customType != IsmChatCustomMessageType.removeMember) {
           final lastMessage = messages.last;

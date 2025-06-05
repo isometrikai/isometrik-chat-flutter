@@ -114,7 +114,16 @@ class IsmChatDBWrapper {
   Future<void> clearAllMessage({required String conversationId}) async {
     var conversation = await getConversation(conversationId);
     if (conversation != null) {
-      conversation = conversation.copyWith(messages: {});
+      conversation = conversation.copyWith(messages: {
+        '${DateTime.now().millisecondsSinceEpoch}': IsmChatMessageModel(
+          body: '',
+          customType: IsmChatCustomMessageType.conversationCreated,
+          sentAt: DateTime.now().millisecondsSinceEpoch,
+          sentByMe: false,
+          conversationId: conversationId,
+          action: 'conversationCreated',
+        )
+      });
       await saveConversation(conversation: conversation);
     }
     if (IsmChatUtility.chatPageControllerRegistered) {

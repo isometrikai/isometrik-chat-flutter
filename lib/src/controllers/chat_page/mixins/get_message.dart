@@ -9,6 +9,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
     final messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
+
     if (messages == null) {
       _controller.messages.clear();
       return;
@@ -23,9 +24,20 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
+    final localMessages = messages.values.toList();
+    if (localMessages.isEmpty) {
+      localMessages.clear();
+      localMessages.add(
+        IsmChatMessageModel(
+          body: '',
+          customType: IsmChatCustomMessageType.conversationCreated,
+          sentAt: DateTime.now().millisecondsSinceEpoch,
+          sentByMe: true,
+        ),
+      );
+    }
     _controller.messages = _controller.commonController
-        .sortMessages(filterMessages(messages.values.toList()));
-
+        .sortMessages(filterMessages(localMessages));
     if (_controller.messages.isEmpty) {
       return;
     }
@@ -220,8 +232,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           metaData: _controller.conversation?.metaData,
           outSideMessage: _controller.conversation?.outSideMessage,
           messages: {
-            for (var message in _controller.messages)
-              '${message.sentAt}': message
+            for (var message in _controller.messages) message.key: message
           },
         );
         IsmChatProperties.chatPageProperties.onCoverstaionStatus?.call(

@@ -277,8 +277,11 @@ class IsmChatCommonController extends GetxController {
           conversationType: conversation.conversationType);
       await IsmChatConfig.dbWrapper
           ?.createAndUpdateConversation(dbConversationModel);
-      await IsmChatUtility.conversationController.getChatConversations();
-
+      unawaited(IsmChatUtility.conversationController.getChatConversations());
+      if (IsmChatUtility.chatPageControllerRegistered) {
+        await IsmChatUtility.chatPageController
+            .getMessagesFromDB(conversationId);
+      }
       return conversation;
     }
     return null;
