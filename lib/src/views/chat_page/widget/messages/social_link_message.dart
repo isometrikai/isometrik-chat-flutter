@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class IsmChatSocialLinkMessage extends StatelessWidget {
-  const IsmChatSocialLinkMessage(this.message, {super.key});
+class IsmChatSocialMessage extends StatelessWidget {
+  const IsmChatSocialMessage(this.message, {super.key});
 
   final IsmChatMessageModel message;
 

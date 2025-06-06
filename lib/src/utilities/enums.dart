@@ -63,6 +63,20 @@ enum IsmChatCustomMessageType {
   productLink(29),
   socialLink(30),
   collectionLink(31),
+  buydirectReq(32),
+  acceptBuyReq(33),
+  rejectBuyReq(34),
+  cancelBuyReq(35),
+  offerSent(36),
+  editOffer(37),
+  cancelOffer(38),
+  counterOffer(39),
+  acceptOffer(40),
+  rejectOffer(41),
+  dealComplete(42),
+  cancelDeal(43),
+  paymentEscrowed(44),
+  reviewRating(45),
   date(100);
 
   const IsmChatCustomMessageType(this.number);
@@ -121,6 +135,20 @@ enum IsmChatCustomMessageType {
       'AttachmentMessage:SocialLink': IsmChatCustomMessageType.socialLink,
       'AttachmentMessage:CollectionLink':
           IsmChatCustomMessageType.collectionLink,
+      'BUYDIRECT_REQUEST': IsmChatCustomMessageType.buydirectReq,
+      'REJECT_BUYDIRECT_REQUEST': IsmChatCustomMessageType.rejectBuyReq,
+      'ACCEPT_BUYDIRECT_REQUEST': IsmChatCustomMessageType.acceptBuyReq,
+      'CANCEL_BUYDIRECT_REQUEST': IsmChatCustomMessageType.cancelBuyReq,
+      'OFFER_SENT': IsmChatCustomMessageType.offerSent,
+      'EDIT_OFFER': IsmChatCustomMessageType.editOffer,
+      'CANCEL_OFFER': IsmChatCustomMessageType.cancelOffer,
+      'COUNTER_OFFER': IsmChatCustomMessageType.counterOffer,
+      'ACCEPT_OFFER': IsmChatCustomMessageType.acceptOffer,
+      'REJECT_OFFER': IsmChatCustomMessageType.rejectOffer,
+      'DEAL_COMPLETE': IsmChatCustomMessageType.dealComplete,
+      'PAYMENT_ESCROWED': IsmChatCustomMessageType.paymentEscrowed,
+      'CANCEL_DEAL': IsmChatCustomMessageType.cancelDeal,
+      'REVIEW_RATING': IsmChatCustomMessageType.reviewRating,
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -306,6 +334,34 @@ enum IsmChatCustomMessageType {
         return 'AttachmentMessage:SocialLink';
       case IsmChatCustomMessageType.collectionLink:
         return 'AttachmentMessage:CollectionLink';
+      case IsmChatCustomMessageType.buydirectReq:
+        return 'BUYDIRECT_REQUEST';
+      case IsmChatCustomMessageType.acceptBuyReq:
+        return 'ACCEPT_BUYDIRECT_REQUEST';
+      case IsmChatCustomMessageType.rejectBuyReq:
+        return 'REJECT_BUYDIRECT_REQUEST';
+      case IsmChatCustomMessageType.cancelBuyReq:
+        return 'CANCEL_BUYDIRECT_REQUEST';
+      case IsmChatCustomMessageType.offerSent:
+        return 'OFFER_SENT';
+      case IsmChatCustomMessageType.editOffer:
+        return 'EDIT_OFFER';
+      case IsmChatCustomMessageType.cancelOffer:
+        return 'CANCEL_OFFER';
+      case IsmChatCustomMessageType.counterOffer:
+        return 'COUNTER_OFFER';
+      case IsmChatCustomMessageType.acceptOffer:
+        return 'ACCEPT_OFFER';
+      case IsmChatCustomMessageType.rejectOffer:
+        return 'REJECT_OFFER';
+      case IsmChatCustomMessageType.dealComplete:
+        return 'DEAL_COMPLETE';
+      case IsmChatCustomMessageType.cancelDeal:
+        return 'CANCEL_DEAL';
+      case IsmChatCustomMessageType.paymentEscrowed:
+        return 'PAYMENT_ESCROWED';
+      case IsmChatCustomMessageType.reviewRating:
+        return 'REVIEW_RATING';
     }
   }
 }

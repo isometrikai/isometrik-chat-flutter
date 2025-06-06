@@ -17,77 +17,53 @@ class IsmChatMessageWrapper extends StatelessWidget {
     switch (messageType) {
       case IsmChatCustomMessageType.text:
         return IsmChatTextMessage(message);
-
       case IsmChatCustomMessageType.reply:
         return IsmChatReplyMessage(message);
-
       case IsmChatCustomMessageType.forward:
         return IsmChatForwardMessage(message);
-
       case IsmChatCustomMessageType.image:
         return IsmChatImageMessage(message);
-
       case IsmChatCustomMessageType.video:
         return IsmChatVideoMessage(message);
-
       case IsmChatCustomMessageType.audio:
         return IsmChatAudioMessage(message);
-
       case IsmChatCustomMessageType.file:
         return IsmChatFileMessage(message);
-
       case IsmChatCustomMessageType.location:
         return IsmChatLocationMessage(message);
-
       case IsmChatCustomMessageType.block:
         return IsmChatBlockedMessage(message);
-
       case IsmChatCustomMessageType.unblock:
         return IsmChatBlockedMessage(message);
-
       case IsmChatCustomMessageType.deletedForMe:
         return IsmChatDeletedMessage(message);
-
       case IsmChatCustomMessageType.deletedForEveryone:
         return IsmChatDeletedMessage(message);
-
       case IsmChatCustomMessageType.link:
         return IsmChatLinkMessage(message);
-
       case IsmChatCustomMessageType.date:
         return IsmChatDateMessage(message);
-
       case IsmChatCustomMessageType.aboutText:
         return IsmChatAboutTextMessage(message);
-
       case IsmChatCustomMessageType.conversationCreated:
         return IsmChatConversationCreatedMessage(message);
-
       case IsmChatCustomMessageType.removeMember:
         return IsmChatAddRemoveMember(message, isAdded: false);
-
       case IsmChatCustomMessageType.addMember:
         return IsmChatAddRemoveMember(message);
-
       case IsmChatCustomMessageType.addAdmin:
         return IsmChatAddRevokeAdmin(message);
-
       case IsmChatCustomMessageType.removeAdmin:
         return IsmChatAddRevokeAdmin(message, isAdded: false);
-
       case IsmChatCustomMessageType.memberLeave:
         return IsmChatMemberLeaveAndJoin(message, didLeft: true);
-
       case IsmChatCustomMessageType.conversationTitleUpdated:
       case IsmChatCustomMessageType.conversationImageUpdated:
         return IsmChatConversationUpdate(message);
-
       case IsmChatCustomMessageType.contact:
         return IsmChatContactMessage(message);
-
       case IsmChatCustomMessageType.memberJoin:
         return IsmChatMemberLeaveAndJoin(message, didLeft: false);
-
       case IsmChatCustomMessageType.observerJoin:
         return IsmChatObserverLeaveAndJoin(message);
       case IsmChatCustomMessageType.observerLeave:
@@ -97,12 +73,39 @@ class IsmChatMessageWrapper extends StatelessWidget {
       case IsmChatCustomMessageType.bulkAction:
         return IsmChatTextMessage(message);
       case IsmChatCustomMessageType.productLink:
-        return IsmChatSocialLinkMessage(message);
+        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.socialLink:
-        return IsmChatSocialLinkMessage(message);
-
+        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.collectionLink:
-        return IsmChatSocialLinkMessage(message);
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.buydirectReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.acceptBuyReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.rejectBuyReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.cancelBuyReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.offerSent:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.editOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.cancelOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.counterOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.acceptOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.rejectOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.dealComplete:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.cancelDeal:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.paymentEscrowed:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.reviewRating:
+        return IsmChatSocialMessage(message);
     }
   }
 }
@@ -123,95 +126,95 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
     switch (replayMessageCustomType) {
       case IsmChatCustomMessageType.text:
         return IsmChatTextMessage(message);
-
       case IsmChatCustomMessageType.reply:
         return IsmChatReplyMessage(message);
-
       case IsmChatCustomMessageType.forward:
         return IsmChatForwardMessage(message);
-
       case IsmChatCustomMessageType.image:
         return IsmChatImageMessage(message);
-
       case IsmChatCustomMessageType.video:
         return IsmChatVideoMessage(message);
-
       case IsmChatCustomMessageType.audio:
         return IsmChatAudioMessage(message);
-
       case IsmChatCustomMessageType.file:
         return IsmChatFileMessage(message);
-
       case IsmChatCustomMessageType.location:
         return IsmChatLocationMessage(message);
-
       case IsmChatCustomMessageType.block:
         return IsmChatBlockedMessage(message);
-
       case IsmChatCustomMessageType.unblock:
         return IsmChatBlockedMessage(message);
-
       case IsmChatCustomMessageType.deletedForMe:
         return IsmChatDeletedMessage(message);
-
       case IsmChatCustomMessageType.deletedForEveryone:
         return IsmChatDeletedMessage(message);
-
       case IsmChatCustomMessageType.link:
         return IsmChatLinkMessage(message);
-
       case IsmChatCustomMessageType.date:
         return IsmChatDateMessage(message);
-
       case IsmChatCustomMessageType.aboutText:
         return IsmChatAboutTextMessage(message);
-
       case IsmChatCustomMessageType.conversationCreated:
         return IsmChatConversationCreatedMessage(message);
-
       case IsmChatCustomMessageType.removeMember:
         return IsmChatAddRemoveMember(message, isAdded: false);
-
       case IsmChatCustomMessageType.addMember:
         return IsmChatAddRemoveMember(message);
-
       case IsmChatCustomMessageType.addAdmin:
         return IsmChatAddRevokeAdmin(message);
-
       case IsmChatCustomMessageType.removeAdmin:
         return IsmChatAddRevokeAdmin(message, isAdded: false);
-
       case IsmChatCustomMessageType.memberLeave:
         return IsmChatMemberLeaveAndJoin(message, didLeft: true);
-
       case IsmChatCustomMessageType.conversationTitleUpdated:
       case IsmChatCustomMessageType.conversationImageUpdated:
         return IsmChatConversationUpdate(message);
-
       case IsmChatCustomMessageType.contact:
         return IsmChatContactMessage(message);
-
       case IsmChatCustomMessageType.memberJoin:
         return IsmChatMemberLeaveAndJoin(message, didLeft: false);
-
       case IsmChatCustomMessageType.observerJoin:
         return IsmChatObserverLeaveAndJoin(message);
-
       case IsmChatCustomMessageType.observerLeave:
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
-
       case IsmChatCustomMessageType.oneToOneCall:
         return IsmOneToOneCallMessage(message);
       case IsmChatCustomMessageType.bulkAction:
         return IsmChatTextMessage(message);
       case IsmChatCustomMessageType.productLink:
-        return IsmChatSocialLinkMessage(message);
-
+        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.socialLink:
-        return IsmChatSocialLinkMessage(message);
-
+        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.collectionLink:
-        return IsmChatSocialLinkMessage(message);
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.buydirectReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.acceptBuyReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.rejectBuyReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.cancelBuyReq:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.offerSent:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.editOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.cancelOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.counterOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.acceptOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.rejectOffer:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.dealComplete:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.cancelDeal:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.paymentEscrowed:
+        return IsmChatSocialMessage(message);
+      case IsmChatCustomMessageType.reviewRating:
+        return IsmChatSocialMessage(message);
     }
   }
 }

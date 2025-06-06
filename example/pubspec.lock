@@ -157,10 +157,10 @@ packages:
     dependency: transitive
     description:
       name: camera_android_camerax
-      sha256: "0bd3d1645df00af2540a22df13ba466ac5fb2838a09bce4089cecdb1712a9e94"
+      sha256: "68d7ec97439108ac22cfba34bb74d0ab53adbc017175116d2cbc5a3d8fc8ea5e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.18"
+    version: "0.6.18+2"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -780,10 +780,10 @@ packages:
     dependency: transitive
     description:
       name: google_maps_flutter_platform_interface
-      sha256: "970c8f766c02909c7be282dea923c971f83a88adaf07f8871d0aacebc3b07bb2"
+      sha256: "0fff8d6f0e096607e456028f095a2efec8f128a25fc7bb8e5161487dd143970c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.11.1"
+    version: "2.12.0"
   google_maps_flutter_web:
     dependency: transitive
     description:
@@ -955,10 +955,10 @@ packages:
     dependency: transitive
     description:
       name: just_audio
-      sha256: d449d6b01ace3343dd8ca7f910db871994942dc58752d2765db35694f9ffe7e2
+      sha256: "679637a3ec5b6e00f36472f5a3663667df00ee4822cbf5dafca0f568c710960a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.3"
+    version: "0.10.4"
   just_audio_platform_interface:
     dependency: transitive
     description:
@@ -1059,10 +1059,10 @@ packages:
     dependency: transitive
     description:
       name: mqtt_client
-      sha256: "7f2cb7faf1bfd132abb4075d64418894f7811e376a4c4db947b4a19d7f569821"
+      sha256: "39cfe62c13403c35eb042ef2fd2d05d792de9bbe5b4f4f7f0b745f38309db09b"
       url: "https://pub.dev"
     source: hosted
-    version: "10.8.1"
+    version: "10.9.0"
   mqtt_helper:
     dependency: transitive
     description:
@@ -1315,10 +1315,10 @@ packages:
     dependency: transitive
     description:
       name: record_web
-      sha256: f8e536a9c927e52f95326d7540898457eaeefbe0b21a84d3cb3d2d7d4645e8cb
+      sha256: "024c81eb7f51468b1833a3eca8b461c7ca25c04899dba37abe580bb57afd32e4"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.7"
+    version: "1.1.8"
   record_windows:
     dependency: transitive
     description:
@@ -1728,10 +1728,10 @@ packages:
     dependency: transitive
     description:
       name: video_player
-      sha256: "7d78f0cfaddc8c19d4cb2d3bebe1bfef11f2103b0a03e5398b303a1bf65eeb14"
+      sha256: "0d55b1f1a31e5ad4c4967bfaa8ade0240b07d20ee4af1dfef5f531056512961a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.5"
+    version: "2.10.0"
   video_player_android:
     dependency: transitive
     description:
