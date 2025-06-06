@@ -82,7 +82,6 @@ mixin IsmChatMqttEventMixin {
   /// This method is called when the event queue is not empty and event processing is not in progress.
   void _eventProcessQueue() async {
     if (_isEventProcessing) return;
-
     _isEventProcessing = true;
     try {
       while (_eventQueue.isNotEmpty) {
@@ -316,13 +315,14 @@ mixin IsmChatMqttEventMixin {
   /// * `message`: The message to handle
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     if (isSenderMe(message.senderInfo?.userId)) return;
+
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     if (!IsmChatUtility.conversationControllerRegistered) {
       return;
     }
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(message.conversationId ?? '');
-    if (IsmChatUtility.chatPageControllerRegistered) {
+    if (conversation == null && IsmChatUtility.chatPageControllerRegistered) {
       final controller = IsmChatUtility.chatPageController;
       if (message.conversationId == controller.conversation?.conversationId) {
         if (controller.messages.isEmpty) {
