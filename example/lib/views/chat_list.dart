@@ -28,6 +28,7 @@ class ChatList extends StatelessWidget {
               //   return true;
               // },
               chatTheme: IsmChatThemeData(
+                chatListCardThemData: IsmChatListCardTheme(iconSize: 16),
                 cardBackgroundColor: const Color(0xFF292030),
                 // backgroundColor: const Color(0xFF292030),
                 chatPageHeaderTheme: IsmChatHeaderTheme(),

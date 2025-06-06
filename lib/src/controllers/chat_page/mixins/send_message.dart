@@ -1036,6 +1036,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.text,
+                parentMessageAttachmentUrl:
+                    _controller.getParentMessageUrl(_controller.replayMessage),
+                parentMessageAttachmentDuration:
+                    _controller.replayMessage?.metaData?.duration?.inSeconds,
                 parentMessageMessageType: _controller.replayMessage?.customType,
                 parentMessageInitiator: _controller.replayMessage?.sentByMe,
                 parentMessageBody:

@@ -1887,6 +1887,24 @@ class IsmChatPageController extends GetxController
     }
   }
 
+  String? getParentMessageUrl(IsmChatMessageModel? replayMessage) {
+    if (replayMessage?.customType == IsmChatCustomMessageType.audio) {
+      return replayMessage?.attachments?.first.name;
+    } else if (replayMessage?.customType == IsmChatCustomMessageType.contact) {
+      return replayMessage?.metaData?.contacts?.first.contactIdentifier;
+    } else if (replayMessage?.customType == IsmChatCustomMessageType.location) {
+      return replayMessage?.attachments?.first.mediaUrl;
+    } else if (replayMessage?.customType == IsmChatCustomMessageType.image) {
+      return replayMessage?.attachments?.first.mediaUrl;
+    } else if (replayMessage?.customType == IsmChatCustomMessageType.video) {
+      return replayMessage?.attachments?.first.thumbnailUrl;
+    } else if (replayMessage?.customType == IsmChatCustomMessageType.file) {
+      return replayMessage?.attachments?.first.name;
+    } else {
+      return replayMessage?.body ?? '';
+    }
+  }
+
   Future<bool> isEncoderSupported(AudioEncoder encoder) async {
     final isSupported = await recordVoice.isEncoderSupported(
       encoder,

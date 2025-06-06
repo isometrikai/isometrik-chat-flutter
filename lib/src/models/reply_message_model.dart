@@ -11,6 +11,7 @@ class IsmChatReplyMessageModel {
     this.parentMessageMessageType,
     this.forMessageType,
     this.parentMessageAttachmentUrl,
+    this.parentMessageAttachmentDuration,
   });
 
   factory IsmChatReplyMessageModel.fromMap(Map<String, dynamic> map) =>
@@ -28,6 +29,8 @@ class IsmChatReplyMessageModel {
         forMessageType: map['forMessageType'] != null
             ? IsmChatCustomMessageType.fromMap(map['forMessageType'] as String)
             : null,
+        parentMessageAttachmentDuration:
+            map['parentMessageAttachmentDuration'] as int? ?? 0,
       );
 
   factory IsmChatReplyMessageModel.fromJson(String source) =>
@@ -40,6 +43,7 @@ class IsmChatReplyMessageModel {
   final IsmChatCustomMessageType? parentMessageMessageType;
   final IsmChatCustomMessageType? forMessageType;
   final String? parentMessageAttachmentUrl;
+  final int? parentMessageAttachmentDuration;
 
   IsmChatReplyMessageModel copyWith({
     String? parentMessageBody,
@@ -49,6 +53,7 @@ class IsmChatReplyMessageModel {
     IsmChatCustomMessageType? parentMessageMessageType,
     IsmChatCustomMessageType? forMessageType,
     String? parentMessageAttachmentUrl,
+    int? parentMessageAttachmentDuration,
   }) =>
       IsmChatReplyMessageModel(
         parentMessageBody: parentMessageBody ?? this.parentMessageBody,
@@ -62,6 +67,8 @@ class IsmChatReplyMessageModel {
         forMessageType: forMessageType ?? this.forMessageType,
         parentMessageAttachmentUrl:
             parentMessageAttachmentUrl ?? this.parentMessageAttachmentUrl,
+        parentMessageAttachmentDuration: parentMessageAttachmentDuration ??
+            this.parentMessageAttachmentDuration,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -72,13 +79,14 @@ class IsmChatReplyMessageModel {
         'parentMessageMessageType': parentMessageMessageType?.value,
         'forMessageType': forMessageType?.value,
         'parentMessageAttachmentUrl': parentMessageAttachmentUrl,
+        'parentMessageAttachmentDuration': parentMessageAttachmentDuration,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatReplyMessageModel(parentMessageBody: $parentMessageBody, parentMessageInitiator: $parentMessageInitiator, parentMessageUserId: $parentMessageUserId, parentMessageUserName: $parentMessageUserName, parentMessageMessageType: $parentMessageMessageType, forMessageType: $forMessageType, parentMessageAttachmentUrl: $parentMessageAttachmentUrl)';
+      'IsmChatReplyMessageModel(parentMessageBody: $parentMessageBody, parentMessageInitiator: $parentMessageInitiator, parentMessageUserId: $parentMessageUserId, parentMessageUserName: $parentMessageUserName, parentMessageMessageType: $parentMessageMessageType, forMessageType: $forMessageType, parentMessageAttachmentUrl: $parentMessageAttachmentUrl, parentMessageAttachmentDuration : $parentMessageAttachmentDuration)';
 
   @override
   bool operator ==(covariant IsmChatReplyMessageModel other) {
@@ -90,6 +98,8 @@ class IsmChatReplyMessageModel {
         other.parentMessageUserName == parentMessageUserName &&
         other.parentMessageMessageType == parentMessageMessageType &&
         other.forMessageType == forMessageType &&
+        other.parentMessageAttachmentDuration ==
+            parentMessageAttachmentDuration &&
         other.parentMessageAttachmentUrl == parentMessageAttachmentUrl;
   }
 
@@ -101,5 +111,6 @@ class IsmChatReplyMessageModel {
       parentMessageUserName.hashCode ^
       parentMessageMessageType.hashCode ^
       forMessageType.hashCode ^
+      parentMessageAttachmentDuration.hashCode ^
       parentMessageAttachmentUrl.hashCode;
 }
