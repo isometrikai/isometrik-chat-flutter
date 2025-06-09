@@ -18,7 +18,6 @@ class IsmChatLocationMessage extends StatelessWidget {
       latLong = LatLng(message.attachments?.first.latitude ?? 0,
           message.attachments?.first.longitude ?? 0);
     }
-
     return IsmChatTapHandler(
       onTap: () async {
         var url = '';

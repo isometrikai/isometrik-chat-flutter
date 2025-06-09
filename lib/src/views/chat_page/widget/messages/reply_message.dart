@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatReplyMessage extends StatelessWidget {
@@ -168,13 +171,21 @@ class _ReplyMessage extends StatelessWidget {
                                       ),
                                     );
                                   }),
-                                  Text(
-                                    IsmChatUtility.decodeString(message.metaData
-                                            ?.replyMessage?.parentMessageBody ??
-                                        ''),
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: message.style,
+                                  Row(
+                                    children: [
+                                      _replayParentIcon(message),
+                                      IsmChatDimens.boxWidth4,
+                                      Text(
+                                        IsmChatUtility.decodeString(message
+                                                .metaData
+                                                ?.replyMessage
+                                                ?.parentMessageBody ??
+                                            ''),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: message.style,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -185,7 +196,6 @@ class _ReplyMessage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      IsmChatDimens.boxWidth8,
                     ],
                   ),
                 ),
@@ -194,6 +204,27 @@ class _ReplyMessage extends StatelessWidget {
           );
         },
       );
+
+  Widget _replayParentIcon(IsmChatMessageModel? message) {
+    final messageType =
+        message?.metaData?.replyMessage?.parentMessageMessageType;
+
+    final icon = switch (messageType) {
+      IsmChatCustomMessageType.image => Icons.image_outlined,
+      IsmChatCustomMessageType.video => Icons.play_circle_outlined,
+      IsmChatCustomMessageType.audio => Icons.mic_outlined,
+      IsmChatCustomMessageType.location => Icons.location_on_outlined,
+      IsmChatCustomMessageType.file => Icons.description_outlined,
+      IsmChatCustomMessageType.contact => Icons.contact_page_outlined,
+      _ => null,
+    };
+    if (icon == null) return IsmChatDimens.box0;
+    return Icon(
+      icon,
+      color: message?.style.color ?? IsmChatColors.greyColor,
+      size: IsmChatDimens.twenty,
+    );
+  }
 }
 
 class ReplayParentMessage extends StatelessWidget {
@@ -203,20 +234,74 @@ class ReplayParentMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (replayData?.parentMessageMessageType ==
-        IsmChatCustomMessageType.image) {
-      return SizedBox(
-        height: IsmChatDimens.fifty,
-        width: IsmChatDimens.fifty,
-        child: IsmChatImage(
-          replayData?.parentMessageAttachmentUrl ?? '',
-          isNetworkImage:
-              replayData?.parentMessageAttachmentUrl?.isValidUrl ?? false,
-          isBytes: false,
-        ),
-      );
+    try {
+      if ([IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
+          .contains(replayData?.parentMessageMessageType)) {
+        Uint8List? bytes;
+        if (IsmChatCustomMessageType.video ==
+                replayData?.parentMessageMessageType &&
+            (replayData?.parentMessageAttachmentUrl?.isValidUrl == false)) {
+          bytes =
+              (replayData?.parentMessageAttachmentUrl ?? '').strigToUnit8List;
+        }
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              height: IsmChatDimens.fifty,
+              width: IsmChatDimens.fifty,
+              child: IsmChatImage(
+                replayData?.parentMessageAttachmentUrl ?? '',
+                isNetworkImage:
+                    replayData?.parentMessageAttachmentUrl?.isValidUrl ?? false,
+                isBytes: bytes != null,
+              ),
+            ),
+            if (IsmChatCustomMessageType.video ==
+                replayData?.parentMessageMessageType) ...[
+              const Icon(
+                Icons.play_circle_filled_outlined,
+                color: IsmChatColors.whiteColor,
+              ),
+            ]
+          ],
+        );
+      }
+      if (IsmChatCustomMessageType.location ==
+          replayData?.parentMessageMessageType) {
+        var url = replayData?.parentMessageAttachmentUrl ?? '';
+        var position = url.position;
+        return SizedBox(
+          height: IsmChatDimens.fifty,
+          width: IsmChatDimens.fifty,
+          child: GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: position,
+              zoom: 10,
+            ),
+            markers: {
+              Marker(
+                markerId: const MarkerId('1'),
+                position: position,
+                infoWindow: const InfoWindow(title: 'Shared Location'),
+              )
+            },
+            myLocationButtonEnabled: false,
+            myLocationEnabled: false,
+            rotateGesturesEnabled: false,
+            scrollGesturesEnabled: false,
+            buildingsEnabled: true,
+            mapToolbarEnabled: false,
+            tiltGesturesEnabled: false,
+            zoomControlsEnabled: false,
+            zoomGesturesEnabled: false,
+            trafficEnabled: false,
+          ),
+        );
+      }
+    } catch (_) {
+      return IsmChatDimens.box0;
     }
-
-    return const Text('Rahul');
+    return IsmChatDimens.box0;
   }
 }
