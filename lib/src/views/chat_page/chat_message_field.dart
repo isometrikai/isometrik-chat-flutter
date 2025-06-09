@@ -323,7 +323,6 @@ class _ReplyMessage extends StatelessWidget {
         margin: IsmChatDimens.edgeInsets4.copyWith(
           bottom: IsmChatDimens.zero,
         ),
-        padding: IsmChatDimens.edgeInsets8,
         width: IsmChatDimens.percentWidth(1),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(
@@ -336,35 +335,48 @@ class _ReplyMessage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    controller.replayMessage?.sentByMe ?? false
-                        ? IsmChatStrings.you
-                        : IsmChatProperties.chatPageProperties.header?.title
-                                ?.call(context, controller.conversation,
-                                    controller.conversation?.chatName ?? '') ??
-                            controller.conversation?.chatName.capitalizeFirst ??
-                            '',
-                  ),
-                  Text(
-                    messageBody,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              child: Padding(
+                padding: IsmChatDimens.edgeInsets8,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      controller.replayMessage?.sentByMe ?? false
+                          ? IsmChatStrings.you
+                          : IsmChatProperties.chatPageProperties.header?.title
+                                  ?.call(
+                                      context,
+                                      controller.conversation,
+                                      controller.conversation?.chatName ??
+                                          '') ??
+                              controller
+                                  .conversation?.chatName.capitalizeFirst ??
+                              '',
+                    ),
+                    Text(
+                      messageBody,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ),
-            IsmChatTapHandler(
-              onTap: () {
-                controller.isreplying = false;
-              },
-              child: Icon(
-                Icons.close_rounded,
-                size: IsmChatDimens.twenty,
-              ),
+            Stack(
+              alignment: Alignment.topRight,
+              children: [
+                ReplayParentMessagePreview(controller: controller),
+                IsmChatTapHandler(
+                  onTap: () {
+                    controller.isreplying = false;
+                  },
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: IsmChatDimens.twenty,
+                  ),
+                )
+              ],
             ),
           ],
         ),

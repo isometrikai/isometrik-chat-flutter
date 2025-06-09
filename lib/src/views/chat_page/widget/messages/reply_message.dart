@@ -185,6 +185,16 @@ class _ReplyMessage extends StatelessWidget {
                                         overflow: TextOverflow.ellipsis,
                                         style: message.style,
                                       ),
+                                      if (message.metaData?.replyMessage
+                                              ?.parentMessageMessageType ==
+                                          IsmChatCustomMessageType.audio) ...[
+                                        Text(
+                                          ' (${Duration(seconds: message.metaData?.replyMessage?.parentMessageAttachmentDuration ?? 0).formatDuration})',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: message.style,
+                                        )
+                                      ]
                                     ],
                                   ),
                                 ],
@@ -208,7 +218,6 @@ class _ReplyMessage extends StatelessWidget {
   Widget _replayParentIcon(IsmChatMessageModel? message) {
     final messageType =
         message?.metaData?.replyMessage?.parentMessageMessageType;
-
     final icon = switch (messageType) {
       IsmChatCustomMessageType.image => Icons.image_outlined,
       IsmChatCustomMessageType.video => Icons.play_circle_outlined,
@@ -228,10 +237,14 @@ class _ReplyMessage extends StatelessWidget {
 }
 
 class ReplayParentMessage extends StatelessWidget {
-  const ReplayParentMessage({super.key, this.replayData});
+  ReplayParentMessage(
+      {super.key, this.replayData, double? height, double? width})
+      : _height = height ?? IsmChatDimens.fifty,
+        _width = width ?? IsmChatDimens.fifty;
 
   final IsmChatReplyMessageModel? replayData;
-
+  final double _height;
+  final double _width;
   @override
   Widget build(BuildContext context) {
     try {
@@ -248,8 +261,8 @@ class ReplayParentMessage extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             SizedBox(
-              height: IsmChatDimens.fifty,
-              width: IsmChatDimens.fifty,
+              height: _height,
+              width: _width,
               child: IsmChatImage(
                 replayData?.parentMessageAttachmentUrl ?? '',
                 isNetworkImage:
@@ -272,8 +285,8 @@ class ReplayParentMessage extends StatelessWidget {
         var url = replayData?.parentMessageAttachmentUrl ?? '';
         var position = url.position;
         return SizedBox(
-          height: IsmChatDimens.fifty,
-          width: IsmChatDimens.fifty,
+          height: _height,
+          width: _width,
           child: GoogleMap(
             initialCameraPosition: CameraPosition(
               target: position,
@@ -304,4 +317,55 @@ class ReplayParentMessage extends StatelessWidget {
     }
     return IsmChatDimens.box0;
   }
+}
+
+class ReplayParentMessagePreview extends StatelessWidget {
+  const ReplayParentMessagePreview({
+    super.key,
+    required this.controller,
+  });
+
+  final IsmChatPageController controller;
+
+  @override
+  Widget build(BuildContext context) => Builder(
+        builder: (context) {
+          final replayMessage = controller.replayMessage;
+          final customType = replayMessage?.customType;
+          final attachment = replayMessage?.attachments?.isNotEmpty == true
+              ? replayMessage?.attachments?.first
+              : null;
+          final contact = replayMessage?.metaData?.contacts?.isNotEmpty == true
+              ? replayMessage?.metaData?.contacts?.first
+              : null;
+          final attachmentUrl = switch (customType) {
+            IsmChatCustomMessageType.audio ||
+            IsmChatCustomMessageType.file =>
+              attachment?.name,
+            IsmChatCustomMessageType.contact => contact?.contactIdentifier,
+            IsmChatCustomMessageType.location ||
+            IsmChatCustomMessageType.image =>
+              attachment?.mediaUrl,
+            IsmChatCustomMessageType.video => attachment?.thumbnailUrl,
+            _ => replayMessage?.body,
+          };
+          final replayData = IsmChatReplyMessageModel(
+            parentMessageAttachmentUrl: attachmentUrl,
+            parentMessageAttachmentDuration:
+                replayMessage?.metaData?.duration?.inSeconds,
+            parentMessageMessageType: customType,
+            parentMessageInitiator: replayMessage?.sentByMe,
+            parentMessageBody: replayMessage?.body,
+            parentMessageUserId: replayMessage?.senderInfo?.userId,
+          );
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(IsmChatDimens.eight),
+            child: ReplayParentMessage(
+              replayData: replayData,
+              height: IsmChatDimens.fiftyFive,
+              width: IsmChatDimens.hundred,
+            ),
+          );
+        },
+      );
 }

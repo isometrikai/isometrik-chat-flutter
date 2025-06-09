@@ -1888,20 +1888,21 @@ class IsmChatPageController extends GetxController
   }
 
   String? getParentMessageUrl(IsmChatMessageModel? replayMessage) {
-    if (replayMessage?.customType == IsmChatCustomMessageType.audio) {
-      return replayMessage?.attachments?.first.name;
-    } else if (replayMessage?.customType == IsmChatCustomMessageType.contact) {
-      return replayMessage?.metaData?.contacts?.first.contactIdentifier;
-    } else if (replayMessage?.customType == IsmChatCustomMessageType.location) {
-      return replayMessage?.attachments?.first.mediaUrl;
-    } else if (replayMessage?.customType == IsmChatCustomMessageType.image) {
-      return replayMessage?.attachments?.first.mediaUrl;
-    } else if (replayMessage?.customType == IsmChatCustomMessageType.video) {
-      return replayMessage?.attachments?.first.thumbnailUrl;
-    } else if (replayMessage?.customType == IsmChatCustomMessageType.file) {
-      return replayMessage?.attachments?.first.name;
-    } else {
-      return replayMessage?.body ?? '';
+    if (replayMessage == null) return null;
+    final customType = replayMessage.customType;
+    switch (customType) {
+      case IsmChatCustomMessageType.audio:
+      case IsmChatCustomMessageType.file:
+        return replayMessage.attachments?.first.name;
+      case IsmChatCustomMessageType.contact:
+        return replayMessage.metaData?.contacts?.first.contactIdentifier;
+      case IsmChatCustomMessageType.location:
+      case IsmChatCustomMessageType.image:
+        return replayMessage.attachments?.first.mediaUrl;
+      case IsmChatCustomMessageType.video:
+        return replayMessage.attachments?.first.thumbnailUrl;
+      default:
+        return replayMessage.body;
     }
   }
 
