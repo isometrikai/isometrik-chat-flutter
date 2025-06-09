@@ -1080,6 +1080,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
 
+    if ([
+      IsmChatCustomMessageType.image,
+      IsmChatCustomMessageType.video
+    ].contains(textMessage.metaData?.replyMessage?.parentMessageMessageType)) {}
+
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??

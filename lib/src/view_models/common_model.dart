@@ -30,19 +30,19 @@ class IsmChatCommonViewModel {
     required String mediaExtension,
     required Uint8List bytes,
   }) async {
-    final responseGetPresig = await _repository.getPresignedUrl(
+    final responseGetPresigned = await _repository.getPresignedUrl(
       isLoading: isLoading,
       userIdentifier: userIdentifier,
       mediaExtension: mediaExtension,
     );
-    if (responseGetPresig != null) {
+    if (responseGetPresigned != null) {
       final response = await updatePresignedUrl(
         bytes: bytes,
         isLoading: isLoading,
-        presignedUrl: responseGetPresig.presignedUrl,
+        presignedUrl: responseGetPresigned.presignedUrl,
       );
       if (response == 200) {
-        return responseGetPresig;
+        return responseGetPresigned;
       }
     }
     return null;
