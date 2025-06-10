@@ -54,10 +54,7 @@ class IsmChatImageEditView extends StatelessWidget {
                 size: IsmChatDimens.twenty,
                 color: IsmChatColors.whiteColor,
               ),
-              onPressed: () {
-                IsmChatRoute.goBack();
-                IsmChatRoute.goBack();
-              },
+              onPressed: IsmChatRoute.goBack,
             ),
           ),
           body: Image.memory(
