@@ -13,7 +13,7 @@ class IsmChatReplyMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IntrinsicWidth(
         child: BlurFilter.widget(
-          isBlured: IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
+          isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
                   ?.call(context, message) ??
               false,
           child: Column(

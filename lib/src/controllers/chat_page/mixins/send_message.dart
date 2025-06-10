@@ -1033,6 +1033,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       metaData: IsmChatMetaData(
         messageSentAt: sentAt,
+        isOnelyEmoji: IsmChatUtility.isOnlyEmoji(
+          _controller.chatInputController.text.trim(),
+        ),
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.text,

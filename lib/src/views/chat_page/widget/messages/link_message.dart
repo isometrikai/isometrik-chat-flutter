@@ -13,15 +13,20 @@ class IsmChatLinkMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
-        child: Container(
-          constraints: BoxConstraints(
-            minHeight: (IsmChatResponsive.isWeb(context))
-                ? context.height * .04
-                : context.height * .05,
-          ),
-          child: LinkPreviewView(
-            url: message.body.convertToValidUrl,
-            message: message,
+        child: BlurFilter.widget(
+          isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
+                  ?.call(context, message) ??
+              false,
+          child: Container(
+            constraints: BoxConstraints(
+              minHeight: (IsmChatResponsive.isWeb(context))
+                  ? context.height * .04
+                  : context.height * .05,
+            ),
+            child: LinkPreviewView(
+              url: message.body.convertToValidUrl,
+              message: message,
+            ),
           ),
         ),
       );

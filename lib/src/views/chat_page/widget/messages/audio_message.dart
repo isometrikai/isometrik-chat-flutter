@@ -21,7 +21,7 @@ class IsmChatAudioMessage extends StatelessWidget {
             ? IsmChatConfig.chatTheme.primaryColor
             : IsmChatConfig.chatTheme.backgroundColor,
         child: BlurFilter(
-          isBlured: IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
+          isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
                   ?.call(context, message) ??
               false,
           child: Stack(

@@ -1027,11 +1027,10 @@ class IsmChatPageController extends GetxController
           .where((item) =>
               [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
                   .contains(item.customType) &&
-              !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
-                      ?.call(
-                          IsmChatConfig.kNavigatorKey.currentContext ??
-                              IsmChatConfig.context,
-                          item) ??
+              !(IsmChatProperties.chatPageProperties.isShowMessageBlur?.call(
+                      IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context,
+                      item) ??
                   false))
           .toList();
       if (mediaList.isNotEmpty) {
@@ -1114,11 +1113,10 @@ class IsmChatPageController extends GetxController
               [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
                   .contains(
                       item.metaData?.replyMessage?.parentMessageMessageType) &&
-              !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
-                      ?.call(
-                          IsmChatConfig.kNavigatorKey.currentContext ??
-                              IsmChatConfig.context,
-                          item) ??
+              !(IsmChatProperties.chatPageProperties.isShowMessageBlur?.call(
+                      IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context,
+                      item) ??
                   false))
           .toList();
       final selectedMediaIndex = mediaList.indexOf(message);

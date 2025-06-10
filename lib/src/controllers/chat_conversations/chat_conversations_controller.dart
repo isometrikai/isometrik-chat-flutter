@@ -528,10 +528,10 @@ class IsmChatConversationsController extends GetxController {
         );
       case IsRenderChatPageScreen.outSideView:
         return IsmChatProperties.conversationProperties.thirdColumnWidget?.call(
-                IsmChatConfig.kNavigatorKey.currentContext ??
-                    IsmChatConfig.context,
-                currentConversation!,
-                false) ??
+              IsmChatConfig.kNavigatorKey.currentContext ??
+                  IsmChatConfig.context,
+              currentConversation!,
+            ) ??
             const SizedBox.shrink();
     }
     return const SizedBox.shrink();
