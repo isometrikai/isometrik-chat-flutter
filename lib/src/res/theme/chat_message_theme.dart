@@ -9,6 +9,7 @@ class IsmChatMessageTheme {
     this.borderColor,
     this.showProfile,
     this.audioMessageBGColor,
+    this.timeStyle,
   });
 
   final Color? backgroundColor;
@@ -18,6 +19,7 @@ class IsmChatMessageTheme {
   final Color? borderColor;
   final ShowProfile? showProfile;
   final Color? audioMessageBGColor;
+  final TextStyle? timeStyle;
 }
 
 class ShowProfile {

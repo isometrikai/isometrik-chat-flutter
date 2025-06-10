@@ -1027,11 +1027,10 @@ class IsmChatPageController extends GetxController
           .where((item) =>
               [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
                   .contains(item.customType) &&
-              !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
-                      ?.call(
-                          IsmChatConfig.kNavigatorKey.currentContext ??
-                              IsmChatConfig.context,
-                          item) ??
+              !(IsmChatProperties.chatPageProperties.isShowMessageBlur?.call(
+                      IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context,
+                      item) ??
                   false))
           .toList();
       if (mediaList.isNotEmpty) {
@@ -1114,11 +1113,10 @@ class IsmChatPageController extends GetxController
               [IsmChatCustomMessageType.image, IsmChatCustomMessageType.video]
                   .contains(
                       item.metaData?.replyMessage?.parentMessageMessageType) &&
-              !(IsmChatProperties.chatPageProperties.isShowMediaMessageBlur
-                      ?.call(
-                          IsmChatConfig.kNavigatorKey.currentContext ??
-                              IsmChatConfig.context,
-                          item) ??
+              !(IsmChatProperties.chatPageProperties.isShowMessageBlur?.call(
+                      IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context,
+                      item) ??
                   false))
           .toList();
       final selectedMediaIndex = mediaList.indexOf(message);
@@ -1884,6 +1882,25 @@ class IsmChatPageController extends GetxController
           : 'Missed ${replayMessage?.meetingType == 0 ? 'voice' : 'video'} call';
     } else {
       return replayMessage?.body ?? '';
+    }
+  }
+
+  String? getParentMessageUrl(IsmChatMessageModel? replayMessage) {
+    if (replayMessage == null) return null;
+    final customType = replayMessage.customType;
+    switch (customType) {
+      case IsmChatCustomMessageType.audio:
+      case IsmChatCustomMessageType.file:
+        return replayMessage.attachments?.first.name;
+      case IsmChatCustomMessageType.contact:
+        return replayMessage.metaData?.contacts?.first.contactIdentifier;
+      case IsmChatCustomMessageType.location:
+      case IsmChatCustomMessageType.image:
+        return replayMessage.attachments?.first.mediaUrl;
+      case IsmChatCustomMessageType.video:
+        return replayMessage.attachments?.first.thumbnailUrl;
+      default:
+        return replayMessage.body;
     }
   }
 

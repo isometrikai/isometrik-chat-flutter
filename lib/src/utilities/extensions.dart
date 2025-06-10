@@ -170,7 +170,7 @@ extension FlashIcon on FlashMode {
 extension DateConvertor on int {
   DateTime toDate() => DateTime.fromMillisecondsSinceEpoch(this).toLocal();
 
-  String toTimeString() => DateFormat.jm()
+  String get toTimeString => DateFormat.jm()
       .format(DateTime.fromMillisecondsSinceEpoch(this).toLocal());
 
   String toCurrentTimeStirng() {
@@ -897,6 +897,16 @@ extension MentionMessage on IsmChatMessageModel {
         .copyWith(
       color: theme?.opponentMessageTheme?.textColor,
     );
+  }
+
+  TextStyle get timeStyle {
+    var theme = IsmChatConfig.chatTheme.chatPageTheme;
+    if (sentByMe) {
+      return theme?.selfMessageTheme?.timeStyle ??
+          style.copyWith(fontSize: (style.fontSize ?? 0) - 5);
+    }
+    return theme?.opponentMessageTheme?.timeStyle ??
+        style.copyWith(fontSize: (style.fontSize ?? 0) - 5);
   }
 
   Color? get textColor {

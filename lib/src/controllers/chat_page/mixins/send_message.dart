@@ -1012,7 +1012,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     conversationId = await createConversation(
         conversationId: conversationId, userId: userId);
     final sentAt = DateTime.now().millisecondsSinceEpoch;
-    final textMessage = IsmChatMessageModel(
+    var textMessage = IsmChatMessageModel(
       body: _controller.chatInputController.text.trim(),
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
@@ -1033,9 +1033,16 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sentByMe: true,
       metaData: IsmChatMetaData(
         messageSentAt: sentAt,
+        isOnelyEmoji: IsmChatUtility.isOnlyEmoji(
+          _controller.chatInputController.text.trim(),
+        ),
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.text,
+                parentMessageAttachmentUrl:
+                    _controller.getParentMessageUrl(_controller.replayMessage),
+                parentMessageAttachmentDuration:
+                    _controller.replayMessage?.metaData?.duration?.inSeconds,
                 parentMessageMessageType: _controller.replayMessage?.customType,
                 parentMessageInitiator: _controller.replayMessage?.sentByMe,
                 parentMessageBody:
@@ -1076,11 +1083,51 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       }
     }
 
+    if ([
+      IsmChatCustomMessageType.image,
+      IsmChatCustomMessageType.video
+    ].contains(textMessage.metaData?.replyMessage?.parentMessageMessageType)) {}
+
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-
+    if (textMessage.metaData?.replyMessage != null) {
+      final replyMessage = textMessage.metaData?.replyMessage;
+      final isImageReply = replyMessage?.parentMessageMessageType ==
+          IsmChatCustomMessageType.image;
+      final isVideoReply = replyMessage?.parentMessageMessageType ==
+          IsmChatCustomMessageType.video;
+      if (isImageReply || isVideoReply) {
+        Uint8List? bytes;
+        String? nameWithExtension;
+        if (isImageReply &&
+            !(replyMessage?.parentMessageAttachmentUrl?.isValidUrl ?? false)) {
+          bytes = await File(replyMessage?.parentMessageAttachmentUrl ?? '')
+              .readAsBytes();
+          nameWithExtension =
+              replyMessage?.parentMessageAttachmentUrl?.split('/').last ?? '';
+        } else if (isVideoReply) {
+          bytes =
+              (replyMessage?.parentMessageAttachmentUrl ?? '').strigToUnit8List;
+          nameWithExtension = '$sentAt.png';
+        }
+        final parentMessageUrl =
+            await _controller.commonController.postMediaUrl(
+          conversationId: textMessage.conversationId ?? '',
+          nameWithExtension: nameWithExtension ?? '',
+          mediaType: IsmChatMediaType.image.value,
+          mediaId: sentAt.toString(),
+          bytes: bytes ?? Uint8List(0),
+          isLoading: false,
+        );
+        textMessage.metaData = textMessage.metaData?.copyWith(
+          replyMessage: replyMessage?.copyWith(
+            parentMessageAttachmentUrl: parentMessageUrl?.mediaUrl ?? '',
+          ),
+        );
+      }
+    }
     sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,

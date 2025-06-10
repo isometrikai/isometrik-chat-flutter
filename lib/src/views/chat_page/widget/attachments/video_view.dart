@@ -100,15 +100,18 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
           actions: [
             IconButton(
               onPressed: () async {
-                // var trimFile = await IsmChatRouteManagement.goToVideoTrimeView(
-                //   index: 0,
-                //   file: XFile(
-                //     webMediaModel?.platformFile.path ?? '',
-                //   ),
-                //   maxVideoTrim: 30,
-                // );
-
-                // _voidConfig(trimFile);
+                var mediaFile =
+                    await IsmChatRoute.goToRoute<XFile>(IsmVideoTrimmerView(
+                  index: 0,
+                  file: XFile(
+                    webMediaModel?.platformFile.path ?? '',
+                  ),
+                  maxVideoTrim: 30,
+                ));
+                if (mediaFile != null) {
+                  _voidConfig(mediaFile);
+                  safeUpdate();
+                }
               },
               icon: const Icon(
                 Icons.content_cut_rounded,

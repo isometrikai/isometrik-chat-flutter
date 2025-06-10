@@ -225,10 +225,8 @@ class MessageBubble extends StatelessWidget {
                                     .messageStatus?.shouldShowMessageTime ??
                                 true) ...[
                               Text(
-                                _message.sentAt.toTimeString(),
-                                style: _message.style.copyWith(
-                                    fontSize:
-                                        (_message.style.fontSize ?? 0) - 5),
+                                _message.sentAt.toTimeString,
+                                style: _message.timeStyle,
                               )
                             ],
                             if ((IsmChatProperties

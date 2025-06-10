@@ -19,7 +19,7 @@ class IsmChatListCardTheme {
         trailingTextStyle = IsmChatStyles.w400Black10,
         subTitleTextStyle = IsmChatStyles.w400Black10,
         titleTextStyle = IsmChatStyles.w600Black12,
-        iconSize = 16,
+        iconSize = 15,
         backgroundColor =
             IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2),
         messageCountTheme = const MessageCountTheme();
@@ -30,7 +30,7 @@ class IsmChatListCardTheme {
         trailingTextStyle = IsmChatStyles.w400White10,
         subTitleTextStyle = IsmChatStyles.w400Black10,
         titleTextStyle = IsmChatStyles.w600Black12,
-        iconSize = 16,
+        iconSize = 15,
         backgroundColor =
             IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2),
         messageCountTheme = const MessageCountTheme();

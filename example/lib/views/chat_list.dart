@@ -28,6 +28,7 @@ class ChatList extends StatelessWidget {
               //   return true;
               // },
               chatTheme: IsmChatThemeData(
+                chatListCardThemData: IsmChatListCardTheme(iconSize: 16),
                 cardBackgroundColor: const Color(0xFF292030),
                 // backgroundColor: const Color(0xFF292030),
                 chatPageHeaderTheme: IsmChatHeaderTheme(),
@@ -61,7 +62,7 @@ class ChatList extends StatelessWidget {
 
               chatPageProperties: IsmChatPageProperties(
                 // backgroundImageUrl: AssetConstants.background,
-                // isShowMediaMessageBlur: (p0, p1) => true,
+                // isShowMessageBlur: (p0, p1) => true,
                 // stackWidget: Container(
                 //   alignment: Alignment.center,
                 //   color: IsmChatColors.greenColor,

@@ -26,7 +26,7 @@ class IsmChatPageProperties {
     this.mentionUserName,
     this.mentionUserProfileUrl,
     this.onMessageTap,
-    this.isShowMediaMessageBlur,
+    this.isShowMessageBlur,
     this.loggedInUser,
     this.messageStatus,
     this.textFieldActions,
@@ -128,7 +128,7 @@ class IsmChatPageProperties {
 
   final MessageFutureCallback? onMessageTap;
 
-  final MessageCallback? isShowMediaMessageBlur;
+  final MessageCallback? isShowMessageBlur;
 
   final Widget? loggedInUser;
 

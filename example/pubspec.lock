@@ -165,10 +165,10 @@ packages:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: fdc0e668f65c8ddfb3be6c10ef4737fb6274cd04d8053a9525d410642f7989c0
+      sha256: ca244564876d5a76f2126bca501aec25243cad23ba1784819242aea2fd25cf70
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.19+1"
+    version: "0.9.19+2"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -740,10 +740,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "0b1e06223bee260dee31a171fb1153e306907563a0b0225e8c1733211911429a"
+      sha256: b453934c36e289cef06525734d1e676c1f91da9e22e2017d9dcab6ce0f999175
       url: "https://pub.dev"
     source: hosted
-    version: "15.1.2"
+    version: "15.1.3"
   google_maps:
     dependency: transitive
     description:
@@ -780,10 +780,10 @@ packages:
     dependency: transitive
     description:
       name: google_maps_flutter_platform_interface
-      sha256: "0fff8d6f0e096607e456028f095a2efec8f128a25fc7bb8e5161487dd143970c"
+      sha256: f8293f072ed8b068b092920a72da6693aa8b3d62dc6b5c5f0bc44c969a8a776c
       url: "https://pub.dev"
     source: hosted
-    version: "2.12.0"
+    version: "2.12.1"
   google_maps_flutter_web:
     dependency: transitive
     description:
@@ -1059,10 +1059,10 @@ packages:
     dependency: transitive
     description:
       name: mqtt_client
-      sha256: "39cfe62c13403c35eb042ef2fd2d05d792de9bbe5b4f4f7f0b745f38309db09b"
+      sha256: f7d96372aff2a2e871f859104276900029858ce6ea91c7fe7ada7badc7eefe5e
       url: "https://pub.dev"
     source: hosted
-    version: "10.9.0"
+    version: "10.9.1"
   mqtt_helper:
     dependency: transitive
     description:

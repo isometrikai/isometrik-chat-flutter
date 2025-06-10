@@ -16,94 +16,39 @@ class IsmChatFileMessage extends StatelessWidget {
         : IsmChatUtility.chatPageController.getMemoryImage(message.sentAt,
             (message.attachments?.first.thumbnailUrl ?? '').strigToUnit8List);
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(IsmChatDimens.ten),
-          ),
-          child: kIsWeb
-              ? Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Container(
-                      alignment: Alignment.topCenter,
-                      width: double.maxFinite,
-                      height: IsmChatDimens.twoHundredTwenty,
-                      child: IsmChatPdfView(
-                        filePath: message.attachments?.first.mediaUrl,
-                      ),
-                    ),
-                    Container(
-                      height: IsmChatDimens.fifty,
-                      width: double.maxFinite,
-                      color: message.backgroundColor,
-                      child: Container(
-                        color: (message.sentByMe
-                                ? IsmChatColors.whiteColor
-                                : IsmChatColors.greyColor)
-                            .applyIsmOpacity(0.2),
-                        padding: IsmChatDimens.edgeInsets4,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(
-                              IsmChatAssets.pdfSvg,
-                              height: IsmChatDimens.thirtyTwo,
-                              width: IsmChatDimens.thirtyTwo,
-                            ),
-                            IsmChatDimens.boxWidth4,
-                            Flexible(
-                              child: Text(
-                                message.attachments?.first.name ?? '',
-                                style: (message.sentByMe
-                                        ? IsmChatStyles.w400White12
-                                        : IsmChatStyles.w400Black12)
-                                    .copyWith(
-                                  color: message.style.color,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+    return BlurFilter.widget(
+      isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
+              ?.call(context, message) ??
+          false,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(IsmChatDimens.ten),
+            ),
+            child: kIsWeb
+                ? Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      Container(
+                        alignment: Alignment.topCenter,
+                        width: double.maxFinite,
+                        height: IsmChatDimens.twoHundredTwenty,
+                        child: IsmChatPdfView(
+                          filePath: message.attachments?.first.mediaUrl,
                         ),
                       ),
-                    ),
-                  ],
-                )
-              : Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    if (message.attachments?.first.mediaUrl?.isNotEmpty == true)
-                      SizedBox(
-                          width: IsmChatDimens.percentWidth(.5),
-                          height: IsmChatDimens.oneHundredThirty,
-                          child: message.attachments?.first.mediaUrl
-                                      ?.isValidUrl ==
-                                  true
-                              ? Image.network(
-                                  message.attachments?.first.thumbnailUrl ?? '',
-                                  fit: BoxFit.fill,
-                                )
-                              : Image(
-                                  image: memoryImage,
-                                  fit: BoxFit.fill,
-                                  gaplessPlayback: true,
-                                )),
-                    Container(
-                      height: context.width * 0.15,
-                      width: double.maxFinite,
-                      color: message.backgroundColor,
-                      child: Container(
-                        color: (message.sentByMe
-                                ? IsmChatColors.whiteColor
-                                : IsmChatColors.greyColor)
-                            .applyIsmOpacity(0.2),
-                        padding: IsmChatDimens.edgeInsets4,
-                        child: Material(
-                          color: Colors.transparent,
+                      Container(
+                        height: IsmChatDimens.fifty,
+                        width: double.maxFinite,
+                        color: message.backgroundColor,
+                        child: Container(
+                          color: (message.sentByMe
+                                  ? IsmChatColors.whiteColor
+                                  : IsmChatColors.greyColor)
+                              .applyIsmOpacity(0.2),
+                          padding: IsmChatDimens.edgeInsets4,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -130,14 +75,76 @@ class IsmChatFileMessage extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-        ),
-        if (message.isUploading == true)
-          IsmChatUtility.circularProgressBar(
-              IsmChatColors.blackColor, IsmChatColors.whiteColor),
-      ],
+                    ],
+                  )
+                : Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      if (message.attachments?.first.mediaUrl?.isNotEmpty ==
+                          true)
+                        SizedBox(
+                            width: IsmChatDimens.percentWidth(.5),
+                            height: IsmChatDimens.oneHundredThirty,
+                            child: message.attachments?.first.mediaUrl
+                                        ?.isValidUrl ==
+                                    true
+                                ? Image.network(
+                                    message.attachments?.first.thumbnailUrl ??
+                                        '',
+                                    fit: BoxFit.fill,
+                                  )
+                                : Image(
+                                    image: memoryImage,
+                                    fit: BoxFit.fill,
+                                    gaplessPlayback: true,
+                                  )),
+                      Container(
+                        height: context.width * 0.15,
+                        width: double.maxFinite,
+                        color: message.backgroundColor,
+                        child: Container(
+                          color: (message.sentByMe
+                                  ? IsmChatColors.whiteColor
+                                  : IsmChatColors.greyColor)
+                              .applyIsmOpacity(0.2),
+                          padding: IsmChatDimens.edgeInsets4,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SvgPicture.asset(
+                                  IsmChatAssets.pdfSvg,
+                                  height: IsmChatDimens.thirtyTwo,
+                                  width: IsmChatDimens.thirtyTwo,
+                                ),
+                                IsmChatDimens.boxWidth4,
+                                Flexible(
+                                  child: Text(
+                                    message.attachments?.first.name ?? '',
+                                    style: (message.sentByMe
+                                            ? IsmChatStyles.w400White12
+                                            : IsmChatStyles.w400Black12)
+                                        .copyWith(
+                                      color: message.style.color,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+          if (message.isUploading == true)
+            IsmChatUtility.circularProgressBar(
+                IsmChatColors.blackColor, IsmChatColors.whiteColor),
+        ],
+      ),
     );
   }
 }

@@ -15,8 +15,7 @@ class IsmChatSocialMessage extends StatelessWidget {
         color: Colors.transparent,
         child: IntrinsicWidth(
           child: BlurFilter.widget(
-            isBlured: IsmChatProperties
-                    .chatPageProperties.isShowMediaMessageBlur
+            isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
                     ?.call(context, message) ??
                 false,
             child: Container(
