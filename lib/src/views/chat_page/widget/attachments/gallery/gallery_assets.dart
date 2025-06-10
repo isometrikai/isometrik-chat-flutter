@@ -127,7 +127,6 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                   maxVideoTrim: 30,
                                 ));
                                 if (mediaFile == null) return;
-
                                 final thumb =
                                     await VideoCompress.getByteThumbnail(
                                         mediaFile.path,
@@ -153,7 +152,7 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                 );
                               },
                               icon: Icon(
-                                Icons.video_settings_rounded,
+                                Icons.content_cut_outlined,
                                 color: IsmChatConfig.chatTheme
                                         .chatPageHeaderTheme?.iconColor ??
                                     IsmChatColors.whiteColor,

@@ -59,8 +59,9 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
       startValue: startValue,
       endValue: endValue,
       onSave: (value) {
+        IsmChatUtility.closeLoader();
         if (value != null) {
-          Get.back<XFile>(result: XFile(value));
+          IsmChatRoute.goBack<XFile>(XFile(value));
         }
       },
     );
@@ -73,7 +74,7 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              Get.back<XFile>(result: file);
+              IsmChatRoute.goBack(file);
             },
             icon: const Icon(
               Icons.arrow_back_rounded,
@@ -86,7 +87,6 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
               onPressed: () async {
                 IsmChatUtility.showLoader();
                 await saveTrimVideo(startValue.value, endValue.value);
-                IsmChatUtility.closeLoader();
               },
               icon: const Icon(
                 Icons.save_rounded,
