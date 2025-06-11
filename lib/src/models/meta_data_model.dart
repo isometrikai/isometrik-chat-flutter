@@ -22,6 +22,7 @@ class IsmChatMetaData {
     this.isDownloaded,
     this.messageSentAt,
     this.isOnelyEmoji,
+    this.blockedMessage,
   });
 
   factory IsmChatMetaData.fromMap(Map<String, dynamic> map) {
@@ -80,6 +81,10 @@ class IsmChatMetaData {
           : map['about'] != null
               ? AboutTextModel(title: map['about'] as String? ?? '')
               : null,
+      blockedMessage: map['blockedMessage'] != null
+          ? IsmChatMessageModel.fromMap(
+              map['blockedMessage'] as Map<String, dynamic>)
+          : null,
     );
     return data;
   }
@@ -108,6 +113,7 @@ class IsmChatMetaData {
   final bool? isDownloaded;
   final int? messageSentAt;
   final bool? isOnelyEmoji;
+  final IsmChatMessageModel? blockedMessage;
 
   IsmChatMetaData copyWith({
     String? parentMessageBody,
@@ -130,6 +136,7 @@ class IsmChatMetaData {
     bool? isDownloaded,
     int? messageSentAt,
     bool? isOnelyEmoji,
+    IsmChatMessageModel? blockedMessage,
   }) =>
       IsmChatMetaData(
         locationAddress: locationAddress ?? this.locationAddress,
@@ -148,6 +155,7 @@ class IsmChatMetaData {
         isDownloaded: isDownloaded ?? this.isDownloaded,
         isOnelyEmoji: isOnelyEmoji ?? this.isOnelyEmoji,
         messageSentAt: messageSentAt ?? this.messageSentAt,
+        blockedMessage: blockedMessage,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -167,14 +175,15 @@ class IsmChatMetaData {
         'isDownloaded': isDownloaded,
         'isOnelyEmoji': isOnelyEmoji,
         'messageSentAt': messageSentAt,
-        'aboutText': aboutText?.toMap()
+        'aboutText': aboutText?.toMap(),
+        'blockedMessage': blockedMessage?.toMap(),
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo ,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt, customMetaData : $customMetaData, isOnelyEmoji : $isOnelyEmoji)';
+      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo ,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt, customMetaData : $customMetaData, isOnelyEmoji : $isOnelyEmoji, blockedMessage : $blockedMessage)';
 
   @override
   bool operator ==(covariant IsmChatMetaData other) {
@@ -196,7 +205,8 @@ class IsmChatMetaData {
         other.isDownloaded == isDownloaded &&
         other.messageSentAt == messageSentAt &&
         other.aboutText == aboutText &&
-        other.isOnelyEmoji == isOnelyEmoji;
+        other.isOnelyEmoji == isOnelyEmoji &&
+        other.blockedMessage == blockedMessage;
   }
 
   @override
@@ -217,5 +227,6 @@ class IsmChatMetaData {
       isDownloaded.hashCode ^
       messageSentAt.hashCode ^
       aboutText.hashCode ^
-      isOnelyEmoji.hashCode;
+      isOnelyEmoji.hashCode ^
+      blockedMessage.hashCode;
 }

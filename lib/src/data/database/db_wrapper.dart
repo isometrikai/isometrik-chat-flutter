@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -114,6 +116,17 @@ class IsmChatDBWrapper {
   Future<void> clearAllMessage({required String conversationId}) async {
     var conversation = await getConversation(conversationId);
     if (conversation != null) {
+      final messages = conversation.messages?.values.toList() ?? [];
+      if (messages.isNotEmpty) {
+        final blockedMessage = messages.last;
+        final isBlockedMessage =
+            blockedMessage.customType == IsmChatCustomMessageType.block;
+        conversation = conversation.copyWith(
+          metaData: conversation.metaData?.copyWith(
+            blockedMessage: isBlockedMessage ? blockedMessage : null,
+          ),
+        );
+      }
       conversation = conversation.copyWith(messages: {});
       await saveConversation(conversation: conversation);
     }

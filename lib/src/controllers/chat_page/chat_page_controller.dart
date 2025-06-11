@@ -1619,6 +1619,25 @@ class IsmChatPageController extends GetxController
     required bool userBlockOrNot,
   }) async {
     bool? blokedUser;
+    conversation = conversation?.copyWith(
+      metaData: conversation?.metaData?.copyWith(
+        blockedMessage: IsmChatMessageModel(
+          action: 'userBlockConversation',
+          initiatorId: IsmChatConfig.communicationConfig.userConfig.userId,
+          initiatorName: IsmChatConfig.communicationConfig.userConfig.userName,
+          userId: IsmChatConfig.communicationConfig.userConfig.userId,
+          userName: IsmChatConfig.communicationConfig.userConfig.userName,
+          body: '',
+          conversationId: conversation?.conversationId ?? '',
+          customType: IsmChatCustomMessageType.block,
+          sentAt: DateTime.now().millisecondsSinceEpoch,
+          sentByMe: false,
+        ),
+      ),
+    );
+    await IsmChatUtility.conversationController.updateConversation(
+        conversationId: conversation?.conversationId ?? '',
+        metaData: conversation?.metaData ?? IsmChatMetaData());
     if (IsmChatProperties.chatPageProperties.onCallBlockUnblock != null) {
       blokedUser = await IsmChatProperties.chatPageProperties.onCallBlockUnblock
               ?.call(
@@ -1633,11 +1652,17 @@ class IsmChatPageController extends GetxController
           conversationId: conversation?.conversationId ?? '',
           isLoading: isLoading);
     }
-
     if (!blokedUser) {
+      conversation = conversation?.copyWith(
+        metaData: conversation?.metaData?.copyWith(
+          blockedMessage: null,
+        ),
+      );
+      await IsmChatUtility.conversationController.updateConversation(
+          conversationId: conversation?.conversationId ?? '',
+          metaData: conversation?.metaData ?? IsmChatMetaData());
       return;
     }
-
     IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
     await Future.wait([
       conversationController.getBlockUser(),
@@ -1682,6 +1707,19 @@ class IsmChatPageController extends GetxController
         getMessagesFromAPI(),
         conversationController.getChatConversations()
       ]);
+    }
+    if (conversation?.metaData?.blockedMessage != null) {
+      final conversationData = conversation?.copyWith(
+        metaData: conversation?.metaData?.copyWith(
+          blockedMessage: null,
+        ),
+      );
+      conversation = conversationData;
+      unawaited(
+        IsmChatUtility.conversationController.updateConversation(
+            conversationId: conversation?.conversationId ?? '',
+            metaData: conversation?.metaData ?? IsmChatMetaData()),
+      );
     }
   }
 

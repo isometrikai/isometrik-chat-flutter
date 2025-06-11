@@ -364,7 +364,7 @@ class IsmChatPageViewModel {
     final response = await _repository.clearAllMessages(
       conversationId: conversationId,
     );
-    if (!response!.hasError) {
+    if (response?.hasError == false) {
       await IsmChatConfig.dbWrapper
           ?.clearAllMessage(conversationId: conversationId);
       await IsmChatUtility.conversationController.getChatConversations();

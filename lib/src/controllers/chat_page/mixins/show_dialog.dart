@@ -217,19 +217,23 @@ mixin IsmChatShowDialogMixin on GetxController {
       showDialogForBlockUnBlockUser(true, includeMembers);
       return;
     }
-    if (_controller.conversation?.isChattingAllowed ?? false) {
-      // This means chatting is allowed i.e. no one is blocked
-      showDialogForBlockUnBlockUser(false, includeMembers);
-      return;
-    }
+
+    // This means chatting is allowed i.e. no one is blocked
+    showDialogForBlockUnBlockUser(false, includeMembers);
+
+    // if (_controller.conversation?.isChattingAllowed ?? false) {
+    // This means chatting is allowed i.e. no one is blocked
+    // showDialogForBlockUnBlockUser(false, includeMembers);
+    // return;
+    // }
 
     // This means chatting is not allowed and opponent has blocked the user
-    await IsmChatContextWidget.showDialogContext(
-      content: const IsmChatAlertDialogBox(
-        title: IsmChatStrings.cannotBlock,
-        cancelLabel: 'Okay',
-      ),
-    );
+    // await IsmChatContextWidget.showDialogContext(
+    //   content: const IsmChatAlertDialogBox(
+    //     title: IsmChatStrings.cannotBlock,
+    //     cancelLabel: 'Okay',
+    //   ),
+    // );
   }
 
   Future<void> showDialogExitButton([bool askToLeave = false]) async {
