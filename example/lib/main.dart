@@ -17,7 +17,7 @@ import 'data/data.dart';
 
 DBWrapper? dbWrapper;
 
-final GlobalKey<NavigatorState> kNavigatorKey = GlobalKey<NavigatorState>();
+final kNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   await initialize();

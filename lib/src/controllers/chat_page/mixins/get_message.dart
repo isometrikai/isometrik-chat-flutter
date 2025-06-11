@@ -25,6 +25,14 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
     var localMessages = messages.values.toList();
+    if (localMessages.isEmpty &&
+        _controller.conversation?.metaData?.blockedMessage != null) {
+      localMessages.add(
+        IsmChatMessageModel.fromJson(
+          _controller.conversation?.metaData?.blockedMessage?.toJson() ?? '',
+        ),
+      );
+    }
     if (localMessages.isNotEmpty) {
       localMessages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
     }
