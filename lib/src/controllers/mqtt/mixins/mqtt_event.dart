@@ -367,9 +367,9 @@ mixin IsmChatMqttEventMixin {
         reactionType: '',
       ),
     );
-    if (message.conversationId == conversation.conversationId) {
-      conversation.messages?.addEntries({message.key: message}.entries);
-    }
+    // if (message.conversationId == conversation.conversationId) {
+    //   conversation.messages?.addEntries({message.key: message}.entries);
+    // }
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
     final conversationController = IsmChatUtility.conversationController;
     unawaited(conversationController.getConversationsFromDB());
