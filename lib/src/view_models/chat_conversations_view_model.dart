@@ -144,15 +144,6 @@ class IsmChatConversationsViewModel {
     return response;
   }
 
-  Future<void> pingMessageDelivered({
-    required String conversationId,
-    required String messageId,
-  }) async =>
-      await _repository.pingMessageDelivered(
-        conversationId: conversationId,
-        messageId: messageId,
-      );
-
   Future<IsmChatUserListModel?> getBlockUser({
     required int? skip,
     required int limit,
@@ -260,76 +251,6 @@ class IsmChatConversationsViewModel {
         limit: limit,
         searchText: searchText,
       );
-
-  Future<List<IsmChatMessageModel>?> getUserMessges({
-    List<String>? ids,
-    List<String>? messageTypes,
-    List<String>? customTypes,
-    List<String>? attachmentTypes,
-    String? showInConversation,
-    List<String>? senderIds,
-    String? parentMessageId,
-    int? lastMessageTimestamp,
-    bool? conversationStatusMessage,
-    String? searchTag,
-    String? fetchConversationDetails,
-    bool deliveredToMe = false,
-    bool senderIdsExclusive = true,
-    int limit = 20,
-    int? skip = 0,
-    int? sort = -1,
-    bool isLoading = false,
-  }) async {
-    final messages = await _repository.getUserMessges(
-      attachmentTypes: attachmentTypes,
-      conversationStatusMessage: conversationStatusMessage,
-      customTypes: customTypes,
-      deliveredToMe: deliveredToMe,
-      fetchConversationDetails: fetchConversationDetails,
-      ids: ids,
-      lastMessageTimestamp: lastMessageTimestamp,
-      limit: limit,
-      messageTypes: messageTypes,
-      parentMessageId: parentMessageId,
-      searchTag: searchTag,
-      senderIds: senderIds,
-      senderIdsExclusive: senderIdsExclusive,
-      showInConversation: showInConversation,
-      skip: skip,
-      sort: sort,
-      isLoading: isLoading,
-    );
-    if (messages == null) {
-      return null;
-    }
-    messages.removeWhere(
-      (e) => [
-        IsmChatActionEvents.clearConversation.name,
-        IsmChatActionEvents.conversationCreated.name,
-        IsmChatActionEvents.deleteConversationLocally.name,
-        IsmChatActionEvents.reactionAdd.name,
-        IsmChatActionEvents.reactionRemove.name,
-        IsmChatActionEvents.conversationDetailsUpdated.name,
-        IsmChatActionEvents.userUpdate.name,
-        IsmChatActionEvents.memberLeave.name,
-        IsmChatActionEvents.memberJoin.name,
-        IsmChatActionEvents.membersRemove.name,
-        IsmChatActionEvents.userUnblock.name,
-        IsmChatActionEvents.userUnblockConversation.name,
-        IsmChatActionEvents.userBlock.name,
-        IsmChatActionEvents.userBlockConversation.name,
-        IsmChatActionEvents.userBlockConversation.name,
-        IsmChatActionEvents.observerJoin.name,
-        IsmChatActionEvents.observerLeave.name,
-        IsmChatActionEvents.removeAdmin.name,
-        IsmChatActionEvents.addAdmin.name,
-        IsmChatActionEvents.meetingCreated.name,
-        IsmChatActionEvents.meetingEndedByHost.name,
-        IsmChatActionEvents.meetingEndedDueToRejectionByAll.name,
-      ].contains(e.action),
-    );
-    return messages;
-  }
 
   /// upload the contacts
   Future<IsmChatResponseModel?> addContact({

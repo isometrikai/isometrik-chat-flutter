@@ -251,13 +251,14 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (data.data != null &&
           (_controller.conversation?.conversationId == conversationId)) {
         final responeData = data.data as IsmChatConversationModel;
+        final messageMap = {
+          for (var message in _controller.messages) message.key: message,
+        };
         _controller.conversation = responeData.copyWith(
           conversationId: conversationId,
-          metaData: _controller.conversation?.metaData,
+          metaData: responeData.metaData,
           outSideMessage: _controller.conversation?.outSideMessage,
-          messages: {
-            for (var message in _controller.messages) message.key: message
-          },
+          messages: messageMap,
         );
         IsmChatProperties.chatPageProperties.onCoverstaionStatus?.call(
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,

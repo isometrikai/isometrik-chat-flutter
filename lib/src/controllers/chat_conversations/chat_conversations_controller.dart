@@ -303,12 +303,6 @@ class IsmChatConversationsController extends GetxController {
   /// This StreamSubscription listen internet `on` or `off` when app in running
   StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
 
-  /// This variable use for store user messages which is get from local db
-  final _userMeessages = <IsmChatMessageModel>[].obs;
-  List<IsmChatMessageModel> get userMeessages => _userMeessages;
-  set userMeessages(List<IsmChatMessageModel> value) =>
-      _userMeessages.value = value;
-
   /// This variable use for check type user name type or not
   ///
   /// This variable listen when change own name
@@ -370,17 +364,19 @@ class IsmChatConversationsController extends GetxController {
     await getConversationsFromDB();
     await getChatConversations();
     if (Get.isRegistered<IsmChatMqttController>()) {
-      await Get.find<IsmChatMqttController>().getChatConversationsUnreadCount();
+      final mqttController = Get.find<IsmChatMqttController>();
+      await Future.wait([
+        mqttController.getChatConversationsUnreadCount(),
+        mqttController.getUserMessges(
+          senderIds: [
+            IsmChatConfig.communicationConfig.userConfig.userId.isNotEmpty
+                ? IsmChatConfig.communicationConfig.userConfig.userId
+                : userDetails?.userId ?? ''
+          ],
+        ),
+      ]);
     }
     await getBackGroundAssets();
-    await getUserMessges(
-      senderIds: [
-        IsmChatConfig.communicationConfig.userConfig.userId.isNotEmpty
-            ? IsmChatConfig.communicationConfig.userConfig.userId
-            : userDetails?.userId ?? ''
-      ],
-    );
-
     unawaited(getBlockUser());
     intilizedContrller = true;
     scrollListener();
@@ -1119,20 +1115,6 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
-  ///  Notifies the sender that a message has been delivered using MQTT
-  ///
-  ///  `conversationId`: The ID of the conversation.
-  ///  `messageId`: The ID of the message.
-  Future<void> pingMessageDelivered({
-    required String conversationId,
-    required String messageId,
-  }) async {
-    await _viewModel.pingMessageDelivered(
-      conversationId: conversationId,
-      messageId: messageId,
-    );
-  }
-
   /// Updates a conversation's metadata on the server.
   ///
   /// `conversationId`: The ID of the conversation to update.
@@ -1467,81 +1449,6 @@ class IsmChatConversationsController extends GetxController {
         }
       } else if (isMessageSent) {
         await getChatConversations();
-      }
-    }
-  }
-
-  /// Retrieves user messages from the server or local database.
-  ///
-  /// `ids`: Optional list of message IDs to retrieve.
-  /// `messageTypes`: Optional list of message types to filter.
-  /// `customTypes`: Optional list of custom message types to filter.
-  /// `attachmentTypes`: Optional list of attachment types to filter.
-  /// `showInConversation`: Indicates if messages should be shown in conversation.
-  /// `senderIds`: Optional list of sender IDs to filter.
-  /// `parentMessageId`: Optional parent message ID for threaded messages.
-  /// `lastMessageTimestamp`: Optional timestamp for filtering messages.
-  /// `conversationStatusMessage`: Indicates if the message is a status message.
-  /// `searchTag`: Optional search term for filtering messages.
-  /// `fetchConversationDetails`: Indicates if conversation details should be fetched.
-  /// `deliveredToMe`: Indicates if the messages should be filtered by delivery status.
-  /// `senderIdsExclusive`: Indicates if the sender IDs should be exclusive.
-  /// `limit`: Maximum number of messages to retrieve.
-  /// `skip`: Number of messages to skip.
-  /// `sort`: Sorting order for messages.
-  /// `isLoading`: Indicates if loading should be shown.
-  Future<void> getUserMessges({
-    List<String>? ids,
-    List<String>? messageTypes,
-    List<String>? customTypes,
-    List<String>? attachmentTypes,
-    String? showInConversation,
-    List<String>? senderIds,
-    String? parentMessageId,
-    int? lastMessageTimestamp,
-    bool? conversationStatusMessage,
-    String? searchTag,
-    String? fetchConversationDetails,
-    bool deliveredToMe = false,
-    bool senderIdsExclusive = true,
-    int limit = 20,
-    int? skip = 0,
-    int? sort = -1,
-    bool isLoading = false,
-  }) async {
-    var response = await _viewModel.getUserMessges(
-      attachmentTypes: attachmentTypes,
-      conversationStatusMessage: conversationStatusMessage,
-      customTypes: customTypes,
-      deliveredToMe: deliveredToMe,
-      fetchConversationDetails: fetchConversationDetails,
-      ids: ids,
-      lastMessageTimestamp: lastMessageTimestamp,
-      limit: limit,
-      messageTypes: messageTypes,
-      parentMessageId: parentMessageId,
-      searchTag: searchTag,
-      senderIds: senderIds,
-      senderIdsExclusive: senderIdsExclusive,
-      showInConversation: showInConversation,
-      skip: skip,
-      sort: sort,
-      isLoading: isLoading,
-    );
-    if (response != null) {
-      userMeessages = response.reversed.toList();
-      for (final message in userMeessages) {
-        final isSender =
-            message.deliveredTo?.any((e) => e.userId == senderIds?.first);
-        if (isSender == false) {
-          await Future.delayed(
-            const Duration(milliseconds: 100),
-          );
-          await pingMessageDelivered(
-            conversationId: message.conversationId ?? '',
-            messageId: message.messageId ?? '',
-          );
-        }
       }
     }
   }

@@ -287,9 +287,8 @@ mixin IsmChatMqttEventMixin {
     conversation.messages?.addEntries({message.key: message}.entries);
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
     if (IsmChatUtility.conversationControllerRegistered) {
-      var conversationController = IsmChatUtility.conversationController;
-      unawaited(conversationController.getConversationsFromDB());
-      await conversationController.pingMessageDelivered(
+      unawaited(IsmChatUtility.conversationController.getConversationsFromDB());
+      await _controller.pingMessageDelivered(
         conversationId: actionModel.conversationId ?? '',
         messageId: actionModel.messageId ?? '',
       );
@@ -371,9 +370,9 @@ mixin IsmChatMqttEventMixin {
     //   conversation.messages?.addEntries({message.key: message}.entries);
     // }
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
-    final conversationController = IsmChatUtility.conversationController;
-    unawaited(conversationController.getConversationsFromDB());
-    await conversationController.pingMessageDelivered(
+
+    unawaited(IsmChatUtility.conversationController.getConversationsFromDB());
+    await _controller.pingMessageDelivered(
       conversationId: message.conversationId ?? '',
       messageId: message.messageId ?? '',
     );
