@@ -314,14 +314,13 @@ mixin IsmChatMqttEventMixin {
   /// * `message`: The message to handle
   Future<void> _handleMessage(IsmChatMessageModel message) async {
     if (isSenderMe(message.senderInfo?.userId)) return;
-
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     if (!IsmChatUtility.conversationControllerRegistered) {
       return;
     }
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(message.conversationId ?? '');
-    if (conversation == null && IsmChatUtility.chatPageControllerRegistered) {
+    if (conversation != null && IsmChatUtility.chatPageControllerRegistered) {
       final controller = IsmChatUtility.chatPageController;
       if (message.conversationId == controller.conversation?.conversationId) {
         if (controller.messages.isEmpty) {
@@ -330,7 +329,6 @@ mixin IsmChatMqttEventMixin {
         } else {
           controller.messages.add(message);
         }
-        return;
       }
     }
     if (conversation == null) return;
@@ -366,11 +364,13 @@ mixin IsmChatMqttEventMixin {
         reactionType: '',
       ),
     );
-    // if (message.conversationId == conversation.conversationId) {
-    //   conversation.messages?.addEntries({message.key: message}.entries);
-    // }
-    await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
 
+    if (message.conversationId == conversation.conversationId) {
+      if (conversation.messages?.isNotEmpty == true) {
+        conversation.messages?.addEntries({message.key: message}.entries);
+      }
+    }
+    await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
     unawaited(IsmChatUtility.conversationController.getConversationsFromDB());
     await _controller.pingMessageDelivered(
       conversationId: message.conversationId ?? '',

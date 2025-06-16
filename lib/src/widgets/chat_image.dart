@@ -95,8 +95,8 @@ class _FileImage extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Text(
-          name[0],
-          style: IsmChatStyles.w600Black24.copyWith(
+          name[0].toUpperCase(),
+          style: IsmChatStyles.w600Black20.copyWith(
             color: IsmChatConfig.chatTheme.primaryColor,
           ),
         ),
@@ -128,8 +128,8 @@ class _MemeroyImage extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Text(
-              name[0],
-              style: IsmChatStyles.w600Black24.copyWith(
+              name[0].toUpperCase(),
+              style: IsmChatStyles.w600Black20.copyWith(
                 color: IsmChatConfig.chatTheme.primaryColor,
               ),
             ),
@@ -198,7 +198,7 @@ class _NetworkImage extends StatelessWidget {
           child: _isProfileImage
               ? Text(
                   _name.isNotEmpty ? _name[0] : 'U',
-                  style: IsmChatStyles.w600Black24.copyWith(
+                  style: IsmChatStyles.w600Black20.copyWith(
                     color: IsmChatConfig.chatTheme.primaryColor,
                   ),
                 )
@@ -235,10 +235,10 @@ class _ErrorImage extends StatelessWidget {
         ),
         child: _isProfileImage
             ? Text(
-                _name.isNotEmpty ? _name[0] : 'U',
+                _name.isNotEmpty ? _name[0].toUpperCase() : 'U',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                  fontSize: 20,
                   color: IsmChatConfig.chatTheme.primaryColor,
                 ),
               )

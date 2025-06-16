@@ -169,7 +169,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                     widget._message?.senderInfo?.userName ?? '',
                                 dimensions: IsmChatConfig.chatTheme
                                         .chatPageTheme?.profileImageSize ??
-                                    30,
+                                    35,
                               ),
                             )
                       ],
