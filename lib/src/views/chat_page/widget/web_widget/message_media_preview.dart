@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
@@ -135,15 +134,13 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
                 icon: const Icon(Icons.delete_rounded),
               ),
             ),
-            IconButton(
+            const IconButton(
               alignment: Alignment.center,
-              icon: const Icon(
+              icon: Icon(
                 Icons.close_rounded,
                 color: IsmChatColors.blackColor,
               ),
-              onPressed: () {
-                Get.back<void>();
-              },
+              onPressed: IsmChatRoute.goBack,
             ),
             IsmChatDimens.boxWidth32
           ],

@@ -82,7 +82,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: IsmChatColors.transparent,
         appBar: AppBar(
           centerTitle: true,
           title: Text(
@@ -98,26 +98,28 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
           ),
           backgroundColor: IsmChatConfig.chatTheme.primaryColor,
           actions: [
-            IconButton(
-              onPressed: () async {
-                var mediaFile =
-                    await IsmChatRoute.goToRoute<XFile>(IsmVideoTrimmerView(
-                  index: 0,
-                  file: XFile(
-                    webMediaModel?.platformFile.path ?? '',
-                  ),
-                  maxVideoTrim: 30,
-                ));
-                if (mediaFile != null) {
-                  _voidConfig(mediaFile);
-                  safeUpdate();
-                }
-              },
-              icon: const Icon(
-                Icons.content_cut_rounded,
-                color: IsmChatColors.whiteColor,
-              ),
-            )
+            if (!kIsWeb) ...[
+              IconButton(
+                onPressed: () async {
+                  var mediaFile =
+                      await IsmChatRoute.goToRoute<XFile>(IsmVideoTrimmerView(
+                    index: 0,
+                    file: XFile(
+                      webMediaModel?.platformFile.path ?? '',
+                    ),
+                    maxVideoTrim: 30,
+                  ));
+                  if (mediaFile != null) {
+                    _voidConfig(mediaFile);
+                    safeUpdate();
+                  }
+                },
+                icon: const Icon(
+                  Icons.content_cut_rounded,
+                  color: IsmChatColors.whiteColor,
+                ),
+              )
+            ]
           ],
         ),
         body: SafeArea(
