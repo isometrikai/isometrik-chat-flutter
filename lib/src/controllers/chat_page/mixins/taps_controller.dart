@@ -15,7 +15,7 @@ mixin IsmChatTapsController on GetxController {
       _controller.conversation,
     );
     if (response?.shouldGoToMediaPreview ?? true) {
-      if (message.messageType == IsmChatMessageType.reply) {
+      if (message.messageType != IsmChatMessageType.reply) {
         if ([
           IsmChatCustomMessageType.image,
           IsmChatCustomMessageType.video,
@@ -25,20 +25,21 @@ mixin IsmChatTapsController on GetxController {
                   IsmChatConfig.context))
             IsmChatCustomMessageType.contact,
         ].contains(
-          message.metaData?.replyMessage?.parentMessageMessageType,
+          message.customType,
         )) {
-          _controller.tapForMediaPreviewWithMetaData(message);
+          _controller.tapForMediaPreview(message);
+        } else if (message.customType == IsmChatCustomMessageType.location) {
+          var url = '';
+          if (message.body.isValidUrl) {
+            url = message.body;
+          } else {
+            url = message.attachments?.first.mediaUrl ?? '';
+          }
+          await launchUrl(
+            Uri.parse(url),
+            mode: LaunchMode.externalApplication,
+          );
         }
-      } else if ([
-        IsmChatCustomMessageType.image,
-        IsmChatCustomMessageType.video,
-        IsmChatCustomMessageType.file,
-        if (!IsmChatResponsive.isWeb(
-            IsmChatConfig.kNavigatorKey.currentContext ??
-                IsmChatConfig.context))
-          IsmChatCustomMessageType.contact,
-      ].contains(message.customType)) {
-        _controller.tapForMediaPreview(message);
       }
     }
     if (response?.shouldUpdateMessage ?? true) {

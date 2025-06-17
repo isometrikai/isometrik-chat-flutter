@@ -27,6 +27,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_compress/video_compress.dart';
 
 part './mixins/get_message.dart';
@@ -959,9 +960,6 @@ class IsmChatPageController extends GetxController
   }
 
   Future<bool> initializeCamera() async {
-    if (areCamerasInitialized && !kIsWeb) {
-      return true;
-    }
     try {
       _cameras = await availableCameras();
     } on CameraException catch (e) {
@@ -1195,11 +1193,7 @@ class IsmChatPageController extends GetxController
 
     if (!IsmChatResponsive.isWeb(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
-      if (kIsWeb) {
-        isFrontCameraSelected = false;
-      } else {
-        isFrontCameraSelected = !isFrontCameraSelected;
-      }
+      isFrontCameraSelected = !isFrontCameraSelected;
     }
 
     if (isFrontCameraSelected) {

@@ -1100,30 +1100,42 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           IsmChatCustomMessageType.video;
       if (isImageReply || isVideoReply) {
         Uint8List? bytes;
-        String? nameWithExtension;
-        if (isImageReply &&
-            !(replyMessage?.parentMessageAttachmentUrl?.isValidUrl ?? false)) {
-          bytes = await File(replyMessage?.parentMessageAttachmentUrl ?? '')
-              .readAsBytes();
-          nameWithExtension =
-              replyMessage?.parentMessageAttachmentUrl?.split('/').last ?? '';
-        } else if (isVideoReply) {
-          bytes =
-              (replyMessage?.parentMessageAttachmentUrl ?? '').strigToUnit8List;
-          nameWithExtension = '$sentAt.png';
+        String? parentMessageAttachmentUrl;
+        final isForceValidUrl =
+            replyMessage?.parentMessageAttachmentUrl?.isForceValidUrl ?? false;
+
+        if (isForceValidUrl == false) {
+          if (isImageReply) {
+            if ((replyMessage?.parentMessageAttachmentUrl ?? '')
+                .startsWith('blob')) {
+              bytes = await IsmChatBlob.blobUrlToBytes(
+                  replyMessage?.parentMessageAttachmentUrl ?? '');
+            } else {
+              bytes = await File(replyMessage?.parentMessageAttachmentUrl ?? '')
+                  .readAsBytes();
+            }
+          } else if (isVideoReply) {
+            bytes = (replyMessage?.parentMessageAttachmentUrl ?? '')
+                .strigToUnit8List;
+          }
+          final parentMessageUrl =
+              await _controller.commonController.postMediaUrl(
+            conversationId: textMessage.conversationId ?? '',
+            nameWithExtension:
+                _controller.replayMessage?.attachments?.first.name ?? '',
+            mediaType: IsmChatMediaType.image.value,
+            mediaId: sentAt.toString(),
+            bytes: bytes ?? Uint8List(0),
+            isLoading: false,
+          );
+          parentMessageAttachmentUrl = parentMessageUrl?.mediaUrl;
+        } else {
+          parentMessageAttachmentUrl = replyMessage?.parentMessageAttachmentUrl;
         }
-        final parentMessageUrl =
-            await _controller.commonController.postMediaUrl(
-          conversationId: textMessage.conversationId ?? '',
-          nameWithExtension: nameWithExtension ?? '',
-          mediaType: IsmChatMediaType.image.value,
-          mediaId: sentAt.toString(),
-          bytes: bytes ?? Uint8List(0),
-          isLoading: false,
-        );
+
         textMessage.metaData = textMessage.metaData?.copyWith(
           replyMessage: replyMessage?.copyWith(
-            parentMessageAttachmentUrl: parentMessageUrl?.mediaUrl ?? '',
+            parentMessageAttachmentUrl: parentMessageAttachmentUrl,
           ),
         );
       }

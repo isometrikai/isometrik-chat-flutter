@@ -57,10 +57,6 @@ class ChatListController extends GetxController {
           deviceId: deviceConfig.deviceId ?? '',
         ),
       ),
-      mqttProperties: IsmMqttProperties(
-        shouldSetupMqtt: kIsWeb && kDebugMode ? false : true,
-        autoReconnect: kIsWeb && kDebugMode ? false : true,
-      ),
       showNotification: (title, body, data) {
         if (IsmChatResponsive.isMobile(kNavigatorKey.currentContext!)) {
           LocalNoticeService().showFlutterNotification(

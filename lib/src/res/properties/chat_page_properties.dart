@@ -32,6 +32,7 @@ class IsmChatPageProperties {
     this.textFieldActions,
     this.shouldShowHoverHold,
     this.backgroundImageUrl,
+    this.canReplayMessage,
   });
 
   final Widget? placeholder;
@@ -141,4 +142,6 @@ class IsmChatPageProperties {
       shouldShowHoverHold;
 
   final String? backgroundImageUrl;
+
+  final MessageCallback? canReplayMessage;
 }

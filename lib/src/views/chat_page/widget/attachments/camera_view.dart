@@ -19,19 +19,8 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
 
   @override
   void dispose() {
-    if (IsmChatResponsive.isWeb(
-        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
-      controller.cameraController.dispose();
-    }
+    controller.cameraController.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    if (!controller.isFrontCameraSelected) {
-      controller.toggleCamera();
-    }
-    super.initState();
   }
 
   @override
@@ -149,6 +138,7 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                   if (controller.flashMode != FlashMode.off) {
                                     controller.toggleFlash(FlashMode.off);
                                   }
+
                                   if (!controller.isFrontCameraSelected) {
                                     // Becauase after coming back from edit video screen, the default camera should be front camera
                                     controller.toggleCamera();

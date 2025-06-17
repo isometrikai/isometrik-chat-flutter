@@ -38,6 +38,11 @@ extension MatchString on String {
       toLowerCase().contains('http') ||
       toLowerCase().contains('www');
 
+  bool get isForceValidUrl =>
+      toLowerCase().startsWith('https') ||
+      toLowerCase().startsWith('http') ||
+      toLowerCase().startsWith('www');
+
   bool get isAlphabet => RegExp(r'^[A-Za-z]+$').hasMatch(this);
 
   // List<String> get phoneNumerList {

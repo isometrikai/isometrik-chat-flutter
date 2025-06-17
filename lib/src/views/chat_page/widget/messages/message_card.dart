@@ -79,15 +79,19 @@ class _MessageCardState extends State<MessageCard>
                       IsmChatCustomMessageType.deletedForEveryone
                   ? null
                   : (details) {
-                      if (details.delta.dx > 1) {
-                        _runAnimation(
-                          onRight: true,
-                        );
-                      }
-                      if (details.delta.dx < -1) {
-                        _runAnimation(
-                          onRight: false,
-                        );
+                      if (IsmChatProperties.chatPageProperties.canReplayMessage
+                              ?.call(context, widget.message) ??
+                          true) {
+                        if (details.delta.dx > 1) {
+                          _runAnimation(
+                            onRight: true,
+                          );
+                        }
+                        if (details.delta.dx < -1) {
+                          _runAnimation(
+                            onRight: false,
+                          );
+                        }
                       }
                     },
           child: SlideTransition(

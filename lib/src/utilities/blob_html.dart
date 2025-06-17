@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
 import 'package:universal_html/html.dart' as html;
 
 class IsmChatBlob {
@@ -10,6 +10,33 @@ class IsmChatBlob {
     final blob = html.Blob([bytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
     return url;
+  }
+
+  static Future<Uint8List> blobUrlToBytes(String blobUrl) async {
+    final request = html.HttpRequest();
+    request
+      ..open('GET', blobUrl)
+      ..responseType = 'arraybuffer';
+
+    final completer = Completer<Uint8List>();
+
+    request.onLoad.listen((_) {
+      if (request.status == 200 || request.status == 0) {
+        final buffer = request.response as ByteBuffer;
+        final bytes = Uint8List.view(buffer);
+        completer.complete(bytes);
+      } else {
+        completer.completeError('Failed to load blob: ${request.statusText}');
+      }
+    });
+
+    request.onError.listen((_) {
+      completer.completeError('Request failed');
+    });
+
+    request.send();
+
+    return completer.future;
   }
 
   /// call function for create video thumbanil with bytes

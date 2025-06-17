@@ -4,6 +4,8 @@ class IsmChatBlob {
   /// call function for create blob url with bytes
   static String blobToUrl(Uint8List bytes) => '';
 
+  static Future<Uint8List> blobUrlToBytes(String blobUrl) async => Uint8List(0);
+
   /// call function for create video thumbanil with bytes
   static Future<Uint8List?> getVideoThumbnailBytes(
           Uint8List videoBytes) async =>
