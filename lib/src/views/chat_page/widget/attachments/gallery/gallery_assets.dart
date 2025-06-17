@@ -316,6 +316,9 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                           IsmChatDimens.boxWidth8,
                           IsmChatStartChatFAB(
                             onTap: () async {
+                              controller.webMedia[controller.assetsIndex]
+                                      .caption =
+                                  controller.textEditingController.text;
                               controller.sendMedia();
                             },
                             icon: const Icon(

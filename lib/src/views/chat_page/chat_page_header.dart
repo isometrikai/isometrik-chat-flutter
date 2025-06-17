@@ -76,9 +76,10 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                     ?.call(updateLastMessage);
                               },
                               icon: Icon(
-                                IsmChat.i.chatPageTag == null
-                                    ? Icons.arrow_back_rounded
-                                    : Icons.close_rounded,
+                                Icons.arrow_back_rounded,
+                                // IsmChat.i.chatPageTag == null
+                                //     ? Icons.arrow_back_rounded
+                                //     : Icons.close_rounded,
                                 color: IsmChatConfig.chatTheme
                                         .chatPageHeaderTheme?.iconColor ??
                                     IsmChatColors.whiteColor,
