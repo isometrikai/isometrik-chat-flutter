@@ -452,9 +452,7 @@ class IsmChatDelegate {
         ),
       );
       conversation = IsmChatConversationModel(
-        userIds: isCreateGroupFromOutSide
-            ? [userId, IsmChatConfig.communicationConfig.userConfig.userId]
-            : null,
+        userIds: isCreateGroupFromOutSide ? [userId] : null,
         messagingDisabled: false,
         conversationImageUrl: conversationImageUrl,
         conversationTitle: conversationTitle,
