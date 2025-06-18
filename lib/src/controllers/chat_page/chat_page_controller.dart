@@ -231,6 +231,7 @@ class IsmChatPageController extends GetxController
         conversationType:
             conversation?.conversationType ?? IsmChatConversationType.private,
         userId: [],
+        metaData: conversation?.metaData,
         isGroup: true,
         searchableTags: [
           IsmChatConfig.communicationConfig.userConfig.userName ??
