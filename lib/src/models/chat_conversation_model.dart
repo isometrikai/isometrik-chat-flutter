@@ -76,7 +76,6 @@ class IsmChatConversationModel {
             ? OutSideMessage.fromMap(
                 map['messageFromOutSide'] as Map<String, dynamic>)
             : null,
-        isCreateGroupFromOutSide: map['isCreateGroupFromOutSide'] as bool? ?? false,
         customType: map['customType'] as String? ?? '',
         pushNotifications: map['pushNotifications'] as bool? ?? false);
     if (model.lastMessageDetails?.action ==
@@ -187,7 +186,6 @@ class IsmChatConversationModel {
     this.outSideMessage,
     this.customType,
     this.pushNotifications,
-    this.isCreateGroupFromOutSide,
   });
 
   final int? updatedAt;
@@ -214,7 +212,6 @@ class IsmChatConversationModel {
   final String? createdByUserName;
   final Map<String, IsmChatMessageModel>? messages;
   final OutSideMessage? outSideMessage;
-  final bool? isCreateGroupFromOutSide;
   final String? customType;
   final bool? pushNotifications;
 
@@ -274,7 +271,6 @@ class IsmChatConversationModel {
     IsmChatUserOwnDetails? usersOwnDetails,
     Map<String, IsmChatMessageModel>? messages,
     OutSideMessage? outSideMessage,
-    bool? isCreateGroupFromOutSide,
     bool? pushNotifications,
     List<String>? userIds,
   }) =>
@@ -305,8 +301,6 @@ class IsmChatConversationModel {
           outSideMessage: outSideMessage ?? this.outSideMessage,
           customType: customType ?? this.customType,
           pushNotifications: pushNotifications ?? this.pushNotifications,
-          isCreateGroupFromOutSide:
-              isCreateGroupFromOutSide ?? this.isCreateGroupFromOutSide,
           userIds: userIds ?? this.userIds);
 
   Map<String, dynamic> toMap() => {
@@ -341,14 +335,13 @@ class IsmChatConversationModel {
         'outSideMessage': outSideMessage?.toMap(),
         'customType': customType,
         'pushNotifications': pushNotifications,
-        'isCreateGroupFromOutSide': isCreateGroupFromOutSide,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatConversationModel(updatedAt: $updatedAt, unreadMessagesCount: $unreadMessagesCount, userIds: $userIds, privateOneToOne: $privateOneToOne, opponentDetails: $opponentDetails, metaData: $metaData, messagingDisabled: $messagingDisabled, membersCount: $membersCount, lastReadAt: $lastReadAt, lastMessageSentAt: $lastMessageSentAt, lastMessageDetails: $lastMessageDetails, isGroup: $isGroup, conversationType: $conversationType, createdAt: $createdAt, conversationTitle: $conversationTitle, conversationImageUrl: $conversationImageUrl, conversationId: $conversationId, config: $config, members: $members, usersOwnDetails: $usersOwnDetails, createdBy: $createdBy, createdByUserName: $createdByUserName, messages: $messages, outSideMessage : $outSideMessage ,customType: $customType, pushNotifications : $pushNotifications, isCreateGroupFromOutSide : $isCreateGroupFromOutSide)';
+      'IsmChatConversationModel(updatedAt: $updatedAt, unreadMessagesCount: $unreadMessagesCount, userIds: $userIds, privateOneToOne: $privateOneToOne, opponentDetails: $opponentDetails, metaData: $metaData, messagingDisabled: $messagingDisabled, membersCount: $membersCount, lastReadAt: $lastReadAt, lastMessageSentAt: $lastMessageSentAt, lastMessageDetails: $lastMessageDetails, isGroup: $isGroup, conversationType: $conversationType, createdAt: $createdAt, conversationTitle: $conversationTitle, conversationImageUrl: $conversationImageUrl, conversationId: $conversationId, config: $config, members: $members, usersOwnDetails: $usersOwnDetails, createdBy: $createdBy, createdByUserName: $createdByUserName, messages: $messages, outSideMessage : $outSideMessage ,customType: $customType, pushNotifications : $pushNotifications)';
 
   @override
   bool operator ==(covariant IsmChatConversationModel other) {
@@ -376,7 +369,6 @@ class IsmChatConversationModel {
         other.usersOwnDetails == usersOwnDetails &&
         other.createdBy == createdBy &&
         other.outSideMessage == outSideMessage &&
-        other.isCreateGroupFromOutSide == isCreateGroupFromOutSide &&
         other.createdByUserName == createdByUserName &&
         other.customType == customType &&
         other.pushNotifications == pushNotifications &&
@@ -408,7 +400,6 @@ class IsmChatConversationModel {
       createdBy.hashCode ^
       createdByUserName.hashCode ^
       outSideMessage.hashCode ^
-      isCreateGroupFromOutSide.hashCode ^
       customType.hashCode ^
       pushNotifications.hashCode ^
       messages.hashCode;

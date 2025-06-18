@@ -320,20 +320,23 @@ class IsmChatCommonViewModel {
     Map<String, dynamic>? metaData,
     String? conversationTitle,
     String? conversationImageUrl,
+    String? customType,
     bool isLoading = false,
   }) async =>
       await _repository.createConversation(
-          typingEvents: typingEvents,
-          readEvents: readEvents,
-          pushNotifications: pushNotifications,
-          members: members,
-          isGroup: isGroup,
-          metaData: metaData,
-          conversationType: conversationType,
-          conversationImageUrl: conversationImageUrl,
-          conversationTitle: conversationTitle,
-          isLoading: isLoading,
-          searchableTags: searchableTags);
+        typingEvents: typingEvents,
+        readEvents: readEvents,
+        pushNotifications: pushNotifications,
+        members: members,
+        isGroup: isGroup,
+        metaData: metaData,
+        conversationType: conversationType,
+        conversationImageUrl: conversationImageUrl,
+        conversationTitle: conversationTitle,
+        isLoading: isLoading,
+        customType: customType,
+        searchableTags: searchableTags,
+      );
 
   Future<List<IsmChatMessageModel>> getChatMessages({
     required String conversationId,

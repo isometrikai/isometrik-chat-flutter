@@ -405,12 +405,24 @@ class IsmChatDelegate {
     String? storyMediaUrl,
     bool pushNotifications = true,
     bool isCreateGroupFromOutSide = false,
+    String? conversationImageUrl,
+    String? conversationTitle,
+    String? customType,
+    IsmChatConversationType conversationType = IsmChatConversationType.private,
   }) async {
     assert(
       [name, userId].every((e) => e.isNotEmpty),
       '''Input Error: Please make sure that all required fields are filled out.
       Name, and userId cannot be empty.''',
     );
+    if (isCreateGroupFromOutSide) {
+      assert(
+        [conversationImageUrl ?? '', conversationTitle ?? '']
+            .every((e) => e.isNotEmpty),
+        '''Input Error: Please make sure that all required fields are filled out.
+      ConversationImageUrl, and ConversationTitle cannot be empty.''',
+      );
+    }
     IsmChatUtility.showLoader();
 
     if (!IsmChatUtility.conversationControllerRegistered) {
@@ -444,16 +456,18 @@ class IsmChatDelegate {
             ? [userId, IsmChatConfig.communicationConfig.userConfig.userId]
             : null,
         messagingDisabled: false,
-        conversationImageUrl: profileImageUrl,
-        isGroup: false,
+        conversationImageUrl: conversationImageUrl,
+        conversationTitle: conversationTitle,
+        isGroup: isCreateGroupFromOutSide,
         opponentDetails: userDetails,
         unreadMessagesCount: 0,
         lastMessageDetails: null,
         lastMessageSentAt: 0,
         membersCount: 1,
+        conversationType: conversationType,
         metaData: metaData,
+        customType: customType,
         outSideMessage: outSideMessage,
-        isCreateGroupFromOutSide: isCreateGroupFromOutSide,
         pushNotifications: pushNotifications,
       );
     } else {
@@ -462,8 +476,8 @@ class IsmChatDelegate {
       conversation = conversation.copyWith(
         metaData: metaData,
         outSideMessage: outSideMessage,
-        isCreateGroupFromOutSide: isCreateGroupFromOutSide,
         pushNotifications: pushNotifications,
+        isGroup: isCreateGroupFromOutSide,
       );
     }
 

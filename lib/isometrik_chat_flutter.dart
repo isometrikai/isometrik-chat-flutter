@@ -710,6 +710,10 @@ class IsmChat {
     String? storyMediaUrl,
     bool pushNotifications = true,
     bool isCreateGroupFromOutSide = false,
+    String? conversationImageUrl,
+    String? conversationTitle,
+    String? customType,
+    IsmChatConversationType conversationType = IsmChatConversationType.private,
   }) async {
     assert(
       [name, userId].every((e) => e.isNotEmpty),
@@ -730,6 +734,10 @@ class IsmChat {
       profileImageUrl: profileImageUrl,
       pushNotifications: pushNotifications,
       storyMediaUrl: storyMediaUrl,
+      conversationImageUrl: conversationImageUrl,
+      conversationTitle: conversationTitle,
+      customType: customType,
+      conversationType: conversationType,
     );
   }
 

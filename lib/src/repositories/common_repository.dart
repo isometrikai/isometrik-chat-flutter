@@ -212,6 +212,7 @@ class IsmChatCommonRepository {
     Map<String, dynamic>? metaData,
     String? conversationTitle,
     String? conversationImageUrl,
+    String? customType,
     bool isLoading = false,
   }) async {
     try {
@@ -224,7 +225,7 @@ class IsmChatCommonRepository {
         'conversationType': conversationType,
         'searchableTags': searchableTags,
         'metaData': metaData,
-        'customType': null,
+        'customType': customType,
         'conversationTitle': conversationTitle,
         'conversationImageUrl': conversationImageUrl,
       };

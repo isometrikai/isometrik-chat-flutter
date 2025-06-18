@@ -1349,7 +1349,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       _controller.conversation =
           await _controller.commonController.createConversation(
         conversation: _controller.conversation!,
-        isGroup: _controller.conversation?.isCreateGroupFromOutSide ?? false,
+        isGroup: _controller.conversation?.isGroup ?? false,
         userId: [userId],
         metaData: _controller.conversation?.metaData,
         searchableTags: [
@@ -1463,7 +1463,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       _controller.conversation =
           await _controller.commonController.createConversation(
         conversation: _controller.conversation!,
-        isGroup: _controller.conversation?.isCreateGroupFromOutSide ?? false,
+        isGroup: _controller.conversation?.isGroup ?? false,
         userId: [userId ?? ''],
         metaData: _controller.conversation?.metaData,
         searchableTags: [

@@ -240,6 +240,7 @@ class IsmChatCommonController extends GetxController {
       conversationType: conversationType.value,
       searchableTags: searchableTags,
       metaData: metaData != null ? metaData.toMap() : {},
+      customType: conversation.customType,
       conversationImageUrl:
           isGroup ? conversation.conversationImageUrl ?? '' : '',
       conversationTitle: isGroup ? conversation.conversationTitle ?? '' : '',
