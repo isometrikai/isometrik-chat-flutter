@@ -355,70 +355,55 @@ await IsmChat.i.deleteChat(conversationId);
     );
 ```
 
-37. This function allows you to create a group chat with multiple users from anywhere in your app. It requires the conversation image URL, conversation title, and a list of user IDs. You can also optionally provide the conversation type, additional metadata, a callback to navigate to the chat conversation, and more.
-
-```dart
-     await IsmChat.i.createGroupFromOutside(
-    conversationImageUrl: 'https://example.com/conversation_image.jpg',
-    conversationTitle: 'Group Chat',
-    userIds: ['12345', '67890'],
-    metaData: IsmChatMetaData(
-        title: 'Hello from outside!',
-        description: 'This is a test message.',
-    ),
-    onNavigateToChat: (context, conversation) {},
-    );
-```
-
-38. This method is used to fetch a message on the chat page. It can be used to retrieve a message from a broadcast or a regular chat.
+37. This method is used to fetch a message on the chat page. It can be used to retrieve a message from a broadcast or a regular chat.
 
 ```dart
     await IsmChat.i.getMessageOnChatPage(isBroadcast: true);
 ```
 
-39. Logout : This method use logs out the current user and clears all local data stored in the app. This is important for ensuring the user's chat session is properly terminated.
+38. Logout : This method use logs out the current user and clears all local data stored in the app. This is important for ensuring the user's chat session is properly terminated.
 
 ```dart
     await IsmChat.i.logout();
 ```
 
-40. Retrieves a specific conversation by its ID.
+39. Retrieves a specific conversation by its ID.
 
 ```dart
 final conversation = await IsmChat.i.getConversation(conversationId: 'conversation-123');
 ```
 
-41. Subscribe to multiple MQTT topics for receiving messages.
+40. Subscribe to multiple MQTT topics for receiving messages.
 
 ```dart
 IsmChat.i.subscribeTopics(['sports', 'politics', 'technology']);
 ```
 
-42. Unsubscribe from MQTT topics to stop receiving messages.
+41. Unsubscribe from MQTT topics to stop receiving messages.
 
 ```dart
 IsmChat.i.unSubscribeTopics(['sports', 'politics', 'technology']);
 ```
 
-43. Retrieves a list of users blocked by the current user.
+42. Retrieves a list of users blocked by the current user.
 
 ```dart
 final blockedUsers = await IsmChat.i.getBlockUser(isLoading: true);
 ```
 
-44. Refreshes the current chat page by updating conversation details and messages.
+43. Refreshes the current chat page by updating conversation details and messages.
 
 ```dart
 await IsmChat.i.updateChatPage();
 ```
 
-45. Retrieves the list of messages in the currently active conversation.
+44. Retrieves the list of messages in the currently active conversation.
 
 ```dart
 final messages = IsmChat.i.currentConversatonMessages();
 ```
 
-46. Fetches a paginated list of chat conversations with search capabilities.
+45. Fetches a paginated list of chat conversations with search capabilities.
 
 ```dart
 final conversations = await IsmChat.i.getChatConversationApi(
@@ -429,44 +414,44 @@ final conversations = await IsmChat.i.getChatConversationApi(
 );
 ```
 
-47. Retrieves the count of conversations with unread messages.
+46. Retrieves the count of conversations with unread messages.
 
 ```dart
 await IsmChat.i.getChatConversationsUnreadCount(isLoading: true);
 ```
 
-48. Sets the current conversation index in the chat interface.
+47. Sets the current conversation index in the chat interface.
 
 ```dart
   IsmChat.i.currentConversationIndex(index: 2);
 ```
 
-49. Determines whether to show other elements on the chat page.
+48. Determines whether to show other elements on the chat page.
 
 ```dart
  IsmChat.i.shouldShowOtherOnChatPage();
 ```
 
-50. Searches for conversations based on the provided search value.
+49. Searches for conversations based on the provided search value.
 
 ```dart
 await IsmChat.i.searchConversation(searchValue: "John");
 ```
 
-51. Retrieves messages from the local database for a specific conversation.
+50. Retrieves messages from the local database for a specific conversation.
 
 ```dart
 await IsmChat.i.getMessagesFromDB(conversationId: "conv123");
 ```
 
-53. Updates an existing message in the chat system.
+51. Updates an existing message in the chat system.
 
 ```dart
 final updatedMessage = IsmChatMessageModel();
 await IsmChat.i.updateMessage(message: updatedMessage);
 ```
 
-54. Updates the metadata of a specific message in a conversation.
+52. Updates the metadata of a specific message in a conversation.
 
 ```dart
 await IsmChat.i.updateMessageMetaData(
@@ -477,7 +462,7 @@ await IsmChat.i.updateMessageMetaData(
 );
 ```
 
-55. Updates the metadata of a specific message in a conversation.
+53. Updates the metadata of a specific message in a conversation.
 
 ```dart
 await IsmChat.i.updateMessageMetaData(
@@ -488,7 +473,7 @@ await IsmChat.i.updateMessageMetaData(
 );
 ```
 
-56. Get or set a tag associated with the chat instance.
+54. Get or set a tag associated with the chat instance.
 
 ```dart
 // Get current tag

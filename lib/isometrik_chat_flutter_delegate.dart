@@ -399,7 +399,8 @@ class IsmChatDelegate {
     required String userId,
     required bool online,
     IsmChatMetaData? metaData,
-    void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
+    ConversationVoidCallback? onNavigateToChat,
+    ConversationVoidCallback? onConversationCreated,
     Duration duration = const Duration(milliseconds: 500),
     OutSideMessage? outSideMessage,
     String? storyMediaUrl,
@@ -410,19 +411,6 @@ class IsmChatDelegate {
     String? customType,
     IsmChatConversationType conversationType = IsmChatConversationType.private,
   }) async {
-    assert(
-      [name, userId].every((e) => e.isNotEmpty),
-      '''Input Error: Please make sure that all required fields are filled out.
-      Name, and userId cannot be empty.''',
-    );
-    if (isCreateGroupFromOutSide) {
-      assert(
-        [conversationImageUrl ?? '', conversationTitle ?? '']
-            .every((e) => e.isNotEmpty),
-        '''Input Error: Please make sure that all required fields are filled out.
-      ConversationImageUrl, and ConversationTitle cannot be empty.''',
-      );
-    }
     IsmChatUtility.showLoader();
 
     if (!IsmChatUtility.conversationControllerRegistered) {
@@ -478,6 +466,7 @@ class IsmChatDelegate {
         isGroup: isCreateGroupFromOutSide,
       );
     }
+    IsmChatConfig.onConversationCreated = onConversationCreated;
 
     (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
         ?.call(
@@ -523,70 +512,6 @@ class IsmChatDelegate {
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             ismChatConversation);
     controller.updateLocalConversation(ismChatConversation);
-    await controller.goToChatPage();
-  }
-
-  Future<void> createGroupFromOutside({
-    required String conversationImageUrl,
-    required String conversationTitle,
-    required List<String> userIds,
-    IsmChatConversationType conversationType = IsmChatConversationType.private,
-    IsmChatMetaData? metaData,
-    void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
-    Duration duration = const Duration(milliseconds: 500),
-    bool pushNotifications = true,
-  }) async {
-    assert(
-      conversationTitle.isNotEmpty && userIds.isNotEmpty,
-      '''Input Error: Please make sure that all required fields are filled out.
-      conversationTitle, and userIds cannot be empty.''',
-    );
-
-    IsmChatUtility.showLoader();
-
-    await Future.delayed(duration);
-
-    IsmChatUtility.closeLoader();
-
-    if (!IsmChatUtility.conversationControllerRegistered) {
-      IsmChatCommonBinding().dependencies();
-      IsmChatConversationsBinding().dependencies();
-    }
-    var controller = IsmChatUtility.conversationController;
-
-    var conversation = IsmChatConversationModel(
-        messagingDisabled: false,
-        userIds: userIds,
-        conversationTitle: conversationTitle,
-        conversationImageUrl: conversationImageUrl,
-        isGroup: true,
-        opponentDetails: controller.userDetails,
-        unreadMessagesCount: 0,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        createdByUserName:
-            IsmChatConfig.communicationConfig.userConfig.userName ??
-                controller.userDetails?.userName ??
-                '',
-        lastMessageDetails: LastMessageDetails(
-          sentByMe: true,
-          showInConversation: true,
-          sentAt: DateTime.now().millisecondsSinceEpoch,
-          senderName: '',
-          messageType: 0,
-          messageId: '',
-          conversationId: '',
-          body: '',
-        ),
-        lastMessageSentAt: 0,
-        conversationType: conversationType,
-        membersCount: userIds.length,
-        pushNotifications: pushNotifications);
-
-    (onNavigateToChat ?? IsmChatProperties.conversationProperties.onChatTap)
-        ?.call(
-            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
-            conversation);
-    controller.updateLocalConversation(conversation);
     await controller.goToChatPage();
   }
 

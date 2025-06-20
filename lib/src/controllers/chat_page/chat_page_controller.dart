@@ -45,8 +45,8 @@ class IsmChatPageController extends GetxController
         IsmChatGroupAdminMixin,
         IsmChatShowDialogMixin,
         IsmChatTapsController,
-        GetTickerProviderStateMixin,
-        IsmChatPageVariablesMixin {
+        IsmChatPageVariablesMixin,
+        GetTickerProviderStateMixin {
   IsmChatPageController(this.viewModel);
   final IsmChatPageViewModel viewModel;
 
@@ -239,6 +239,10 @@ class IsmChatPageController extends GetxController
               '',
           conversation?.chatName ?? ''
         ],
+      );
+      IsmChatConfig.onConversationCreated?.call(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+        conversation,
       );
 
       await getConverstaionDetails();

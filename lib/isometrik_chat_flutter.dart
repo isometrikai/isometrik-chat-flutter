@@ -704,7 +704,8 @@ class IsmChat {
     required String userId,
     required bool online,
     IsmChatMetaData? metaData,
-    void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
+    ConversationVoidCallback? onNavigateToChat,
+    ConversationVoidCallback? onConversationCreated,
     Duration duration = const Duration(milliseconds: 500),
     OutSideMessage? outSideMessage,
     String? storyMediaUrl,
@@ -720,6 +721,14 @@ class IsmChat {
       '''Input Error: Please make sure that all required fields are filled out.
       Name, and userId cannot be empty.''',
     );
+    if (isCreateGroupFromOutSide) {
+      assert(
+        [conversationImageUrl ?? '', conversationTitle ?? '']
+            .every((e) => e.isNotEmpty),
+        '''Input Error: Please make sure that all required fields are filled out.
+      ConversationImageUrl, and ConversationTitle cannot be empty.''',
+      );
+    }
 
     await _delegate.chatFromOutside(
       name: name,
@@ -738,6 +747,7 @@ class IsmChat {
       conversationTitle: conversationTitle,
       customType: customType,
       conversationType: conversationType,
+      onConversationCreated: onConversationCreated,
     );
   }
 
@@ -785,70 +795,6 @@ class IsmChat {
       duration: duration,
       isShowLoader: isShowLoader,
       onNavigateToChat: onNavigateToChat,
-    );
-  }
-
-  /// Creates a group chat from outside the chat screen.
-  ///
-  /// This function allows you to create a group chat with multiple users from anywhere in your app.
-  /// It requires the conversation image URL, conversation title, and a list of user IDs.
-  /// You can also optionally provide the conversation type, additional metadata, a callback to navigate to the chat conversation, and more.
-  ///
-  /// Parameters:
-  ///
-  /// * `conversationImageUrl`: The URL of the conversation image. (Required)
-  /// * `conversationTitle`: The title of the conversation. (Required)
-  /// * `userIds`: A list of user IDs to add to the conversation. (Required)
-  /// * `conversationType`: The type of conversation (private or public). (Default: private)
-  /// * `metaData`: Additional metadata to pass to the chat conversation.
-  /// * `onNavigateToChat`: A callback to navigate to the chat conversation.
-  /// * `duration`: The duration of the animation to navigate to the chat conversation. (Default: 500ms)
-  /// * `pushNotifications`: Whether to enable push notifications for the chat conversation. (Default: true)
-  ///
-  /// Example:
-  ///
-  /// ```dart
-  /// await IsmChat.i.createGroupFromOutside(
-  ///   conversationImageUrl: 'https://example.com/conversation_image.jpg',
-  ///   conversationTitle: 'Group Chat',
-  ///   userIds: ['12345', '67890'],
-  ///   metaData: IsmChatMetaData(
-  ///     title: 'Hello from outside!',
-  ///     description: 'This is a test message.',
-  ///   ),
-  ///   onNavigateToChat: (context, conversation) {
-  ///     Navigator.push(
-  ///       context,
-  ///       MaterialPageRoute(builder: (context) => ChatScreen(conversation)),
-  ///     );
-  ///   },
-  /// );
-  /// ```
-  ///
-  Future<void> createGroupFromOutside({
-    required String conversationImageUrl,
-    required String conversationTitle,
-    required List<String> userIds,
-    IsmChatConversationType conversationType = IsmChatConversationType.private,
-    IsmChatMetaData? metaData,
-    void Function(BuildContext, IsmChatConversationModel)? onNavigateToChat,
-    Duration duration = const Duration(milliseconds: 500),
-    bool pushNotifications = true,
-  }) async {
-    assert(
-      conversationTitle.isNotEmpty && userIds.isNotEmpty,
-      '''Input Error: Please make sure that all required fields are filled out.
-      conversationTitle, and userIds cannot be empty.''',
-    );
-    await _delegate.createGroupFromOutside(
-      conversationImageUrl: conversationImageUrl,
-      conversationTitle: conversationTitle,
-      userIds: userIds,
-      conversationType: conversationType,
-      duration: duration,
-      metaData: metaData,
-      onNavigateToChat: onNavigateToChat,
-      pushNotifications: pushNotifications,
     );
   }
 
