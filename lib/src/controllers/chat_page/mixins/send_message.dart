@@ -1474,6 +1474,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         ],
       );
       conversationId = _controller.conversation?.conversationId ?? '';
+      IsmChatConfig.onConversationCreated?.call(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+        _controller.conversation,
+      );
       unawaited(
         _controller.getConverstaionDetails(),
       );
