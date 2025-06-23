@@ -1115,14 +1115,77 @@ class IsmChat {
     );
   }
 
+  /// Retrieves chat conversations from the local database.
+  ///
+  /// This method fetches conversations stored locally on the device's database.
+  /// It's useful for displaying offline conversation history or when you need
+  /// to access conversations without making a network request.
+  ///
+  /// Parameters:
+  /// - `searchTag`: Optional search string to filter conversations by title or content.
+  ///   If provided, only conversations matching this search term will be returned.
+  ///   If null or empty, all local conversations will be retrieved.
+  ///
+  /// Returns:
+  /// - Future<void>: A Future that completes when the local conversations have been
+  ///   retrieved and updated in the conversation controller.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Get all local conversations
+  /// await IsmChat.i.getChatConversationFromLocal();
+  ///
+  /// // Get local conversations matching a search term
+  /// await IsmChat.i.getChatConversationFromLocal(searchTag: "John");
+  /// ```
   Future<void> getChatConversationFromLocal({
     String? searchTag,
   }) async =>
       await _delegate.getChatConversationFromLocal(searchTag: searchTag);
 
+  /// Deletes the conversation controller from memory.
+  ///
+  /// This method removes the IsmChatConversationsController instance from the
+  /// GetX dependency injection system. This is typically used for cleanup
+  /// operations when you want to free up memory or reset the conversation state.
+  ///
+  /// The method safely handles the deletion by:
+  /// - Checking if the controller is registered before attempting deletion
+  /// - Using force deletion to ensure complete removal
+  /// - Catching and logging any errors that occur during deletion
+  ///
+  /// Returns:
+  /// - Future<void>: A Future that completes when the controller has been
+  ///   successfully deleted from memory.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Clean up conversation controller when logging out
+  /// await IsmChat.i.deleteConversationController();
+  /// ```
   Future<void> deleteConversationController() async =>
       await _delegate.deleteConversationController();
 
+  /// Deletes the chat page controller from memory.
+  ///
+  /// This method removes the IsmChatPageController instance from the
+  /// GetX dependency injection system. This is typically used for cleanup
+  /// operations when you want to free up memory or reset the chat page state.
+  ///
+  /// The method safely handles the deletion by:
+  /// - Checking if the controller is registered before attempting deletion
+  /// - Using force deletion to ensure complete removal
+  /// - Catching and logging any errors that occur during deletion
+  ///
+  /// Returns:
+  /// - Future<void>: A Future that completes when the controller has been
+  ///   successfully deleted from memory.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Clean up chat page controller when navigating away
+  /// await IsmChat.i.deleteChatPageController();
+  /// ```
   Future<void> deleteChatPageController() async =>
       await _delegate.deleteChatPageController();
 }
