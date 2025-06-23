@@ -1648,7 +1648,7 @@ class IsmChatConversationsController extends GetxController {
   }
 
   /// Navigates to the contact synchronization page.
-  void goToContactSync() async {
+  Future<void> goToContactSync() async {
     // await askPermissions();
     await Future.delayed(Durations.extralong1);
 
