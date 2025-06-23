@@ -45,8 +45,14 @@ mixin IsmChatMqttEventMixin {
   /// Stores messages pending to be processed.
   IsmChatConversationModel? chatPendingMessages;
 
-  bool isSenderMe(String? senderId) =>
-      senderId == _controller.userConfig?.userId;
+  bool isSenderMe(String? senderId, {String? deviceId}) {
+    if (deviceId == null) {
+      return senderId == _controller.userConfig?.userId;
+    }
+    final isMyMessage = _controller.userConfig?.userId == senderId &&
+        deviceId == _controller.projectConfig?.deviceId;
+    return isMyMessage;
+  }
 
   /// Handles incoming MQTT events and routes them to appropriate handlers.
   ///
@@ -313,7 +319,9 @@ mixin IsmChatMqttEventMixin {
   ///
   /// * `message`: The message to handle
   Future<void> _handleMessage(IsmChatMessageModel message) async {
-    if (isSenderMe(message.senderInfo?.userId)) return;
+    if (isSenderMe(message.senderInfo?.userId, deviceId: message.deviceId)) {
+      return;
+    }
     _handleUnreadMessages(message.senderInfo?.userId ?? '');
     if (!IsmChatUtility.conversationControllerRegistered) {
       return;
