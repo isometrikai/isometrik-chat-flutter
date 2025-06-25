@@ -382,6 +382,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             backgroundColor: '#ffffff',
           );
           await page.close();
+          await document.close();
           thumbnailBytes = pdfImage?.bytes;
           thumbnailNameWithExtension = pdfImage?.format.toString();
           thumbnailMediaId = sentAt.toString();
