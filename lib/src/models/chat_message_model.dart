@@ -450,7 +450,7 @@ class IsmChatMessageModel {
         'meetingId': meetingId,
         'meetingType': meetingType,
         'audioOnly': audioOnly,
-        'isInvalid': isInvalidMessage,
+        'isInvalidMessage': isInvalidMessage,
       }.removeNullValues();
 
   String body;
