@@ -140,7 +140,8 @@ class IsmChatCommonViewModel {
           chatPendingMessages = chatPendingMessagesData;
         }
         final pendingMessage = chatPendingMessages?.messages?['$createdAt'];
-        if (pendingMessage != null) {
+        if (pendingMessage != null &&
+            [200, 403].contains(response.respone.errorCode)) {
           if (response.messageId.isNotEmpty) {
             pendingMessage.messageId = response.messageId;
             pendingMessage.deliveredToAll = false;
@@ -173,8 +174,8 @@ class IsmChatCommonViewModel {
             );
           }
           await dbBox?.saveConversation(conversation: conversationModel!);
+          return true;
         }
-        return true;
       }
       return false;
     } catch (e, st) {

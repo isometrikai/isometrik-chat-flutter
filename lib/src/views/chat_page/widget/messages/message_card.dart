@@ -79,9 +79,10 @@ class _MessageCardState extends State<MessageCard>
                       IsmChatCustomMessageType.deletedForEveryone
                   ? null
                   : (details) {
-                      if (IsmChatProperties.chatPageProperties.canReplayMessage
-                              ?.call(context, widget.message) ??
-                          true) {
+                      if ((IsmChatProperties.chatPageProperties.canReplayMessage
+                                  ?.call(context, widget.message) ??
+                              true) &&
+                          widget.message.messageId?.isNotEmpty == true) {
                         if (details.delta.dx > 1) {
                           _runAnimation(
                             onRight: true,
