@@ -198,9 +198,10 @@ class _MessageCardState extends State<MessageCard>
                                       .messageStatus?.shouldShowMessgaeStatus ??
                                   false) &&
                               widget.message.sentByMe &&
-                              widget.message.customType !=
-                                  IsmChatCustomMessageType
-                                      .deletedForEveryone) ...[
+                              ![
+                                IsmChatCustomMessageType.deletedForEveryone,
+                                IsmChatCustomMessageType.oneToOneCall,
+                              ].contains(widget.message.customType)) ...[
                             if (widget.message.messageId?.isEmpty == true) ...[
                               IsmChatDimens.boxWidth2,
                               if (widget.message.isInvalidMessage == true) ...[

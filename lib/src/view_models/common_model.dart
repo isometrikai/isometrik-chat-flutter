@@ -118,7 +118,6 @@ class IsmChatCommonViewModel {
       );
       if (response == null) return false;
       if (!isUpdateMesage) return false;
-      if (response.messageId.isEmpty && response.respone.errorCode == 403) {}
       if (isBroadcast) {
         final chatPageController = IsmChatUtility.chatPageController;
         for (var x = 0; x < chatPageController.messages.length; x++) {
@@ -147,7 +146,7 @@ class IsmChatCommonViewModel {
             pendingMessage.deliveredToAll = false;
             pendingMessage.readByAll = false;
             pendingMessage.isUploading = false;
-          } else {
+          } else if (response.respone.errorCode == 403) {
             pendingMessage.messageId = '';
             pendingMessage.isInvalidMessage = true;
           }
