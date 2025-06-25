@@ -363,18 +363,17 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       conversationId = await createConversation(
           conversationId: conversationId, userId: userId);
       final resultFiles = result?.files ?? [];
-
       for (var x in resultFiles) {
+        bytes = x.bytes;
         final sizeMedia = kIsWeb
             ? IsmChatUtility.formatBytes(
-                int.parse((x.bytes?.length ?? 0).toString()),
+                int.parse((bytes?.length ?? 0).toString()),
               )
             : await IsmChatUtility.fileToSize(File(x.path ?? ''));
-
-        bytes = x.bytes;
         if (sizeMedia.size()) {
+          final bytesForPdf = Uint8List.fromList(bytes ?? []);
           final document = kIsWeb
-              ? await PdfDocument.openData(x.bytes ?? Uint8List(0))
+              ? await PdfDocument.openData(bytesForPdf)
               : await PdfDocument.openFile(x.path ?? '');
           final page = await document.getPage(1);
           final pdfImage = await page.render(
@@ -383,7 +382,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             backgroundColor: '#ffffff',
           );
           await page.close();
-
           thumbnailBytes = pdfImage?.bytes;
           thumbnailNameWithExtension = pdfImage?.format.toString();
           thumbnailMediaId = sentAt.toString();
