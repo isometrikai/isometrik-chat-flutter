@@ -112,52 +112,56 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                         )
                       : Row(
                           children: [
-                            IconButton(
-                              onPressed: () async {
-                                controller.isVideoVisible = true;
-                                var mediaFile =
-                                    await IsmChatRoute.goToRoute<XFile>(
-                                        IsmVideoTrimmerView(
-                                  index: controller.assetsIndex,
-                                  file: XFile(
-                                    controller.webMedia[controller.assetsIndex]
-                                            .platformFile.path ??
-                                        '',
-                                  ),
-                                  maxVideoTrim: 30,
-                                ));
-                                if (mediaFile == null) return;
-                                final thumb =
-                                    await VideoCompress.getByteThumbnail(
-                                        mediaFile.path,
-                                        quality: 50,
-                                        position: 1);
+                            if (!kIsWeb) ...[
+                              IconButton(
+                                onPressed: () async {
+                                  controller.isVideoVisible = true;
+                                  var mediaFile =
+                                      await IsmChatRoute.goToRoute<XFile>(
+                                          IsmVideoTrimmerView(
+                                    index: controller.assetsIndex,
+                                    file: XFile(
+                                      controller
+                                              .webMedia[controller.assetsIndex]
+                                              .platformFile
+                                              .path ??
+                                          '',
+                                    ),
+                                    maxVideoTrim: 30,
+                                  ));
+                                  if (mediaFile == null) return;
+                                  final thumb =
+                                      await VideoCompress.getByteThumbnail(
+                                          mediaFile.path,
+                                          quality: 50,
+                                          position: 1);
 
-                                var bytes = await mediaFile.readAsBytes();
-                                final fileSize = IsmChatUtility.formatBytes(
-                                  int.parse(bytes.length.toString()),
-                                );
-                                controller.webMedia[controller.assetsIndex] =
-                                    WebMediaModel(
-                                  dataSize: fileSize,
-                                  isVideo: true,
-                                  platformFile: IsmchPlatformFile(
-                                    name: mediaFile.name,
-                                    bytes: bytes,
-                                    path: mediaFile.path,
-                                    size: bytes.length,
-                                    extension: mediaFile.mimeType,
-                                    thumbnailBytes: thumb,
-                                  ),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.content_cut_outlined,
-                                color: IsmChatConfig.chatTheme
-                                        .chatPageHeaderTheme?.iconColor ??
-                                    IsmChatColors.whiteColor,
-                              ),
-                            ),
+                                  var bytes = await mediaFile.readAsBytes();
+                                  final fileSize = IsmChatUtility.formatBytes(
+                                    int.parse(bytes.length.toString()),
+                                  );
+                                  controller.webMedia[controller.assetsIndex] =
+                                      WebMediaModel(
+                                    dataSize: fileSize,
+                                    isVideo: true,
+                                    platformFile: IsmchPlatformFile(
+                                      name: mediaFile.name,
+                                      bytes: bytes,
+                                      path: mediaFile.path,
+                                      size: bytes.length,
+                                      extension: mediaFile.mimeType,
+                                      thumbnailBytes: thumb,
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.content_cut_outlined,
+                                  color: IsmChatConfig.chatTheme
+                                          .chatPageHeaderTheme?.iconColor ??
+                                      IsmChatColors.whiteColor,
+                                ),
+                              )
+                            ],
                             IconButton(
                               onPressed: () {
                                 controller.webMedia
