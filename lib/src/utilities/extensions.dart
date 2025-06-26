@@ -907,10 +907,10 @@ extension MentionMessage on IsmChatMessageModel {
   TextStyle get readTextStyle {
     var theme = IsmChatConfig.chatTheme.chatPageTheme;
     if (sentByMe) {
-      return theme?.selfMessageTheme?.readTextStyle ??
+      return theme?.selfMessageTheme?.readMoreTextStyle ??
           IsmChatStyles.w500White14;
     }
-    return theme?.opponentMessageTheme?.readTextStyle ??
+    return theme?.opponentMessageTheme?.readMoreTextStyle ??
         IsmChatStyles.w500Black14;
   }
 
