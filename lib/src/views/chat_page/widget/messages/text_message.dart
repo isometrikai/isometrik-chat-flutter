@@ -189,10 +189,8 @@ class IsmChatTextMessage extends StatelessWidget {
                                     isExpandedNotifier.value = !isExpanded;
                                   },
                                   child: Text(
-                                    isExpanded ? 'show less' : 'show more',
-                                    style: message.style.copyWith(
-                                        fontSize:
-                                            (message.style.fontSize ?? 0) - 2),
+                                    isExpanded ? 'Show less' : 'Show more',
+                                    style: message.readTextStyle,
                                   ),
                                 ),
                             ],

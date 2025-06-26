@@ -10,6 +10,7 @@ class IsmChatMessageTheme {
     this.showProfile,
     this.audioMessageBGColor,
     this.timeStyle,
+    this.readTextStyle,
   });
 
   final Color? backgroundColor;
@@ -20,6 +21,7 @@ class IsmChatMessageTheme {
   final ShowProfile? showProfile;
   final Color? audioMessageBGColor;
   final TextStyle? timeStyle;
+  final TextStyle? readTextStyle;
 }
 
 class ShowProfile {

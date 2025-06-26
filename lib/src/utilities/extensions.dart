@@ -904,6 +904,16 @@ extension MentionMessage on IsmChatMessageModel {
     );
   }
 
+  TextStyle get readTextStyle {
+    var theme = IsmChatConfig.chatTheme.chatPageTheme;
+    if (sentByMe) {
+      return theme?.selfMessageTheme?.readTextStyle ??
+          IsmChatStyles.w500White14;
+    }
+    return theme?.opponentMessageTheme?.readTextStyle ??
+        IsmChatStyles.w500Black14;
+  }
+
   TextStyle get timeStyle {
     var theme = IsmChatConfig.chatTheme.chatPageTheme;
     if (sentByMe) {
