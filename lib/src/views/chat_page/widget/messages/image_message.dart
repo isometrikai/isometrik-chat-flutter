@@ -25,7 +25,7 @@ class IsmChatImageMessage extends StatelessWidget {
                     constraints: BoxConstraints(
                       maxHeight: (IsmChatResponsive.isWeb(context))
                           ? context.height * .35
-                          : context.height * .7,
+                          : context.height * .6,
                     ),
                     child: IsmChatImage(
                       message.attachments?.first.mediaUrl ?? '',

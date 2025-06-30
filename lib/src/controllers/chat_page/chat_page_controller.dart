@@ -167,7 +167,7 @@ class IsmChatPageController extends GetxController
     ifTimerMounted();
   }
 
-  _currentUser() {
+  void _currentUser() {
     currentUser = UserDetails(
       userProfileImageUrl:
           IsmChatConfig.communicationConfig.userConfig.userProfile ?? '',
@@ -180,7 +180,7 @@ class IsmChatPageController extends GetxController
     );
   }
 
-  _generateReactionList() async {
+  void _generateReactionList() async {
     reactions.clear();
     reactions.addAll(IsmChatEmoji.values
         .expand((typesOfEmoji) => defaultEmojiSet.expand((categoryEmoji) =>
@@ -189,7 +189,7 @@ class IsmChatPageController extends GetxController
         .toList());
   }
 
-  _getBackGroundAsset() {
+  void _getBackGroundAsset() {
     final assets =
         conversationController.userDetails?.metaData?.assetList ?? [];
     final asset = assets
@@ -431,7 +431,7 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  toggleEmojiBoard([
+  void toggleEmojiBoard([
     bool? showEmoji,
     bool focusKeyboard = true,
   ]) {
@@ -445,7 +445,7 @@ class IsmChatPageController extends GetxController
     showEmojiBoard = showEmoji ?? !showEmojiBoard;
   }
 
-  toggleAttachment() {
+  void toggleAttachment() {
     showAttachment = !showAttachment;
   }
 

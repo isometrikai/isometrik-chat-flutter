@@ -189,7 +189,7 @@ class VoiceMessageState extends State<VoiceMessage>
     }
   }
 
-  _stopPlaying() async {
+  void _stopPlaying() async {
     await _player.pause();
     _animationController?.stop();
   }

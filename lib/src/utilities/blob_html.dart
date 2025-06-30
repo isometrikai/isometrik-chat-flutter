@@ -154,9 +154,10 @@ class IsmChatBlob {
     return status?.state ?? '';
   }
 
-  static listenTabAndRefesh() => html.window.onBeforeUnload.listen((event) {});
+  static void listenTabAndRefesh() =>
+      html.window.onBeforeUnload.listen((event) {});
 
-  static listenTabAndRefeshOne() {
+  static void listenTabAndRefeshOne() {
     html.window.onUnload.listen((event) {});
   }
 }

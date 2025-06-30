@@ -29,8 +29,8 @@ class IsmChatBlob {
 
   static Future<String> checkPermission(String value) async => '';
 
-  static listenTabAndRefesh() {}
-  static listenTabAndRefeshOne() {}
+  static void listenTabAndRefesh() {}
+  static void listenTabAndRefeshOne() {}
 
-  static openNewTab(String route) {}
+  static void openNewTab(String route) {}
 }

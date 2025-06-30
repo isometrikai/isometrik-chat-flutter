@@ -34,7 +34,7 @@ class _WebMessageMediaPreviewState extends State<IsmWebMessageMediaPreview> {
     startInit();
   }
 
-  startInit() {
+  void startInit() {
     messageData = widget.previewData['messageData'] ?? [];
     mediaUserName = widget.previewData['mediaUserName'] ?? '';
     initiated = widget.previewData['initiated'] ?? false;

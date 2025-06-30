@@ -11,6 +11,7 @@ class IsmChatConversationProperties {
   /// You can customize the conversation UI by passing various parameters to this constructor.
   IsmChatConversationProperties({
     this.onChatTap,
+    this.onLongPress,
     this.onCreateTap,
     this.cardBuilder,
     this.cardElementBuilders,
@@ -62,6 +63,16 @@ class IsmChatConversationProperties {
   /// onChatTap: (context, conversation) {},
   /// ```
   final ConversationVoidCallback? onChatTap;
+
+  /// A callback that is called when a chat item is onLongPress.
+  ///
+  /// This callback takes two parameters: the [BuildContext] and the [IsmChatConversationModel] of the onLongPressed chat item.
+  ///
+  /// Example:
+  /// ```dart
+  /// onLongPress: (context, conversation) {},
+  /// ```
+  final ConversationVoidCallback? onLongPress;
 
   /// A callback that is called when the create chat button is tapped.
   ///

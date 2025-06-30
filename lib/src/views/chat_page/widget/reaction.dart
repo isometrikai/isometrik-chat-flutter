@@ -22,7 +22,7 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
     super.initState();
   }
 
-  _checkReactionCount() {
+  void _checkReactionCount() {
     widget.message.reactions
         ?.removeWhere((e) => e.emojiKey.isNotEmpty && e.userIds.isEmpty);
     reactionLength = widget.message.reactions?.length ?? 0;

@@ -65,7 +65,7 @@ class MessageBubble extends StatelessWidget {
                       BoxConstraints(
                         maxWidth: (IsmChatResponsive.isWeb(context))
                             ? context.width * .25
-                            : context.width * .7,
+                            : context.width * .6,
                         minWidth: IsmChatResponsive.isWeb(context)
                             ? context.width * .05
                             : context.width * .25,

@@ -36,7 +36,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
   late bool showMessageInCenter;
   late bool isGroup;
 
-  _updateWidget() {
+  void _updateWidget() {
     showMessageInCenter = [
       IsmChatCustomMessageType.date,
       IsmChatCustomMessageType.block,

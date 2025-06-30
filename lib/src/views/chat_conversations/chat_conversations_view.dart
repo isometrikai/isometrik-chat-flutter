@@ -46,7 +46,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
     }
   }
 
-  startInit() {
+  void startInit() {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatLog.info(
           'IsmMQttController initiliazing from {IsmChatConversations view}');

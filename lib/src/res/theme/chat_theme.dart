@@ -98,5 +98,6 @@ class IsmChatThemeData with Diagnosticable {
 
   final IsmChatListCardTheme? chatListCardThemData;
 
+  // ignore: strict_top_level_inference
   lerp(IsmChatThemeData? theme, double t) {}
 }

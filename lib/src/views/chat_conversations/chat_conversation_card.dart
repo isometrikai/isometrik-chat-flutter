@@ -9,6 +9,7 @@ class IsmChatConversationCard extends StatefulWidget {
     this.nameBuilder,
     this.subtitleBuilder,
     this.onTap,
+    this.onLongPress,
     this.name,
     this.profileImageUrl,
     this.subtitle,
@@ -22,6 +23,7 @@ class IsmChatConversationCard extends StatefulWidget {
 
   final IsmChatConversationModel conversation;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final ConversationWidgetCallback? profileImageBuilder;
   final ConversationStringCallback? profileImageUrl;
   final ConversationWidgetCallback? nameBuilder;
@@ -49,6 +51,7 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
     super.build(context);
     return IsmChatTapHandler(
       onTap: widget.onTap,
+      onLongPress: widget.onLongPress,
       child: Container(
         decoration: BoxDecoration(
           color: IsmChatResponsive.isWeb(context)

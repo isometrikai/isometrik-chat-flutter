@@ -41,12 +41,12 @@ class _VideoTrimmerViewState extends State<IsmVideoTrimmerView> {
     loadVideo(file.path);
   }
 
-  loadVideo(String url) async {
+  void loadVideo(String url) async {
     await trimmer.loadVideo(videoFile: File(url));
     trimmer.videoPlayerController?.addListener(checkVideo);
   }
 
-  checkVideo() async {
+  void checkVideo() async {
     if (trimmer.videoPlayerController?.value.isPlaying == false) {
       setState(() {
         playPausedAction = true;

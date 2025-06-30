@@ -241,7 +241,7 @@ class IsmChatDelegate {
   }
 
   Future<int> getChatConversationsMessageCount({
-    required isLoading,
+    required bool isLoading,
     required String converationId,
     required List<String> senderIds,
     required bool senderIdsExclusive,

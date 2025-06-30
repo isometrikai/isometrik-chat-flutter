@@ -77,7 +77,7 @@ class _IsmChatPageState extends State<IsmChatPage> {
     super.initState();
   }
 
-  startInit() async {
+  void startInit() async {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatMqttBinding().dependencies();
     }

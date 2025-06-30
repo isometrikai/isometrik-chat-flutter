@@ -687,7 +687,7 @@ class _AttachmentIconForWebState extends State<_AttachmentIconForWeb>
     }
   }
 
-  showOverLay(BuildContext context) async {
+  void showOverLay(BuildContext context) async {
     final renderBox = context.findRenderObject() as RenderBox?;
     final size = renderBox!.size;
     OverlayState? overlayState = Overlay.of(context);

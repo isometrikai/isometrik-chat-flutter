@@ -82,11 +82,31 @@ class IsmChatConversationSearchView extends StatelessWidget {
                                           style: IsmChatStyles.typing,
                                         ),
                                 onTap: () async {
-                                  IsmChatProperties.conversationProperties
-                                      .onChatTap!(context, conversation);
+                                  if (IsmChatProperties
+                                          .conversationProperties.onChatTap !=
+                                      null) {
+                                    IsmChatProperties
+                                        .conversationProperties.onChatTap
+                                        ?.call(
+                                      context,
+                                      conversation,
+                                    );
+                                  }
                                   controller
                                       .updateLocalConversation(conversation);
                                   await controller.goToChatPage();
+                                },
+                                onLongPress: () {
+                                  if (IsmChatProperties
+                                          .conversationProperties.onLongPress !=
+                                      null) {
+                                    IsmChatProperties
+                                        .conversationProperties.onLongPress
+                                        ?.call(
+                                      context,
+                                      conversation,
+                                    );
+                                  }
                                 },
                               ),
                               SizedBox(

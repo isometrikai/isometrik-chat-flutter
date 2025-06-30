@@ -49,7 +49,6 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
             updateState();
           }
         });
-
         _controller.pause();
       });
   }
@@ -83,7 +82,6 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
                 updateState();
               }
             });
-
             _controller.pause();
           });
       });
@@ -180,10 +178,14 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
                 alignment: Alignment.center,
                 child: InkWell(
                   onTap: () {
-                    _controller.value.isPlaying
-                        ? _controller.pause()
-                        : _controller.play();
-                    updateState();
+                    if (_controller.value.isInitialized &&
+                        !_controller.value.position.isNegative &&
+                        _controller.value.duration > Duration.zero) {
+                      _controller.value.isPlaying
+                          ? _controller.pause()
+                          : _controller.play();
+                      updateState();
+                    }
                   },
                   child: CircleAvatar(
                     radius: 33,

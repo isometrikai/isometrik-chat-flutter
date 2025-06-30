@@ -27,7 +27,7 @@ class IsmChatVideoMessage extends StatelessWidget {
                         constraints: BoxConstraints(
                           maxHeight: (IsmChatResponsive.isWeb(context))
                               ? context.height * .35
-                              : context.height * .7,
+                              : context.height * .6,
                         ),
                         margin: IsmChatDimens.edgeInsetsBottom4,
                         child: IsmChatImage(

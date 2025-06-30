@@ -139,7 +139,7 @@ class IsmChatUtility {
 
   /// Token common Header for All api
   static Map<String, String> accessTokenCommonHeader({
-    isDefaultContentType = false,
+    bool isDefaultContentType = false,
   }) {
     var header = <String, String>{
       'licenseKey': IsmChatConfig.communicationConfig.projectConfig.licenseKey,

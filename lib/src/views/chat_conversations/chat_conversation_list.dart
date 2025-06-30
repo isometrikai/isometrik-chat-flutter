@@ -268,6 +268,15 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                 await controller.goToChatPage();
               }
             },
+            onLongPress: () {
+              if (IsmChatProperties.conversationProperties.onLongPress !=
+                  null) {
+                IsmChatProperties.conversationProperties.onLongPress?.call(
+                  context,
+                  widget.conversation,
+                );
+              }
+            },
           ),
         ),
       );

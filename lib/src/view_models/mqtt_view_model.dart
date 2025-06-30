@@ -57,7 +57,7 @@ class IsmChatMqttViewModel {
   }
 
   Future<String> getChatConversationsMessageCount({
-    required isLoading,
+    required bool isLoading,
     required String conversationId,
     required List<String> senderIds,
     required senderIdsExclusive,
