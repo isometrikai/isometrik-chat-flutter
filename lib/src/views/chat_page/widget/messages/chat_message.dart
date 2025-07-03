@@ -16,6 +16,7 @@ class IsmChatMessageWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (messageType) {
       case IsmChatCustomMessageType.text:
+      case IsmChatCustomMessageType.bulkAction:
         return IsmChatTextMessage(message);
       case IsmChatCustomMessageType.reply:
         return IsmChatReplyMessage(message);
@@ -32,11 +33,9 @@ class IsmChatMessageWrapper extends StatelessWidget {
       case IsmChatCustomMessageType.location:
         return IsmChatLocationMessage(message);
       case IsmChatCustomMessageType.block:
-        return IsmChatBlockedMessage(message);
       case IsmChatCustomMessageType.unblock:
         return IsmChatBlockedMessage(message);
       case IsmChatCustomMessageType.deletedForMe:
-        return IsmChatDeletedMessage(message);
       case IsmChatCustomMessageType.deletedForEveryone:
         return IsmChatDeletedMessage(message);
       case IsmChatCustomMessageType.link:
@@ -70,41 +69,27 @@ class IsmChatMessageWrapper extends StatelessWidget {
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
       case IsmChatCustomMessageType.oneToOneCall:
         return IsmOneToOneCallMessage(message);
-      case IsmChatCustomMessageType.bulkAction:
-        return IsmChatTextMessage(message);
       case IsmChatCustomMessageType.productLink:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.socialLink:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.collectionLink:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.buydirectReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.acceptBuyReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.rejectBuyReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.cancelBuyReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.offerSent:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.editOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.cancelOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.counterOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.acceptOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.rejectOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.dealComplete:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.cancelDeal:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.paymentEscrowed:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.reviewRating:
+      case IsmChatCustomMessageType.exchangeOfferSent:
+      case IsmChatCustomMessageType.acceptExchangeOffer:
+      case IsmChatCustomMessageType.rejectExchangeOffer:
+      case IsmChatCustomMessageType.counterExchangeOffer:
         return IsmChatSocialMessage(message);
     }
   }
@@ -125,6 +110,7 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (replayMessageCustomType) {
       case IsmChatCustomMessageType.text:
+      case IsmChatCustomMessageType.bulkAction:
         return IsmChatTextMessage(message);
       case IsmChatCustomMessageType.reply:
         return IsmChatReplyMessage(message);
@@ -141,11 +127,9 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
       case IsmChatCustomMessageType.location:
         return IsmChatLocationMessage(message);
       case IsmChatCustomMessageType.block:
-        return IsmChatBlockedMessage(message);
       case IsmChatCustomMessageType.unblock:
         return IsmChatBlockedMessage(message);
       case IsmChatCustomMessageType.deletedForMe:
-        return IsmChatDeletedMessage(message);
       case IsmChatCustomMessageType.deletedForEveryone:
         return IsmChatDeletedMessage(message);
       case IsmChatCustomMessageType.link:
@@ -179,41 +163,27 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
       case IsmChatCustomMessageType.oneToOneCall:
         return IsmOneToOneCallMessage(message);
-      case IsmChatCustomMessageType.bulkAction:
-        return IsmChatTextMessage(message);
       case IsmChatCustomMessageType.productLink:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.socialLink:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.collectionLink:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.buydirectReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.acceptBuyReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.rejectBuyReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.cancelBuyReq:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.offerSent:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.editOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.cancelOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.counterOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.acceptOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.rejectOffer:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.dealComplete:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.cancelDeal:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.paymentEscrowed:
-        return IsmChatSocialMessage(message);
       case IsmChatCustomMessageType.reviewRating:
+      case IsmChatCustomMessageType.exchangeOfferSent:
+      case IsmChatCustomMessageType.acceptExchangeOffer:
+      case IsmChatCustomMessageType.rejectExchangeOffer:
+      case IsmChatCustomMessageType.counterExchangeOffer:
         return IsmChatSocialMessage(message);
     }
   }

@@ -77,6 +77,10 @@ enum IsmChatCustomMessageType {
   cancelDeal(43),
   paymentEscrowed(44),
   reviewRating(45),
+  exchangeOfferSent(46),
+  acceptExchangeOffer(47),
+  rejectExchangeOffer(48),
+  counterExchangeOffer(49),
   date(100);
 
   const IsmChatCustomMessageType(this.number);
@@ -149,6 +153,10 @@ enum IsmChatCustomMessageType {
       'PAYMENT_ESCROWED': IsmChatCustomMessageType.paymentEscrowed,
       'CANCEL_DEAL': IsmChatCustomMessageType.cancelDeal,
       'REVIEW_RATING': IsmChatCustomMessageType.reviewRating,
+      'EXCHANGE_OFFER_SENT': IsmChatCustomMessageType.exchangeOfferSent,
+      'ACCEPT_EXCHANGE_OFFER': IsmChatCustomMessageType.acceptExchangeOffer,
+      'REJECT_EXCHANGE_OFFER': IsmChatCustomMessageType.rejectExchangeOffer,
+      'COUNTER_EXCHANGE_OFFER': IsmChatCustomMessageType.counterExchangeOffer,
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -362,6 +370,14 @@ enum IsmChatCustomMessageType {
         return 'PAYMENT_ESCROWED';
       case IsmChatCustomMessageType.reviewRating:
         return 'REVIEW_RATING';
+      case IsmChatCustomMessageType.exchangeOfferSent:
+        return 'EXCHANGE_OFFER_SENT';
+      case IsmChatCustomMessageType.acceptExchangeOffer:
+        return 'ACCEPT_EXCHANGE_OFFER';
+      case IsmChatCustomMessageType.rejectExchangeOffer:
+        return 'REJECT_EXCHANGE_OFFER';
+      case IsmChatCustomMessageType.counterExchangeOffer:
+        return 'COUNTER_EXCHANGE_OFFER';
     }
   }
 }

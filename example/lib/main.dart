@@ -78,7 +78,6 @@ class _MyAppState extends State<MyApp> {
         onTap: IsmChatUtility.hideKeyboard,
         child: MaterialApp.router(
           key: const Key('ChatApp'),
-
           title: 'Isomterik flutter web chat',
           locale: const Locale('en', 'US'),
           // localizationsDelegates:  [
