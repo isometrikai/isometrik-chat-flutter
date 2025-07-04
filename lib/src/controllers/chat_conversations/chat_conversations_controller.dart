@@ -863,18 +863,28 @@ class IsmChatConversationsController extends GetxController {
     conversations = opponentData;
 
     if (searchTag?.isNotEmpty == true) {
-      conversations = conversations
-          .where((e) =>
-              (e.opponentDetails?.userName ?? '')
+      final lowerSearchText = (searchTag ?? '').toLowerCase();
+      conversations = conversations.where((e) {
+        if (e.isGroup == true) {
+          return (e.conversationTitle ?? '')
                   .toLowerCase()
-                  .startsWith((searchTag ?? '').toLowerCase()) ||
+                  .startsWith(lowerSearchText) ||
+              (e.searchableTags?.cast<String>().any(
+                        (x) => x.toLowerCase().startsWith(lowerSearchText),
+                      ) ??
+                  false);
+        } else {
+          return (e.opponentDetails?.userName ?? '')
+                  .toLowerCase()
+                  .startsWith(lowerSearchText) ||
               (e.opponentDetails?.metaData?.firstName ?? '')
                   .toLowerCase()
-                  .startsWith((searchTag ?? '').toLowerCase()) ||
+                  .startsWith(lowerSearchText) ||
               (e.opponentDetails?.metaData?.lastName ?? '')
                   .toLowerCase()
-                  .startsWith((searchTag ?? '').toLowerCase()))
-          .toList();
+                  .startsWith(lowerSearchText);
+        }
+      }).toList();
     }
 
     if (IsmChatConfig.sortConversationWithIdentifier != null) {
