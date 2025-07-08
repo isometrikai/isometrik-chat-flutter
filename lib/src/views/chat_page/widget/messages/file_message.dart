@@ -15,11 +15,12 @@ class IsmChatFileMessage extends StatelessWidget {
         ? MemoryImage(Uint8List(0))
         : IsmChatUtility.chatPageController.getMemoryImage(message.sentAt,
             (message.attachments?.first.thumbnailUrl ?? '').strigToUnit8List);
-
+    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
+        ?.call(context, message);
     return BlurFilter.widget(
-      isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
-              ?.call(context, message) ??
-          false,
+      isBlured: data?.shouldBlured ?? false,
+      sigmaX: data?.sigmaX ?? 3,
+      sigmaY: data?.sigmaY ?? 3,
       child: Stack(
         alignment: Alignment.center,
         children: [

@@ -11,23 +11,27 @@ class IsmChatLinkMessage extends StatelessWidget {
   final IsmChatMessageModel message;
 
   @override
-  Widget build(BuildContext context) => Material(
-        color: Colors.transparent,
-        child: BlurFilter.widget(
-          isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
-                  ?.call(context, message) ??
-              false,
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight: (IsmChatResponsive.isWeb(context))
-                  ? context.height * .04
-                  : context.height * .05,
-            ),
-            child: LinkPreviewView(
-              url: message.body.convertToValidUrl,
-              message: message,
-            ),
+  Widget build(BuildContext context) {
+    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
+        ?.call(context, message);
+    return Material(
+      color: Colors.transparent,
+      child: BlurFilter.widget(
+        isBlured: data?.shouldBlured ?? false,
+        sigmaX: data?.sigmaX ?? 3,
+        sigmaY: data?.sigmaY ?? 3,
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: (IsmChatResponsive.isWeb(context))
+                ? context.height * .04
+                : context.height * .05,
+          ),
+          child: LinkPreviewView(
+            url: message.body.convertToValidUrl,
+            message: message,
           ),
         ),
-      );
+      ),
+    );
+  }
 }

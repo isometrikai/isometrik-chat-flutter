@@ -168,3 +168,9 @@ typedef ConditionConversationCustomeTypeCallback = Future<bool?>? Function(
 );
 
 typedef ConditionCallback = void Function(bool);
+
+typedef MessageRecordsCallback
+    = ({double sigmaX, double sigmaY, bool shouldBlured}) Function(
+  BuildContext,
+  IsmChatMessageModel,
+);

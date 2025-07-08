@@ -11,28 +11,32 @@ class IsmChatReplyMessage extends StatelessWidget {
   final IsmChatMessageModel message;
 
   @override
-  Widget build(BuildContext context) => IntrinsicWidth(
-        child: BlurFilter.widget(
-          isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
-                  ?.call(context, message) ??
-              false,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ReplyMessage(message),
-              IsmChatDimens.boxHeight5,
-              ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: (IsmChatResponsive.isWeb(context))
-                        ? context.height * .04
-                        : context.height * .05,
-                  ),
-                  child: IsmChatMessageWrapperWithMetaData(message)),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
+        ?.call(context, message);
+    return IntrinsicWidth(
+      child: BlurFilter.widget(
+        isBlured: data?.shouldBlured ?? false,
+        sigmaX: data?.sigmaX ?? 3,
+        sigmaY: data?.sigmaY ?? 3,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _ReplyMessage(message),
+            IsmChatDimens.boxHeight5,
+            ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: (IsmChatResponsive.isWeb(context))
+                      ? context.height * .04
+                      : context.height * .05,
+                ),
+                child: IsmChatMessageWrapperWithMetaData(message)),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _ReplyMessage extends StatelessWidget {

@@ -129,7 +129,7 @@ class IsmChatPageProperties {
 
   final MessageFutureCallback? onMessageTap;
 
-  final MessageCallback? isShowMessageBlur;
+  final MessageRecordsCallback? isShowMessageBlur;
 
   final Widget? loggedInUser;
 

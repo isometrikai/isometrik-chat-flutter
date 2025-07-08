@@ -16,42 +16,46 @@ class IsmChatAudioMessage extends StatelessWidget {
   final Widget noise;
 
   @override
-  Widget build(BuildContext context) => Material(
-        color: message.sentByMe
-            ? IsmChatConfig.chatTheme.primaryColor
-            : IsmChatConfig.chatTheme.backgroundColor,
-        child: BlurFilter(
-          isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
-                  ?.call(context, message) ??
-              false,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              VoiceMessage(
-                audioSrc: url,
-                noise: noise,
-                me: message.sentByMe,
-                meBgColor: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.selfMessageTheme?.audioMessageBGColor ??
-                    IsmChatConfig.chatTheme.primaryColor ??
-                    IsmChatColors.primaryColorLight,
-                opponentBgColor: IsmChatConfig.chatTheme.chatPageTheme
-                        ?.opponentMessageTheme?.audioMessageBGColor ??
-                    IsmChatConfig.chatTheme.primaryColor ??
-                    IsmChatColors.primaryColorLight,
-                mePlayIconColor: IsmChatConfig.chatTheme.primaryColor ??
-                    IsmChatColors.primaryColorLight,
-                duration: duration,
+  Widget build(BuildContext context) {
+    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
+        ?.call(context, message);
+    return Material(
+      color: message.sentByMe
+          ? IsmChatConfig.chatTheme.primaryColor
+          : IsmChatConfig.chatTheme.backgroundColor,
+      child: BlurFilter(
+        isBlured: data?.shouldBlured ?? false,
+        sigmaX: data?.sigmaX ?? 10,
+        sigmaY: data?.sigmaY ?? 10,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            VoiceMessage(
+              audioSrc: url,
+              noise: noise,
+              me: message.sentByMe,
+              meBgColor: IsmChatConfig.chatTheme.chatPageTheme?.selfMessageTheme
+                      ?.audioMessageBGColor ??
+                  IsmChatConfig.chatTheme.primaryColor ??
+                  IsmChatColors.primaryColorLight,
+              opponentBgColor: IsmChatConfig.chatTheme.chatPageTheme
+                      ?.opponentMessageTheme?.audioMessageBGColor ??
+                  IsmChatConfig.chatTheme.primaryColor ??
+                  IsmChatColors.primaryColorLight,
+              mePlayIconColor: IsmChatConfig.chatTheme.primaryColor ??
+                  IsmChatColors.primaryColorLight,
+              duration: duration,
+            ),
+            if (message.isUploading == true)
+              IsmChatUtility.circularProgressBar(
+                IsmChatColors.blackColor,
+                IsmChatColors.whiteColor,
               ),
-              if (message.isUploading == true)
-                IsmChatUtility.circularProgressBar(
-                  IsmChatColors.blackColor,
-                  IsmChatColors.whiteColor,
-                ),
-            ],
-          ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 /// document will be added

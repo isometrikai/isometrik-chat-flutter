@@ -17,10 +17,12 @@ class IsmChatLocationMessage extends StatelessWidget {
       latLong = LatLng(message.attachments?.first.latitude ?? 0,
           message.attachments?.first.longitude ?? 0);
     }
+    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
+        ?.call(context, message);
     return BlurFilter.widget(
-      isBlured: IsmChatProperties.chatPageProperties.isShowMessageBlur
-              ?.call(context, message) ??
-          false,
+      isBlured: data?.shouldBlured ?? false,
+      sigmaX: data?.sigmaX ?? 3,
+      sigmaY: data?.sigmaY ?? 3,
       child: Stack(
         alignment: Alignment.center,
         clipBehavior: Clip.hardEdge,
