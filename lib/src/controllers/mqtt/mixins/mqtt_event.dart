@@ -405,7 +405,9 @@ mixin IsmChatMqttEventMixin {
   ///
   /// * `message`: The message to handle
   void _handleLocalNotification(IsmChatMessageModel message) {
-    if (isSenderMe(message.senderInfo?.userId)) return;
+    if (isSenderMe(message.senderInfo?.userId, deviceId: message.deviceId)) {
+      return;
+    }
     String? mqttMessage;
     switch (message.customType) {
       case IsmChatCustomMessageType.image:
