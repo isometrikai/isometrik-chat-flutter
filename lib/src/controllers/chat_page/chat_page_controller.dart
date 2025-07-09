@@ -550,17 +550,19 @@ class IsmChatPageController extends GetxController
   void getMedia() async {
     webMedia.clear();
     assetsIndex = 0;
+
     final result = await IsmChatUtility.pickMedia(
       ImageSource.gallery,
       isVideoAndImage: true,
     );
+
     if (result.isEmpty) return;
     if (IsmChatResponsive.isWeb(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       IsmChatUtility.showLoader();
       for (var x in result) {
         final bytes = await x?.readAsBytes();
-        final extension = x?.mimeType?.split('/').last;
+        final extension = x?.name.split('.').last;
         final dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
         final platformFile = IsmchPlatformFile(
           name: x?.name ?? '',
@@ -569,7 +571,6 @@ class IsmChatPageController extends GetxController
           path: x?.path,
           extension: extension,
         );
-
         if (IsmChatConstants.videoExtensions.contains(extension)) {
           final thumbnailBytes =
               await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));

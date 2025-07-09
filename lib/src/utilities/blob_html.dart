@@ -46,9 +46,11 @@ class IsmChatBlob {
 
     final videoElement = html.VideoElement()
       ..src = url
+      // ..crossOrigin = 'anonymous'
       ..autoplay = false
       ..controls = false
       ..muted = true
+      // ..preload = 'metadata'
       ..style.display = 'none';
 
     await videoElement.onLoadedMetadata.first;

@@ -77,6 +77,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         topicChannels: mqttProperties.topicChannels,
         autoReconnect: mqttProperties.autoReconnect,
         enableLogging: mqttProperties.enableLogging,
+        maxAutoReconnectRetry: mqttProperties.maxAutoReconnectRetry,
       );
     }
     await Future.wait([
@@ -99,6 +100,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
     List<String>? topicChannels,
     bool autoReconnect = true,
     bool enableLogging = true,
+    int maxAutoReconnectRetry = 3,
   }) async {
     final topicPrefix =
         '/${projectConfig?.accountId ?? ''}/${projectConfig?.projectId ?? ''}';
@@ -133,6 +135,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         enableLogging: enableLogging,
         secure: false,
         autoReconnect: autoReconnect,
+        maxAutoReconnectRetry: maxAutoReconnectRetry,
         webSocketConfig: WebSocketConfig(
           useWebsocket: mqttConfig?.useWebSocket ?? false,
           websocketProtocols: mqttConfig?.websocketProtocols ?? [],
