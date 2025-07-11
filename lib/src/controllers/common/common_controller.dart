@@ -133,24 +133,25 @@ class IsmChatCommonController extends GetxController {
     bool isUpdateMesage = true,
   }) async =>
       await viewModel.sendMessage(
-          showInConversation: showInConversation,
-          messageType: messageType,
-          encrypted: encrypted,
-          deviceId: deviceId,
-          conversationId: conversationId,
-          body: body,
-          createdAt: createdAt,
-          notificationBody: notificationBody,
-          notificationTitle: notificationTitle,
-          attachments: attachments,
-          customType: customType,
-          events: events,
-          isBroadcast: isBroadcast,
-          mentionedUsers: mentionedUsers,
-          metaData: metaData,
-          parentMessageId: parentMessageId,
-          searchableTags: searchableTags,
-          isUpdateMesage: isUpdateMesage);
+        showInConversation: showInConversation,
+        messageType: messageType,
+        encrypted: encrypted,
+        deviceId: deviceId,
+        conversationId: conversationId,
+        body: body,
+        createdAt: createdAt,
+        notificationBody: notificationBody,
+        notificationTitle: notificationTitle,
+        attachments: attachments,
+        customType: customType,
+        events: events,
+        isBroadcast: isBroadcast,
+        mentionedUsers: mentionedUsers,
+        metaData: metaData,
+        parentMessageId: parentMessageId,
+        searchableTags: searchableTags,
+        isUpdateMesage: isUpdateMesage,
+      );
 
   // Sends a paid wallet message.
   ///

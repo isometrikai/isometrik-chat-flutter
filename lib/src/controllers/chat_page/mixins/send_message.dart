@@ -18,6 +18,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     List<Map<String, dynamic>>? attachments,
     bool isBroadcast = false,
     bool sendPushNotification = true,
+    bool encrypted = false,
   }) async {
     if (IsmChatConfig.sendPaidWalletMessage?.call(
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
@@ -1011,6 +1012,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     conversationId = await createConversation(
         conversationId: conversationId, userId: userId);
     final sentAt = DateTime.now().millisecondsSinceEpoch;
+
     var textMessage = IsmChatMessageModel(
       body: _controller.chatInputController.text.trim(),
       conversationId: conversationId,
@@ -1139,11 +1141,20 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         );
       }
     }
+    var body = '';
+    if (IsmChatConfig.messageEncrypted ?? false) {
+      body = IsmChatUtility.encryptMessage(
+        textMessage.body,
+        conversationId,
+      );
+    } else {
+      body = textMessage.body;
+    }
     sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,
       deviceId: textMessage.deviceId ?? '',
-      body: textMessage.body,
+      body: body,
       customType: textMessage.customType?.value ?? '',
       createdAt: sentAt,
       parentMessageId: textMessage.parentMessageId,
@@ -1154,6 +1165,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       mentionedUsers:
           _controller.userMentionedList.map((e) => e.toMap()).toList(),
       sendPushNotification: pushNotifications,
+      encrypted: IsmChatConfig.messageEncrypted ?? false,
     );
   }
 

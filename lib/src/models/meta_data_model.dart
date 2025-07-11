@@ -28,9 +28,9 @@ class IsmChatMetaData {
   factory IsmChatMetaData.fromMap(Map<String, dynamic> map) {
     var data = IsmChatMetaData(
       caption: map['caption'] != null
-          ? IsmChatUtility.decodeString(map['caption'] as String)
+          ? map['caption'] as String? ?? ''
           : map['captionMessage'] != null
-              ? IsmChatUtility.decodeString(map['captionMessage'] as String)
+              ? map['captionMessage'] as String? ?? ''
               : '',
       locationAddress: map['locationAddress'] as String? ?? '',
       locationSubAddress: map['locationSubAddress'] as String? ?? '',

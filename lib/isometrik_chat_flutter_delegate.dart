@@ -39,8 +39,10 @@ class IsmChatDelegate {
     ResponseCallback? chatInvalidate,
     IsmMqttProperties? mqttProperties,
     bool? isMonthFirst,
+    bool messageEncrypted = false,
   }) async {
     IsmChatConfig.kNavigatorKey = kNavigatorKey;
+    IsmChatConfig.messageEncrypted = messageEncrypted;
     IsmChatConfig.dbName = databaseName;
     IsmChatConfig.useDatabase = !kIsWeb && useDatabase;
     IsmChatConfig.communicationConfig = communicationConfig;

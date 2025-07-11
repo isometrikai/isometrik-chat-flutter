@@ -180,11 +180,12 @@ class _ReplyMessage extends StatelessWidget {
                                       _replayParentIcon(message),
                                       IsmChatDimens.boxWidth4,
                                       Text(
-                                        IsmChatUtility.decodeString(message
-                                                .metaData
-                                                ?.replyMessage
-                                                ?.parentMessageBody ??
-                                            ''),
+                                        IsmChatUtility.decryptMessage(
+                                          message.metaData?.replyMessage
+                                                  ?.parentMessageBody ??
+                                              '',
+                                          message.conversationId ?? '',
+                                        ),
                                         maxLines: 3,
                                         overflow: TextOverflow.ellipsis,
                                         style: message.style,

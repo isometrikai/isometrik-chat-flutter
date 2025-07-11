@@ -84,7 +84,7 @@ class IsmChatCommonRepository {
         'attachments': attachments,
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
-        'searchableTags': [body],
+        'searchableTags': [notificationBody],
         'mentionedUsers': mentionedUsers
       }.removeNullValues();
 

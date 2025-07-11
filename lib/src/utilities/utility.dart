@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -157,17 +158,51 @@ class IsmChatUtility {
     return header;
   }
 
-  /// this is for change encoded string to decode string
-  static String decodeString(String value) {
-    try {
-      return utf8.decode(value.runes.toList());
-    } catch (e) {
-      return value;
+  // /// this is for change encoded string to decode string
+  // static String decodeString(String value) {
+  //   try {
+  //     return utf8.decode(value.runes.toList());
+  //   } catch (e) {
+  //     return value;
+  //   }
+  // }
+
+  // /// this is for change decode string to encode string
+  // static String encodeString(String value) => utf8.fuse(base64).encode(value);
+
+  static String encryptMessage(String body, String conversationId) {
+    if (conversationId.isNotEmpty) {
+      final keyBytes = base64Decode('${conversationId}abcdefab');
+      final key = encrypt.Key(keyBytes);
+      final iv = encrypt.IV.fromSecureRandom(16); // ✅ Must be 16 bytes
+      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      final encrypted = encrypter.encrypt(body, iv: iv);
+      return '${iv.base64}:${encrypted.base64}';
     }
+    return body;
   }
 
-  /// this is for change decode string to encode string
-  static String encodeString(String value) => utf8.fuse(base64).encode(value);
+  static String generateValidHexString(int length) {
+    const hexChars = '0123456789abcdef';
+    final random = Random.secure();
+    return List.generate(length, (_) => hexChars[random.nextInt(16)]).join();
+  }
+
+  static String decryptMessage(String body, String conversationId) {
+    try {
+      if (conversationId.isNotEmpty) {
+        final parts = body.split(':');
+        final iv = encrypt.IV.fromBase64(parts[0]);
+        final encryptedText = parts[1];
+        final key = encrypt.Key(base64Decode('${conversationId}abcdefab'));
+        final encrypter = encrypt.Encrypter(encrypt.AES(key));
+        return encrypter.decrypt64(encryptedText, iv: iv);
+      }
+      return body;
+    } catch (_) {
+      return body;
+    }
+  }
 
   static void showToast(String message, {int timeOutInSec = 1}) {
     Fluttertoast.showToast(

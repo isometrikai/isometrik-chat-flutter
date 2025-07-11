@@ -151,6 +151,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
         pongCallback: _pong,
       ),
       autoSubscribe: true,
+
       topics: subscribedTopics,
       subscribedTopicsCallback: (topics) {
         subscribedTopics = topics;

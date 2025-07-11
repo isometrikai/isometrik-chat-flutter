@@ -71,6 +71,7 @@ mixin IsmChatMqttEventMixin {
       }
     } else {
       final message = IsmChatMessageModel.fromMap(payload);
+
       if (messageId == message.messageId) return;
       messageId = message.messageId ?? '';
       _handleLocalNotification(message);
