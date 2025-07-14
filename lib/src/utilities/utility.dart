@@ -4,8 +4,10 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -171,31 +173,29 @@ class IsmChatUtility {
   // static String encodeString(String value) => utf8.fuse(base64).encode(value);
 
   static String encryptMessage(String body, String conversationId) {
-    if (conversationId.isNotEmpty) {
-      final keyBytes = base64Decode('${conversationId}abcdefab');
-      final key = encrypt.Key(keyBytes);
-      final iv = encrypt.IV.fromSecureRandom(16); // ✅ Must be 16 bytes
-      final encrypter = encrypt.Encrypter(encrypt.AES(key));
-      final encrypted = encrypter.encrypt(body, iv: iv);
-      return '${iv.base64}:${encrypted.base64}';
-    }
-    return body;
-  }
-
-  static String generateValidHexString(int length) {
-    const hexChars = '0123456789abcdef';
-    final random = Random.secure();
-    return List.generate(length, (_) => hexChars[random.nextInt(16)]).join();
+    if (conversationId.isEmpty) return body;
+    final bytes = sha256.convert(utf8.encode(conversationId)).bytes;
+    final key = encrypt.Key(Uint8List.fromList(bytes));
+    final iv = encrypt.IV.fromLength(12);
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.gcm),
+    );
+    final encrypted = encrypter.encrypt(body, iv: iv);
+    return '${iv.base64}:${encrypted.base64}';
   }
 
   static String decryptMessage(String body, String conversationId) {
     try {
       if (conversationId.isNotEmpty) {
         final parts = body.split(':');
+        if (parts.length != 2) return body;
         final iv = encrypt.IV.fromBase64(parts[0]);
         final encryptedText = parts[1];
-        final key = encrypt.Key(base64Decode('${conversationId}abcdefab'));
-        final encrypter = encrypt.Encrypter(encrypt.AES(key));
+        final keyBytes = sha256.convert(utf8.encode(conversationId)).bytes;
+        final key = encrypt.Key(Uint8List.fromList(keyBytes));
+        final encrypter = encrypt.Encrypter(
+          encrypt.AES(key, mode: AESMode.gcm),
+        );
         return encrypter.decrypt64(encryptedText, iv: iv);
       }
       return body;

@@ -1141,15 +1141,12 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         );
       }
     }
-    var body = '';
-    if (IsmChatConfig.messageEncrypted ?? false) {
-      body = IsmChatUtility.encryptMessage(
-        textMessage.body,
-        conversationId,
-      );
-    } else {
-      body = textMessage.body;
-    }
+    var body = (IsmChatConfig.messageEncrypted ?? false)
+        ? IsmChatUtility.encryptMessage(
+            textMessage.body,
+            conversationId,
+          )
+        : textMessage.body;
     sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,
