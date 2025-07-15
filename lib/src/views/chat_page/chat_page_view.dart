@@ -41,13 +41,17 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     final mqttController = Get.find<IsmChatMqttController>();
-    if (AppLifecycleState.resumed == state &&
-        !(controller.conversation?.conversationId).isNullOrEmpty) {
-      mqttController.isAppInBackground = false;
-      controller.getMessageForStatus();
-      controller.readAllMessages();
-      IsmChatLog.info('app chat in resumed');
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      final controller = IsmChatUtility.chatPageController;
+      if (AppLifecycleState.resumed == state &&
+          !(controller.conversation?.conversationId.isNullOrEmpty == true)) {
+        mqttController.isAppInBackground = false;
+        controller.getMessageForStatus();
+        controller.readAllMessages();
+        IsmChatLog.info('app chat in resumed');
+      }
     }
+
     if (AppLifecycleState.paused == state) {
       mqttController.isAppInBackground = true;
       IsmChatLog.info('app chat in backgorund');
@@ -57,21 +61,23 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     }
   }
 
-  IsmChatPageController get controller => IsmChatUtility.chatPageController;
-
   Future<bool> navigateBack() async {
-    if (controller.isMessageSeleted) {
-      controller.isMessageSeleted = false;
-      controller.selectedMessage.clear();
-      return false;
-    } else {
-      IsmChatRoute.goBack();
-      controller.closeOverlay();
-      final updateMessage = await controller.updateLastMessage();
-      IsmChatProperties.chatPageProperties.header?.onBackTap
-          ?.call(updateMessage);
-      return true;
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      final controller = IsmChatUtility.chatPageController;
+      if (controller.isMessageSeleted) {
+        controller.isMessageSeleted = false;
+        controller.selectedMessage.clear();
+        return false;
+      } else {
+        IsmChatRoute.goBack();
+        controller.closeOverlay();
+        final updateMessage = await controller.updateLastMessage();
+        IsmChatProperties.chatPageProperties.header?.onBackTap
+            ?.call(updateMessage);
+        return true;
+      }
     }
+    return false;
   }
 
   @override
