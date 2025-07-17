@@ -188,7 +188,7 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   void _onDisconnected() {
     connectionState = IsmChatConnectionState.disconnected;
     IsmChatConfig.mqttConnectionStatus?.call(connectionState);
-    IsmChatLog.error('MQTT Disconnected Successfully ');
+    IsmChatLog.error('MQTT Disconnected Successfully');
   }
 
   /// onSubscribed callback, it will be called when connection successfully subscribes to certain topic

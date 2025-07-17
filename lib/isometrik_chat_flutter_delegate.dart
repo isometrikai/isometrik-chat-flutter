@@ -351,6 +351,13 @@ class IsmChatDelegate {
     }
   }
 
+  Future<void> disconnectMQTT() async {
+    final mqttController = Get.find<IsmChatMqttController>();
+    if (mqttController.connectionState == IsmChatConnectionState.connected) {
+      mqttController.mqttHelper.disconnect();
+    }
+  }
+
   Future<void> clearChatLocalDb() async {
     await IsmChatConfig.dbWrapper?.clearChatLocalDb();
   }

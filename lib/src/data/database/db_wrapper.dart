@@ -90,7 +90,7 @@ class IsmChatDBWrapper {
 
   Map<String, List<IsmChatMessageModel>> forwardMessages = {};
 
-  /// delete chat object box
+  /// delete chat Hive box
   Future<void> deleteChatLocalDb() async {
     if (IsmChatConfig.shouldSetupMqtt &&
         Get.isRegistered<IsmChatMqttController>()) {

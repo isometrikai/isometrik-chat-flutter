@@ -1190,4 +1190,6 @@ class IsmChat {
   /// ```
   Future<void> deleteChatPageController() async =>
       await _delegate.deleteChatPageController();
+
+  Future<void> disconnectMQTT() async => await _delegate.disconnectMQTT();
 }
