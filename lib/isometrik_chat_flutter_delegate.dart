@@ -352,9 +352,11 @@ class IsmChatDelegate {
   }
 
   Future<void> disconnectMQTT() async {
-    final mqttController = Get.find<IsmChatMqttController>();
-    if (mqttController.connectionState == IsmChatConnectionState.connected) {
-      mqttController.mqttHelper.disconnect();
+    if (Get.isRegistered<IsmChatMqttController>()) {
+      final mqttController = Get.find<IsmChatMqttController>();
+      if (mqttController.connectionState == IsmChatConnectionState.connected) {
+        mqttController.mqttHelper.disconnect();
+      }
     }
   }
 
