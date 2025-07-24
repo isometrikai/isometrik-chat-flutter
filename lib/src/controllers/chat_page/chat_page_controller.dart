@@ -666,6 +666,7 @@ class IsmChatPageController extends GetxController
   void onMenuItemSelected(
     IsmChatFocusMenuType menuType,
     IsmChatMessageModel message,
+    BuildContext context,
   ) async {
     switch (menuType) {
       case IsmChatFocusMenuType.info:
@@ -673,7 +674,11 @@ class IsmChatPageController extends GetxController
 
         break;
       case IsmChatFocusMenuType.reply:
-        onReplyTap(message);
+        if (IsmChatProperties.chatPageProperties.canReplayMessage
+                ?.call(context, message) ??
+            true) {
+          onReplyTap(message);
+        }
         break;
       case IsmChatFocusMenuType.forward:
         conversationController.forwardedList.clear();
