@@ -24,25 +24,26 @@ class IsmChatDelegate {
   String? get chatListPageTag => _chatListPageTag.value;
   set chatListPageTag(String? value) => _chatListPageTag.value = value;
 
-  Future<void> initialize({
-    required IsmChatCommunicationConfig communicationConfig,
-    required GlobalKey<NavigatorState> kNavigatorKey,
-    bool useDatabase = true,
-    NotificaitonCallback? showNotification,
-    String databaseName = IsmChatStrings.dbname,
-    bool shouldPendingMessageSend = true,
-    SendMessageCallback? sendPaidWalletMessage,
-    IsmPaidWalletConfig? paidWalletConfig,
-    ResponseCallback? paidWalletMessageApiResponse,
-    SortingConversationCallback? sortConversationWithIdentifier,
-    ConnectionStateCallback? mqttConnectionStatus,
-    ResponseCallback? chatInvalidate,
-    IsmMqttProperties? mqttProperties,
-    bool? isMonthFirst,
-    bool messageEncrypted = false,
-  }) async {
+  Future<void> initialize(
+      {required IsmChatCommunicationConfig communicationConfig,
+      required GlobalKey<NavigatorState> kNavigatorKey,
+      bool useDatabase = true,
+      NotificaitonCallback? showNotification,
+      String databaseName = IsmChatStrings.dbname,
+      bool shouldPendingMessageSend = true,
+      SendMessageCallback? sendPaidWalletMessage,
+      IsmPaidWalletConfig? paidWalletConfig,
+      ResponseCallback? paidWalletMessageApiResponse,
+      SortingConversationCallback? sortConversationWithIdentifier,
+      ConnectionStateCallback? mqttConnectionStatus,
+      ResponseCallback? chatInvalidate,
+      IsmMqttProperties? mqttProperties,
+      bool? isMonthFirst,
+      bool messageEncrypted = false,
+      NotificationBodyCallback? notificationBody}) async {
     IsmChatConfig.kNavigatorKey = kNavigatorKey;
     IsmChatConfig.messageEncrypted = messageEncrypted;
+    IsmChatConfig.notificationBody = notificationBody;
     IsmChatConfig.dbName = databaseName;
     IsmChatConfig.useDatabase = !kIsWeb && useDatabase;
     IsmChatConfig.communicationConfig = communicationConfig;

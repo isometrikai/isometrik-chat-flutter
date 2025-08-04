@@ -43,6 +43,7 @@ class IsmChatConfig {
   static bool? isMonthFirst;
   static ConversationVoidCallback? onConversationCreated;
   static bool? messageEncrypted;
+  static NotificationBodyCallback? notificationBody;
 }
 
 class IsmPaidWalletConfig {

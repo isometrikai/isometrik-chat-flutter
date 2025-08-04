@@ -174,3 +174,6 @@ typedef MessageRecordsCallback
   BuildContext,
   IsmChatMessageModel,
 );
+
+typedef NotificationBodyCallback = String Function(
+    String, IsmChatCustomMessageType);

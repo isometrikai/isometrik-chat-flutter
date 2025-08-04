@@ -72,23 +72,23 @@ class IsmChat {
   /// `showNotification` is the callback for showing notifications.
   /// `context` is the build context.
   /// `mqttProperties` is whether to set up MQTT. Defaults to `true`.
-  Future<void> initialize({
-    required IsmChatCommunicationConfig communicationConfig,
-    required GlobalKey<NavigatorState> kNavigatorKey,
-    bool useDatabase = true,
-    String databaseName = IsmChatStrings.dbname,
-    NotificaitonCallback? showNotification,
-    bool shouldPendingMessageSend = true,
-    SendMessageCallback? sendPaidWalletMessage,
-    IsmPaidWalletConfig? paidWalletConfig,
-    ResponseCallback? paidWalletMessageApiResponse,
-    SortingConversationCallback? sortingConversationWithIdentifier,
-    ConnectionStateCallback? mqttConnectionStatus,
-    ResponseCallback? chatInvalidate,
-    IsmMqttProperties? mqttProperties,
-    bool? isMonthFirst,
-    bool messageEncrypted = false,
-  }) async {
+  Future<void> initialize(
+      {required IsmChatCommunicationConfig communicationConfig,
+      required GlobalKey<NavigatorState> kNavigatorKey,
+      bool useDatabase = true,
+      String databaseName = IsmChatStrings.dbname,
+      NotificaitonCallback? showNotification,
+      bool shouldPendingMessageSend = true,
+      SendMessageCallback? sendPaidWalletMessage,
+      IsmPaidWalletConfig? paidWalletConfig,
+      ResponseCallback? paidWalletMessageApiResponse,
+      SortingConversationCallback? sortingConversationWithIdentifier,
+      ConnectionStateCallback? mqttConnectionStatus,
+      ResponseCallback? chatInvalidate,
+      IsmMqttProperties? mqttProperties,
+      bool? isMonthFirst,
+      bool messageEncrypted = false,
+      NotificationBodyCallback? notificationBody}) async {
     if (sendPaidWalletMessage != null) {
       assert(paidWalletConfig != null,
           'isPadiWalletMessage = true, paidWalletConfig should be mandatory');
@@ -99,22 +99,22 @@ class IsmChat {
     }
 
     await _delegate.initialize(
-      kNavigatorKey: kNavigatorKey,
-      communicationConfig: communicationConfig,
-      useDatabase: useDatabase,
-      showNotification: showNotification,
-      databaseName: databaseName,
-      shouldPendingMessageSend: shouldPendingMessageSend,
-      sendPaidWalletMessage: sendPaidWalletMessage,
-      paidWalletConfig: paidWalletConfig,
-      paidWalletMessageApiResponse: paidWalletMessageApiResponse,
-      sortConversationWithIdentifier: sortingConversationWithIdentifier,
-      mqttConnectionStatus: mqttConnectionStatus,
-      chatInvalidate: chatInvalidate,
-      mqttProperties: mqttProperties,
-      isMonthFirst: isMonthFirst,
-      messageEncrypted: messageEncrypted,
-    );
+        kNavigatorKey: kNavigatorKey,
+        communicationConfig: communicationConfig,
+        useDatabase: useDatabase,
+        showNotification: showNotification,
+        databaseName: databaseName,
+        shouldPendingMessageSend: shouldPendingMessageSend,
+        sendPaidWalletMessage: sendPaidWalletMessage,
+        paidWalletConfig: paidWalletConfig,
+        paidWalletMessageApiResponse: paidWalletMessageApiResponse,
+        sortConversationWithIdentifier: sortingConversationWithIdentifier,
+        mqttConnectionStatus: mqttConnectionStatus,
+        chatInvalidate: chatInvalidate,
+        mqttProperties: mqttProperties,
+        isMonthFirst: isMonthFirst,
+        messageEncrypted: messageEncrypted,
+        notificationBody: notificationBody);
     _initialized = true;
   }
 

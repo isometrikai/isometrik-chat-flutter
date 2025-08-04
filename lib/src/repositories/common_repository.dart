@@ -62,11 +62,11 @@ class IsmChatCommonRepository {
     required String body,
     required String notificationBody,
     required String notificationTitle,
+    required String customType,
     String? parentMessageId,
     IsmChatMetaData? metaData,
     List<Map<String, dynamic>>? mentionedUsers,
     Map<String, dynamic>? events,
-    String? customType,
     List<Map<String, dynamic>>? attachments,
   }) async {
     try {
@@ -84,7 +84,10 @@ class IsmChatCommonRepository {
         'attachments': attachments,
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
-        'searchableTags': [notificationBody],
+        if (!(IsmChatConfig.messageEncrypted == true &&
+            IsmChatCustomMessageType.fromString(customType) ==
+                IsmChatCustomMessageType.text))
+          'searchableTags': [notificationBody],
         'mentionedUsers': mentionedUsers
       }.removeNullValues();
 
@@ -114,11 +117,11 @@ class IsmChatCommonRepository {
     required String body,
     required String notificationBody,
     required String notificationTitle,
+    required String customType,
     String? parentMessageId,
     Map<String, dynamic>? metaData,
     List<Map<String, dynamic>>? mentionedUsers,
     Map<String, dynamic>? events,
-    String? customType,
     List<Map<String, dynamic>>? attachments,
   }) async {
     try {
@@ -136,7 +139,10 @@ class IsmChatCommonRepository {
         'attachments': attachments,
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
-        'searchableTags': [body],
+        if (!(IsmChatConfig.messageEncrypted == true &&
+            IsmChatCustomMessageType.fromString(customType) ==
+                IsmChatCustomMessageType.text))
+          'searchableTags': [body],
         'mentionedUsers': mentionedUsers
       }.removeNullValues();
       var headers = IsmChatUtility.tokenCommonHeader();

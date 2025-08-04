@@ -20,6 +20,9 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     bool sendPushNotification = true,
     bool encrypted = false,
   }) async {
+    notificationBody = IsmChatConfig.notificationBody?.call(notificationBody,
+            IsmChatCustomMessageType.fromString(customType)) ??
+        notificationBody;
     if (IsmChatConfig.sendPaidWalletMessage?.call(
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             _controller.conversation,
