@@ -81,6 +81,7 @@ enum IsmChatCustomMessageType {
   acceptExchangeOffer(47),
   rejectExchangeOffer(48),
   counterExchangeOffer(49),
+  profileLink(509),
   date(100);
 
   const IsmChatCustomMessageType(this.number);
@@ -157,6 +158,7 @@ enum IsmChatCustomMessageType {
       'ACCEPT_EXCHANGE_OFFER': IsmChatCustomMessageType.acceptExchangeOffer,
       'REJECT_EXCHANGE_OFFER': IsmChatCustomMessageType.rejectExchangeOffer,
       'COUNTER_EXCHANGE_OFFER': IsmChatCustomMessageType.counterExchangeOffer,
+      'AttachmentMessage:ProfileLink': IsmChatCustomMessageType.profileLink,
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -378,6 +380,8 @@ enum IsmChatCustomMessageType {
         return 'REJECT_EXCHANGE_OFFER';
       case IsmChatCustomMessageType.counterExchangeOffer:
         return 'COUNTER_EXCHANGE_OFFER';
+      case IsmChatCustomMessageType.profileLink:
+        return 'AttachmentMessage:ProfileLink';
     }
   }
 }
