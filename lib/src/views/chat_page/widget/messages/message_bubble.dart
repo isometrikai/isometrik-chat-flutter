@@ -235,9 +235,10 @@ class MessageBubble extends StatelessWidget {
                                         ?.shouldShowMessgaeStatus ??
                                     true) &&
                                 _message.sentByMe &&
-                                _message.customType !=
-                                    IsmChatCustomMessageType
-                                        .deletedForEveryone) ...[
+                                ![
+                                  IsmChatCustomMessageType.oneToOneCall,
+                                  IsmChatCustomMessageType.deletedForEveryone
+                                ].contains(_message.customType)) ...[
                               if (_message.messageId?.isEmpty == true) ...[
                                 IsmChatDimens.boxWidth2,
                                 if (_message.isInvalidMessage == true) ...[
