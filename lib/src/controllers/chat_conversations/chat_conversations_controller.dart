@@ -1433,7 +1433,9 @@ class IsmChatConversationsController extends GetxController {
       }
       final isMessageSent = await commonController.sendMessage(
         showInConversation: true,
-        encrypted: true,
+        encrypted: x.customType == IsmChatCustomMessageType.text
+            ? (IsmChatConfig.messageEncrypted ?? false)
+            : false,
         events: {'updateUnreadCount': true, 'sendPushNotification': true},
         attachments: attachments,
         mentionedUsers: x.mentionedUsers?.map((e) => e.toMap()).toList(),
@@ -1772,7 +1774,7 @@ class IsmChatConversationsController extends GetxController {
             userDetails.userName;
     await commonController.sendMessage(
       showInConversation: true,
-      encrypted: true,
+      encrypted: IsmChatConfig.messageEncrypted ?? false,
       events: {
         'updateUnreadCount': true,
         'sendPushNotification': sendPushNotification
