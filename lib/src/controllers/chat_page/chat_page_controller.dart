@@ -674,11 +674,7 @@ class IsmChatPageController extends GetxController
 
         break;
       case IsmChatFocusMenuType.reply:
-        if (IsmChatProperties.chatPageProperties.canReplayMessage
-                ?.call(context, message) ??
-            true) {
-          onReplyTap(message);
-        }
+        onReplyTap(message);
         break;
       case IsmChatFocusMenuType.forward:
         conversationController.forwardedList.clear();
@@ -1558,13 +1554,13 @@ class IsmChatPageController extends GetxController
     if (isTyping) {
       isTyping = false;
       var tickTick = 0;
-      Timer.periodic(const Duration(seconds: 3), (timer) async {
+      Timer.periodic(const Duration(seconds: 2), (timer) async {
         if (tickTick == 0) {
           await viewModel.notifyTyping(
             conversationId: conversation?.conversationId ?? '',
           );
         }
-        if (tickTick == 3) {
+        if (tickTick == 2) {
           isTyping = true;
           timer.cancel();
         }

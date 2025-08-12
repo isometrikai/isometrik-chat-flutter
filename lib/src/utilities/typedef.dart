@@ -122,7 +122,6 @@ typedef MessageFutureCallback = Future<
 );
 
 typedef MessageCallback = bool Function(
-  BuildContext,
   IsmChatMessageModel,
 );
 

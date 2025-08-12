@@ -887,6 +887,11 @@ extension MentionMessage on IsmChatMessageModel {
       menu.remove(IsmChatFocusMenuType.delete);
     }
 
+    if (!(IsmChatProperties.chatPageProperties.canReplayMessage?.call(this) ??
+        true)) {
+      menu.remove(IsmChatFocusMenuType.reply);
+    }
+
     return menu;
   }
 
@@ -940,6 +945,14 @@ extension MentionMessage on IsmChatMessageModel {
     }
     return theme?.opponentMessageTheme?.backgroundColor ??
         IsmChatConfig.chatTheme.backgroundColor;
+  }
+
+  Gradient? get gradient {
+    var theme = IsmChatConfig.chatTheme.chatPageTheme;
+    if (sentByMe) {
+      return theme?.selfMessageTheme?.gradient;
+    }
+    return theme?.opponentMessageTheme?.gradient;
   }
 
   Color? get borderColor {

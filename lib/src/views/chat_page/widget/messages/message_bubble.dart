@@ -74,6 +74,7 @@ class MessageBubble extends StatelessWidget {
                   ? null
                   : BoxDecoration(
                       color: _message.backgroundColor,
+                      gradient: _message.gradient,
                       border: _message.borderColor != null
                           ? Border.all(color: _message.borderColor!)
                           : null,

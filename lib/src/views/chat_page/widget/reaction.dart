@@ -75,7 +75,11 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
                     ),
                     color: IsmChatColors.whiteColor),
                 child: showCount && index == 2
-                    ? Text('+ $reactionLength')
+                    ? Text(
+                        '+ $reactionLength',
+                        textAlign: TextAlign.center,
+                        style: IsmChatStyles.w400Black12,
+                      )
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -102,7 +106,10 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
                             ),
                           ),
                           Text(
-                              '${widget.message.reactions?[index].userIds.length}')
+                            '${widget.message.reactions?[index].userIds.length}',
+                            textAlign: TextAlign.center,
+                            style: IsmChatStyles.w400Black12,
+                          )
                         ],
                       ),
               ),

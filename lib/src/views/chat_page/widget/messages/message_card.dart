@@ -80,7 +80,7 @@ class _MessageCardState extends State<MessageCard>
                   ? null
                   : (details) {
                       if ((IsmChatProperties.chatPageProperties.canReplayMessage
-                                  ?.call(context, widget.message) ??
+                                  ?.call(widget.message) ??
                               true) &&
                           widget.message.messageId?.isNotEmpty == true) {
                         if (details.delta.dx > 1) {

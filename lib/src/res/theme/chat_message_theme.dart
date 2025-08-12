@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class IsmChatMessageTheme {
   IsmChatMessageTheme({
     this.backgroundColor,
+    this.gradient,
     this.textColor,
     this.textStyle,
     this.borderRadius,
@@ -14,6 +15,7 @@ class IsmChatMessageTheme {
   });
 
   final Color? backgroundColor;
+  final Gradient? gradient;
   final Color? textColor;
   final TextStyle? textStyle;
   final BorderRadius? borderRadius;

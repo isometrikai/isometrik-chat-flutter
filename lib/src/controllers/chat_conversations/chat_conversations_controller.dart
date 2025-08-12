@@ -981,9 +981,13 @@ class IsmChatConversationsController extends GetxController {
       }
     }
 
-    await getConversationsFromDB(
-      searchTag: searchTag,
-    );
+    if (chats.isEmpty && searchTag != null) {
+      conversations.clear();
+    } else {
+      await getConversationsFromDB(
+        searchTag: searchTag,
+      );
+    }
 
     if (conversations.isEmpty) {
       isConversationsLoading = false;

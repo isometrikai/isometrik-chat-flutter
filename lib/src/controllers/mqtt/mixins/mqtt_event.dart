@@ -488,7 +488,7 @@ mixin IsmChatMqttEventMixin {
     );
     _controller.typingUsers.add(user);
     await Future.delayed(
-      const Duration(seconds: 3),
+      const Duration(seconds: 2),
       () {
         _controller.typingUsers.remove(user);
       },
