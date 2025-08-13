@@ -1094,10 +1094,6 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       IsmChatCustomMessageType.video
     ].contains(textMessage.metaData?.replyMessage?.parentMessageMessageType)) {}
 
-    final notificationTitle =
-        IsmChatConfig.communicationConfig.userConfig.userName ??
-            _controller.conversationController.userDetails?.userName ??
-            '';
     if (textMessage.metaData?.replyMessage != null) {
       final replyMessage = textMessage.metaData?.replyMessage;
       final isImageReply = replyMessage?.parentMessageMessageType ==
@@ -1146,12 +1142,18 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         );
       }
     }
-    var body = (IsmChatConfig.messageEncrypted ?? false)
+    final encrypted = IsmChatConfig.messageEncrypted ?? false;
+    var body = encrypted
         ? IsmChatUtility.encryptMessage(
             textMessage.body,
             conversationId,
           )
         : textMessage.body;
+    final notificationTitle =
+        IsmChatConfig.communicationConfig.userConfig.userName ??
+            _controller.conversationController.userDetails?.userName ??
+            '';
+    final notificationBody = encrypted ? 'New Message' : textMessage.body;
     sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,
@@ -1162,12 +1164,12 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       parentMessageId: textMessage.parentMessageId,
       conversationId: textMessage.conversationId ?? '',
       messageType: textMessage.messageType?.value ?? 0,
-      notificationBody: textMessage.body,
+      notificationBody: notificationBody,
       notificationTitle: notificationTitle,
       mentionedUsers:
           _controller.userMentionedList.map((e) => e.toMap()).toList(),
       sendPushNotification: pushNotifications,
-      encrypted: IsmChatConfig.messageEncrypted ?? false,
+      encrypted: encrypted,
     );
   }
 

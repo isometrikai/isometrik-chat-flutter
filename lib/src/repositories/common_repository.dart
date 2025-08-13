@@ -84,10 +84,7 @@ class IsmChatCommonRepository {
         'attachments': attachments,
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
-        if (!(IsmChatConfig.messageEncrypted == true &&
-            IsmChatCustomMessageType.fromString(customType) ==
-                IsmChatCustomMessageType.text))
-          'searchableTags': [body],
+        if (!encrypted) 'searchableTags': [body],
         'mentionedUsers': mentionedUsers
       }.removeNullValues();
 
