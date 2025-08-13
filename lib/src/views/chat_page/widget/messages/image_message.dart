@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatImageMessage extends StatelessWidget {
-  const IsmChatImageMessage(this.message, {super.key});
+  IsmChatImageMessage(this.message, {super.key});
 
   final IsmChatMessageModel message;
+
+  final isExpandedNotifier = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +43,37 @@ class IsmChatImageMessage extends StatelessWidget {
                 if (message.metaData?.caption?.isNotEmpty == true) ...[
                   Padding(
                     padding: IsmChatDimens.edgeInsetsTop5,
-                    child: Text(
-                      message.metaData?.caption ?? '',
-                      style: message.style,
-                      textAlign: TextAlign.start,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: isExpandedNotifier,
+                      builder: (context, isExpanded, _) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            message.metaData?.caption ?? '',
+                            style: message.style,
+                            textAlign: TextAlign.start,
+                            overflow: isExpanded
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            maxLines: isExpanded ? null : 3,
+                          ),
+                          if (_isCaptionOverflowing(context))
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: IsmChatDimens.edgeInsets0,
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () {
+                                isExpandedNotifier.value = !isExpanded;
+                              },
+                              child: Text(
+                                isExpanded ? 'Show less' : 'Show more',
+                                style: message.readTextStyle,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   )
                 ]
@@ -61,5 +88,23 @@ class IsmChatImageMessage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _isCaptionOverflowing(BuildContext context) {
+    final caption = message.metaData?.caption ?? '';
+    if (caption.isEmpty) return false;
+
+    final textSpan = TextSpan(
+      text: caption,
+      style: message.style,
+    );
+
+    final textPainter = TextPainter(
+      text: textSpan,
+      maxLines: 3,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: context.width * 0.7);
+
+    return textPainter.didExceedMaxLines;
   }
 }
