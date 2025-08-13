@@ -252,7 +252,7 @@ class MessageReadDelivered extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-        color: IsmChatConfig.chatTheme.cardBackgroundColor,
+        color: IsmChatConfig.chatTheme.cardTheme?.backgroundColor,
         elevation: 1,
         child: Container(
           width: IsmChatDimens.percentWidth(.9),
@@ -291,7 +291,7 @@ class _UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-        color: IsmChatConfig.chatTheme.cardBackgroundColor,
+        color: IsmChatConfig.chatTheme.cardTheme?.backgroundColor,
         elevation: 1,
         child: Padding(
           padding: IsmChatDimens.edgeInsets10,

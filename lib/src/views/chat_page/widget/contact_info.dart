@@ -38,7 +38,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
             itemBuilder: (_, index) {
               var contact = contacts[index];
               return Card(
-                color: IsmChatConfig.chatTheme.cardBackgroundColor ??
+                color: IsmChatConfig.chatTheme.cardTheme?.backgroundColor ??
                     IsmChatColors.whiteColor,
                 child: Column(
                   children: [
@@ -51,11 +51,15 @@ class IsmChatContactsInfoView extends StatelessWidget {
                       ),
                       title: Text(
                         contact.contactName ?? '',
-                        style: IsmChatStyles.w600Black14,
+                        style: IsmChatStyles.w600Black14.copyWith(
+                            color:
+                                IsmChatConfig.chatTheme.cardTheme?.textColor),
                       ),
                       subtitle: Text(
                         contact.contactIdentifier ?? '',
-                        style: IsmChatStyles.w600Black12,
+                        style: IsmChatStyles.w600Black12.copyWith(
+                            color:
+                                IsmChatConfig.chatTheme.cardTheme?.textColor),
                       ),
                       trailing: IsmChatTapHandler(
                         onTap: () async {
@@ -125,7 +129,9 @@ class IsmChatContactsInfoView extends StatelessWidget {
                               color: IsmChatConfig.chatTheme.primaryColor,
                               size: IsmChatDimens.twentyFive,
                             ),
-                            label: const Text('Call'),
+                            label: const Text(
+                              'Call',
+                            ),
                           ),
                         )
                       ],
