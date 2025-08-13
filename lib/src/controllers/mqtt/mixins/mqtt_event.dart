@@ -409,21 +409,6 @@ mixin IsmChatMqttEventMixin {
     if (isSenderMe(message.senderInfo?.userId, deviceId: message.deviceId)) {
       return;
     }
-    String? mqttMessage;
-    switch (message.customType) {
-      case IsmChatCustomMessageType.image:
-      case IsmChatCustomMessageType.video:
-      case IsmChatCustomMessageType.file:
-      case IsmChatCustomMessageType.audio:
-      case IsmChatCustomMessageType.location:
-      case IsmChatCustomMessageType.reply:
-      case IsmChatCustomMessageType.forward:
-      case IsmChatCustomMessageType.link:
-        mqttMessage = message.notificationBody;
-        break;
-      default:
-        mqttMessage = message.body;
-    }
     if (message.events != null &&
         message.events?.sendPushNotification == false) {
       return;
@@ -438,7 +423,7 @@ mixin IsmChatMqttEventMixin {
             title: notificationTitle.isNotEmpty
                 ? notificationTitle
                 : message.notificationTitle ?? '',
-            body: mqttMessage ?? '',
+            body: message.notificationBody ?? '',
             data: message.toMap());
         return;
       }
@@ -454,7 +439,7 @@ mixin IsmChatMqttEventMixin {
           title: notificationTitle.isNotEmpty
               ? notificationTitle
               : message.notificationTitle ?? '',
-          body: mqttMessage ?? '',
+          body: message.notificationBody ?? '',
           data: message.toMap());
     } catch (_) {}
   }
