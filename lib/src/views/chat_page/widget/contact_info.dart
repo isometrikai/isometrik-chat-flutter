@@ -11,7 +11,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: IsmChatColors.whiteColor,
+        backgroundColor: IsmChatConfig.chatTheme.backgroundColor,
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
@@ -22,10 +22,13 @@ class IsmChatContactsInfoView extends StatelessWidget {
                   IsmChatColors.whiteColor,
             ),
           ),
-          backgroundColor: IsmChatConfig.chatTheme.primaryColor,
+          backgroundColor:
+              IsmChatConfig.chatTheme.chatPageHeaderTheme?.backgroundColor ??
+                  IsmChatConfig.chatTheme.primaryColor,
           titleSpacing: 1,
           title: Text(IsmChatStrings.contactInfo,
-              style: IsmChatStyles.w600White18),
+              style: IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
+                  IsmChatStyles.w600White18),
           centerTitle: true,
         ),
         body: SizedBox(
@@ -35,6 +38,8 @@ class IsmChatContactsInfoView extends StatelessWidget {
             itemBuilder: (_, index) {
               var contact = contacts[index];
               return Card(
+                color: IsmChatConfig.chatTheme.cardBackgroundColor ??
+                    IsmChatColors.whiteColor,
                 child: Column(
                   children: [
                     ListTile(
@@ -103,7 +108,9 @@ class IsmChatContactsInfoView extends StatelessWidget {
                               color: IsmChatConfig.chatTheme.primaryColor,
                               size: IsmChatDimens.twentyFive,
                             ),
-                            label: const Text('SMS'),
+                            label: const Text(
+                              'SMS',
+                            ),
                           ),
                         ),
                         Expanded(

@@ -24,7 +24,7 @@ class IsmChatContactMessage extends StatelessWidget {
               ? IsmChatDimens.oneHundredSeventy
               : null,
           decoration: BoxDecoration(
-            color: IsmChatConfig.chatTheme.backgroundColor,
+            color: message.backgroundColor?.applyIsmOpacity(.5),
             borderRadius: BorderRadius.circular(IsmChatDimens.eight),
           ),
           padding: IsmChatDimens.edgeInsets10,
@@ -81,7 +81,8 @@ class IsmChatContactMessage extends StatelessWidget {
                       message.contacts.length == 1
                           ? message.contacts.first.contactName ?? ''
                           : '${message.contacts.first.contactName} and ${message.contacts.length - 1} other contact',
-                      style: IsmChatStyles.w600Black14,
+                      style:
+                          message.style.copyWith(fontWeight: FontWeight.w600),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -95,7 +96,9 @@ class IsmChatContactMessage extends StatelessWidget {
                 Center(
                   child: Text(
                     'View ${message.contacts.length != 1 ? 'All' : ''}',
-                    style: IsmChatStyles.w600Black12,
+                    style: message.style.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: IsmChatDimens.twelve),
                   ),
                 )
             ],
