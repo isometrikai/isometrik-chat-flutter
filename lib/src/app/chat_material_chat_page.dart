@@ -5,25 +5,26 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPage extends StatefulWidget {
-  IsmChatPage({
-    super.key,
-    this.chatPageProperties,
-    this.chatTheme,
-    this.chatDarkTheme,
-    this.loadingDialog,
-    this.databaseName,
-    this.useDataBase = true,
-    this.isShowMqttConnectErrorDailog = false,
-    this.fontFamily,
-    this.conversationParser,
-    required this.conversation,
-  }) {
+  IsmChatPage(
+      {super.key,
+      this.chatPageProperties,
+      this.chatTheme,
+      this.chatDarkTheme,
+      this.loadingDialog,
+      this.databaseName,
+      this.useDataBase = true,
+      this.isShowMqttConnectErrorDailog = false,
+      this.fontFamily,
+      this.conversationParser,
+      required this.conversation,
+      required this.context}) {
     assert(IsmChatConfig.configInitilized,
         '''communicationConfig of type IsmChatCommunicationConfig must be initialized
     Either initialize using IsmChat.i.initialize() by passing  communicationConfig.
     ''');
 
     IsmChatConfig.dbName = databaseName ?? IsmChatStrings.dbname;
+    IsmChatConfig.context = context;
 
     IsmChatConfig.fontFamily = fontFamily;
     IsmChatConfig.conversationParser = conversationParser;
@@ -52,6 +53,8 @@ class IsmChatPage extends StatefulWidget {
   final bool isShowMqttConnectErrorDailog;
 
   final IsmChatConversationModel conversation;
+
+  final BuildContext context;
 
   /// Opitonal field
   ///
