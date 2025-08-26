@@ -51,7 +51,6 @@ dependencies:
   just_audio: ^0.10.0
   metadata_fetch: ^0.4.2
   mqtt_client: ^10.7.0
-  # mqtt_helper: ^1.0.2
   mqtt_helper:
     git:
       url: https://github.com/rahulsaryam/mqtt_helper.git
