@@ -65,7 +65,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   record: ^6.0.0
   scroll_to_index: ^3.0.1
-  share_plus: ^11.0.0
+  share_plus: ^12.0.0
   timezone: ^0.10.0
   universal_html: ^2.2.4
   url_launcher: ^6.3.1
@@ -78,9 +78,6 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-
-# dependency_overrides:
-# device_info_plus: ^11.3.3
 
 flutter:
   plugin:
