@@ -34,7 +34,7 @@ dependencies:
   flutter_svg: ^2.0.17
   flutter_web_plugins:
     sdk: flutter
-  fluttertoast: ^8.2.12
+  fluttertoast: ^9.0.0
   gal: ^2.3.1
   geocoding: ^4.0.0
   geolocator: ^14.0.0
