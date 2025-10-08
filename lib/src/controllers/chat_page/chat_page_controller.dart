@@ -1785,6 +1785,7 @@ class IsmChatPageController extends GetxController
       {bool fromServer = true}) async {
     await viewModel.clearAllMessages(
         conversationId: conversationId, fromServer: fromServer);
+    showDownSideButton = false;
   }
 
   Future<void> getLocation(
