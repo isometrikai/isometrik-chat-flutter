@@ -434,7 +434,8 @@ class _MicOrSendButton extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: () async {
-              if (!(controller.conversation?.isChattingAllowed == true)) {
+              if (!(controller.conversation?.isChattingAllowed == true) ||
+                  controller.conversation?.isBlockedByMe == true) {
                 controller.showDialogCheckBlockUnBlock();
                 return;
               }
