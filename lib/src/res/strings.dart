@@ -40,6 +40,35 @@ class IsmChatStrings {
   static const String on = 'on';
   static const String okay = 'Okay';
   static const String change = 'Change';
+  static const String startSecretChat = 'Start Secret Chat';
+  static const String start = 'Start';
+  static const String startSecretChatDesc =
+      'Are you sure want to start a Secret chat?\n\nIf the user is not online, you may need to wait until they come online to begin the conversation.';
+
+  // Secret Chat UI strings
+  static const String secretChatInviteTitle =
+      'You Invited %s to join a\nSecret Chat';
+  static const String secretChatsTitle = 'Secret Chats:';
+  static const String secretChatFeature1 =
+      'Use end-to-end encryption for maximum privacy';
+  static const String secretChatFeature2 = 'Leave no trace on our servers';
+  static const String secretChatFeature3 =
+      'Support a self-destruct timer for messages';
+  static const String secretChatFeature4 =
+      'Block screenshots for added security (optional)';
+  static const String secretChatFeature5 =
+      'Be device-specific — chats don\'t sync across devices';
+  static const String secretChatFeature6 =
+      'Auto-delete when either user clears the conversation';
+  static const String waitingForUserOnline = 'Waiting for %s to come Online...';
+  static const String opponent = 'opponent';
+  static const String selfDestructTimer = 'Self-Destruct Timer';
+  static const String chooseWhenAutoDelete =
+      'Choose when messages should auto-delete after being seen.';
+  static const String timer1Minute = '1 Minute';
+  static const String timer1Hour = '1 Hour';
+  static const String timer1Day = '1 Day';
+  static const String done = 'Done';
   static const String blockUser = 'Block User';
   static const String unBlockUser = 'Unblock User';
   static const String blockedUsers = 'Blocked Users';

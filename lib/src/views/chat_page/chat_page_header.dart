@@ -368,6 +368,33 @@ class _PopupMenuWidget extends StatelessWidget {
               ),
             )
           ],
+          if ((!(controller.conversation?.isGroup ?? false)) &&
+              IsmChatProperties.chatPageProperties.features
+                  .contains(IsmChatFeature.startSecretChat)) ...[
+            PopupMenuItem(
+              value: 6,
+              child: Row(
+                children: [
+                  Icon(
+                    controller.isSecretChatInvite
+                        ? Icons.timer_outlined
+                        : Icons.lock_outline_rounded,
+                    color: IsmChatConfig
+                            .chatTheme.chatPageHeaderTheme?.iconColor ??
+                        IsmChatConfig.chatTheme.primaryColor,
+                  ),
+                  IsmChatDimens.boxWidth8,
+                  Text(
+                    controller.isSecretChatInvite
+                        ? IsmChatStrings.selfDestructTimer
+                        : IsmChatStrings.startSecretChat,
+                    style: IsmChatConfig
+                        .chatTheme.chatPageHeaderTheme?.popupLableStyle,
+                  )
+                ],
+              ),
+            )
+          ],
           if (IsmChatProperties.chatPageProperties.features
               .contains(IsmChatFeature.chageWallpaper)) ...[
             PopupMenuItem(
@@ -469,12 +496,15 @@ class _PopupMenuWidget extends StatelessWidget {
                 .popupItems!(context, controller.conversation)
                 .map(
               (e) => PopupMenuItem(
-                value:
+                value: ((IsmChatProperties.chatPageProperties.features
+                                .contains(IsmChatFeature.startSecretChat) &&
+                            !(controller.conversation?.isGroup ?? false))
+                        ? 7
+                        : 6) +
                     (IsmChatProperties.chatPageProperties.header?.popupItems!(
-                                    context, controller.conversation) ??
-                                [])
-                            .indexOf(e) +
-                        6,
+                                context, controller.conversation) ??
+                            [])
+                        .indexOf(e),
                 child: Row(
                   children: [
                     Icon(
@@ -508,6 +538,14 @@ class _PopupMenuWidget extends StatelessWidget {
                   IsRenderChatPageScreen.messageSearchView;
             } else {
               IsmChatRoute.goToRoute(const IsmChatSearchMessgae());
+            }
+          } else if (value == 6 &&
+              IsmChatProperties.chatPageProperties.features
+                  .contains(IsmChatFeature.startSecretChat)) {
+            if (controller.isSecretChatInvite) {
+              controller.showDialogForSelfDestructTimer();
+            } else {
+              controller.showDialogForStartSecretChat();
             }
           } else {
             IsmChatProperties.chatPageProperties.header?.popupItems

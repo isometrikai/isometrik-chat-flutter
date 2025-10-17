@@ -106,10 +106,12 @@ class IsmChatPageController extends GetxController
 
   void startInit({
     bool isBroadcasts = false,
+    bool isSecretChat = false,
   }) async {
     chatInputController.clear();
     recordVoice = AudioRecorder();
     isActionAllowed = false;
+    isSecretChatInvite = isSecretChat;
     _generateReactionList();
     _startAnimated();
     _scrollListener();
@@ -165,6 +167,14 @@ class IsmChatPageController extends GetxController
     fabAnimationController?.dispose();
     holdController?.dispose();
     ifTimerMounted();
+  }
+
+  /// Secret chat invitation overlay flag
+  bool isSecretChatInvite = false;
+
+  void showSecretChatInviteOverlay() {
+    isSecretChatInvite = true;
+    update();
   }
 
   void _currentUser() {

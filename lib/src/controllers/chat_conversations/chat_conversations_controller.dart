@@ -1286,7 +1286,7 @@ class IsmChatConversationsController extends GetxController {
   }
 
   /// Navigates to the chat page based on the platform (web or mobile).
-  Future<void> goToChatPage() async {
+  Future<void> goToChatPage({bool isSecretChat = false}) async {
     if (IsmChatResponsive.isWeb(
       IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
     )) {
@@ -1296,7 +1296,7 @@ class IsmChatConversationsController extends GetxController {
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.none;
       final chatPagecontroller = IsmChatUtility.chatPageController;
-      chatPagecontroller.startInit();
+      chatPagecontroller.startInit(isSecretChat: isSecretChat);
       chatPagecontroller.closeOverlay();
       if (chatPagecontroller.showEmojiBoard) {
         chatPagecontroller.toggleEmojiBoard(false, false);

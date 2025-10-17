@@ -115,6 +115,97 @@ mixin IsmChatShowDialogMixin on GetxController {
     );
   }
 
+  Future<void> showDialogForStartSecretChat() async {
+    await IsmChatContextWidget.showDialogContext(
+      content: IsmChatAlertDialogBox(
+        title: IsmChatStrings.startSecretChat,
+        content: const Text(IsmChatStrings.startSecretChatDesc),
+        contentTextStyle: IsmChatStyles.w400Grey14,
+        actionLabels: const [IsmChatStrings.start],
+        callbackActions: [
+          () async {
+            if (!kIsWeb) {
+              IsmChatRoute.goBack();
+            }
+
+            // Show the secret chat waiting overlay in chat view
+            IsmChatUtility.chatPageController.showSecretChatInviteOverlay();
+            // Create a local temp conversation instance for secret chat UI
+            final opponent = _controller.conversation?.opponentDetails;
+            final tempConversation = IsmChatConversationModel(
+              isGroup: false,
+              conversationType: IsmChatConversationType.private,
+              conversationId: '', // will be assigned by API later
+              opponentDetails: opponent,
+              privateOneToOne: true,
+              createdAt: DateTime.now().millisecondsSinceEpoch,
+              messages: {},
+            );
+
+            final conversationController =
+                IsmChatUtility.conversationController;
+            conversationController.updateLocalConversation(tempConversation);
+            await conversationController.goToChatPage(isSecretChat: true);
+          },
+        ],
+      ),
+    );
+  }
+
+  Future<void> showDialogForSelfDestructTimer() async {
+    final selected = ValueNotifier<int>(0);
+    await IsmChatContextWidget.showDialogContext(
+      content: IsmChatAlertDialogBox(
+        title: IsmChatStrings.selfDestructTimer,
+        content: StatefulBuilder(
+          builder: (context, setState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                IsmChatStrings.chooseWhenAutoDelete,
+                style: IsmChatStyles.w400Grey14,
+              ),
+              IsmChatDimens.boxHeight8,
+              ValueListenableBuilder<int>(
+                valueListenable: selected,
+                builder: (_, value, __) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    RadioListTile<int>(
+                      value: 0,
+                      groupValue: value,
+                      onChanged: (v) => selected.value = v ?? 0,
+                      title: const Text(IsmChatStrings.timer1Minute),
+                    ),
+                    RadioListTile<int>(
+                      value: 1,
+                      groupValue: value,
+                      onChanged: (v) => selected.value = v ?? 1,
+                      title: const Text(IsmChatStrings.timer1Hour),
+                    ),
+                    RadioListTile<int>(
+                      value: 2,
+                      groupValue: value,
+                      onChanged: (v) => selected.value = v ?? 2,
+                      title: const Text(IsmChatStrings.timer1Day),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        actionLabels: const [IsmChatStrings.done],
+        callbackActions: [
+          () {
+            // TODO: Hook to persist selected timer value when API is ready
+          }
+        ],
+      ),
+    );
+  }
+
   void showDialogCheckBlockUnBlock() async {
     if (_controller.conversation?.isBlockedByMe ?? false) {
       await IsmChatContextWidget.showDialogContext(

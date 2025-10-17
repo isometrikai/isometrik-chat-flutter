@@ -385,6 +385,69 @@ class _IsmChatPageView extends StatelessWidget {
                                     showMessage:
                                         IsmChatStrings.userDeleteMessage,
                                   )
+                                ] else if (controller.isSecretChatInvite) ...[
+                                  IsmChatProperties.chatPageProperties
+                                          .secretChatWaitingMessageBuilder
+                                          ?.call(context,
+                                              controller.conversation) ??
+                                      Container(
+                                        color: IsmChatConfig
+                                            .chatTheme.backgroundColor,
+                                        width: double.maxFinite,
+                                        child: SafeArea(
+                                          child: Padding(
+                                            padding: IsmChatDimens.edgeInsets16,
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding:
+                                                  IsmChatDimens.edgeInsets12,
+                                              decoration: BoxDecoration(
+                                                color: IsmChatColors
+                                                    .primaryColorLight
+                                                    .withOpacity(.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        IsmChatDimens.eight),
+                                              ),
+                                              child: RichText(
+                                                textAlign: TextAlign.center,
+                                                text: TextSpan(
+                                                  style:
+                                                      IsmChatStyles.w500Black12,
+                                                  children: [
+                                                    TextSpan(
+                                                      text: IsmChatStrings
+                                                          .waitingForUserOnline
+                                                          .replaceAll(
+                                                        '%s',
+                                                        controller
+                                                                    .conversation
+                                                                    ?.opponentDetails
+                                                                    ?.userName
+                                                                    .isEmpty ??
+                                                                true
+                                                            ? IsmChatStrings
+                                                                .opponent
+                                                            : controller
+                                                                    .conversation
+                                                                    ?.opponentDetails
+                                                                    ?.userName ??
+                                                                IsmChatStrings
+                                                                    .opponent,
+                                                      ),
+                                                      style: IsmChatStyles
+                                                          .w600Black12
+                                                          .copyWith(
+                                                              color: IsmChatColors
+                                                                  .primaryColorLight),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
                                 ] else ...[
                                   Container(
                                     padding: IsmChatConfig
@@ -445,6 +508,27 @@ class _IsmChatPageView extends StatelessWidget {
                                     ),
                                   ),
                           ),
+                          if (controller.isSecretChatInvite)
+                            Positioned.fill(
+                              child: Container(
+                                color:
+                                    IsmChatColors.blackColor.withOpacity(0.3),
+                                child: Center(
+                                  child: Padding(
+                                    padding: IsmChatDimens.edgeInsets16,
+                                    child: IsmChatProperties.chatPageProperties
+                                            .secretChatInviteCardBuilder
+                                            ?.call(context,
+                                                controller.conversation) ??
+                                        IsmSecretChatInviteCard(
+                                          opponentName: controller.conversation
+                                                  ?.opponentDetails?.userName ??
+                                              '',
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
           ).withUnfocusGestureDetctor(context),
@@ -483,3 +567,5 @@ class _MessgeNotAllowdWidget extends StatelessWidget {
         ),
       );
 }
+
+// Moved to `widget/secret_chat_invite_card.dart`

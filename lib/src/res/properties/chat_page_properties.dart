@@ -33,6 +33,8 @@ class IsmChatPageProperties {
     this.shouldShowHoverHold,
     this.backgroundImageUrl,
     this.canReplayMessage,
+    this.secretChatInviteCardBuilder,
+    this.secretChatWaitingMessageBuilder,
   });
 
   final Widget? placeholder;
@@ -144,4 +146,24 @@ class IsmChatPageProperties {
   final String? backgroundImageUrl;
 
   final MessageCallback? canReplayMessage;
+
+  /// Optional parameter for custom secret chat invite card builder
+  ///
+  /// Allows host app to provide custom UI for the secret chat invitation card
+  ///
+  /// ```dart
+  /// Widget? secretChatInviteCardBuilder;
+  /// ```
+  final Widget Function(BuildContext, IsmChatConversationModel?)?
+      secretChatInviteCardBuilder;
+
+  /// Optional parameter for custom secret chat waiting message builder
+  ///
+  /// Allows host app to provide custom UI for the waiting message at bottom
+  ///
+  /// ```dart
+  /// Widget? secretChatWaitingMessageBuilder;
+  /// ```
+  final Widget Function(BuildContext, IsmChatConversationModel?)?
+      secretChatWaitingMessageBuilder;
 }

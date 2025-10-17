@@ -61,6 +61,11 @@ class ChatList extends StatelessWidget {
               ),
 
               chatPageProperties: IsmChatPageProperties(
+                // features: [
+                //   IsmChatFeature.searchMessage,
+                //   IsmChatFeature.chageWallpaper,
+                //   IsmChatFeature.startSecretChat,
+                // ],
                 // backgroundImageUrl: AssetConstants.background,
                 // isShowMessageBlur: (p0, p1) => true,
                 // stackWidget: Container(

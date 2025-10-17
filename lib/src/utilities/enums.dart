@@ -781,7 +781,8 @@ enum IsmChatFeature {
   copyMessage,
   selectMessage,
   emojiIcon,
-  audioMessage;
+  audioMessage,
+  startSecretChat;
 }
 
 enum IsmChatDbBox { main, pending }
