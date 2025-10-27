@@ -182,8 +182,12 @@ class _IsmChatPageView extends StatelessWidget {
                           }
                           var messageSenderSide =
                               controller.isAllMessagesFromMe();
+                          var messageDeletedForEveryone =
+                              controller.isAnyMessageDeletedForEveryone();
                           controller.showDialogForDeleteMultipleMessage(
-                              messageSenderSide, selectedMessage);
+                              messageSenderSide,
+                              messageDeletedForEveryone,
+                              selectedMessage);
                         },
                         icon: Icon(
                           Icons.delete_rounded,

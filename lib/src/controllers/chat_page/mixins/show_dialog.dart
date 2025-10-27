@@ -172,12 +172,17 @@ mixin IsmChatShowDialogMixin on GetxController {
     }
   }
 
-  void showDialogForDeleteMultipleMessage(
-      bool sentByMe, IsmChatMessages messages) async {
-    if (sentByMe) {
+  void showDialogForDeleteMultipleMessage(bool sentByMe,
+      bool messageDeletedForEveryone, IsmChatMessages messages) async {
+    final messageCount = messages.length;
+    final titleText = messageCount > 1
+        ? '${IsmChatStrings.delete} $messageCount ${IsmChatStrings.messages.toLowerCase()} ?'
+        : IsmChatStrings.deleteMessage;
+
+    if (sentByMe && !messageDeletedForEveryone) {
       await IsmChatContextWidget.showDialogContext(
         content: IsmChatAlertDialogBox(
-          title: IsmChatStrings.deleteMessage,
+          title: titleText,
           actionLabels: const [
             IsmChatStrings.deleteForEvery,
             IsmChatStrings.deleteForMe,
@@ -196,8 +201,9 @@ mixin IsmChatShowDialogMixin on GetxController {
     } else {
       await IsmChatContextWidget.showDialogContext(
         content: IsmChatAlertDialogBox(
-          title:
-              '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
+          title: messageDeletedForEveryone
+              ? titleText
+              : '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
           actionLabels: const [IsmChatStrings.deleteForMe],
           callbackActions: [
             () => _controller.deleteMessageForMe(messages),

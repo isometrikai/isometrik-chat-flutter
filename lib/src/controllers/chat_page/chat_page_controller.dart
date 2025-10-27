@@ -1772,14 +1772,11 @@ class IsmChatPageController extends GetxController
   }
 
   bool isAllMessagesFromMe() => selectedMessage.every(
-        (e) {
-          if (e.sentByMe &&
-              e.customType == IsmChatCustomMessageType.deletedForEveryone) {
-            return false;
-          }
-          return e.sentByMe;
-        },
+        (e) => e.sentByMe,
       );
+
+  bool isAnyMessageDeletedForEveryone() => selectedMessage
+      .any((e) => e.customType == IsmChatCustomMessageType.deletedForEveryone);
 
   Future<void> clearAllMessages(String conversationId,
       {bool fromServer = true}) async {
