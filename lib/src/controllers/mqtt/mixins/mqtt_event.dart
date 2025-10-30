@@ -714,16 +714,30 @@ mixin IsmChatMqttEventMixin {
   ///
   /// * `actionModel`: The block user or unblock event model to handle
   void _handleBlockUserOrUnBlock(IsmChatMqttActionModel actionModel) async {
-    if (isSenderMe(actionModel.initiatorDetails?.userId)) return;
+    final isInitiatedByMe = isSenderMe(actionModel.initiatorDetails?.userId);
+    // Do not early-return for self-initiated block/unblock so UI updates instantly
+    if (isInitiatedByMe &&
+        !(actionModel.action == IsmChatActionEvents.userBlock ||
+            actionModel.action == IsmChatActionEvents.userBlockConversation ||
+            actionModel.action == IsmChatActionEvents.userUnblock ||
+            actionModel.action ==
+                IsmChatActionEvents.userUnblockConversation)) {
+      return;
+    }
     if (IsmChatUtility.chatPageControllerRegistered) {
       var controller = IsmChatUtility.chatPageController;
 
       if (controller.conversation?.conversationId ==
           actionModel.conversationId) {
         await controller.getConverstaionDetails();
+        final lastTs = controller.messages.isNotEmpty
+            ? controller.messages.last.sentAt
+            : 0;
+        await Future.delayed(const Duration(milliseconds: 600));
         await controller.getMessagesFromAPI(
-          lastMessageTimestamp: controller.messages.last.sentAt,
+          lastMessageTimestamp: lastTs,
         );
+        await controller.getMessagesFromDB(actionModel.conversationId ?? '');
       }
     }
     if (IsmChatUtility.conversationControllerRegistered) {
