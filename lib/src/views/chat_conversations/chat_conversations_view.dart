@@ -108,50 +108,83 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: IsmChatResponsive.isWeb(context)
-                          ? Border(
+                  IsmChatResponsive.isWeb(context)
+                      ? Container(
+                          decoration: BoxDecoration(
+                            border: Border(
                               right: BorderSide(
                                 color: IsmChatConfig.chatTheme.dividerColor ??
                                     IsmChatColors.whiteColor,
                               ),
-                            )
-                          : null,
-                    ),
-                    width: IsmChatResponsive.isWeb(context)
-                        ? IsmChatProperties.sideWidgetWidth ??
-                            IsmChatDimens.percentWidth(.3)
-                        : IsmChatDimens.percentWidth(1),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        if (!IsmChatProperties
-                                .conversationProperties.shouldShowAppBar &&
-                            IsmChatProperties.conversationProperties.header !=
-                                null) ...[
-                          IsmChatProperties.conversationProperties.header ??
-                              IsmChatDimens.box0,
-                        ],
-                        if (IsmChatProperties.conversationProperties
-                                    .allowedConversations.length !=
-                                1 &&
-                            IsmChatProperties.conversationProperties
-                                    .conversationPosition ==
-                                IsmChatConversationPosition.tabBar) ...[
-                          _IsmchatTabBar(),
-                          _IsmChatTabView()
-                        ] else ...[
-                          Obx(
-                            () => Expanded(
-                              child: controller.conversationView[
-                                  controller.currentConversationIndex],
                             ),
-                          )
-                        ]
-                      ],
-                    ),
-                  ),
+                          ),
+                          width: IsmChatProperties.sideWidgetWidth ??
+                              IsmChatDimens.percentWidth(.3),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              if (!IsmChatProperties.conversationProperties
+                                      .shouldShowAppBar &&
+                                  IsmChatProperties
+                                          .conversationProperties.header !=
+                                      null) ...[
+                                IsmChatProperties
+                                        .conversationProperties.header ??
+                                    IsmChatDimens.box0,
+                              ],
+                              if (IsmChatProperties.conversationProperties
+                                          .allowedConversations.length !=
+                                      1 &&
+                                  IsmChatProperties.conversationProperties
+                                          .conversationPosition ==
+                                      IsmChatConversationPosition.tabBar) ...[
+                                _IsmchatTabBar(),
+                                _IsmChatTabView()
+                              ] else ...[
+                                Obx(
+                                  () => Expanded(
+                                    child: controller.conversationView[
+                                        controller.currentConversationIndex],
+                                  ),
+                                )
+                              ]
+                            ],
+                          ),
+                        )
+                      : Expanded(
+                          child: Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                if (!IsmChatProperties.conversationProperties
+                                        .shouldShowAppBar &&
+                                    IsmChatProperties
+                                            .conversationProperties.header !=
+                                        null) ...[
+                                  IsmChatProperties
+                                          .conversationProperties.header ??
+                                      IsmChatDimens.box0,
+                                ],
+                                if (IsmChatProperties.conversationProperties
+                                            .allowedConversations.length !=
+                                        1 &&
+                                    IsmChatProperties.conversationProperties
+                                            .conversationPosition ==
+                                        IsmChatConversationPosition.tabBar) ...[
+                                  _IsmchatTabBar(),
+                                  _IsmChatTabView()
+                                ] else ...[
+                                  Obx(
+                                    () => Expanded(
+                                      child: controller.conversationView[
+                                          controller.currentConversationIndex],
+                                    ),
+                                  )
+                                ]
+                              ],
+                            ),
+                          ),
+                        ),
                   if (IsmChatResponsive.isWeb(context)) ...[
                     Expanded(
                       child: Stack(
