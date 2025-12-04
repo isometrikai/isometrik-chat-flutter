@@ -164,6 +164,11 @@ class IsmChatConversationsController extends GetxController {
   bool get isLoadResponse => _isLoadResponse.value;
   set isLoadResponse(bool value) => _isLoadResponse.value = value;
 
+  /// This variable tracks if background loading of all contacts is in progress
+  final RxBool _isLoadingAllContacts = false.obs;
+  bool get isLoadingAllContacts => _isLoadingAllContacts.value;
+  set isLoadingAllContacts(bool value) => _isLoadingAllContacts.value = value;
+
   /// This variable use for store bool value
   ///
   /// When click search icon set `true` then show search textfiled
@@ -779,6 +784,155 @@ class IsmChatConversationsController extends GetxController {
     }
     callApiOrNot = true;
     return forwardedList;
+  }
+
+  /// Loads all contacts in the background for A-Z navigation.
+  ///
+  /// This method continuously fetches contacts in batches until all contacts are loaded.
+  /// It runs in the background and updates the forwardedList in batches to avoid frequent UI updates.
+  Future<void> loadAllContactsInBackground({
+    String? opponentId,
+    bool isGroupConversation = false,
+  }) async {
+    // Prevent multiple background loading processes
+    if (isLoadingAllContacts) return;
+
+    isLoadingAllContacts = true;
+
+    // Small delay to ensure initial load completes
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    int skip = forwardedList.length;
+    const int limit = 20;
+    bool hasMoreContacts = true;
+
+    // Batch contacts before updating UI (update every 3 batches = 60 contacts)
+    final List<SelectedMembers> batchedContacts = [];
+    const int batchUpdateSize = 3; // Update UI every 3 API calls
+    int batchCount = 0;
+
+    while (hasMoreContacts && callApiOrNot) {
+      try {
+        final response = await _viewModel.getNonBlockUserList(
+          sort: 1,
+          skip: skip,
+          limit: limit,
+          searchTag: '',
+          isLoading: false,
+        );
+
+        final users = response?.users ?? [];
+
+        // If we get less than limit, we've reached the end
+        if (users.isEmpty || users.length < limit) {
+          hasMoreContacts = false;
+        }
+
+        if (users.isNotEmpty) {
+          users.sort((a, b) => a.userName.compareTo(b.userName));
+
+          if (opponentId != null) {
+            users.removeWhere((e) => e.userId == opponentId);
+          }
+
+          // Filter out duplicates and current user
+          final newUsers = users.where((user) {
+            return user.userId !=
+                    IsmChatConfig.communicationConfig.userConfig.userId &&
+                !forwardedList.any(
+                    (existing) => existing.userDetails.userId == user.userId) &&
+                !batchedContacts.any(
+                    (existing) => existing.userDetails.userId == user.userId);
+          }).toList();
+
+          if (newUsers.isNotEmpty) {
+            final newMembers = newUsers
+                .map((e) => SelectedMembers(
+                      isUserSelected: selectedUserList.isEmpty
+                          ? false
+                          : selectedUserList.any((d) => d.userId == e.userId),
+                      userDetails: e,
+                      isBlocked: false,
+                    ))
+                .toList();
+
+            batchedContacts.addAll(newMembers);
+            batchCount++;
+          }
+
+          skip += users.length;
+
+          // Update UI only after collecting multiple batches
+          if (batchCount >= batchUpdateSize || !hasMoreContacts) {
+            if (batchedContacts.isNotEmpty) {
+              // Sort batched contacts before adding
+              batchedContacts.sort((a, b) =>
+                  a.userDetails.userName.compareTo(b.userDetails.userName));
+
+              forwardedList.addAll(batchedContacts);
+              forwardedListDuplicat = List<SelectedMembers>.from(forwardedList);
+
+              // Sort and update suspension tags only once per batch update
+              commonController.handleSorSelectedMembers(forwardedList);
+
+              // Clear batched contacts
+              batchedContacts.clear();
+              batchCount = 0;
+            }
+          }
+        } else {
+          // Update remaining batched contacts before exiting
+          if (batchedContacts.isNotEmpty) {
+            batchedContacts.sort((a, b) =>
+                a.userDetails.userName.compareTo(b.userDetails.userName));
+
+            forwardedList.addAll(batchedContacts);
+            forwardedListDuplicat = List<SelectedMembers>.from(forwardedList);
+            commonController.handleSorSelectedMembers(forwardedList);
+          }
+          hasMoreContacts = false;
+        }
+
+        // Small delay between API calls to avoid overwhelming the server
+        await Future.delayed(const Duration(milliseconds: 200));
+      } catch (e) {
+        IsmChatLog.error('Error loading contacts in background: $e');
+        // Update remaining batched contacts before exiting on error
+        if (batchedContacts.isNotEmpty) {
+          batchedContacts.sort((a, b) =>
+              a.userDetails.userName.compareTo(b.userDetails.userName));
+
+          forwardedList.addAll(batchedContacts);
+          forwardedListDuplicat = List<SelectedMembers>.from(forwardedList);
+          commonController.handleSorSelectedMembers(forwardedList);
+        }
+        hasMoreContacts = false;
+      }
+    }
+
+    isLoadingAllContacts = false;
+  }
+
+  /// Gets the list of alphabets that have contacts.
+  ///
+  /// Returns a list of alphabet letters (A-Z) that have at least one contact
+  List<String> getAvailableAlphabets() {
+    final Set<String> availableLetters = {};
+
+    for (var member in forwardedList) {
+      if (member.userDetails.userName.isNotEmpty) {
+        final firstChar = member.userDetails.userName[0].toUpperCase();
+        // Check if it's a valid letter (A-Z)
+        if (firstChar.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
+            firstChar.codeUnitAt(0) <= 'Z'.codeUnitAt(0)) {
+          availableLetters.add(firstChar);
+        }
+      }
+    }
+
+    // Return sorted list
+    final sortedList = availableLetters.toList()..sort();
+    return sortedList;
   }
 
   /// Clears all messages in a conversation.
@@ -1480,7 +1634,10 @@ class IsmChatConversationsController extends GetxController {
     isLoadResponse = false;
     await getNonBlockUserList(
       opponentId: IsmChatConfig.communicationConfig.userConfig.userId,
+      isGroupConversation: isGroupConversation,
     );
+
+    // No need for background loading - contacts will be fetched on-demand when alphabet is clicked
     if (!isGroupConversation) {
       await getContacts();
     }

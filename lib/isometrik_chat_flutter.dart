@@ -800,6 +800,108 @@ class IsmChat {
     );
   }
 
+  /// Opens the conversation info screen for any user from outside the chat context.
+  ///
+  /// This function allows the host app to display conversation/contact info for any user
+  /// without requiring an active chat session. Similar to [chatFromOutside], but for
+  /// viewing conversation details instead of starting a chat.
+  ///
+  /// **Parameters:**
+  /// - `profileImageUrl`: Profile image URL of the user (optional)
+  /// - `name`: Display name of the user (required)
+  /// - `userIdentifier`: Unique identifier for the user (email, phone, etc.) (required)
+  /// - `userId`: Unique user ID (required)
+  /// - `online`: Whether the user is currently online (required)
+  /// - `metaData`: Optional metadata for the user
+  /// - `conversationId`: Optional conversation ID. If provided, will use this directly.
+  ///                     If not provided, will attempt to find/create conversation.
+  /// - `isGroup`: Whether this is a group conversation (default: false)
+  /// - `conversationImageUrl`: Optional conversation image URL for groups
+  /// - `conversationTitle`: Optional conversation title for groups
+  /// - `customType`: Optional custom type for the conversation
+  /// - `conversationType`: Type of conversation (default: private)
+  /// - `duration`: Duration for loader display (default: 500ms)
+  /// - `isShowLoader`: Whether to show loader during initialization (default: true)
+  ///
+  /// **Example:**
+  /// ```dart
+  /// // Open conversation info for any user from outside
+  /// await IsmChat.i.showConversationInfoFromOutside(
+  ///   name: 'John Doe',
+  ///   userIdentifier: 'john@example.com',
+  ///   userId: 'user123',
+  ///   online: true,
+  ///   profileImageUrl: 'https://example.com/profile.jpg',
+  /// );
+  ///
+  /// // Or with conversation ID
+  /// await IsmChat.i.showConversationInfoFromOutside(
+  ///   name: 'Jane Smith',
+  ///   userIdentifier: 'jane@example.com',
+  ///   userId: 'user456',
+  ///   online: false,
+  ///   conversationId: 'existing-conversation-id',
+  /// );
+  ///
+  /// // For groups
+  /// await IsmChat.i.showConversationInfoFromOutside(
+  ///   name: 'Team Chat',
+  ///   userIdentifier: 'team@example.com',
+  ///   userId: 'group123',
+  ///   online: true,
+  ///   isGroup: true,
+  ///   conversationTitle: 'My Team',
+  ///   conversationImageUrl: 'https://example.com/group.jpg',
+  /// );
+  /// ```
+  Future<void> showConversationInfoFromOutside({
+    String profileImageUrl = '',
+    required String name,
+    required userIdentifier,
+    required String userId,
+    required bool online,
+    IsmChatMetaData? metaData,
+    String? conversationId,
+    bool isGroup = false,
+    String? conversationImageUrl,
+    String? conversationTitle,
+    String? customType,
+    IsmChatConversationType conversationType = IsmChatConversationType.private,
+    Duration duration = const Duration(milliseconds: 500),
+    bool isShowLoader = true,
+  }) async {
+    assert(
+      [name, userId].every((e) => e.isNotEmpty),
+      '''Input Error: Please make sure that all required fields are filled out.
+      Name, and userId cannot be empty.''',
+    );
+    if (isGroup) {
+      assert(
+        [conversationImageUrl ?? '', conversationTitle ?? '']
+            .every((e) => e.isNotEmpty),
+        '''Input Error: Please make sure that all required fields are filled out.
+      ConversationImageUrl, and ConversationTitle cannot be empty for groups.''',
+      );
+    }
+
+    await _delegate.showConversationInfoFromOutside(
+      name: name,
+      userIdentifier: userIdentifier,
+      userId: userId,
+      online: online,
+      profileImageUrl: profileImageUrl,
+      metaData: metaData,
+      conversationId: conversationId,
+      isGroup: isGroup,
+      conversationImageUrl: conversationImageUrl,
+      conversationTitle: conversationTitle,
+      customType: customType,
+      conversationType: conversationType,
+      duration: duration,
+      isShowLoader: isShowLoader,
+    );
+  }
+
   /// Retrieves a message on the chat page.
   ///
   /// This method is used to fetch a message on the chat page. It can be used to
