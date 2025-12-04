@@ -134,8 +134,8 @@ class IsmChatCreateConversationView extends StatelessWidget {
                             if (scrollNotification is ScrollEndNotification) {
                               if (scrollNotification.metrics.pixels >
                                   scrollNotification.metrics.maxScrollExtent *
-                                      0.3) {
-                                /// call the api only on down scroll
+                                      0.7) {
+                                /// call the api only on down scroll for pagination
                                 unawaited(controller.getNonBlockUserList(
                                   isGroupConversation: isGroupConversation,
                                   opponentId: IsmChatConfig
@@ -147,177 +147,11 @@ class IsmChatCreateConversationView extends StatelessWidget {
 
                           return true;
                         },
-                        child: AzListView(
-                          data: controller.forwardedList,
-                          itemCount: controller.forwardedList.length,
-                          indexHintBuilder: (context, hint) => Container(
-                            alignment: Alignment.center,
-                            width: IsmChatDimens.eighty,
-                            height: IsmChatDimens.eighty,
-                            decoration: BoxDecoration(
-                              color: IsmChatConfig.chatTheme.primaryColor,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              hint,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 30.0,
-                              ),
-                            ),
-                          ),
-                          indexBarData: isGroupConversation
-                              ? const []
-                              : SuspensionUtil.getTagIndexList(
-                                  controller.forwardedList),
-                          indexBarMargin: IsmChatDimens.edgeInsets10,
-                          indexBarHeight: IsmChatDimens.percentHeight(5),
-                          indexBarWidth: IsmChatDimens.forty,
-                          indexBarItemHeight: IsmChatDimens.twenty,
-                          indexBarOptions: IndexBarOptions(
-                            indexHintDecoration: const BoxDecoration(
-                                color: IsmChatColors.whiteColor),
-                            indexHintChildAlignment: Alignment.center,
-                            selectTextStyle: IsmChatStyles.w400White12,
-                            selectItemDecoration: BoxDecoration(
-                              color: IsmChatConfig.chatTheme.primaryColor,
-                              shape: BoxShape.circle,
-                            ),
-                            needRebuild: true,
-                            indexHintHeight: IsmChatDimens.percentHeight(.2),
-                          ),
-                          itemBuilder: (_, int index) {
-                            var user = controller.forwardedList[index];
-                            var susTag = user.getSuspensionTag();
-                            if (user.userDetails.userId ==
-                                IsmChatConfig
-                                    .communicationConfig.userConfig.userId) {
-                              return const SizedBox.shrink();
-                            }
-                            return Column(
-                              children: [
-                                if (index == 0 &&
-                                    !isGroupConversation &&
-                                    IsmChatConfig.communicationConfig.userConfig
-                                            .accessToken !=
-                                        null)
-                                  const ChatModes(),
-                                Offstage(
-                                  offstage: user.isShowSuspension != true,
-                                  child: IsmChatUtility.buildSusWidget(susTag),
-                                ),
-                                ColoredBox(
-                                  color: user.isUserSelected
-                                      ? IsmChatConfig.chatTheme.primaryColor!
-                                          .applyIsmOpacity(.2)
-                                      : Colors.transparent,
-                                  child: ListTile(
-                                    onTap: () async {
-                                      if (isGroupConversation) {
-                                        controller.onForwardUserTap(index);
-                                        controller
-                                            .isSelectedUser(user.userDetails);
-                                      } else {
-                                        if (controller.forwardedList[index]
-                                                .localContacts ==
-                                            true) {
-                                          IsmChatUtility.toSMS(controller
-                                              .forwardedList[index]
-                                              .userDetails
-                                              .userIdentifier);
-                                          return;
-                                        }
-                                        var ismChatConversation =
-                                            IsmChatConversationModel(
-                                                messagingDisabled: false,
-                                                conversationImageUrl: user
-                                                    .userDetails
-                                                    .userProfileImageUrl,
-                                                isGroup: false,
-                                                opponentDetails:
-                                                    user.userDetails,
-                                                unreadMessagesCount: 0,
-                                                lastMessageDetails:
-                                                    LastMessageDetails(
-                                                  sentByMe: true,
-                                                  showInConversation: true,
-                                                  sentAt: DateTime.now()
-                                                      .millisecondsSinceEpoch,
-                                                  senderName: '',
-                                                  messageType: 0,
-                                                  messageId: '',
-                                                  conversationId: '',
-                                                  body: '',
-                                                ),
-                                                lastMessageSentAt: 0,
-                                                membersCount: 1,
-                                                conversationType:
-                                                    conversationType);
-                                        ismChatConversation =
-                                            ismChatConversation.copyWith(
-                                          conversationId:
-                                              controller.getConversationId(
-                                            user.userDetails.userId,
-                                          ),
-                                        );
-                                        IsmChatRoute.goBack<void>();
-                                        IsmChatProperties
-                                            .conversationProperties.onChatTap
-                                            ?.call(_, ismChatConversation);
-                                        controller.updateLocalConversation(
-                                            ismChatConversation);
-                                        await controller.goToChatPage();
-                                      }
-                                    },
-                                    dense: true,
-                                    mouseCursor: SystemMouseCursors.click,
-                                    leading: IsmChatImage.profile(
-                                      user.userDetails.userProfileImageUrl,
-                                      name: user.userDetails.userName,
-                                    ),
-                                    title: Text(
-                                      user.userDetails.userName,
-                                      style: IsmChatStyles.w600Black14,
-                                    ),
-                                    subtitle: Text(
-                                      IsmChatProperties.conversationProperties
-                                              .opponentSubTitle
-                                              ?.call(
-                                                  context, user.userDetails) ??
-                                          user.userDetails.userIdentifier,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: IsmChatStyles.w400Black12,
-                                    ),
-                                    trailing: !isGroupConversation
-                                        ? null
-                                        : Container(
-                                            padding:
-                                                IsmChatDimens.edgeInsets8_4,
-                                            decoration: BoxDecoration(
-                                              color: IsmChatConfig
-                                                  .chatTheme.primaryColor
-                                                  ?.applyIsmOpacity(.2),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      IsmChatDimens.eight),
-                                            ),
-                                            child: Text(
-                                              user.isUserSelected
-                                                  ? 'Remove'
-                                                  : 'Add',
-                                              style: IsmChatStyles.w400Black12
-                                                  .copyWith(
-                                                color: IsmChatConfig
-                                                    .chatTheme.primaryColor,
-                                              ),
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                        child: _AlphabetAwareAzListView(
+                          controller: controller,
+                          isGroupConversation: isGroupConversation,
+                          forwardedList: controller.forwardedList,
+                          conversationType: conversationType,
                         ),
                       ),
                     ),
@@ -496,6 +330,182 @@ class IsmChatCreateConversationView extends StatelessWidget {
                 ),
         ),
       );
+}
+
+/// A custom AzListView wrapper that handles alphabet clicks and fetches missing contacts
+class _AlphabetAwareAzListView extends StatefulWidget {
+  const _AlphabetAwareAzListView({
+    required this.controller,
+    required this.isGroupConversation,
+    required this.forwardedList,
+    required this.conversationType,
+  });
+
+  final IsmChatConversationsController controller;
+  final bool isGroupConversation;
+  final List<SelectedMembers> forwardedList;
+  final IsmChatConversationType conversationType;
+
+  @override
+  State<_AlphabetAwareAzListView> createState() =>
+      _AlphabetAwareAzListViewState();
+}
+
+class _AlphabetAwareAzListViewState extends State<_AlphabetAwareAzListView> {
+  @override
+  Widget build(BuildContext context) {
+    // Get only the alphabets that have contacts
+    final availableAlphabets = widget.isGroupConversation
+        ? <String>[]
+        : widget.controller.getAvailableAlphabets();
+
+    // AzListView automatically handles scrolling to contacts if they exist
+    // Only show clickable letters that have contacts
+    return AzListView(
+      data: widget.forwardedList,
+      itemCount: widget.forwardedList.length,
+      indexHintBuilder: (context, hint) => Container(
+        alignment: Alignment.center,
+        width: IsmChatDimens.eighty,
+        height: IsmChatDimens.eighty,
+        decoration: BoxDecoration(
+          color: IsmChatConfig.chatTheme.primaryColor,
+          shape: BoxShape.circle,
+        ),
+        child: Text(
+          hint,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 30.0,
+          ),
+        ),
+      ),
+      indexBarData: availableAlphabets,
+      indexBarMargin: IsmChatDimens.edgeInsets10,
+      indexBarHeight: IsmChatDimens.percentHeight(5),
+      indexBarWidth: IsmChatDimens.forty,
+      indexBarItemHeight: IsmChatDimens.twenty,
+      indexBarOptions: IndexBarOptions(
+        indexHintDecoration:
+            const BoxDecoration(color: IsmChatColors.whiteColor),
+        indexHintChildAlignment: Alignment.center,
+        selectTextStyle: IsmChatStyles.w400White12,
+        selectItemDecoration: BoxDecoration(
+          color: IsmChatConfig.chatTheme.primaryColor,
+          shape: BoxShape.circle,
+        ),
+        needRebuild: true,
+        indexHintHeight: IsmChatDimens.percentHeight(.2),
+      ),
+      itemBuilder: (_, int index) {
+        var user = widget.forwardedList[index];
+        var susTag = user.getSuspensionTag();
+        if (user.userDetails.userId ==
+            IsmChatConfig.communicationConfig.userConfig.userId) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          children: [
+            if (index == 0 &&
+                !widget.isGroupConversation &&
+                IsmChatConfig.communicationConfig.userConfig.accessToken !=
+                    null)
+              const ChatModes(),
+            Offstage(
+              offstage: user.isShowSuspension != true,
+              child: IsmChatUtility.buildSusWidget(susTag),
+            ),
+            ColoredBox(
+              color: user.isUserSelected
+                  ? IsmChatConfig.chatTheme.primaryColor!.applyIsmOpacity(.2)
+                  : Colors.transparent,
+              child: ListTile(
+                onTap: () async {
+                  if (widget.isGroupConversation) {
+                    widget.controller.onForwardUserTap(index);
+                    widget.controller.isSelectedUser(user.userDetails);
+                  } else {
+                    if (widget.controller.forwardedList[index].localContacts ==
+                        true) {
+                      IsmChatUtility.toSMS(widget.controller
+                          .forwardedList[index].userDetails.userIdentifier);
+                      return;
+                    }
+                    var ismChatConversation = IsmChatConversationModel(
+                        messagingDisabled: false,
+                        conversationImageUrl:
+                            user.userDetails.userProfileImageUrl,
+                        isGroup: false,
+                        opponentDetails: user.userDetails,
+                        unreadMessagesCount: 0,
+                        lastMessageDetails: LastMessageDetails(
+                          sentByMe: true,
+                          showInConversation: true,
+                          sentAt: DateTime.now().millisecondsSinceEpoch,
+                          senderName: '',
+                          messageType: 0,
+                          messageId: '',
+                          conversationId: '',
+                          body: '',
+                        ),
+                        lastMessageSentAt: 0,
+                        membersCount: 1,
+                        conversationType: widget.conversationType);
+                    ismChatConversation = ismChatConversation.copyWith(
+                      conversationId: widget.controller.getConversationId(
+                        user.userDetails.userId,
+                      ),
+                    );
+                    IsmChatRoute.goBack<void>();
+                    IsmChatProperties.conversationProperties.onChatTap
+                        ?.call(_, ismChatConversation);
+                    widget.controller
+                        .updateLocalConversation(ismChatConversation);
+                    await widget.controller.goToChatPage();
+                  }
+                },
+                dense: true,
+                mouseCursor: SystemMouseCursors.click,
+                leading: IsmChatImage.profile(
+                  user.userDetails.userProfileImageUrl,
+                  name: user.userDetails.userName,
+                ),
+                title: Text(
+                  user.userDetails.userName,
+                  style: IsmChatStyles.w600Black14,
+                ),
+                subtitle: Text(
+                  IsmChatProperties.conversationProperties.opponentSubTitle
+                          ?.call(context, user.userDetails) ??
+                      user.userDetails.userIdentifier,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: IsmChatStyles.w400Black12,
+                ),
+                trailing: !widget.isGroupConversation
+                    ? null
+                    : Container(
+                        padding: IsmChatDimens.edgeInsets8_4,
+                        decoration: BoxDecoration(
+                          color: IsmChatConfig.chatTheme.primaryColor
+                              ?.applyIsmOpacity(.2),
+                          borderRadius:
+                              BorderRadius.circular(IsmChatDimens.eight),
+                        ),
+                        child: Text(
+                          user.isUserSelected ? 'Remove' : 'Add',
+                          style: IsmChatStyles.w400Black12.copyWith(
+                            color: IsmChatConfig.chatTheme.primaryColor,
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class _GroupChatImageAndName extends StatelessWidget {

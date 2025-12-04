@@ -140,7 +140,7 @@ Path: `android` > `app` > `build.gradle`
 
    ```gradle
    android {
-       compileSdkVersion 33
+       compileSdkVersion 36
 
        defaultConfig {
            multiDexEnabled true

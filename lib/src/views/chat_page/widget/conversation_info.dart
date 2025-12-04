@@ -4,7 +4,27 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatConverstaionInfoView extends StatelessWidget {
-  IsmChatConverstaionInfoView({super.key});
+  /// Creates a conversation info view widget.
+  ///
+  /// **Parameters:**
+  /// - `conversationId`: Optional conversation ID. If provided, will fetch details for this conversation.
+  /// - `conversation`: Optional conversation model. If provided, will use this directly.
+  ///                   If both are null, will use the current conversation from chat page controller.
+  ///
+  /// **Usage:**
+  /// - When called from within chat context: `IsmChatConverstaionInfoView()`
+  /// - When called from outside: `IsmChatConverstaionInfoView(conversationId: '...', conversation: ...)`
+  IsmChatConverstaionInfoView({
+    super.key,
+    this.conversationId,
+    this.conversation,
+  });
+
+  /// Optional conversation ID to fetch details for
+  final String? conversationId;
+
+  /// Optional conversation model to display
+  final IsmChatConversationModel? conversation;
 
   final conversationController = IsmChatUtility.conversationController;
 
@@ -15,8 +35,37 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
           conversationController.mediaList.clear();
           conversationController.mediaListLinks.clear();
           conversationController.mediaListDocs.clear();
+
           var controller = IsmChatUtility.chatPageController;
-          await controller.getConverstaionDetails();
+
+          // If conversation is provided, set it directly
+          if (conversation != null) {
+            controller.conversation = conversation;
+          }
+
+          // If conversationId is provided but conversation is not set, fetch details
+          if (conversationId != null &&
+              conversationId!.isNotEmpty &&
+              conversation == null) {
+            // Try to get conversation from controller or database
+            final existingConversation = controller.conversationController
+                .getConversation(conversationId!);
+            if (existingConversation != null) {
+              controller.conversation = existingConversation;
+            } else {
+              // Try to get from database
+              final dbConversation = await IsmChatConfig.dbWrapper
+                  ?.getConversation(conversationId!);
+              if (dbConversation != null) {
+                controller.conversation = dbConversation;
+              }
+            }
+          }
+
+          // Fetch conversation details if conversation is set
+          if (controller.conversation != null) {
+            await controller.getConverstaionDetails();
+          }
         },
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.blueGreyColor,
