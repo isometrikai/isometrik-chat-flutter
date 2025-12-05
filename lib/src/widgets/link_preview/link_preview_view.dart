@@ -88,7 +88,7 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
 
         if (response.statusCode == 200) {
           final jsonResponse =
-          jsonDecode(response.body) as Map<String, dynamic>;
+              jsonDecode(response.body) as Map<String, dynamic>;
           final htmlString = jsonResponse['contents'] as String?;
 
           if (htmlString == null || htmlString.isEmpty) {
@@ -121,18 +121,18 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
       final document = html_parser.parse(htmlString);
 
       final title = document
-          .querySelector("meta[property='og:title']")
-          ?.attributes['content'] ??
+              .querySelector("meta[property='og:title']")
+              ?.attributes['content'] ??
           document.querySelector('title')?.text;
       final description = document
-          .querySelector("meta[property='og:description']")
-          ?.attributes['content'] ??
+              .querySelector("meta[property='og:description']")
+              ?.attributes['content'] ??
           document
               .querySelector("meta[name='description']")
               ?.attributes['content'];
       var imageUrl = document
-          .querySelector("meta[property='og:image']")
-          ?.attributes['content'] ??
+              .querySelector("meta[property='og:image']")
+              ?.attributes['content'] ??
           document
               .querySelector("meta[property='twitter:image']")
               ?.attributes['content'];
@@ -144,8 +144,8 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
 
       imageUrl = _resolveUrl(imageUrl, url);
       var additionalLink = document
-          .querySelector("meta[property='og:url']")
-          ?.attributes['content'] ??
+              .querySelector("meta[property='og:url']")
+              ?.attributes['content'] ??
           document.querySelector('a')?.attributes['href'];
 
       additionalLink = _resolveUrl(additionalLink, url);
@@ -170,6 +170,17 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
     return url;
   }
 
+  Color _getLinkPreviewColor() {
+    final theme = IsmChatConfig.chatTheme.chatPageTheme;
+    if (widget.message.sentByMe) {
+      return theme?.selfMessageTheme?.linkPreviewColor ??
+          IsmChatColors.pureBlue;
+    }
+    return theme?.opponentMessageTheme?.linkPreviewColor ??
+        IsmChatConfig.chatTheme.mentionColor ??
+        IsmChatColors.pureBlue;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading || _isError) {
@@ -192,8 +203,8 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
             widget.url,
             style: widget.message.style.copyWith(
               decoration: TextDecoration.underline,
-              decorationColor: IsmChatColors.pureBlue,
-              color: IsmChatColors.pureBlue,
+              decorationColor: _getLinkPreviewColor(),
+              color: _getLinkPreviewColor(),
             ),
             softWrap: true,
             overflow: TextOverflow.ellipsis,
@@ -208,57 +219,57 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
   }
 
   Widget _buildMetadataContent() => IsmChatTapHandler(
-    onTap: () => launchUrl(Uri.parse(widget.url.convertToValidUrl)),
-    child: ListView(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: IsmChatDimens.edgeInsets10_0,
-      shrinkWrap: true,
-      children: [
-        IsmChatDimens.boxHeight10,
-        Image.network(
-          _metadata?.imageUrl ?? '',
-          errorBuilder: (_, __, ___) => IsmChatDimens.box0,
-          height: (IsmChatResponsive.isWeb(context))
-              ? context.height * .2
-              : context.height * .15,
-          fit: BoxFit.contain,
+        onTap: () => launchUrl(Uri.parse(widget.url.convertToValidUrl)),
+        child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: IsmChatDimens.edgeInsets10_0,
+          shrinkWrap: true,
+          children: [
+            IsmChatDimens.boxHeight10,
+            Image.network(
+              _metadata?.imageUrl ?? '',
+              errorBuilder: (_, __, ___) => IsmChatDimens.box0,
+              height: (IsmChatResponsive.isWeb(context))
+                  ? context.height * .2
+                  : context.height * .15,
+              fit: BoxFit.contain,
+            ),
+            IsmChatDimens.boxHeight10,
+            Text(
+              _metadata?.title ?? '',
+              style: widget.message.style.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: (widget.message.style.fontSize ?? 0) + 5),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              textAlign: TextAlign.start,
+            ),
+            IsmChatDimens.boxHeight5,
+            Text(
+              _metadata?.description ?? '',
+              style: widget.message.style,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              textAlign: TextAlign.start,
+            ),
+            IsmChatDimens.boxHeight5,
+            Text(
+              widget.url,
+              style: widget.message.style.copyWith(
+                decoration: TextDecoration.underline,
+                decorationColor: _getLinkPreviewColor(),
+                color: _getLinkPreviewColor(),
+              ),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              textAlign: TextAlign.start,
+            ),
+          ],
         ),
-        IsmChatDimens.boxHeight10,
-        Text(
-          _metadata?.title ?? '',
-          style: widget.message.style.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: (widget.message.style.fontSize ?? 0) + 5),
-          softWrap: true,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-          textAlign: TextAlign.start,
-        ),
-        IsmChatDimens.boxHeight5,
-        Text(
-          _metadata?.description ?? '',
-          style: widget.message.style,
-          softWrap: true,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-          textAlign: TextAlign.start,
-        ),
-        IsmChatDimens.boxHeight5,
-        Text(
-          widget.url,
-          style: widget.message.style.copyWith(
-            decoration: TextDecoration.underline,
-            decorationColor: IsmChatColors.pureBlue,
-            color: IsmChatColors.pureBlue,
-          ),
-          softWrap: true,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-          textAlign: TextAlign.start,
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 class MetaDataResponse {

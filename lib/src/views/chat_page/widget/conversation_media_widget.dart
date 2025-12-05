@@ -30,6 +30,7 @@ class ConversationMediaWidget extends StatelessWidget {
             ? Icon(
                 iconData,
                 color: IsmChatConfig.chatTheme.primaryColor,
+                size: IsmChatDimens.sixty,
               )
             : IsmChatImage(
                 url,
