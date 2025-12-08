@@ -262,6 +262,13 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                                       [])
                                                   .map(
                                                   (e) {
+                                                    if (e.userId ==
+                                                        IsmChatConfig
+                                                            .communicationConfig
+                                                            .userConfig
+                                                            .userId) {
+                                                      return IsmChatStrings.you;
+                                                    }
                                                     final name =
                                                         '${e.metaData?.firstName ?? ''} ${e.metaData?.lastName ?? ''} ';
                                                     if (name

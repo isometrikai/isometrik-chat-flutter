@@ -115,6 +115,7 @@ class IsmChatStrings {
 
   static const String createGroupAlert =
       'Select at least one user, add group name and choose one photo';
+  static const String youCreatedGroup = 'You created group';
   static const String admin = 'Admin';
   static const String add = 'Add';
   static const String contactAppear =
@@ -152,6 +153,7 @@ class IsmChatStrings {
   static const String links = 'Links';
   static const String docs = 'Docs';
   static const String readby = 'Read by';
+  static const String playedby = 'Played by';
   static const String deliveredTo = 'Delivered to';
   static const String deletedMessage = 'You deleted this message';
   static const String wasDeletedMessage = 'This message was deleted';

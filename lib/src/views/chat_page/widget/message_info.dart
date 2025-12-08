@@ -117,12 +117,22 @@ class IsmChatMessageInfo extends StatelessWidget {
                                   .readMessageMembers.isNotEmpty) ...[
                                 _UserInfo(
                                   userList: chatController.readMessageMembers,
-                                  title: IsmChatStrings.readby,
+                                  title: (message.customType ==
+                                              IsmChatCustomMessageType.audio ||
+                                          message.customType ==
+                                              IsmChatCustomMessageType.video)
+                                      ? IsmChatStrings.playedby
+                                      : IsmChatStrings.readby,
                                   isRead: true,
                                 ),
                               ] else ...[
-                                const MessageReadDelivered(
-                                  title: IsmChatStrings.readby,
+                                MessageReadDelivered(
+                                  title: (message.customType ==
+                                              IsmChatCustomMessageType.audio ||
+                                          message.customType ==
+                                              IsmChatCustomMessageType.video)
+                                      ? IsmChatStrings.playedby
+                                      : IsmChatStrings.readby,
                                 )
                               ],
                             ],
@@ -201,7 +211,15 @@ class IsmChatMessageInfo extends StatelessWidget {
                                             size: IsmChatDimens.twenty,
                                           ),
                                           IsmChatDimens.boxWidth14,
-                                          Text('Read',
+                                          Text(
+                                              (message.customType ==
+                                                          IsmChatCustomMessageType
+                                                              .audio ||
+                                                      message.customType ==
+                                                          IsmChatCustomMessageType
+                                                              .video)
+                                                  ? 'Played'
+                                                  : 'Read',
                                               style: IsmChatStyles.w400Black12
                                                   .copyWith(
                                                 fontSize:
