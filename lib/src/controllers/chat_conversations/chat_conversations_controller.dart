@@ -1975,6 +1975,11 @@ class IsmChatConversationsController extends GetxController {
       chatPagecontroller.startInit(isBroadcasts: true);
       chatPagecontroller.closeOverlay();
     } else {
+      if (!IsmChatUtility.chatPageControllerRegistered) {
+        IsmChatPageBinding().dependencies();
+      }
+      final chatPagecontroller = IsmChatUtility.chatPageController;
+      chatPagecontroller.isBroadcast = true;
       IsmChatRoute.goToRoute(const IsmChatBoradcastMessagePage());
     }
   }

@@ -23,69 +23,72 @@ class IsmChatMetaData {
     this.messageSentAt,
     this.isOnelyEmoji,
     this.blockedMessage,
+    this.isBroadCastMessage,
+    this.groupCastId,
   });
 
   factory IsmChatMetaData.fromMap(Map<String, dynamic> map) {
     var data = IsmChatMetaData(
-      caption: map['caption'] != null
-          ? map['caption'] as String? ?? ''
-          : map['captionMessage'] != null
-              ? map['captionMessage'] as String? ?? ''
-              : '',
-      locationAddress: map['locationAddress'] as String? ?? '',
-      locationSubAddress: map['locationSubAddress'] as String? ?? '',
-      profilePic: map['profilePic'] as String? ?? '',
-      firstName: map['firstName'] as String? ?? '',
-      lastName: map['lastName'] as String? ?? '',
-      customType: map['customType'].runtimeType == String
-          ? {'${map['customType']}': map['customType']}
-          : map['customType'] as Map<String, dynamic>? ?? {},
-      customMetaData: map['customMetaData'] != null
-          ? map['customMetaData'] as Map<String, dynamic>? ?? {}
-          : map,
-      assetList: map['assetList'] == null
-          ? []
-          : List<Map<String, IsmChatBackgroundModel>>.from(
-              map['assetList'].map(
-                (x) => Map.from(x).map(
-                  (k, v) => MapEntry<String, IsmChatBackgroundModel>(
-                    k,
-                    v.runtimeType == String
-                        ? IsmChatBackgroundModel.fromJson(v)
-                        : IsmChatBackgroundModel.fromMap(v),
+        caption: map['caption'] != null
+            ? map['caption'] as String? ?? ''
+            : map['captionMessage'] != null
+                ? map['captionMessage'] as String? ?? ''
+                : '',
+        locationAddress: map['locationAddress'] as String? ?? '',
+        locationSubAddress: map['locationSubAddress'] as String? ?? '',
+        profilePic: map['profilePic'] as String? ?? '',
+        firstName: map['firstName'] as String? ?? '',
+        lastName: map['lastName'] as String? ?? '',
+        customType: map['customType'].runtimeType == String
+            ? {'${map['customType']}': map['customType']}
+            : map['customType'] as Map<String, dynamic>? ?? {},
+        customMetaData: map['customMetaData'] != null
+            ? map['customMetaData'] as Map<String, dynamic>? ?? {}
+            : map,
+        assetList: map['assetList'] == null
+            ? []
+            : List<Map<String, IsmChatBackgroundModel>>.from(
+                map['assetList'].map(
+                  (x) => Map.from(x).map(
+                    (k, v) => MapEntry<String, IsmChatBackgroundModel>(
+                      k,
+                      v.runtimeType == String
+                          ? IsmChatBackgroundModel.fromJson(v)
+                          : IsmChatBackgroundModel.fromMap(v),
+                    ),
                   ),
                 ),
-              ),
-            ).toList(),
-      duration: Duration(seconds: map['duration'] as int? ?? 0),
-      replyMessage: map['replyMessage'] != null
-          ? IsmChatReplyMessageModel.fromMap(
-              map['replyMessage'] as Map<String, dynamic>)
-          : null,
-      contacts: map['contacts'] != null
-          ? List<IsmChatContactMetaDatModel>.from(
-              (map['contacts'] as List).map<IsmChatContactMetaDatModel?>(
-                (x) => IsmChatContactMetaDatModel.fromMap(
-                    x as Map<String, dynamic>),
-              ),
-            )
-          : null,
-      senderInfo: map['senderInfo'] != null
-          ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
-          : null,
-      isDownloaded: map['isDownloaded'] as bool? ?? true,
-      isOnelyEmoji: map['isOnelyEmoji'] as bool? ?? false,
-      messageSentAt: map['messageSentAt'] as int? ?? 0,
-      aboutText: map['aboutText'] != null
-          ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
-          : map['about'] != null
-              ? AboutTextModel(title: map['about'] as String? ?? '')
-              : null,
-      blockedMessage: map['blockedMessage'] != null
-          ? IsmChatMessageModel.fromMap(
-              map['blockedMessage'] as Map<String, dynamic>)
-          : null,
-    );
+              ).toList(),
+        duration: Duration(seconds: map['duration'] as int? ?? 0),
+        replyMessage: map['replyMessage'] != null
+            ? IsmChatReplyMessageModel.fromMap(
+                map['replyMessage'] as Map<String, dynamic>)
+            : null,
+        contacts: map['contacts'] != null
+            ? List<IsmChatContactMetaDatModel>.from(
+                (map['contacts'] as List).map<IsmChatContactMetaDatModel?>(
+                  (x) => IsmChatContactMetaDatModel.fromMap(
+                      x as Map<String, dynamic>),
+                ),
+              )
+            : null,
+        senderInfo: map['senderInfo'] != null
+            ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
+            : null,
+        isDownloaded: map['isDownloaded'] as bool? ?? true,
+        isOnelyEmoji: map['isOnelyEmoji'] as bool? ?? false,
+        messageSentAt: map['messageSentAt'] as int? ?? 0,
+        aboutText: map['aboutText'] != null
+            ? AboutTextModel.fromMap(map['aboutText'] as Map<String, dynamic>)
+            : map['about'] != null
+                ? AboutTextModel(title: map['about'] as String? ?? '')
+                : null,
+        blockedMessage: map['blockedMessage'] != null
+            ? IsmChatMessageModel.fromMap(
+                map['blockedMessage'] as Map<String, dynamic>)
+            : null,
+        isBroadCastMessage: map['isBroadCastMessage'] as bool? ?? false,
+        groupCastId: map['groupCastId'] as String? ?? '');
     return data;
   }
 
@@ -114,30 +117,32 @@ class IsmChatMetaData {
   final int? messageSentAt;
   final bool? isOnelyEmoji;
   final IsmChatMessageModel? blockedMessage;
-
-  IsmChatMetaData copyWith({
-    String? parentMessageBody,
-    String? locationAddress,
-    String? locationSubAddress,
-    String? profilePic,
-    String? lastName,
-    String? firstName,
-    List<IsmChatContactMetaDatModel>? contacts,
-    bool? parentMessageInitiator,
-    Map<String, dynamic>? customType,
-    Map<String, dynamic>? customMetaData,
-    List<Map<String, IsmChatBackgroundModel>>? assetList,
-    Duration? duration,
-    String? captionMessage,
-    IsmChatCustomMessageType? replayMessageCustomType,
-    IsmChatReplyMessageModel? replyMessage,
-    UserDetails? senderInfo,
-    AboutTextModel? aboutText,
-    bool? isDownloaded,
-    int? messageSentAt,
-    bool? isOnelyEmoji,
-    IsmChatMessageModel? blockedMessage,
-  }) =>
+  final bool? isBroadCastMessage;
+  final String? groupCastId;
+  IsmChatMetaData copyWith(
+          {String? parentMessageBody,
+          String? locationAddress,
+          String? locationSubAddress,
+          String? profilePic,
+          String? lastName,
+          String? firstName,
+          List<IsmChatContactMetaDatModel>? contacts,
+          bool? parentMessageInitiator,
+          Map<String, dynamic>? customType,
+          Map<String, dynamic>? customMetaData,
+          List<Map<String, IsmChatBackgroundModel>>? assetList,
+          Duration? duration,
+          String? captionMessage,
+          IsmChatCustomMessageType? replayMessageCustomType,
+          IsmChatReplyMessageModel? replyMessage,
+          UserDetails? senderInfo,
+          AboutTextModel? aboutText,
+          bool? isDownloaded,
+          int? messageSentAt,
+          bool? isOnelyEmoji,
+          IsmChatMessageModel? blockedMessage,
+          bool? isBroadCastMessage,
+          String? groupCastId}) =>
       IsmChatMetaData(
         locationAddress: locationAddress ?? this.locationAddress,
         locationSubAddress: locationSubAddress ?? this.locationSubAddress,
@@ -156,6 +161,8 @@ class IsmChatMetaData {
         isOnelyEmoji: isOnelyEmoji ?? this.isOnelyEmoji,
         messageSentAt: messageSentAt ?? this.messageSentAt,
         blockedMessage: blockedMessage,
+        isBroadCastMessage: isBroadCastMessage ?? this.isBroadCastMessage,
+        groupCastId: groupCastId ?? this.groupCastId,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -177,13 +184,15 @@ class IsmChatMetaData {
         'messageSentAt': messageSentAt,
         'aboutText': aboutText?.toMap(),
         'blockedMessage': blockedMessage?.toMap(),
+        'isBroadCastMessage': isBroadCastMessage,
+        'groupCastId': groupCastId,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo ,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt, customMetaData : $customMetaData, isOnelyEmoji : $isOnelyEmoji, blockedMessage : $blockedMessage)';
+      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo ,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt, customMetaData : $customMetaData, isOnelyEmoji : $isOnelyEmoji, blockedMessage : $blockedMessage, isBroadCastMessage : $isBroadCastMessage,groupCastId : $groupCastId)';
 
   @override
   bool operator ==(covariant IsmChatMetaData other) {
@@ -206,7 +215,9 @@ class IsmChatMetaData {
         other.messageSentAt == messageSentAt &&
         other.aboutText == aboutText &&
         other.isOnelyEmoji == isOnelyEmoji &&
-        other.blockedMessage == blockedMessage;
+        other.blockedMessage == blockedMessage &&
+        other.isBroadCastMessage == isBroadCastMessage &&
+        other.groupCastId == groupCastId;
   }
 
   @override
@@ -228,5 +239,7 @@ class IsmChatMetaData {
       messageSentAt.hashCode ^
       aboutText.hashCode ^
       isOnelyEmoji.hashCode ^
-      blockedMessage.hashCode;
+      blockedMessage.hashCode ^
+      isBroadCastMessage.hashCode ^
+      groupCastId.hashCode;
 }
