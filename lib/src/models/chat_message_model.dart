@@ -65,10 +65,24 @@ class IsmChatMessageModel {
       IsmChatMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   factory IsmChatMessageModel.fromMap(Map<String, dynamic> map) {
+    // Check if this is a broadcast message and get groupcastId from metaData for decryption
+    final metaDataMap = map['metaData'] as Map<String, dynamic>?;
+    final isBroadcastMessage =
+        metaDataMap?['isBroadCastMessage'] as bool? ?? false;
+    final groupcastIdFromMetaData =
+        metaDataMap?['groupCastId'] as String? ?? '';
+
+    // For broadcast messages, use groupcastId from metaData if available, otherwise use conversationId
+    final conversationId = map['conversationId'] as String? ?? '';
+    final decryptionId =
+        isBroadcastMessage && groupcastIdFromMetaData.isNotEmpty
+            ? groupcastIdFromMetaData
+            : conversationId;
+
     var model = IsmChatMessageModel(
       body: IsmChatUtility.decryptMessage(
         map['body'] as String? ?? '',
-        map['conversationId'] as String? ?? '',
+        decryptionId,
       ),
       action: map['action'] as String? ?? '',
       updatedAt: map['updatedAt'] as int? ?? 0,

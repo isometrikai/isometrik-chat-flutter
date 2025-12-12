@@ -70,7 +70,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         IsmChatConfig.paidWalletModel?.apiUrl ?? '',
       );
     } else if (_controller.conversation?.customType !=
-        IsmChatStrings.broadcast) {
+            IsmChatStrings.broadcast &&
+        _controller.conversation?.customType != null) {
       final isMessageSent = await _controller.commonController.sendMessage(
         showInConversation: true,
         encrypted: encrypted,
@@ -118,6 +119,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         mentionedUsers: mentionedUsers,
         parentMessageId: parentMessageId,
         sendPushNotification: sendPushNotification,
+        encrypted: encrypted,
       );
     }
   }
@@ -1304,8 +1306,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
     List<Map<String, dynamic>>? mentionedUsers,
     bool isLoading = false,
     bool sendPushNotification = true,
+    bool encrypted = false,
   }) async {
     metaData = metaData?.copyWith(customType: {'broadcastMessage': true});
+    metaData = metaData?.copyWith(isBroadCastMessage: true);
+    metaData = metaData?.copyWith(groupCastId: groupcastId);
     final response = await _controller.viewModel.sendBroadcastMessage(
       showInConversation: true,
       notifyOnCompletion: false,
@@ -1313,7 +1318,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       sendPushForNewConversationCreated: false,
       groupcastId: groupcastId,
       messageType: messageType,
-      encrypted: true,
+      encrypted: encrypted,
       deviceId: deviceId,
       body: body,
       notificationBody: notificationBody,
@@ -1474,7 +1479,15 @@ mixin IsmChatPageSendMessageMixin on GetxController {
   }) async {
     final chatConversationResponse =
         await IsmChatConfig.dbWrapper?.getConversation(conversationId);
-    if (chatConversationResponse == null && _controller.isBroadcast == false) {
+    final isBroadcastConversation = _controller.isBroadcast ||
+        _controller.conversation?.customType == IsmChatStrings.broadcast;
+
+    // Ensure isBroadcast flag is set if conversation is a broadcast
+    if (!_controller.isBroadcast && isBroadcastConversation) {
+      _controller.isBroadcast = true;
+    }
+
+    if (chatConversationResponse == null && !isBroadcastConversation) {
       _controller.conversation =
           await _controller.commonController.createConversation(
         conversation: _controller.conversation!,
@@ -1496,7 +1509,8 @@ mixin IsmChatPageSendMessageMixin on GetxController {
       unawaited(
         _controller.getConverstaionDetails(),
       );
-    } else if (_controller.isBroadcast && _controller.messages.isEmpty) {
+    } else if (isBroadcastConversation &&
+        (conversationId.isEmpty || chatConversationResponse == null)) {
       conversationId = await _controller.createBroadcastConversation(
             groupcastImageUrl:
                 'https://png.pngtree.com/element_our/20190528/ourmid/pngtree-speaker-broadcast-icon-image_1144351.jpg',

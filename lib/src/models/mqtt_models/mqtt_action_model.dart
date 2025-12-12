@@ -85,10 +85,24 @@ class IsmChatMqttActionModel {
         reactionType: map['reactionType'] as String? ?? '',
         reactionsCount: map['reactionsCount'] as int? ?? 0,
         senderId: map['senderId'] as String? ?? '',
-        body: IsmChatUtility.decryptMessage(
-          map['body'] as String? ?? '',
-          map['conversationId'] as String? ?? '',
-        ),
+        body: () {
+          // Check metaData map directly for broadcast message info before parsing
+          final metaDataMap = map['metaData'] as Map<String, dynamic>?;
+          final isBroadcastMessage =
+              metaDataMap?['isBroadCastMessage'] as bool? ?? false;
+          final groupcastId = metaDataMap?['groupCastId'] as String? ?? '';
+
+          // Use groupcastId for decryption if it's a broadcast message, otherwise use conversationId
+          final decryptionId =
+              isBroadcastMessage && (groupcastId?.isNotEmpty ?? false)
+                  ? groupcastId ?? ''
+                  : map['conversationId'] as String? ?? '';
+
+          return IsmChatUtility.decryptMessage(
+            map['body'] as String? ?? '',
+            decryptionId,
+          );
+        }(),
         messageType:
             IsmChatMessageType.fromValue(map['messageType'] as int? ?? 0),
         customType: map['customType'] != null

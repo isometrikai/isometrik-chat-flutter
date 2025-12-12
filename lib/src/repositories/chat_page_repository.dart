@@ -614,7 +614,7 @@ class IsmChatPageRepository {
       List<Map<String, dynamic>>? mentionedUsers,
       bool isLoading = false}) async {
     try {
-      final payload = {
+      final payload = <String, dynamic>{
         'showInConversation': showInConversation,
         'sendPushForNewConversationCreated': sendPushForNewConversationCreated,
         'searchableTags': searchableTags,
@@ -624,7 +624,6 @@ class IsmChatPageRepository {
         'notificationTitle': notificationTitle,
         'messageType': messageType,
         'metaData': metaData?.toMap(),
-        'mentionedUsers': mentionedUsers,
         'hideNewConversationsForSender': hideNewConversationsForSender,
         'groupcastId': groupcastId,
         'events': events,
@@ -634,6 +633,11 @@ class IsmChatPageRepository {
         'body': body,
         'attachments': attachments,
       };
+
+      // Only include mentionedUsers if it's not null and not empty
+      if (mentionedUsers != null && mentionedUsers.isNotEmpty) {
+        payload['mentionedUsers'] = mentionedUsers;
+      }
 
       var response = await _apiWrapper.post(
         IsmChatAPI.chatGroupCastMessage,
