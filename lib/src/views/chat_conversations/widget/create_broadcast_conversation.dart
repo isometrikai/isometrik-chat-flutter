@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -211,17 +213,18 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                   : Expanded(
                       child: NotificationListener<ScrollNotification>(
                         onNotification: (scrollNotification) {
-                          if (scrollNotification is ScrollEndNotification) {
-                            if (scrollNotification.metrics.pixels >
-                                scrollNotification.metrics.maxScrollExtent *
-                                    0.7) {
-                              if ((scrollNotification.dragDetails?.velocity
-                                          .pixelsPerSecond.dy ??
-                                      0) <
-                                  0) {
-                                controller.getNonBlockUserList(
-                                    opponentId: IsmChatConfig
-                                        .communicationConfig.userConfig.userId);
+                          if (!controller.showSearchField &&
+                              !controller.isLoadResponse) {
+                            if (scrollNotification is ScrollEndNotification) {
+                              if (scrollNotification.metrics.pixels >
+                                  scrollNotification.metrics.maxScrollExtent *
+                                      0.7) {
+                                /// call the api only on down scroll for pagination
+                                unawaited(controller.getNonBlockUserList(
+                                  isGroupConversation: true,
+                                  opponentId: IsmChatConfig
+                                      .communicationConfig.userConfig.userId,
+                                ));
                               }
                             }
                           }

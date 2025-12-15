@@ -49,7 +49,7 @@ class IsmChatStrings {
 
   static const String observer = 'Observers';
 
-  static const String boradcastMessge = 'Broadcast Messgaes';
+  static const String boradcastMessge = 'Broadcast Messages';
   static const String newBroadCast = 'New Broadcast';
 
   static const String clearChat = 'Clear chat';
