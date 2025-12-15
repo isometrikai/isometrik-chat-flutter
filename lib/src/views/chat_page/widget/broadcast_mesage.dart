@@ -49,8 +49,12 @@ class _IsmChatBoradcastMessagePageState
           force: true, tag: IsmChat.i.chatPageTag);
     } else {
       if (controller.messages.isNotEmpty) {
+        await Get.delete<IsmChatPageController>(
+            force: true, tag: IsmChat.i.chatPageTag);
         IsmChatRoute.goBack();
       }
+      await Get.delete<IsmChatPageController>(
+          force: true, tag: IsmChat.i.chatPageTag);
       IsmChatRoute.goBack();
     }
     if (controller.messages.isNotEmpty) {

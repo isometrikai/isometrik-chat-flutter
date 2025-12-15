@@ -123,6 +123,10 @@ class IsmChatPageController extends GetxController
         final arguments = Get.arguments as Map<String, dynamic>? ?? {};
         isBroadcast = arguments['isBroadcast'] as bool? ?? isBroadcasts;
       } catch (_) {}
+      // Check conversation customType to determine if it's a broadcast
+      if (conversation?.customType == IsmChatStrings.broadcast) {
+        isBroadcast = true;
+      }
 
       if (conversation?.conversationId?.isNotEmpty == true) {
         await callFunctionsWithConversationId(

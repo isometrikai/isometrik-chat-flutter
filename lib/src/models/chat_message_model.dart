@@ -102,9 +102,10 @@ class IsmChatMessageModel {
           ? UserDetails.fromMap(map['senderInfo'] as Map<String, dynamic>)
           : map['senderId'] != null
               ? UserDetails(
-                  userProfileImageUrl: map['senderProfileImageUrl'] as String,
-                  userName: map['senderName'] as String,
-                  userIdentifier: map['senderIdentifier'] as String,
+                  userProfileImageUrl:
+                      map['senderProfileImageUrl'] as String? ?? '',
+                  userName: map['senderName'] as String? ?? '',
+                  userIdentifier: map['senderIdentifier'] as String? ?? '',
                   userId: map['senderId'] as String,
                   online: false,
                   lastSeen: 0,
