@@ -160,6 +160,32 @@ class IsmChatConversationsRepository {
     }
   }
 
+  Future<IsmChatResponseModel?> updateMyStatusToAllUsers({
+    required List<String> userIds,
+    required Map<String, dynamic> payload,
+    bool isLoading = false,
+  }) async {
+    try {
+      final requestPayload = {
+        'userIds': userIds,
+        'payload': payload,
+      };
+      var response = await _apiWrapper.post(
+        IsmChatAPI.publishUsers,
+        payload: requestPayload,
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+      if (response.hasError) {
+        return response;
+      }
+      return response;
+    } catch (e, st) {
+      IsmChatLog.error('Update My Status To All Users error $e', st);
+      return null;
+    }
+  }
+
   Future<UserDetails?> updateUserData({
     String? userProfileImageUrl,
     String? userName,

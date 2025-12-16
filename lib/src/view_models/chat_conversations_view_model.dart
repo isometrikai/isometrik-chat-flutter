@@ -276,4 +276,15 @@ class IsmChatConversationsViewModel {
           skip: skip,
           limit: limit,
           searchTag: searchTag);
+
+  Future<IsmChatResponseModel?> updateMyStatusToAllUsers({
+    required List<String> userIds,
+    required Map<String, dynamic> payload,
+    bool isLoading = false,
+  }) async =>
+      await _repository.updateMyStatusToAllUsers(
+        userIds: userIds,
+        payload: payload,
+        isLoading: isLoading,
+      );
 }

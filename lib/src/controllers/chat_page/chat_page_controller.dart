@@ -1557,6 +1557,28 @@ class IsmChatPageController extends GetxController
   void notifyTyping() {
     if (isTyping) {
       isTyping = false;
+
+      // If opponent is offline, manually set to online
+      if (conversation?.opponentDetails?.online == false &&
+          conversation?.isGroup != true) {
+        conversation = conversation?.copyWith(
+          opponentDetails: conversation?.opponentDetails?.copyWith(
+            online: true,
+          ),
+        );
+      }
+
+      // Reschedule conversation details API call after 1 minute
+      ifTimerMounted();
+      conversationDetailsApTimer = Timer(
+        const Duration(minutes: 1),
+        () {
+          if (conversation?.conversationId?.isNotEmpty == true) {
+            getConverstaionDetails();
+          }
+        },
+      );
+
       var tickTick = 0;
       Timer.periodic(const Duration(seconds: 2), (timer) async {
         if (tickTick == 0) {

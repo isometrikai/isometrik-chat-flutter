@@ -25,6 +25,7 @@ class IsmChatMetaData {
     this.blockedMessage,
     this.isBroadCastMessage,
     this.groupCastId,
+    this.userOnlineStatus,
   });
 
   factory IsmChatMetaData.fromMap(Map<String, dynamic> map) {
@@ -88,7 +89,8 @@ class IsmChatMetaData {
                 map['blockedMessage'] as Map<String, dynamic>)
             : null,
         isBroadCastMessage: map['isBroadCastMessage'] as bool? ?? false,
-        groupCastId: map['groupCastId'] as String? ?? '');
+        groupCastId: map['groupCastId'] as String? ?? '',
+        userOnlineStatus: map['userOnlineStatus'] as bool? ?? false);
     return data;
   }
 
@@ -119,6 +121,7 @@ class IsmChatMetaData {
   final IsmChatMessageModel? blockedMessage;
   final bool? isBroadCastMessage;
   final String? groupCastId;
+  final bool? userOnlineStatus;
   IsmChatMetaData copyWith(
           {String? parentMessageBody,
           String? locationAddress,
@@ -142,7 +145,8 @@ class IsmChatMetaData {
           bool? isOnelyEmoji,
           IsmChatMessageModel? blockedMessage,
           bool? isBroadCastMessage,
-          String? groupCastId}) =>
+          String? groupCastId,
+          bool? userOnlineStatus}) =>
       IsmChatMetaData(
         locationAddress: locationAddress ?? this.locationAddress,
         locationSubAddress: locationSubAddress ?? this.locationSubAddress,
@@ -163,6 +167,7 @@ class IsmChatMetaData {
         blockedMessage: blockedMessage,
         isBroadCastMessage: isBroadCastMessage ?? this.isBroadCastMessage,
         groupCastId: groupCastId ?? this.groupCastId,
+        userOnlineStatus: userOnlineStatus ?? this.userOnlineStatus,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -186,13 +191,14 @@ class IsmChatMetaData {
         'blockedMessage': blockedMessage?.toMap(),
         'isBroadCastMessage': isBroadCastMessage,
         'groupCastId': groupCastId,
+        'userOnlineStatus': userOnlineStatus,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo ,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt, customMetaData : $customMetaData, isOnelyEmoji : $isOnelyEmoji, blockedMessage : $blockedMessage, isBroadCastMessage : $isBroadCastMessage,groupCastId : $groupCastId)';
+      'IsmChatMetaData(locationAddress: $locationAddress, locationSubAddress: $locationSubAddress, profilePic: $profilePic, lastName: $lastName, firstName: $firstName, contacts: $contacts,customType: $customType, assetList: $assetList, duration: $duration, captionMessage: $caption,replyMessage: $replyMessage, senderInfo : $senderInfo ,aboutText : $aboutText, isDownloaded : $isDownloaded, messageSentAt : $messageSentAt, customMetaData : $customMetaData, isOnelyEmoji : $isOnelyEmoji, blockedMessage : $blockedMessage, isBroadCastMessage : $isBroadCastMessage,groupCastId : $groupCastId,userOnlineStatus : $userOnlineStatus)';
 
   @override
   bool operator ==(covariant IsmChatMetaData other) {
@@ -217,7 +223,8 @@ class IsmChatMetaData {
         other.isOnelyEmoji == isOnelyEmoji &&
         other.blockedMessage == blockedMessage &&
         other.isBroadCastMessage == isBroadCastMessage &&
-        other.groupCastId == groupCastId;
+        other.groupCastId == groupCastId &&
+        other.userOnlineStatus == userOnlineStatus;
   }
 
   @override
@@ -241,5 +248,6 @@ class IsmChatMetaData {
       isOnelyEmoji.hashCode ^
       blockedMessage.hashCode ^
       isBroadCastMessage.hashCode ^
-      groupCastId.hashCode;
+      groupCastId.hashCode ^
+      userOnlineStatus.hashCode;
 }

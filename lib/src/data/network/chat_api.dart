@@ -76,4 +76,5 @@ class IsmChatAPI {
   static String chatGroupCastMessages = '$chatGroupCast/messages';
   static String chatGroupCastDeleteEveryone = '$chatGroupCast/message/everyone';
   static String chatGroupCastDeleteSelf = '$chatGroupCast/message/self';
+  static String publishUsers = '$allUsers/publish';
 }

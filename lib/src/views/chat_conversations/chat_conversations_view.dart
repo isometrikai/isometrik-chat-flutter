@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -77,9 +79,31 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
     }
     if (AppLifecycleState.paused == state) {
       IsmChatLog.info('app in backgorund');
+      // Update user status to offline when app goes to background
+      if (IsmChatUtility.conversationControllerRegistered) {
+        final controller = IsmChatUtility.conversationController;
+        controller.updateUserData(
+          metaData: {'userOnlineStatus': false},
+        );
+        // Publish offline status to all users in conversations
+        controller.updateMyStatusToAllUsers(
+          payload: {'userOnlineStatus': false},
+        );
+      }
     }
     if (AppLifecycleState.detached == state) {
       IsmChatLog.info('app in killed');
+      // Update user status to offline when app is killed
+      if (IsmChatUtility.conversationControllerRegistered) {
+        final controller = IsmChatUtility.conversationController;
+        controller.updateUserData(
+          metaData: {'userOnlineStatus': false},
+        );
+        // Publish offline status to all users in conversations
+        controller.updateMyStatusToAllUsers(
+          payload: {'userOnlineStatus': false},
+        );
+      }
     }
   }
 

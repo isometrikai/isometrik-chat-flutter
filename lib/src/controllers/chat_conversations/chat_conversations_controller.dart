@@ -366,6 +366,12 @@ class IsmChatConversationsController extends GetxController {
     } else {
       await getUserData();
     }
+
+    // Update user last status to Online when app opens
+    unawaited(updateUserData(
+      metaData: {'userOnlineStatus': true},
+    ));
+
     await getConversationsFromDB();
     await getChatConversations();
     if (Get.isRegistered<IsmChatMqttController>()) {
@@ -980,6 +986,27 @@ class IsmChatConversationsController extends GetxController {
     }
   }
 
+  /// Extracts userIds from opponentDetails of all non-group conversations.
+  ///
+  /// Returns a list of userIds from conversations where isGroup is false
+  /// and opponentDetails has a valid userId.
+  /// Ensures conversation count equals userId count for non-group conversations.
+  List<String> getConversationUserIds() {
+    final extractedUserIds = conversations
+        .where((e) =>
+            e.isGroup == false && e.opponentDetails?.userId.isNotEmpty == true)
+        .map((e) => e.opponentDetails!.userId)
+        .toList();
+
+    // Ensure conversation count equals userId count (only for non-group conversations)
+    final nonGroupConversations =
+        conversations.where((e) => e.isGroup == false).length;
+    assert(extractedUserIds.length == nonGroupConversations,
+        'Conversation count ($nonGroupConversations) should equal userId count (${extractedUserIds.length})');
+
+    return extractedUserIds;
+  }
+
   /// Retrieves conversations from the local database and updates the observable list.
   ///
   /// `searchTag`: Optional search term for filtering conversations.
@@ -1146,6 +1173,29 @@ class IsmChatConversationsController extends GetxController {
     if (conversations.isEmpty) {
       isConversationsLoading = false;
     }
+    // when i come online i need to update the user status to online for all users in the conversations
+    updateMyStatusToAllUsers();
+  }
+
+  /// Updates user status to all users in conversations.
+  ///
+  /// Calls the publish API to notify all conversation participants
+  /// about the current user's status (online/offline).
+  ///
+  /// `payload`: The status payload to send (e.g., {'userOnlineStatus': true} or {'userOnlineStatus': false})
+  Future<void> updateMyStatusToAllUsers({
+    Map<String, dynamic>? payload,
+  }) async {
+    final updateToUsers = getConversationUserIds();
+    if (updateToUsers.isEmpty) {
+      return;
+    }
+
+    await _viewModel.updateMyStatusToAllUsers(
+      userIds: updateToUsers,
+      payload: payload ?? {'userOnlineStatus': true},
+      isLoading: false,
+    );
   }
 
   /// Fetches search results for chat conversations.
