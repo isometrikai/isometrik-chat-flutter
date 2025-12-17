@@ -1,5 +1,13 @@
 part of 'isometrik_chat_flutter.dart';
 
+/// Lifecycle state to drive delegate presence handling.
+enum IsmChatAppLifecycleStatus {
+  online,
+  resumed,
+  background,
+  killed,
+}
+
 class IsmChatDelegate {
   const IsmChatDelegate();
 
@@ -197,6 +205,65 @@ class IsmChatDelegate {
   Future<void> getChatConversation() async {
     if (IsmChatUtility.conversationControllerRegistered) {
       await IsmChatUtility.conversationController.getChatConversations();
+    }
+  }
+
+  void _updatePresenceStatus({
+    required IsmChatConversationsController controller,
+    required bool isOnline,
+  }) {
+    final userId = IsmChatConfig.communicationConfig.userConfig.userId;
+
+    // Fire-and-forget updates; callers invoke from lifecycle hooks.
+    unawaited(
+      controller.updateUserData(
+        metaData: {
+          'userOnlineStatus': isOnline,
+          'userId': userId,
+        },
+      ),
+    );
+    unawaited(
+      controller.updateMyStatusToAllUsers(
+        payload: {
+          'userOnlineStatus': isOnline,
+          'userId': IsmChatConfig.communicationConfig.userConfig.userId
+        },
+      ),
+    );
+  }
+
+  /// Marks the user online and refreshes conversations when the app resumes.
+  void notifyOnlineOrResumed() {
+    IsmChatLog.info('notifyOnlineOrResumed');
+    if (!IsmChatUtility.conversationControllerRegistered) return;
+
+    final controller = IsmChatUtility.conversationController;
+    unawaited(controller.getChatConversations());
+    _updatePresenceStatus(controller: controller, isOnline: true);
+  }
+
+  /// Marks the user offline when the app goes to background or is killed.
+  void notifyBackgroundOrKilled() {
+    IsmChatLog.info('notifyBackgroundOrKilled');
+    if (!IsmChatUtility.conversationControllerRegistered) return;
+
+    final controller = IsmChatUtility.conversationController;
+    _updatePresenceStatus(controller: controller, isOnline: false);
+  }
+
+  /// Handles app lifecycle updates via enum to centralize presence handling.
+  Future<void> handleAppLifecycleStatus(
+    IsmChatAppLifecycleStatus status,
+  ) async {
+    switch (status) {
+      case IsmChatAppLifecycleStatus.resumed:
+        notifyOnlineOrResumed();
+        break;
+      case IsmChatAppLifecycleStatus.background:
+      case IsmChatAppLifecycleStatus.killed:
+        notifyBackgroundOrKilled();
+        break;
     }
   }
 

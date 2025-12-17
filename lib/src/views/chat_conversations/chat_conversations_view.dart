@@ -68,58 +68,67 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
     );
   }
 
+  void _updatePresenceStatus({
+    required IsmChatConversationsController controller,
+    required bool isOnline,
+  }) {
+    final userId = controller.userDetails?.userId ??
+        IsmChatConfig.communicationConfig.userConfig.userId;
+    // Fire-and-forget; we trigger earlier (paused/inactive) to give time before kill.
+    unawaited(
+      controller.updateUserData(
+        metaData: {
+          'userOnlineStatus': isOnline,
+          'userId': userId,
+        },
+      ),
+    );
+    unawaited(
+      controller.updateMyStatusToAllUsers(
+        payload: {
+          'userOnlineStatus': isOnline,
+          'userId': IsmChatConfig.communicationConfig.userConfig.userId
+        },
+      ),
+    );
+  }
+
+  void _handleAppResume() {
+    IsmChatLog.info('app in resumed');
+    if (!IsmChatUtility.conversationControllerRegistered) return;
+
+    final controller = IsmChatUtility.conversationController;
+    controller.getChatConversations();
+    _updatePresenceStatus(controller: controller, isOnline: true);
+  }
+
+  void _handleAppBackground(String logMessage) {
+    IsmChatLog.info(
+        logMessage); // Happens before potential kill; best place to mark offline.
+    if (!IsmChatUtility.conversationControllerRegistered) return;
+
+    final controller = IsmChatUtility.conversationController;
+    _updatePresenceStatus(controller: controller, isOnline: false);
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (AppLifecycleState.resumed == state) {
-      if (IsmChatUtility.conversationControllerRegistered) {
-        IsmChatUtility.conversationController.getChatConversations();
-      }
-      IsmChatLog.info('app in resumed');
+    if (state == AppLifecycleState.resumed) {
+      _handleAppResume();
+      return;
     }
-    if (AppLifecycleState.paused == state) {
-      IsmChatLog.info('app in backgorund');
-      //Update user status to offline when app goes to background
-      if (IsmChatUtility.conversationControllerRegistered) {
-        final controller = IsmChatUtility.conversationController;
-        final userId = controller.userDetails?.userId ??
-            IsmChatConfig.communicationConfig.userConfig.userId;
-        controller.updateUserData(
-          metaData: {
-            'userOnlineStatus': false,
-            'userId': userId,
-          },
-        );
-        // Publish offline status to all users in conversations
-        controller.updateMyStatusToAllUsers(
-          payload: {
-            'userOnlineStatus': false,
-            'userId': IsmChatConfig.communicationConfig.userConfig.userId ?? ''
-          },
-        );
-      }
+
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      // Do the offline update as early as possible; detached may never complete.
+      _handleAppBackground('app moving to background');
+      return;
     }
-    if (AppLifecycleState.detached == state) {
+
+    if (state == AppLifecycleState.detached) {
       IsmChatLog.info('app in killed');
-      // Update user status to offline when app is killed
-      if (IsmChatUtility.conversationControllerRegistered) {
-        final controller = IsmChatUtility.conversationController;
-        final userId = controller.userDetails?.userId ??
-            IsmChatConfig.communicationConfig.userConfig.userId;
-        controller.updateUserData(
-          metaData: {
-            'userOnlineStatus': false,
-            'userId': userId,
-          },
-        );
-        // Publish offline status to all users in conversations
-        controller.updateMyStatusToAllUsers(
-          payload: {
-            'userOnlineStatus': false,
-            'userId': IsmChatConfig.communicationConfig.userConfig.userId ?? ''
-          },
-        );
-      }
+      // Offline already set during paused/inactive; avoid relying on this state.
     }
   }
 

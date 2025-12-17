@@ -1191,6 +1191,9 @@ mixin IsmChatMqttEventMixin {
           final updatedConversation = conversation.copyWith(
             opponentDetails: conversation.opponentDetails?.copyWith(
               online: isOnline,
+              metaData: conversation.opponentDetails?.metaData?.copyWith(
+                userOnlineStatus: isOnline,
+              ),
               lastSeen: isOnline
                   ? conversation.opponentDetails?.lastSeen
                   : DateTime.now().millisecondsSinceEpoch,
@@ -1257,13 +1260,16 @@ mixin IsmChatMqttEventMixin {
           chatController.conversation = currentConversation.copyWith(
             opponentDetails: currentConversation.opponentDetails?.copyWith(
               online: isOnline,
+              metaData: currentConversation.opponentDetails?.metaData?.copyWith(
+                userOnlineStatus: isOnline,
+              ),
               lastSeen: isOnline
                   ? currentConversation.opponentDetails?.lastSeen
                   : DateTime.now().millisecondsSinceEpoch,
             ),
           );
           // Force an immediate rebuild for chat page UI
-          chatController.update();
+          // chatController.update();
 
           IsmChatLog.info(
             '[UserStatus] Conversation updated in chat page controller. '
