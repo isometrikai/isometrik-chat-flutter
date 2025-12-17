@@ -70,8 +70,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
         IsmChatConfig.paidWalletModel?.apiUrl ?? '',
       );
     } else if (_controller.conversation?.customType !=
-            IsmChatStrings.broadcast &&
-        _controller.conversation?.customType != null) {
+        IsmChatStrings.broadcast) {
       final isMessageSent = await _controller.commonController.sendMessage(
         showInConversation: true,
         encrypted: encrypted,
