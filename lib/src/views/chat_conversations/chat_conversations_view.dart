@@ -82,8 +82,13 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
       // Update user status to offline when app goes to background
       if (IsmChatUtility.conversationControllerRegistered) {
         final controller = IsmChatUtility.conversationController;
+        final userId = controller.userDetails?.userId ??
+            IsmChatConfig.communicationConfig.userConfig.userId;
         controller.updateUserData(
-          metaData: {'userOnlineStatus': false},
+          metaData: {
+            'userOnlineStatus': false,
+            'userId': userId,
+          },
         );
         // Publish offline status to all users in conversations
         controller.updateMyStatusToAllUsers(
@@ -96,8 +101,13 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
       // Update user status to offline when app is killed
       if (IsmChatUtility.conversationControllerRegistered) {
         final controller = IsmChatUtility.conversationController;
+        final userId = controller.userDetails?.userId ??
+            IsmChatConfig.communicationConfig.userConfig.userId;
         controller.updateUserData(
-          metaData: {'userOnlineStatus': false},
+          metaData: {
+            'userOnlineStatus': false,
+            'userId': userId,
+          },
         );
         // Publish offline status to all users in conversations
         controller.updateMyStatusToAllUsers(

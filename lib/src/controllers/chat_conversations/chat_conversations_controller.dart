@@ -369,7 +369,11 @@ class IsmChatConversationsController extends GetxController {
 
     // Update user last status to Online when app opens
     unawaited(updateUserData(
-      metaData: {'userOnlineStatus': true},
+      metaData: {
+        'userOnlineStatus': true,
+        'userId': userDetails?.userId ??
+            IsmChatConfig.communicationConfig.userConfig.userId,
+      },
     ));
 
     await getConversationsFromDB();
@@ -1294,7 +1298,7 @@ class IsmChatConversationsController extends GetxController {
   /// `userProfileImageUrl`: The URL of the user's profile image.
   ///  `userName`: The user's name.
   /// `userIdentifier`: The user's identifier.
-  /// `metaData`: Additional metadata for the user.
+  /// `metaData`: Additional metadata for the user (can include userId).
   /// `isloading`: Indicates if loading should be shown.
   Future<void> updateUserData({
     String? userProfileImageUrl,

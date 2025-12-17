@@ -60,6 +60,16 @@ mixin IsmChatMqttEventMixin {
   void onMqttEvent({required EventModel event}) async {
     _controller.eventStreamController.add(event);
     final payload = event.payload;
+
+    // Handle user online status updates from User topic
+    final topic = event.topic as String?;
+    if (topic != null && topic.contains('/User/')) {
+      final handled = await _handleUserStatusEvent(event: event, topic: topic);
+      if (handled) {
+        return;
+      }
+    }
+
     if (!['chatMessageSentBulk', 'chatMessageSent']
         .contains(payload['action'])) {
       final action = payload['action'];
@@ -1045,6 +1055,260 @@ mixin IsmChatMqttEventMixin {
     }
     if (IsmChatUtility.conversationControllerRegistered) {
       await IsmChatUtility.conversationController.getChatConversations();
+    }
+  }
+
+  /// Handles user status events from User topic.
+  ///
+  /// This method processes MQTT events received on User topics that contain
+  /// user online status updates. It gets the userId from metadata payload
+  /// and the status from the payload, then updates local conversations accordingly.
+  ///
+  /// * `event`: The MQTT event containing the status update
+  /// * `topic`: The MQTT topic string (format: /accountId/projectId/User/userId)
+  /// Returns true if the event was handled, false otherwise.
+  Future<bool> _handleUserStatusEvent({
+    required EventModel event,
+    required String topic,
+  }) async {
+    try {
+      IsmChatLog.info('[UserStatus] MQTT Event received - Topic: $topic');
+      final payload = event.payload;
+      final nestedPayload = payload['payload'] as Map<String, dynamic>?;
+      IsmChatLog.info('[UserStatus] Nested payload: $nestedPayload');
+
+      if (nestedPayload != null &&
+          nestedPayload.containsKey('userOnlineStatus')) {
+        // Get userId from metadata only (as per requirement)
+        final userId = nestedPayload['userId'] as String?;
+
+        if (userId == null || userId.isEmpty) {
+          IsmChatLog.info('[UserStatus] userId is null or empty in metadata');
+          return false;
+        }
+
+        final isOnline = nestedPayload['userOnlineStatus'] as bool? ?? false;
+        IsmChatLog.info(
+          '[UserStatus] Processing status update - userId: $userId (from metadata), isOnline: $isOnline',
+        );
+
+        await _handleUserOnlineStatusUpdate(
+          userId: userId,
+          isOnline: isOnline,
+        );
+        return true;
+      } else {
+        IsmChatLog.info(
+          '[UserStatus] Nested payload does not contain userOnlineStatus',
+        );
+      }
+    } catch (e, stack) {
+      IsmChatLog.error(
+        '[UserStatus] Error handling user status event: $e Stack trace: $stack',
+      );
+    }
+    return false;
+  }
+
+  /// Handles user online status updates from MQTT User topic.
+  ///
+  /// Updates the opponentDetails.online status for all conversations
+  /// with the specified userId and reschedules the conversation details
+  /// API timer if the chat page controller is showing that conversation.
+  ///
+  /// * `userId`: The userId whose status is being updated (opponent's userId from metadata)
+  /// * `isOnline`: The new online status (true = online, false = offline)
+  Future<void> _handleUserOnlineStatusUpdate({
+    required String userId,
+    required bool isOnline,
+  }) async {
+    // Get current user's ID from database (stored during login)
+    String currentUserId = '';
+    try {
+      final storedUserData = await IsmChatConfig.dbWrapper?.userDetailsBox
+          .get(IsmChatStrings.userData);
+      if (storedUserData != null) {
+        final userDetails = UserDetails.fromJson(storedUserData);
+        currentUserId = userDetails.userId;
+      } else {
+        // Fallback to MQTT controller userConfig if database doesn't have it
+        currentUserId = _controller.userConfig?.userId ?? '';
+      }
+    } catch (e) {
+      // Fallback to MQTT controller userConfig on error
+      currentUserId = _controller.userConfig?.userId ?? '';
+    }
+
+    IsmChatLog.info(
+      '[UserStatus] _handleUserOnlineStatusUpdate - opponent userId: $userId, isOnline: $isOnline, currentUserId: $currentUserId',
+    );
+
+    // Skip if this is our own status update (we already know our own status)
+    if (userId == currentUserId || currentUserId.isEmpty) {
+      IsmChatLog.info(
+        '[UserStatus] Skipping - this is our own status update. '
+        'userId: $userId matches currentUserId: $currentUserId',
+      );
+      return;
+    }
+
+    IsmChatLog.info(
+      '[UserStatus] Processing status update for other user: $userId',
+    );
+
+    try {
+      // Get all conversations from database
+      IsmChatLog.info('[UserStatus] Fetching all conversations from database');
+      final conversations =
+          await IsmChatConfig.dbWrapper?.getAllConversations();
+      if (conversations == null || conversations.isEmpty) {
+        IsmChatLog.info(
+          '[UserStatus] No conversations found in database',
+        );
+        return;
+      }
+
+      IsmChatLog.info(
+        '[UserStatus] Found ${conversations.length} conversations in database',
+      );
+
+      // Find conversations with this userId as opponent
+      final updatedConversations = <IsmChatConversationModel>[];
+      for (var conversation in conversations) {
+        // Check if this is a private conversation with the user
+        final isPrivateConversation = conversation.isGroup != true;
+        final opponentUserId = conversation.opponentDetails?.userId;
+        IsmChatLog.info(
+          '[UserStatus] Checking conversation: ${conversation.conversationId} - '
+          'isGroup: ${conversation.isGroup}, opponentUserId: $opponentUserId',
+        );
+
+        if (isPrivateConversation && opponentUserId == userId) {
+          IsmChatLog.info(
+            '[UserStatus] Found matching conversation: ${conversation.conversationId}',
+          );
+          // Update opponentDetails.online status
+          final updatedConversation = conversation.copyWith(
+            opponentDetails: conversation.opponentDetails?.copyWith(
+              online: isOnline,
+            ),
+          );
+          updatedConversations.add(updatedConversation);
+          await IsmChatConfig.dbWrapper?.saveConversation(
+            conversation: updatedConversation,
+          );
+          IsmChatLog.info(
+            '[UserStatus] Updated conversation ${conversation.conversationId} '
+            'with online status: $isOnline',
+          );
+        }
+      }
+
+      IsmChatLog.info(
+        '[UserStatus] Updated ${updatedConversations.length} conversations',
+      );
+
+      // Update conversation list if controller is registered
+      if (IsmChatUtility.conversationControllerRegistered) {
+        IsmChatLog.info('[UserStatus] Conversation controller is registered');
+        if (updatedConversations.isNotEmpty) {
+          IsmChatLog.info(
+            '[UserStatus] Refreshing conversation list from DB',
+          );
+          unawaited(
+            IsmChatUtility.conversationController.getConversationsFromDB(),
+          );
+        } else {
+          IsmChatLog.info(
+            '[UserStatus] No conversations to update, skipping refresh',
+          );
+        }
+      } else {
+        IsmChatLog.info(
+          '[UserStatus] Conversation controller is NOT registered',
+        );
+      }
+
+      // Update chat page controller if it's showing a conversation with this user
+      if (IsmChatUtility.chatPageControllerRegistered) {
+        IsmChatLog.info('[UserStatus] Chat page controller is registered');
+        final chatController = IsmChatUtility.chatPageController;
+        final currentConversation = chatController.conversation;
+
+        IsmChatLog.info(
+          '[UserStatus] Current conversation in chat page: '
+          '${currentConversation?.conversationId}, '
+          'isGroup: ${currentConversation?.isGroup}, '
+          'opponentUserId: ${currentConversation?.opponentDetails?.userId}',
+        );
+
+        if (currentConversation != null &&
+            currentConversation.isGroup != true &&
+            currentConversation.opponentDetails?.userId == userId) {
+          IsmChatLog.info(
+            '[UserStatus] Chat page is showing conversation with this user. '
+            'Updating conversation and rescheduling timer',
+          );
+
+          // Update the conversation in chat page controller
+          chatController.conversation = currentConversation.copyWith(
+            opponentDetails: currentConversation.opponentDetails?.copyWith(
+              online: isOnline,
+            ),
+          );
+
+          IsmChatLog.info(
+            '[UserStatus] Conversation updated in chat page controller. '
+            'Cancelling existing timer if any',
+          );
+
+          // Reschedule conversation details API timer
+          chatController.ifTimerMounted();
+          IsmChatLog.info(
+            '[UserStatus] Scheduling new conversation details API timer '
+            '(1 minute delay)',
+          );
+          chatController.conversationDetailsApTimer = Timer(
+            const Duration(minutes: 1),
+            () {
+              IsmChatLog.info(
+                '[UserStatus] Timer callback triggered - calling getConverstaionDetails',
+              );
+              final conversationId =
+                  chatController.conversation?.conversationId;
+              IsmChatLog.info(
+                '[UserStatus] Current conversationId: $conversationId',
+              );
+              if (conversationId?.isNotEmpty == true) {
+                IsmChatLog.info(
+                  '[UserStatus] Calling getConverstaionDetails API',
+                );
+                chatController.getConverstaionDetails();
+              } else {
+                IsmChatLog.info(
+                  '[UserStatus] ConversationId is empty, skipping API call',
+                );
+              }
+            },
+          );
+          IsmChatLog.info(
+            '[UserStatus] Timer scheduled successfully. '
+            'Timer active: ${chatController.conversationDetailsApTimer?.isActive}',
+          );
+        } else {
+          IsmChatLog.info(
+            '[UserStatus] Chat page is NOT showing conversation with this user. '
+            'Skipping timer reschedule',
+          );
+        }
+      } else {
+        IsmChatLog.info('[UserStatus] Chat page controller is NOT registered');
+      }
+    } catch (e, stack) {
+      IsmChatLog.error(
+        '[UserStatus] Error handling user online status update: $e '
+        'Stack trace: $stack',
+      );
     }
   }
 }
