@@ -1197,7 +1197,11 @@ class IsmChatConversationsController extends GetxController {
 
     await _viewModel.updateMyStatusToAllUsers(
       userIds: updateToUsers,
-      payload: payload ?? {'userOnlineStatus': true},
+      payload: payload ??
+          {
+            'userOnlineStatus': true,
+            'userId': IsmChatConfig.communicationConfig.userConfig.userId ?? ''
+          },
       isLoading: false,
     );
   }

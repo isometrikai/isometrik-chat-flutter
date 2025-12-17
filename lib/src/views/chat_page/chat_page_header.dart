@@ -289,7 +289,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                           maxLines: 2,
                                         ))
                                     : controller.conversation?.opponentDetails
-                                                ?.online ??
+                                                ?.metaData?.userOnlineStatus ??
                                             false
                                         ? Text(
                                             IsmChatStrings.online,

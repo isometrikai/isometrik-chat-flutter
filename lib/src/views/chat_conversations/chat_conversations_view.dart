@@ -79,7 +79,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
     }
     if (AppLifecycleState.paused == state) {
       IsmChatLog.info('app in backgorund');
-      // Update user status to offline when app goes to background
+      //Update user status to offline when app goes to background
       if (IsmChatUtility.conversationControllerRegistered) {
         final controller = IsmChatUtility.conversationController;
         final userId = controller.userDetails?.userId ??
@@ -92,7 +92,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
         );
         // Publish offline status to all users in conversations
         controller.updateMyStatusToAllUsers(
-          payload: {'userOnlineStatus': false},
+          payload: {
+            'userOnlineStatus': false,
+            'userId': IsmChatConfig.communicationConfig.userConfig.userId ?? ''
+          },
         );
       }
     }
@@ -111,7 +114,10 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
         );
         // Publish offline status to all users in conversations
         controller.updateMyStatusToAllUsers(
-          payload: {'userOnlineStatus': false},
+          payload: {
+            'userOnlineStatus': false,
+            'userId': IsmChatConfig.communicationConfig.userConfig.userId ?? ''
+          },
         );
       }
     }
