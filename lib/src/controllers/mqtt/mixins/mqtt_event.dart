@@ -419,12 +419,19 @@ mixin IsmChatMqttEventMixin {
     if (IsmChatResponsive.isMobile(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       if (isAppInBackground) {
+        final notificationData = message.toMap();
+        // Ensure conversationId is always included in notification payload
+        // even if it was null and removed by removeNullValues()
+        if (!notificationData.containsKey('conversationId') ||
+            notificationData['conversationId'] == null) {
+          notificationData['conversationId'] = message.conversationId ?? '';
+        }
         showPushNotification(
             title: notificationTitle.isNotEmpty
                 ? notificationTitle
                 : message.notificationTitle ?? '',
             body: message.notificationBody ?? '',
-            data: message.toMap());
+            data: notificationData);
         return;
       }
     }
@@ -435,12 +442,19 @@ mixin IsmChatMqttEventMixin {
       }
     }
     try {
+      final notificationData = message.toMap();
+      // Ensure conversationId is always included in notification payload
+      // even if it was null and removed by removeNullValues()
+      if (!notificationData.containsKey('conversationId') ||
+          notificationData['conversationId'] == null) {
+        notificationData['conversationId'] = message.conversationId ?? '';
+      }
       showPushNotification(
           title: notificationTitle.isNotEmpty
               ? notificationTitle
               : message.notificationTitle ?? '',
           body: message.notificationBody ?? '',
-          data: message.toMap());
+          data: notificationData);
     } catch (_) {}
   }
 

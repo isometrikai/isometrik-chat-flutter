@@ -91,11 +91,24 @@ class LocalNoticeService {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    await _localNotificationsPlugin
-        .initialize(
+    await _localNotificationsPlugin.initialize(
       initSettings,
-    )
-        .then((_) {
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        // Handle notification tap for local notifications
+        if (response.payload != null) {
+          try {
+            final payload =
+                jsonDecode(response.payload!) as Map<String, dynamic>;
+            debugPrint('Local notification tapped with payload: $payload');
+
+            // Handle notification payload and navigate to conversation
+            IsmChat.i.handleNotificationPayload(payload);
+          } catch (e) {
+            debugPrint('Error parsing notification payload: $e');
+          }
+        }
+      },
+    ).then((_) {
       debugPrint('setupPlugin: setup success');
     }).catchError((Object error) {
       debugPrint('Error: $error');
