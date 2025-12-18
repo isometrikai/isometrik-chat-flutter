@@ -344,15 +344,32 @@ class _ReplyMessage extends StatelessWidget {
                     Text(
                       controller.replayMessage?.sentByMe ?? false
                           ? IsmChatStrings.you
-                          : IsmChatProperties.chatPageProperties.header?.title
-                                  ?.call(
-                                      context,
-                                      controller.conversation,
-                                      controller.conversation?.chatName ??
-                                          '') ??
-                              controller
-                                  .conversation?.chatName.capitalizeFirst ??
-                              '',
+                          : (controller.conversation?.isGroup ?? false)
+                              ? (controller.replayMessage?.senderInfo
+                                              ?.userName ??
+                                          (controller.conversation?.members
+                                                  ?.firstWhereOrNull(
+                                                    (e) =>
+                                                        e.userId ==
+                                                        controller
+                                                            .replayMessage
+                                                            ?.senderInfo
+                                                            ?.userId,
+                                                  )
+                                                  ?.userName ??
+                                              ''))
+                                      .capitalizeFirst ??
+                                  ''
+                              : IsmChatProperties
+                                      .chatPageProperties.header?.title
+                                      ?.call(
+                                          context,
+                                          controller.conversation,
+                                          controller.conversation?.chatName ??
+                                              '') ??
+                                  controller
+                                      .conversation?.chatName.capitalizeFirst ??
+                                  '',
                     ),
                     Text(
                       messageBody,

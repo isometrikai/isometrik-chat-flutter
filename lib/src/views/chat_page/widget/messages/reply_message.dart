@@ -126,8 +126,10 @@ class _ReplyMessage extends StatelessWidget {
                                                                 e.userId,
                                                           )
                                                           ?.userName ??
-                                                      controller.conversation
-                                                          ?.chatName ??
+                                                      message
+                                                          .metaData
+                                                          ?.replyMessage
+                                                          ?.parentMessageUserName ??
                                                       '')
                                                   .capitalizeFirst ??
                                               '';

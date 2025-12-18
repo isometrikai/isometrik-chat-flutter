@@ -172,9 +172,11 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
             itemBuilder: (BuildContext context, int index) {
               final media = widget.messageData[index];
               var url = media.attachments?.first.mediaUrl ?? '';
-              var customType = (media.messageType == IsmChatMessageType.normal)
+              var customType = media.messageType == IsmChatMessageType.forward
                   ? media.customType
-                  : media.metaData?.replyMessage?.parentMessageMessageType;
+                  : (media.messageType == IsmChatMessageType.reply
+                      ? media.metaData?.replyMessage?.parentMessageMessageType
+                      : media.customType);
               return customType == IsmChatCustomMessageType.image
                   ? PhotoView(
                       imageProvider: url.isValidUrl

@@ -63,7 +63,7 @@ class ChatListController extends GetxController {
           LocalNoticeService().showFlutterNotification(
             title,
             body,
-            conversataionId: data['conversataionId'] as String? ?? '',
+            conversataionId: data['conversationId'] as String? ?? '',
           );
         } else {
           ElegantNotification(

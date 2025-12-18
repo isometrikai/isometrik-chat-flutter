@@ -1,6 +1,7 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -936,6 +937,32 @@ class IsmChat {
     required String conversationId,
   }) async =>
       _delegate.getConversation(conversationId: conversationId);
+
+  /// Handles notification tap/payload and navigates to the chat conversation.
+  ///
+  /// This method should be called when a push notification is tapped.
+  /// It extracts the conversationId from the notification data and navigates to that conversation.
+  ///
+  /// Parameters:
+  /// - `notificationData`: The notification payload data (Map<String, dynamic> or JSON string)
+  ///   Expected to contain 'conversationId' key, or will try to extract from message object
+  ///
+  /// Example:
+  /// ```dart
+  /// // In your notification tap handler
+  /// FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  ///   IsmChat.i.handleNotificationPayload(message.data);
+  /// });
+  ///
+  /// // Or for local notifications (payload is JSON string)
+  /// LocalNoticeService.onNotificationTap.listen((payload) {
+  ///   IsmChat.i.handleNotificationPayload(payload);
+  /// });
+  /// ```
+  Future<void> handleNotificationPayload(
+    dynamic notificationData,
+  ) async =>
+      await _delegate.handleNotificationPayload(notificationData);
 
   /// Gets or sets the tag associated with this object.
   ///

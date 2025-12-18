@@ -126,6 +126,7 @@ class PushNotificationService {
   }
 
   Future<void> initialize() async {
+    // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       IsmChatLog.success('Got a message whilst in the foreground!');
       IsmChatLog.success('Message data: ${message.data}');
@@ -135,6 +136,27 @@ class PushNotificationService {
             'Message also contained a notification: ${message.notification}');
       }
     });
+
+    // Handle notification tap when app is opened from notification
+    // This is called when user taps a notification and the app opens
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      IsmChatLog.success('Notification tapped! Opening conversation...');
+      IsmChatLog.success('Message data: ${message.data}');
+
+      // Handle notification payload and navigate to conversation
+      IsmChat.i.handleNotificationPayload(message.data);
+    });
+
+    // Handle notification tap when app is opened from terminated state
+    // Check if app was opened from a notification
+    final initialMessage = await messaging.getInitialMessage();
+    if (initialMessage != null) {
+      IsmChatLog.success('App opened from terminated state via notification');
+      IsmChatLog.success('Message data: ${initialMessage.data}');
+
+      // Handle notification payload and navigate to conversation
+      IsmChat.i.handleNotificationPayload(initialMessage.data);
+    }
   }
 
   Future<String?> getToken() async {
