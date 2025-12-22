@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/src/res/res.dart';
 import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
@@ -26,7 +27,6 @@ class IsmChatMediaGridMessage extends StatelessWidget {
 
     final totalCount = messages.length;
     final crossAxisCount = 2; // Always use 2 columns for grid
-    final aspectRatio = 1.0;
 
     // Determine display count and remaining count based on total
     int displayCount;
@@ -47,6 +47,17 @@ class IsmChatMediaGridMessage extends StatelessWidget {
       displayCount = 4;
       remainingCount = totalCount > 4 ? totalCount - 4 : 0;
     }
+
+    // Calculate aspect ratio for grid images
+    // For 2-row grid (4 images): use base aspect ratio
+    // For 2-column, 1-row (2 images): use half aspect ratio to make height double
+    // Smaller aspect ratio = taller images
+    // Relationship: 1-row height = 2x (per-row height of 2-row grid)
+    final baseAspectRatio = 0.85; // Base aspect ratio for 2-row grid
+    final aspectRatio = displayCount == 2
+        ? baseAspectRatio /
+            2 // Half aspect ratio for 1-row (taller, height = 2x)
+        : baseAspectRatio; // Base aspect ratio for 2-row grid
 
     return Column(
       mainAxisSize: MainAxisSize.min,
