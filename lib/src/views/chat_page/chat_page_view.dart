@@ -6,6 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Main chat page view widget that displays the conversation interface.
+///
+/// This widget manages the chat page lifecycle, handles app state changes,
+/// and provides navigation controls. It supports both Android and iOS platforms
+/// with platform-specific gesture handling.
+///
+/// The [viewTag] parameter is optional and used for multiple chat page instances.
 class IsmChatPageView extends StatefulWidget {
   const IsmChatPageView({
     super.key,
@@ -37,6 +44,18 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     super.dispose();
   }
 
+  /// Handles app lifecycle state changes to manage MQTT connection and message synchronization.
+  ///
+  /// When the app resumes:
+  /// - Sets MQTT controller background state to false
+  /// - Fetches message status updates
+  /// - Marks all messages as read
+  ///
+  /// When the app is paused:
+  /// - Sets MQTT controller background state to true
+  ///
+  /// When the app is detached:
+  /// - Logs the state change for debugging
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -54,21 +73,33 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
 
     if (AppLifecycleState.paused == state) {
       mqttController.isAppInBackground = true;
-      IsmChatLog.info('app chat in backgorund');
+      IsmChatLog.info('app chat in background');
     }
     if (AppLifecycleState.detached == state) {
       IsmChatLog.info('app chat in killed');
     }
   }
 
+  /// Handles navigation back action with proper cleanup.
+  ///
+  /// If messages are currently selected, deselects them and prevents navigation.
+  /// Otherwise, performs cleanup operations:
+  /// - Closes any open overlays
+  /// - Updates the last message
+  /// - Calls the onBackTap callback if provided
+  /// - Navigates back
+  ///
+  /// Returns `true` if navigation should proceed, `false` otherwise.
   Future<bool> navigateBack() async {
     if (IsmChatUtility.chatPageControllerRegistered) {
       final controller = IsmChatUtility.chatPageController;
       if (controller.isMessageSeleted) {
+        // Deselect messages and prevent navigation
         controller.isMessageSeleted = false;
         controller.selectedMessage.clear();
         return false;
       } else {
+        // Perform cleanup and navigate back
         IsmChatRoute.goBack();
         controller.closeOverlay();
         final updateMessage = await controller.updateLastMessage();
@@ -101,6 +132,15 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       );
 }
 
+/// Internal widget that builds the actual chat page UI.
+///
+/// This widget handles:
+/// - Background decoration (color and image)
+/// - App bar (message selection mode or normal header)
+/// - Message list display
+/// - Message input field
+/// - Emoji board
+/// - Scroll-to-bottom button
 class _IsmChatPageView extends StatelessWidget {
   const _IsmChatPageView();
 
@@ -136,6 +176,7 @@ class _IsmChatPageView extends StatelessWidget {
                 IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
                     Colors.transparent,
             resizeToAvoidBottomInset: true,
+            // App bar: Shows selection mode or normal header
             appBar: controller.isMessageSeleted
                 ? AppBar(
                     systemOverlayStyle: IsmChatConfig.chatTheme
@@ -173,17 +214,22 @@ class _IsmChatPageView extends StatelessWidget {
                                 .chatTheme.chatPageHeaderTheme?.iconColor ??
                             IsmChatColors.whiteColor),
                     actions: [
+                      // Delete button for selected messages
                       IconButton(
                         onPressed: () async {
+                          // Convert selected messages to map format
                           var selectedMessage = <String, IsmChatMessageModel>{};
                           for (var message in controller.selectedMessage) {
                             selectedMessage
                                 .addEntries({message.key: message}.entries);
                           }
+                          // Check if all messages are from current user
                           var messageSenderSide =
                               controller.isAllMessagesFromMe();
+                          // Check if any message is deleted for everyone
                           var messageDeletedForEveryone =
                               controller.isAnyMessageDeletedForEveryone();
+                          // Show delete confirmation dialog
                           controller.showDialogForDeleteMultipleMessage(
                               messageSenderSide,
                               messageDeletedForEveryone,
@@ -199,6 +245,7 @@ class _IsmChatPageView extends StatelessWidget {
                     ],
                   )
                 : IsmChatPageHeader(
+                    // Handle profile tap: Use custom callback, or navigate to conversation info
                     onTap: IsmChatProperties
                                 .chatPageProperties.header?.onProfileTap !=
                             null
@@ -211,8 +258,10 @@ class _IsmChatPageView extends StatelessWidget {
                             ? null
                             : controller.isActionAllowed == false
                                 ? () {
+                                    // Navigate to conversation info if allowed
                                     if (controller.isActionAllowed == false &&
                                         controller.isBroadcast == false) {
+                                      // Don't navigate if user was removed from group
                                       if (!(controller
                                                   .conversation
                                                   ?.lastMessageDetails
@@ -239,6 +288,7 @@ class _IsmChatPageView extends StatelessWidget {
                                   }
                                 : null,
                   ),
+            // Body content: Shows media preview, camera view, or main chat interface
             body: IsmChatResponsive.isWeb(context) &&
                     controller.webMedia.isNotEmpty
                 ? const WebMediaPreview()
@@ -256,18 +306,22 @@ class _IsmChatPageView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                // Messages list area
                                 Expanded(
                                   child: controller.isMessagesLoading
                                       ? const IsmChatLoadingDialog()
                                       : GestureDetector(
+                                          // Close overlay when tapping on messages area
                                           onTap: controller.hasOverlay
                                               ? controller.closeOverlay
                                               : null,
                                           child: AbsorbPointer(
+                                            // Prevent interactions when overlay is shown
                                             absorbing: controller.hasOverlay,
                                             child: Stack(
                                               alignment: Alignment.bottomLeft,
                                               children: [
+                                                // Messages list or empty state
                                                 controller.messages.isNotEmpty
                                                     ? Align(
                                                         alignment:
@@ -314,6 +368,7 @@ class _IsmChatPageView extends StatelessWidget {
                                                           text: IsmChatStrings
                                                               .noMessages,
                                                         ),
+                                                // Mention user list overlay
                                                 Obx(() => Align(
                                                       alignment:
                                                           IsmChatResponsive
@@ -334,10 +389,13 @@ class _IsmChatPageView extends StatelessWidget {
                                           ),
                                         ),
                                 ),
+                                // Message input restrictions and input field
+                                // Show message restrictions based on various conditions
                                 if (controller.isActionAllowed == true &&
                                     controller.conversation?.isGroup ==
                                         true) ...[
-                                  const _MessgeNotAllowdWidget(
+                                  // User was removed from group
+                                  const _MessageNotAllowedWidget(
                                     showMessage:
                                         IsmChatStrings.removeGroupMessage,
                                   )
@@ -349,7 +407,8 @@ class _IsmChatPageView extends StatelessWidget {
                                     controller.conversation?.lastMessageDetails?.userId ==
                                         IsmChatConfig.communicationConfig
                                             .userConfig.userId) ...[
-                                  const _MessgeNotAllowdWidget(
+                                  // Current user was removed from group
+                                  const _MessageNotAllowedWidget(
                                     showMessage:
                                         IsmChatStrings.removeGroupMessage,
                                   )
@@ -366,7 +425,8 @@ class _IsmChatPageView extends StatelessWidget {
                                             .call(context,
                                                 controller.conversation) ==
                                         true)) ...[
-                                  _MessgeNotAllowdWidget(
+                                  // Custom message restriction from properties
+                                  _MessageNotAllowedWidget(
                                     showMessage: IsmChatProperties
                                             .chatPageProperties
                                             .messageAllowedConfig
@@ -385,11 +445,13 @@ class _IsmChatPageView extends StatelessWidget {
                                   )
                                 ] else if (controller.conversation?.isOpponentDetailsEmpty ==
                                     true) ...[
-                                  const _MessgeNotAllowdWidget(
+                                  // Opponent user has been deleted
+                                  const _MessageNotAllowedWidget(
                                     showMessage:
                                         IsmChatStrings.userDeleteMessage,
                                   )
                                 ] else ...[
+                                  // Normal message input field
                                   Container(
                                     padding: IsmChatConfig
                                         .chatTheme
@@ -407,6 +469,7 @@ class _IsmChatPageView extends StatelessWidget {
                                     ),
                                   ),
                                 ],
+                                // Emoji board (hidden when not shown)
                                 Offstage(
                                   offstage: !controller.showEmojiBoard,
                                   child: const EmojiBoard(),
@@ -414,6 +477,7 @@ class _IsmChatPageView extends StatelessWidget {
                               ],
                             ),
                           ),
+                          // Scroll to bottom button (shown when there are unread messages)
                           Obx(
                             () => !controller.showDownSideButton
                                 ? IsmChatDimens.box0
@@ -456,17 +520,30 @@ class _IsmChatPageView extends StatelessWidget {
       );
 }
 
-class _MessgeNotAllowdWidget extends StatelessWidget {
-  const _MessgeNotAllowdWidget({required this.showMessage, this.messageWidget});
+/// Widget that displays a message when message input is not allowed.
+///
+/// This widget is shown in various scenarios:
+/// - User was removed from a group
+/// - Opponent user has been deleted
+/// - Custom message restrictions are configured
+///
+/// The [showMessage] parameter contains the text to display.
+/// The [messageWidget] parameter is optional and allows customizing the message widget.
+class _MessageNotAllowedWidget extends StatelessWidget {
+  const _MessageNotAllowedWidget({
+    required this.showMessage,
+    this.messageWidget,
+  });
 
+  /// The message text to display when message input is not allowed.
   final String showMessage;
 
+  /// Optional custom widget to display instead of the default text message.
   final Widget? messageWidget;
 
   @override
   Widget build(BuildContext context) => Container(
         color: IsmChatConfig.chatTheme.backgroundColor,
-        // height: IsmChatDimens.sixty,
         width: double.maxFinite,
         child: SafeArea(
           child: Center(
