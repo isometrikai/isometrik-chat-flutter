@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/src/res/res.dart';
 import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
@@ -189,9 +188,15 @@ class IsmChatMediaGridMessage extends StatelessWidget {
                           color: Colors.black.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: IsmChatUtility.circularProgressBar(
-                          IsmChatColors.blackColor,
-                          IsmChatColors.whiteColor,
+                        child: Center(
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: IsmChatUtility.circularProgressBar(
+                              IsmChatColors.blackColor,
+                              IsmChatColors.whiteColor,
+                            ),
+                          ),
                         ),
                       ),
                   ],
@@ -247,8 +252,14 @@ class IsmChatMediaGridMessage extends StatelessWidget {
         fit: BoxFit.cover,
         placeholder: (context, url) => Container(
           color: IsmChatColors.greyColor.applyIsmOpacity(0.2),
-          child: const Center(
-            child: CircularProgressIndicator.adaptive(),
+          child: Center(
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator.adaptive(
+                strokeWidth: 2.5,
+              ),
+            ),
           ),
         ),
         errorWidget: (context, url, error) => Container(
