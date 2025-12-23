@@ -63,8 +63,16 @@ class IsmChatVideoMessage extends StatelessWidget {
                   color: IsmChatColors.whiteColor,
                 ),
                 if (message.isUploading == true)
-                  IsmChatUtility.circularProgressBar(
-                      IsmChatColors.blackColor, IsmChatColors.whiteColor),
+                  Center(
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: IsmChatUtility.circularProgressBar(
+                        IsmChatColors.blackColor,
+                        IsmChatColors.whiteColor,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],

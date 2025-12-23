@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter/src/views/chat_page/widget/messages/media_grid_message.dart';
 
 class MessageBubble extends StatelessWidget {
   MessageBubble({
@@ -26,6 +27,183 @@ class MessageBubble extends StatelessWidget {
   final bool showMessageInCenter;
   final int? index;
   final GlobalKey _globalKey;
+
+  /// Checks if the current message is part of a group of consecutive media messages
+  /// Returns the list of grouped messages if this is the first message in the group
+  /// Returns null if this message should not show a grid
+  List<IsmChatMessageModel>? _getGroupedMediaMessages(
+    IsmChatPageController controller,
+  ) {
+    final isImage = _message.customType == IsmChatCustomMessageType.image;
+    final isVideo = _message.customType == IsmChatCustomMessageType.video;
+
+    if (!isImage && !isVideo) {
+      return null;
+    }
+
+    // Get all messages (excluding date messages) - these are in chronological order
+    final allMessages = controller.messages
+        .where((msg) => msg.customType != IsmChatCustomMessageType.date)
+        .toList();
+
+    if (allMessages.isEmpty || index == null) {
+      return null;
+    }
+
+    // Since ListView is reversed, the index in the reversed list corresponds to
+    // (allMessages.length - 1 - index) in the chronological list
+    final reversedIndex = allMessages.length - 1 - index!;
+
+    if (reversedIndex < 0 || reversedIndex >= allMessages.length) {
+      return null;
+    }
+
+    final currentMessage = allMessages[reversedIndex];
+    final sentByMe = currentMessage.sentByMe;
+    final timeWindow =
+        10000; // 10 seconds in milliseconds - allows for upload delays
+    final groupedMessages = <IsmChatMessageModel>[];
+
+    // Find the first message in the group by going backwards chronologically
+    // (which means going forward in the reversed list)
+    int groupStartIndex = reversedIndex;
+    for (int i = reversedIndex; i >= 0; i--) {
+      final msg = allMessages[i];
+      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
+
+      // Stop if we hit a non-media message or different sender
+      if (!msgIsImage && !msgIsVideo) {
+        break;
+      }
+
+      if (msg.sentByMe != sentByMe) {
+        break;
+      }
+
+      // Check if message is within time window
+      final timeDiff = (msg.sentAt - currentMessage.sentAt).abs();
+      if (timeDiff > timeWindow) {
+        break;
+      }
+
+      groupStartIndex = i;
+    }
+
+    // Now collect all messages in the group starting from groupStartIndex
+    for (int i = groupStartIndex; i < allMessages.length; i++) {
+      final msg = allMessages[i];
+      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
+
+      // Stop if we hit a non-media message or different sender
+      if (!msgIsImage && !msgIsVideo) {
+        break;
+      }
+
+      if (msg.sentByMe != sentByMe) {
+        break;
+      }
+
+      // Check if message is within time window
+      final timeDiff = (msg.sentAt - allMessages[groupStartIndex].sentAt).abs();
+      if (timeDiff > timeWindow && groupedMessages.isNotEmpty) {
+        break;
+      }
+
+      groupedMessages.add(msg);
+    }
+
+    // Only return grouped messages if there are 2 or more
+    // And only if the current message is the first one in the group
+    if (groupedMessages.length >= 2) {
+      final firstMessage = groupedMessages.first;
+      final isFirstMessage = firstMessage.sentAt == currentMessage.sentAt &&
+          (firstMessage.messageId == currentMessage.messageId ||
+              (firstMessage.messageId?.isEmpty == true &&
+                  currentMessage.messageId?.isEmpty == true));
+
+      // Only return the group if this is the first message
+      return isFirstMessage ? groupedMessages : null;
+    }
+
+    return null;
+  }
+
+  /// Gets appropriate padding based on message type
+  /// Reduces bottom padding for grid messages to minimize space above time/status
+  EdgeInsets _getPaddingForMessage(IsmChatPageController controller) {
+    final groupedMessages = _getGroupedMediaMessages(controller);
+    final isGridMessage = groupedMessages != null && groupedMessages.isNotEmpty;
+
+    if (isGridMessage) {
+      // Check if any message in the group has a caption
+      final hasCaption = groupedMessages.any(
+        (msg) => msg.metaData?.caption?.isNotEmpty == true,
+      );
+
+      if (hasCaption) {
+        // More bottom padding when caption is present to make room for time below caption
+        return const EdgeInsets.only(
+          top: 5,
+          bottom: 25, // Extra space for caption + time
+          left: 5,
+          right: 5,
+        );
+      } else {
+        // Enough bottom padding for grid messages without caption to show time below grid
+        return const EdgeInsets.only(
+          top: 5,
+          bottom: 20, // Space for time below grid
+          left: 5,
+          right: 5,
+        );
+      }
+    }
+
+    // Default padding for other messages
+    return IsmChatDimens.edgeInsets5_5_5_20;
+  }
+
+  /// Gets the bottom position for time/status indicator
+  /// Adjusts position when grid message has caption to avoid overlap
+  double _getTimeBottomPosition(IsmChatPageController controller) {
+    final groupedMessages = _getGroupedMediaMessages(controller);
+    final isGridMessage = groupedMessages != null && groupedMessages.isNotEmpty;
+
+    if (isGridMessage) {
+      final hasCaption = groupedMessages.any(
+        (msg) => msg.metaData?.caption?.isNotEmpty == true,
+      );
+
+      if (hasCaption) {
+        // Position time lower when caption is present
+        return IsmChatDimens.four;
+      }
+    }
+
+    // Default position
+    return IsmChatDimens.four;
+  }
+
+  Widget _buildMessageContent(
+    BuildContext context,
+    IsmChatPageController controller,
+  ) {
+    final groupedMessages = _getGroupedMediaMessages(controller);
+
+    if (groupedMessages != null && groupedMessages.isNotEmpty) {
+      // If we got grouped messages, it means this IS the first message in the group
+      // Show grid for the first message
+      return IsmChatMediaGridMessage(
+        messages: groupedMessages,
+        sentByMe: _message.sentByMe,
+      );
+    }
+
+    // Show normal message wrapper for non-grouped messages
+    return IsmChatMessageWrapper(_message);
+  }
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
@@ -100,7 +278,7 @@ class MessageBubble extends StatelessWidget {
                         ? (IsmChatProperties.chatPageProperties.messageStatus
                                     ?.shouldShowTimeStatusInner ??
                                 true)
-                            ? IsmChatDimens.edgeInsets5_5_5_20
+                            ? _getPaddingForMessage(controller)
                             : IsmChatDimens.edgeInsets5
                         : IsmChatDimens.edgeInsets0,
                     child: Column(
@@ -203,7 +381,7 @@ class MessageBubble extends StatelessWidget {
                             ],
                           ],
                         ),
-                        IsmChatMessageWrapper(_message)
+                        _buildMessageContent(context, controller)
                       ],
                     ),
                   ),
@@ -212,7 +390,7 @@ class MessageBubble extends StatelessWidget {
                               ?.shouldShowTimeStatusInner ??
                           true)) ...[
                     Positioned(
-                      bottom: IsmChatDimens.four,
+                      bottom: _getTimeBottomPosition(controller),
                       right: IsmChatDimens.ten,
                       child: Material(
                         color: Colors.transparent,

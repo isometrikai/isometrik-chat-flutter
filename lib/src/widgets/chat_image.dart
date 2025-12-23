@@ -202,8 +202,14 @@ class _NetworkImage extends StatelessWidget {
                     color: IsmChatConfig.chatTheme.primaryColor,
                   ),
                 )
-              : const Center(
-                  child: CircularProgressIndicator.adaptive(),
+              : Center(
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator.adaptive(
+                      strokeWidth: 2.5,
+                    ),
+                  ),
                 ),
         ),
         errorWidget: (context, url, error) => _ErrorImage(

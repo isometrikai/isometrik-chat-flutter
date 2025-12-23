@@ -147,6 +147,13 @@ class IsmChatCommonViewModel {
             pendingMessage.deliveredToAll = false;
             pendingMessage.readByAll = false;
             pendingMessage.isUploading = false;
+
+            // Update attachments if new ones are provided (e.g., after media upload)
+            if (attachments != null && attachments.isNotEmpty) {
+              final updatedAttachments =
+                  attachments.map((e) => AttachmentModel.fromMap(e)).toList();
+              pendingMessage.attachments = updatedAttachments;
+            }
           } else if (response.respone.errorCode == 403) {
             pendingMessage.messageId = '';
             pendingMessage.isInvalidMessage = true;
