@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -33,6 +35,7 @@ class IsmChatPageProperties {
     this.shouldShowHoverHold,
     this.backgroundImageUrl,
     this.canReplayMessage,
+    this.conversationDetailsApiInterval = const Duration(minutes: 1),
   });
 
   final Widget? placeholder;
@@ -144,4 +147,19 @@ class IsmChatPageProperties {
   final String? backgroundImageUrl;
 
   final MessageCallback? canReplayMessage;
+
+  /// Configurable interval for periodic conversation details API calls.
+  ///
+  /// This duration determines how frequently the conversation details
+  /// are fetched from the API to keep the conversation data up-to-date.
+  ///
+  /// Defaults to 1 minute (`Duration(minutes: 1)`).
+  ///
+  /// Example:
+  /// ```dart
+  /// IsmChatPageProperties(
+  ///   conversationDetailsApiInterval: Duration(seconds: 30), // Every 30 seconds
+  /// )
+  /// ```
+  final Duration conversationDetailsApiInterval;
 }
