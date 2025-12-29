@@ -1595,10 +1595,21 @@ class IsmChatPageController extends GetxController
     }
   }
 
-  /// Call function for Get Chat Conversation Detailss
+  /// Periodically calls the conversation details API to keep conversation data up-to-date.
+  ///
+  /// The interval is configurable via [IsmChatPageProperties.conversationDetailsApiInterval]
+  /// and defaults to 1 minute if not specified.
+  ///
+  /// The timer automatically cancels if:
+  /// - The chat page controller is no longer registered
+  /// - The conversation ID is null or empty
   void checkUserStatus() {
+    // Get the configurable interval from properties, defaulting to 1 minute
+    final interval = IsmChatProperties
+        .chatPageProperties.conversationDetailsApiInterval;
+
     conversationDetailsApTimer = Timer.periodic(
-      const Duration(minutes: 1),
+      interval,
       (Timer t) {
         if (!IsmChatUtility.chatPageControllerRegistered) {
           t.cancel();
