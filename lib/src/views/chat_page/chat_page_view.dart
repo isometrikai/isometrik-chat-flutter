@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:custom_will_pop_scope/custom_will_pop_scope.dart';
@@ -48,6 +49,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   ///
   /// When the app resumes:
   /// - Sets MQTT controller background state to false
+  /// - Fetches new messages from API that arrived while in background
   /// - Fetches message status updates
   /// - Marks all messages as read
   ///
@@ -65,8 +67,19 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       if (AppLifecycleState.resumed == state &&
           !(controller.conversation?.conversationId.isNullOrEmpty == true)) {
         mqttController.isAppInBackground = false;
-        controller.getMessageForStatus();
-        controller.readAllMessages();
+        // Fetch new messages that arrived while app was in background
+        // This ensures messages are displayed on receiver's screen
+        unawaited(controller.getMessagesFromAPI().then((_) async {
+          // After fetching messages, ensure they're loaded from DB
+          final conversationId = controller.conversation?.conversationId ?? '';
+          if (conversationId.isNotEmpty) {
+            await controller.getMessagesFromDB(conversationId);
+          }
+          // Then get status updates and mark as read
+          controller.getMessageForStatus();
+          await Future.delayed(const Duration(milliseconds: 100));
+          controller.readAllMessages();
+        }));
         IsmChatLog.info('app chat in resumed');
       }
     }
