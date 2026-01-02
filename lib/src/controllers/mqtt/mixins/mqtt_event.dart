@@ -578,6 +578,11 @@ mixin IsmChatMqttEventMixin {
           }
           message.readByAll =
               message.readBy?.length == (conversation?.membersCount ?? 0) - 1;
+          // If readByAll is true, deliveredToAll must also be true
+          // (you can't read a message that hasn't been delivered)
+          if (message.readByAll == true) {
+            message.deliveredToAll = true;
+          }
           conversation?.messages?[message.key] = message;
           conversation = conversation?.copyWith(
             lastMessageDetails: conversation.lastMessageDetails?.copyWith(
@@ -642,15 +647,18 @@ mixin IsmChatMqttEventMixin {
                   ],
           );
 
+          final readByAllValue =
+              modified.readBy?.length == (conversation.membersCount ?? 0) - 1;
+          final deliveredToAllValue = modified.deliveredTo?.length ==
+                  (conversation.membersCount ?? 0) - 1
+              ? true
+              : false;
+
           modified = modified.copyWith(
-            readByAll:
-                modified.readBy?.length == (conversation.membersCount ?? 0) - 1
-                    ? true
-                    : false,
-            deliveredToAll: modified.deliveredTo?.length ==
-                    (conversation.membersCount ?? 0) - 1
-                ? true
-                : false,
+            readByAll: readByAllValue,
+            // If readByAll is true, deliveredToAll must also be true
+            // (you can't read a message that hasn't been delivered)
+            deliveredToAll: readByAllValue ? true : deliveredToAllValue,
           );
 
           modifiedMessages.addEntries(
