@@ -289,7 +289,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                           maxLines: 2,
                                         ))
                                     : controller.conversation?.opponentDetails
-                                                ?.online ??
+                                                ?.isOnlineBasedOnLastActive ??
                                             false
                                         ? Text(
                                             IsmChatStrings.online,
@@ -303,19 +303,14 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                           )
                                         : Text(
                                             controller
-                                                            .conversation
-                                                            ?.opponentDetails
-                                                            ?.lastSeen !=
-                                                        null &&
-                                                    controller
-                                                            .conversation
-                                                            ?.opponentDetails
-                                                            ?.lastSeen !=
-                                                        0
+                                                        .conversation
+                                                        ?.opponentDetails
+                                                        ?.lastSeenTimestamp !=
+                                                    null
                                                 ? controller
                                                         .conversation
                                                         ?.opponentDetails
-                                                        ?.lastSeen
+                                                        ?.lastSeenTimestamp
                                                         ?.toCurrentTimeStirng() ??
                                                     ''
                                                 : IsmChatStrings.tapInfo,

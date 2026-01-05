@@ -1246,6 +1246,31 @@ class IsmChat {
     );
   }
 
+  /// Updates the lastActiveTimestamp in user metadata.
+  ///
+  /// This method should be called periodically (e.g., every 30 seconds) from outside the SDK
+  /// to update the user's last active timestamp. It updates the metadata's customMetaData
+  /// with the current timestamp.
+  ///
+  /// **Parameters:**
+  /// - `isLoading`: Whether to show a loading indicator. Defaults to false.
+  ///
+  /// **Example usage from home screen:**
+  /// ```dart
+  /// // Set up a timer to update every 30 seconds
+  /// Timer.periodic(Duration(seconds: 30), (timer) {
+  ///   IsmChat.i.updateLastActiveTimestamp();
+  /// });
+  ///
+  /// // Or call it manually
+  /// await IsmChat.i.updateLastActiveTimestamp(isLoading: false);
+  /// ```
+  ///
+  /// **Note:** This method updates the `lastActiveTimestamp` key in the user's metadata
+  /// `customMetaData` field via the PATCH `/chat/user` API endpoint.
+  Future<void> updateLastActiveTimestamp({bool isLoading = false}) async =>
+      await _delegate.updateLastActiveTimestamp(isLoading: isLoading);
+
   /// Retrieves chat conversations from the local database.
   ///
   /// This method fetches conversations stored locally on the device's database.

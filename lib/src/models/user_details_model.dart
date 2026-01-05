@@ -168,4 +168,75 @@ class UserDetails {
       order.hashCode ^
       language.hashCode ^
       memberId.hashCode;
+
+  /// Checks if user should be shown as online based on lastActiveTimestamp.
+  ///
+  /// Priority:
+  /// 1. If lastActiveTimestamp exists in metadata:
+  ///    - If within 30 seconds → returns true (online)
+  ///    - If older than 30 seconds → returns false (offline, regardless of online field)
+  /// 2. If lastActiveTimestamp doesn't exist → falls back to existing `online` field
+  ///
+  /// Returns true if user should be shown as online, false otherwise.
+  bool get isOnlineBasedOnLastActive {
+    // Check if lastActiveTimestamp exists in customMetaData
+    final lastActive = metaData?.customMetaData?['lastActiveTimestamp'];
+
+    if (lastActive != null) {
+      // Handle different data types (int or String)
+      final lastActiveTimestamp = lastActive is int
+          ? lastActive
+          : (lastActive is String ? int.tryParse(lastActive) : null);
+
+      if (lastActiveTimestamp != null && lastActiveTimestamp > 0) {
+        final now = DateTime.now().millisecondsSinceEpoch;
+        final diffSeconds = (now - lastActiveTimestamp) ~/ 1000;
+
+        // If timestamp is in the future (clock skew), treat as online
+        if (diffSeconds < 0) {
+          return true;
+        }
+
+        // If last active was within 30 seconds, consider user online
+        // Using 30 seconds to match the update interval
+        // If user updates every 30 seconds and goes to background, they'll show offline after 30 seconds
+        if (diffSeconds >= 0 && diffSeconds <= 30) {
+          return true;
+        }
+
+        // If lastActiveTimestamp exists but is older than 30 seconds, user is offline
+        // This ensures that even if the online field is true, we show offline based on timestamp
+        return false;
+      }
+    }
+
+    // Fallback to existing online field only if lastActiveTimestamp is not available
+    return online ?? false;
+  }
+
+  /// Gets the last seen timestamp for display.
+  ///
+  /// Priority:
+  /// 1. If lastActiveTimestamp exists in metadata → returns it
+  /// 2. Otherwise falls back to the existing `lastSeen` field
+  ///
+  /// Returns the timestamp in milliseconds, or null if not available.
+  int? get lastSeenTimestamp {
+    // Check lastActiveTimestamp first
+    final lastActive = metaData?.customMetaData?['lastActiveTimestamp'];
+
+    if (lastActive != null) {
+      // Handle different data types (int or String)
+      final lastActiveTimestamp = lastActive is int
+          ? lastActive
+          : (lastActive is String ? int.tryParse(lastActive) : null);
+
+      if (lastActiveTimestamp != null && lastActiveTimestamp > 0) {
+        return lastActiveTimestamp;
+      }
+    }
+
+    // Fallback to existing lastSeen field
+    return lastSeen != null && lastSeen != 0 ? lastSeen : null;
+  }
 }
