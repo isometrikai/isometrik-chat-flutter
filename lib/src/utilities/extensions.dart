@@ -609,7 +609,11 @@ extension ModelConversion on IsmChatConversationModel {
               IsmChatFeature.showMessageStatus,
             )
               ? Icon(
-                  deliveredToAll ? Icons.done_all_rounded : Icons.done_rounded,
+                  // If readByAll is true, deliveredToAll must also be true
+                  // Always show double checkmark if read
+                  readByAll || deliveredToAll
+                      ? Icons.done_all_rounded
+                      : Icons.done_rounded,
                   color: readByAll
                       ? IsmChatConfig.chatTheme.chatPageTheme
                               ?.messageStatusTheme?.readCheckColor ??

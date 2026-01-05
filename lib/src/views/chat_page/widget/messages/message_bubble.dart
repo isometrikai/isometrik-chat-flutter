@@ -276,7 +276,10 @@ class MessageBubble extends StatelessWidget {
                               )) ...[
                                 IsmChatDimens.boxWidth2,
                                 Icon(
-                                  _message.deliveredToAll ?? false
+                                  // If readByAll is true, deliveredToAll must also be true
+                                  // Always show double checkmark if read
+                                  (_message.readByAll ?? false) ||
+                                          (_message.deliveredToAll ?? false)
                                       ? Icons.done_all_rounded
                                       : Icons.done_rounded,
                                   color: _message.readByAll ?? false

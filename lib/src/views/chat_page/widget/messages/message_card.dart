@@ -239,7 +239,10 @@ class _MessageCardState extends State<MessageCard>
                             )) ...[
                               IsmChatDimens.boxWidth2,
                               Icon(
-                                widget.message.deliveredToAll ?? false
+                                // If readByAll is true, deliveredToAll must also be true
+                                // Always show double checkmark if read
+                                (widget.message.readByAll ?? false) ||
+                                        (widget.message.deliveredToAll ?? false)
                                     ? Icons.done_all_rounded
                                     : Icons.done_rounded,
                                 color: widget.message.readByAll ?? false

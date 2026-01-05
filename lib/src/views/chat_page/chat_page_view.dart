@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:custom_will_pop_scope/custom_will_pop_scope.dart';
@@ -48,6 +49,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   ///
   /// When the app resumes:
   /// - Sets MQTT controller background state to false
+  /// - Fetches new messages from API that arrived while in background
   /// - Fetches message status updates
   /// - Marks all messages as read
   ///
@@ -65,8 +67,19 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       if (AppLifecycleState.resumed == state &&
           !(controller.conversation?.conversationId.isNullOrEmpty == true)) {
         mqttController.isAppInBackground = false;
-        controller.getMessageForStatus();
-        controller.readAllMessages();
+        // Fetch new messages that arrived while app was in background
+        // This ensures messages are displayed on receiver's screen
+        unawaited(controller.getMessagesFromAPI().then((_) async {
+          // After fetching messages, ensure they're loaded from DB
+          final conversationId = controller.conversation?.conversationId ?? '';
+          if (conversationId.isNotEmpty) {
+            await controller.getMessagesFromDB(conversationId);
+          }
+          // Then get status updates and mark as read
+          controller.getMessageForStatus();
+          await Future.delayed(const Duration(milliseconds: 100));
+          controller.readAllMessages();
+        }));
         IsmChatLog.info('app chat in resumed');
       }
     }
@@ -118,14 +131,9 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
           return IsmChat.i.chatPageTag == null ? await navigateBack() : false;
         },
         child: GetPlatform.isIOS
-            ? GestureDetector(
-                onHorizontalDragEnd: IsmChat.i.chatPageTag == null
-                    ? (details) {
-                        if (details.velocity.pixelsPerSecond.dx > 50) {
-                          navigateBack();
-                        }
-                      }
-                    : null,
+            ? _SwipeGestureDetector(
+                onSwipeRight:
+                    IsmChat.i.chatPageTag == null ? () => navigateBack() : null,
                 child: const _IsmChatPageView(),
               )
             : const _IsmChatPageView(),
@@ -563,4 +571,58 @@ class _MessageNotAllowedWidget extends StatelessWidget {
           ),
         ),
       );
+}
+
+/// Custom gesture detector that requires a deliberate swipe gesture to trigger navigation.
+///
+/// This widget prevents accidental navigation by requiring both:
+/// - A minimum drag distance (100 pixels)
+/// - A minimum velocity (300 pixels per second)
+///
+/// This ensures only intentional swipe gestures trigger the back navigation.
+class _SwipeGestureDetector extends StatefulWidget {
+  const _SwipeGestureDetector({
+    required this.child,
+    this.onSwipeRight,
+  });
+
+  final Widget child;
+  final VoidCallback? onSwipeRight;
+
+  @override
+  State<_SwipeGestureDetector> createState() => _SwipeGestureDetectorState();
+}
+
+class _SwipeGestureDetectorState extends State<_SwipeGestureDetector> {
+  double _dragDistance = 0.0;
+  static const double _minDragDistance = 100.0;
+  static const double _minVelocity = 300.0;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.onSwipeRight == null) {
+      return widget.child;
+    }
+
+    return GestureDetector(
+      onHorizontalDragStart: (_) {
+        _dragDistance = 0.0;
+      },
+      onHorizontalDragUpdate: (details) {
+        // Only track rightward swipes (positive dx)
+        if (details.delta.dx > 0) {
+          _dragDistance += details.delta.dx;
+        }
+      },
+      onHorizontalDragEnd: (details) {
+        final velocity = details.velocity.pixelsPerSecond.dx;
+        // Require both minimum distance and velocity for a deliberate swipe
+        if (_dragDistance >= _minDragDistance && velocity >= _minVelocity) {
+          widget.onSwipeRight?.call();
+        }
+        _dragDistance = 0.0;
+      },
+      child: widget.child,
+    );
+  }
 }

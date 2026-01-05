@@ -72,12 +72,8 @@ class _IsmChatBoradcastMessagePageState
           return await _back(context);
         },
         child: GetPlatform.isIOS
-            ? GestureDetector(
-                onHorizontalDragEnd: (details) {
-                  if (details.velocity.pixelsPerSecond.dx > 50) {
-                    _back(context);
-                  }
-                },
+            ? _SwipeGestureDetector(
+                onSwipeRight: () => _back(context),
                 child: _BroadCastMessage(
                   onBackTap: () => _back(context),
                 ),
@@ -203,4 +199,58 @@ class _BroadCastMessage extends StatelessWidget {
           ),
         ),
       );
+}
+
+/// Custom gesture detector that requires a deliberate swipe gesture to trigger navigation.
+///
+/// This widget prevents accidental navigation by requiring both:
+/// - A minimum drag distance (100 pixels)
+/// - A minimum velocity (300 pixels per second)
+///
+/// This ensures only intentional swipe gestures trigger the back navigation.
+class _SwipeGestureDetector extends StatefulWidget {
+  const _SwipeGestureDetector({
+    required this.child,
+    this.onSwipeRight,
+  });
+
+  final Widget child;
+  final VoidCallback? onSwipeRight;
+
+  @override
+  State<_SwipeGestureDetector> createState() => _SwipeGestureDetectorState();
+}
+
+class _SwipeGestureDetectorState extends State<_SwipeGestureDetector> {
+  double _dragDistance = 0.0;
+  static const double _minDragDistance = 100.0;
+  static const double _minVelocity = 300.0;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.onSwipeRight == null) {
+      return widget.child;
+    }
+
+    return GestureDetector(
+      onHorizontalDragStart: (_) {
+        _dragDistance = 0.0;
+      },
+      onHorizontalDragUpdate: (details) {
+        // Only track rightward swipes (positive dx)
+        if (details.delta.dx > 0) {
+          _dragDistance += details.delta.dx;
+        }
+      },
+      onHorizontalDragEnd: (details) {
+        final velocity = details.velocity.pixelsPerSecond.dx;
+        // Require both minimum distance and velocity for a deliberate swipe
+        if (_dragDistance >= _minDragDistance && velocity >= _minVelocity) {
+          widget.onSwipeRight?.call();
+        }
+        _dragDistance = 0.0;
+      },
+      child: widget.child,
+    );
+  }
 }

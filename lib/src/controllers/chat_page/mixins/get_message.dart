@@ -485,8 +485,13 @@ mixin IsmChatPageGetMessageMixin on GetxController {
                 ),
               );
             }
-            dbmessage.deliveredToAll = messageStatus?.deliveredToAll ?? false;
             dbmessage.readByAll = messageStatus?.readByAll ?? false;
+            dbmessage.deliveredToAll = messageStatus?.deliveredToAll ?? false;
+            // If readByAll is true, deliveredToAll must also be true
+            // (you can't read a message that hasn't been delivered)
+            if (dbmessage.readByAll == true) {
+              dbmessage.deliveredToAll = true;
+            }
             conversation?.messages?[dbmessage.key] = dbmessage;
           }
         }
