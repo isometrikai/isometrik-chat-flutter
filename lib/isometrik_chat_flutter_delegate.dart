@@ -945,6 +945,75 @@ class IsmChatDelegate {
     }
   }
 
+  /// Updates the lastActiveTimestamp in user metadata.
+  ///
+  /// This method should be called periodically (e.g., every 30 seconds) from outside the SDK
+  /// to update the user's last active timestamp. It updates the metadata's customMetaData
+  /// with the current timestamp.
+  ///
+  /// - `isLoading`: Whether to show a loading indicator. Defaults to false.
+  ///
+  /// Example usage from home screen:
+  /// ```dart
+  /// Timer.periodic(Duration(seconds: 30), (timer) {
+  ///   IsmChat.i.updateLastActiveTimestamp();
+  /// });
+  /// ```
+  Future<void> updateLastActiveTimestamp({bool isLoading = false}) async {
+    try {
+      // Create repository instance directly
+      final repository = IsmChatConversationsRepository();
+
+      // Get current user data from database first
+      UserDetails? currentUser;
+      var userDataJson = await IsmChatConfig.dbWrapper?.userDetailsBox
+          .get(IsmChatStrings.userData);
+
+      if (userDataJson != null) {
+        currentUser = UserDetails.fromJson(userDataJson);
+      }
+
+      // If user details not in database, fetch from API
+      if (currentUser == null) {
+        currentUser = await repository.getUserData(isLoading: false);
+      }
+
+      if (currentUser == null) {
+        IsmChatLog.error(
+            'Cannot update lastActiveTimestamp: User data not available');
+        return;
+      }
+
+      // Get existing metadata or create new one
+      final existingMetaData = currentUser.metaData ?? IsmChatMetaData();
+
+      // Get existing customMetaData or create new map
+      final existingCustomMetaData = Map<String, dynamic>.from(
+        existingMetaData.customMetaData ?? {},
+      );
+
+      // Update lastActiveTimestamp with current timestamp in milliseconds
+      existingCustomMetaData['lastActiveTimestamp'] =
+          DateTime.now().millisecondsSinceEpoch;
+
+      // Create updated metadata with new customMetaData
+      final updatedMetaData = existingMetaData.copyWith(
+        customMetaData: existingCustomMetaData,
+      );
+
+      // Update user data directly using repository
+      await repository.updateUserData(
+        metaData: updatedMetaData.toMap(),
+        isloading: isLoading,
+      );
+
+      IsmChatLog.info(
+          'Updated lastActiveTimestamp: ${existingCustomMetaData['lastActiveTimestamp']}');
+    } catch (e, st) {
+      IsmChatLog.error('Error updating lastActiveTimestamp: $e', st);
+    }
+  }
+
   Future<void> getMessagesFromDB({required String conversationId}) async {
     if (IsmChatUtility.chatPageControllerRegistered) {
       await IsmChatUtility.chatPageController.getMessagesFromDB(conversationId);

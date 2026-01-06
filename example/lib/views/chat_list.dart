@@ -64,7 +64,7 @@ class ChatList extends StatelessWidget {
                 // Configure the interval for periodic conversation details API calls
                 // Default is 1 minute. You can customize it as needed:
                 conversationDetailsApiInterval:
-                    Duration(seconds: 10), // Every 30 seconds
+                    Duration(seconds: 30), // Every 30 seconds
                 // backgroundImageUrl: AssetConstants.background,
                 // isShowMessageBlur: (p0, p1) => true,
                 // stackWidget: Container(
@@ -198,6 +198,17 @@ class ChatList extends StatelessWidget {
                 //     e.chatName.toLowerCase().startsWith('t'),
 
                 opponentSubTitle: (_, opponent) {
+                  // Show online/last seen status based on lastActiveTimestamp
+                  if (opponent?.isOnlineBasedOnLastActive ?? false) {
+                    return IsmChatStrings.online;
+                  } else {
+                    final lastSeenTimestamp = opponent?.lastSeenTimestamp;
+                    if (lastSeenTimestamp != null) {
+                      return lastSeenTimestamp.toCurrentTimeStirng();
+                    }
+                  }
+
+                  // Fallback to about text if no last seen info available
                   return opponent?.metaData?.aboutText?.title == null
                       ? 'Hey there! I am using IsoChat'
                       : opponent?.metaData?.aboutText?.title ?? '';

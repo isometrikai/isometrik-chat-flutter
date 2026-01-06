@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:elegant_notification/resources/arrays.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,6 +20,9 @@ class ChatListController extends GetxController {
 
   final deviceConfig = Get.find<DeviceConfig>();
 
+  /// Timer to update lastActiveTimestamp every 30 seconds
+  Timer? _lastActiveTimer;
+
   @override
   void onInit() {
     super.onInit();
@@ -26,6 +31,65 @@ class ChatListController extends GetxController {
       subscribeToTopic();
     }
     initialize();
+  }
+
+  @override
+  void onClose() {
+    _stopLastActiveTimer();
+    super.onClose();
+  }
+
+  /// Starts a timer to update lastActiveTimestamp every 30 seconds
+  /// Only starts if user is logged in and SDK is initialized
+  void _startLastActiveTimer() {
+    // Check if user is logged in and SDK is initialized
+    if (!_isUserLoggedIn()) {
+      return;
+    }
+
+    // Update immediately on start
+    IsmChat.i.updateLastActiveTimestamp();
+
+    // Then update every 30 seconds
+    _lastActiveTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (timer) {
+        // Check again before each update
+        if (!_isUserLoggedIn()) {
+          timer.cancel();
+          _lastActiveTimer = null;
+          return;
+        }
+        IsmChat.i.updateLastActiveTimestamp(isLoading: false);
+      },
+    );
+  }
+
+  /// Stops the last active timer
+  void _stopLastActiveTimer() {
+    _lastActiveTimer?.cancel();
+    _lastActiveTimer = null;
+  }
+
+  /// Checks if user is logged in and SDK is initialized
+  bool _isUserLoggedIn() {
+    try {
+      // Check if SDK is initialized
+      if (!IsmChatConfig.configInitilized) {
+        return false;
+      }
+
+      // Check if user config exists and has valid userId
+      final userId = IsmChatConfig.communicationConfig.userConfig.userId;
+      if (userId.isEmpty) {
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      // If any error occurs, assume user is not logged in
+      return false;
+    }
   }
 
   void initialize() async {
@@ -87,6 +151,9 @@ class ChatListController extends GetxController {
         }
       },
     );
+
+    // Start timer after successful initialization
+    _startLastActiveTimer();
   }
 
   subscribeToTopic() async {
@@ -105,6 +172,9 @@ class ChatListController extends GetxController {
   }
 
   void onSignOut() async {
+    // Stop timer before logout
+    _stopLastActiveTimer();
+
     IsmChatUtility.showLoader();
     await unSubscribeToTopic();
     await dbWrapper?.deleteChatLocalDb();

@@ -51,15 +51,64 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (!kIsWeb) {
       final notificationService = PushNotificationService();
       notificationService.requestNotificationService();
       notificationService.initialize();
     }
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    // Only update if user is logged in
+    if (!_isUserLoggedIn()) {
+      return;
+    }
+
+    // Update lastActiveTimestamp when app goes to background or is killed
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      IsmChat.i.updateLastActiveTimestamp(isLoading: false);
+    }
+
+    // Update when app comes back to foreground
+    if (state == AppLifecycleState.resumed) {
+      IsmChat.i.updateLastActiveTimestamp(isLoading: false);
+    }
+  }
+
+  /// Checks if user is logged in and SDK is initialized
+  bool _isUserLoggedIn() {
+    try {
+      // Check if SDK is initialized
+      if (!IsmChatConfig.configInitilized) {
+        return false;
+      }
+
+      // Check if user config exists and has valid userId
+      final userId = IsmChatConfig.communicationConfig.userConfig.userId;
+      if (userId.isEmpty) {
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      // If any error occurs, assume user is not logged in
+      return false;
+    }
   }
 
   @override
