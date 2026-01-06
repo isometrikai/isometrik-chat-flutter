@@ -177,6 +177,9 @@ class UserDetails {
   ///    - If older than 30 seconds → returns false (offline, regardless of online field)
   /// 2. If lastActiveTimestamp doesn't exist → falls back to existing `online` field
   ///
+  /// Note: In projects where lastActiveTimestamp is not available, this method
+  /// will use the `online` field to determine online status.
+  ///
   /// Returns true if user should be shown as online, false otherwise.
   bool get isOnlineBasedOnLastActive {
     // Check if lastActiveTimestamp exists in customMetaData
@@ -210,7 +213,12 @@ class UserDetails {
       }
     }
 
-    // Fallback to existing online field only if lastActiveTimestamp is not available
+    // Fallback to existing online field if lastActiveTimestamp is not available
+    // This handles cases where:
+    // - The project doesn't implement lastActiveTimestamp updates
+    // - The user data doesn't have lastActiveTimestamp in metadata
+    // - lastActiveTimestamp exists but is invalid (null or <= 0)
+    // - We need to rely on the server-provided online status
     return online ?? false;
   }
 
@@ -219,6 +227,12 @@ class UserDetails {
   /// Priority:
   /// 1. If lastActiveTimestamp exists in metadata → returns it
   /// 2. Otherwise falls back to the existing `lastSeen` field
+  ///
+  /// Note: In projects where lastActiveTimestamp is not available, this method
+  /// will use the `lastSeen` field to determine when the user was last seen.
+  /// When checking opponentDetails.lastSeenTimestamp (from a conversation),
+  /// if opponentDetails doesn't have lastActiveTimestamp, it will fall back
+  /// to opponentDetails.lastSeen.
   ///
   /// Returns the timestamp in milliseconds, or null if not available.
   int? get lastSeenTimestamp {
@@ -236,7 +250,12 @@ class UserDetails {
       }
     }
 
-    // Fallback to existing lastSeen field
+    // Fallback to existing lastSeen field if lastActiveTimestamp is not available
+    // This handles cases where:
+    // - The project doesn't implement lastActiveTimestamp updates
+    // - The user data doesn't have lastActiveTimestamp in metadata
+    // - lastActiveTimestamp exists but is invalid (null or <= 0)
+    // - We need to rely on the server-provided lastSeen timestamp
     return lastSeen != null && lastSeen != 0 ? lastSeen : null;
   }
 }

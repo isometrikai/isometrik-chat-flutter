@@ -85,11 +85,6 @@ class ChatListController extends GetxController {
         return false;
       }
 
-      // Check if conversation controller is registered (indicates active session)
-      if (!IsmChatUtility.conversationControllerRegistered) {
-        return false;
-      }
-
       return true;
     } catch (e) {
       // If any error occurs, assume user is not logged in
