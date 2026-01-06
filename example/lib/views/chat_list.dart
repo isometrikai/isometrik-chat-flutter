@@ -64,7 +64,7 @@ class ChatList extends StatelessWidget {
                 // Configure the interval for periodic conversation details API calls
                 // Default is 1 minute. You can customize it as needed:
                 conversationDetailsApiInterval:
-                    Duration(seconds: 10), // Every 30 seconds
+                    Duration(seconds: 30), // Every 30 seconds
                 // backgroundImageUrl: AssetConstants.background,
                 // isShowMessageBlur: (p0, p1) => true,
                 // stackWidget: Container(

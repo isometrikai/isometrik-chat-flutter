@@ -961,21 +961,21 @@ class IsmChatDelegate {
   /// ```
   Future<void> updateLastActiveTimestamp({bool isLoading = false}) async {
     try {
-      if (!IsmChatUtility.conversationControllerRegistered) {
-        IsmChatLog.info(
-            'Conversation controller not registered. Cannot update lastActiveTimestamp.');
-        return;
+      // Create repository instance directly
+      final repository = IsmChatConversationsRepository();
+
+      // Get current user data from database first
+      UserDetails? currentUser;
+      var userDataJson = await IsmChatConfig.dbWrapper?.userDetailsBox
+          .get(IsmChatStrings.userData);
+
+      if (userDataJson != null) {
+        currentUser = UserDetails.fromJson(userDataJson);
       }
 
-      final controller = IsmChatUtility.conversationController;
-
-      // Get current user data to preserve existing metadata
-      UserDetails? currentUser = controller.userDetails;
-
-      // If user details not loaded, fetch them first
+      // If user details not in database, fetch from API
       if (currentUser == null) {
-        await controller.getUserData(isLoading: false);
-        currentUser = controller.userDetails;
+        currentUser = await repository.getUserData(isLoading: false);
       }
 
       if (currentUser == null) {
@@ -1001,8 +1001,8 @@ class IsmChatDelegate {
         customMetaData: existingCustomMetaData,
       );
 
-      // Update user data with new metadata
-      await controller.updateUserData(
+      // Update user data directly using repository
+      await repository.updateUserData(
         metaData: updatedMetaData.toMap(),
         isloading: isLoading,
       );
