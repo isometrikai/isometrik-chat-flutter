@@ -206,16 +206,20 @@ class IsmChatPageViewModel {
       await _repository.removeMembers(conversationId, userId, isLoading);
 
   /// Get eligible members to add to a conversation
-  Future<List<UserDetails>?> getEligibleMembers(
-          {required String conversationId,
-          bool isLoading = false,
-          int limit = 20,
-          int skip = 0}) async =>
+  Future<List<UserDetails>?> getEligibleMembers({
+    required String conversationId,
+    bool isLoading = false,
+    int limit = 20,
+    int skip = 0,
+    String? searchTag,
+  }) async =>
       await _repository.getEligibleMembers(
-          conversationId: conversationId,
-          isLoading: isLoading,
-          limit: limit,
-          skip: skip);
+        conversationId: conversationId,
+        isLoading: isLoading,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
 
   /// Leave conversation
   Future<IsmChatResponseModel?> leaveConversation(

@@ -92,32 +92,62 @@ mixin IsmChatGroupAdminMixin on GetxController {
       {required String conversationId,
       bool isLoading = false,
       int limit = 20,
-      int skip = 0}) async {
-    if (_controller.canCallCurrentApi) return;
-    _controller.canCallCurrentApi = true;
+      int skip = 0,
+      String? searchTag}) async {
+    // Allow search calls even if previous call is in progress
+    // Only block pagination calls (when searchTag is empty)
+    if (searchTag.isNullOrEmpty && _controller.canCallCurrentApi) return;
+
+    // For search, we want to make the call immediately, so don't block
+    if (searchTag.isNullOrEmpty) {
+      _controller.canCallCurrentApi = true;
+    }
 
     final response = await _controller.viewModel.getEligibleMembers(
         conversationId: conversationId,
         isLoading: isLoading,
         limit: limit,
-        skip: _controller.groupEligibleUser.length.pagination());
+        skip: searchTag.isNullOrEmpty
+            ? _controller.groupEligibleUser.length.pagination()
+            : 0,
+        searchTag: searchTag);
     if (response == null) {
+      if (searchTag.isNullOrEmpty) {
+        _controller.canCallCurrentApi = false;
+      }
       return;
     }
     final users = response;
-    _controller.groupEligibleUser.addAll(List.from(users)
-        .map((e) => SelectedMembers(
-              isUserSelected: false,
-              userDetails: e as UserDetails,
-              isBlocked: false,
-            ))
-        .toList());
-    _controller.groupEligibleUser.sort((a, b) => a.userDetails.userName
-        .toLowerCase()
-        .compareTo(b.userDetails.userName.toLowerCase()));
-    _controller.groupEligibleUserDuplicate =
-        List.from(_controller.groupEligibleUser);
-    _controller.canCallCurrentApi = false;
+
+    if (searchTag.isNullOrEmpty) {
+      // Add to existing list when not searching
+      _controller.groupEligibleUser.addAll(List.from(users)
+          .map((e) => SelectedMembers(
+                isUserSelected: false,
+                userDetails: e as UserDetails,
+                isBlocked: false,
+              ))
+          .toList());
+      _controller.groupEligibleUser.sort((a, b) => a.userDetails.userName
+          .toLowerCase()
+          .compareTo(b.userDetails.userName.toLowerCase()));
+      _controller.groupEligibleUserDuplicate =
+          List.from(_controller.groupEligibleUser);
+      _controller.canCallCurrentApi = false;
+    } else {
+      // Replace list when searching
+      _controller.groupEligibleUser.clear();
+      _controller.groupEligibleUser.addAll(List.from(users)
+          .map((e) => SelectedMembers(
+                isUserSelected: false,
+                userDetails: e as UserDetails,
+                isBlocked: false,
+              ))
+          .toList());
+      _controller.groupEligibleUser.sort((a, b) => a.userDetails.userName
+          .toLowerCase()
+          .compareTo(b.userDetails.userName.toLowerCase()));
+    }
 
     _commonController.handleSorSelectedMembers(_controller.groupEligibleUser);
   }

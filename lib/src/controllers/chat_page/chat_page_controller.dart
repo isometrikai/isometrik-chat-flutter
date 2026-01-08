@@ -951,16 +951,21 @@ class IsmChatPageController extends GetxController
 
   void addParticipantSearch(String query) {
     if (query.trim().isEmpty) {
+      // Reset to all eligible users when search is cleared
       groupEligibleUser = groupEligibleUserDuplicate;
       return;
     }
-    groupEligibleUser = groupEligibleUserDuplicate
-        .where(
-          (e) =>
-              e.userDetails.userName.didMatch(query) ||
-              e.userDetails.userIdentifier.didMatch(query),
-        )
-        .toList();
+
+    // Use debounce to delay API call until user stops typing (matches 1-to-1 chat behavior)
+    ismChatDebounce.run(() {
+      // Call API with search query to get filtered results from server
+      getEligibleMembers(
+        conversationId: conversation?.conversationId ?? '',
+        limit: 20,
+        searchTag: query.trim(),
+        isLoading: false,
+      );
+    });
   }
 
   void startTimer() {
@@ -1605,8 +1610,8 @@ class IsmChatPageController extends GetxController
   /// - The conversation ID is null or empty
   void checkUserStatus() {
     // Get the configurable interval from properties, defaulting to 1 minute
-    final interval = IsmChatProperties
-        .chatPageProperties.conversationDetailsApiInterval;
+    final interval =
+        IsmChatProperties.chatPageProperties.conversationDetailsApiInterval;
 
     conversationDetailsApTimer = Timer.periodic(
       interval,

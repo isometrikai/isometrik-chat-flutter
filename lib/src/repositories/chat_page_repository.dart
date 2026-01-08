@@ -205,10 +205,19 @@ class IsmChatPageRepository {
     bool isLoading = false,
     int limit = 20,
     int skip = 0,
+    String? searchTag,
   }) async {
     try {
+      String? url;
+      if (searchTag.isNullOrEmpty) {
+        url =
+            '${IsmChatAPI.eligibleMembers}?conversationId=$conversationId&sort=1&limit=$limit&skip=$skip';
+      } else {
+        url =
+            '${IsmChatAPI.eligibleMembers}?conversationId=$conversationId&searchTag=$searchTag&sort=1&limit=$limit&skip=$skip';
+      }
       var response = await _apiWrapper.get(
-        '${IsmChatAPI.eligibleMembers}?conversationId=$conversationId&sort=1&limit=$limit&skip=$skip',
+        url,
         headers: IsmChatUtility.tokenCommonHeader(),
         showLoader: isLoading,
       );
