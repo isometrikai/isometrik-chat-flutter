@@ -381,12 +381,13 @@ class _IsmChatTabView extends StatelessWidget {
 class _CreateChatBottomSheet extends StatelessWidget {
   const _CreateChatBottomSheet();
 
-  void _startConversation(
+  Future<void> _startConversation(
       [bool isGroup = false,
       IsmChatConversationType conversationType =
-          IsmChatConversationType.private]) {
+          IsmChatConversationType.private]) async {
     IsmChatRoute.goBack();
-    Future.delayed(const Duration(milliseconds: 500));
+    // Wait for bottom sheet to dismiss before navigating
+    await Future.delayed(const Duration(milliseconds: 300));
     IsmChatRoute.goToRoute(IsmChatCreateConversationView(
       isGroupConversation: isGroup,
       conversationType: conversationType,
@@ -501,8 +502,10 @@ class _CreateChatBottomSheet extends StatelessWidget {
             ),
           ),
           CupertinoActionSheetAction(
-            onPressed: () {
+            onPressed: () async {
               IsmChatRoute.goBack();
+              // Wait for bottom sheet to dismiss before navigating
+              await Future.delayed(const Duration(milliseconds: 300));
               IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
             },
             child: Row(

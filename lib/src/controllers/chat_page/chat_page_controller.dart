@@ -101,7 +101,9 @@ class IsmChatPageController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    startInit();
+    // Defer initialization to allow UI to render first
+    // This improves perceived performance by showing the screen immediately
+    Future.microtask(() => startInit());
   }
 
   void startInit({
@@ -118,6 +120,7 @@ class IsmChatPageController extends GetxController
     if (conversationController.currentConversation != null) {
       _currentUser();
       conversation = conversationController.currentConversation;
+      // Allow UI to render before heavy operations
       await Future.delayed(Duration.zero);
       try {
         final arguments = Get.arguments as Map<String, dynamic>? ?? {};
