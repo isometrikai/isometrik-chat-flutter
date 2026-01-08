@@ -1450,11 +1450,12 @@ class IsmChatConversationsController extends GetxController {
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.none;
       final chatPagecontroller = IsmChatUtility.chatPageController;
-      chatPagecontroller.startInit();
       chatPagecontroller.closeOverlay();
       if (chatPagecontroller.showEmojiBoard) {
         chatPagecontroller.toggleEmojiBoard(false, false);
       }
+      // Defer initialization to allow UI to render first
+      Future.microtask(() => chatPagecontroller.startInit());
     } else {
       await IsmChatRoute.goToRoute(IsmChatPageView(
         viewTag: IsmChat.i.chatPageTag,
@@ -1972,8 +1973,9 @@ class IsmChatConversationsController extends GetxController {
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.boradcastChatMessagePage;
       final chatPagecontroller = IsmChatUtility.chatPageController;
-      chatPagecontroller.startInit(isBroadcasts: true);
       chatPagecontroller.closeOverlay();
+      // Defer initialization to allow UI to render first
+      Future.microtask(() => chatPagecontroller.startInit(isBroadcasts: true));
     } else {
       if (!IsmChatUtility.chatPageControllerRegistered) {
         IsmChatPageBinding().dependencies();

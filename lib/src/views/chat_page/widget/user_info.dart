@@ -187,8 +187,9 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           }
 
                           IsmChatUtility.closeLoader();
-                          controller.startInit();
                           controller.closeOverlay();
+                          // Defer initialization to allow UI to render first
+                          Future.microtask(() => controller.startInit());
                         },
                         title: Text(
                           IsmChatStrings.message,

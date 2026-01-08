@@ -101,7 +101,9 @@ class IsmChatPageController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    startInit();
+    // Defer initialization to allow UI to render first
+    // This improves perceived performance by showing the screen immediately
+    Future.microtask(() => startInit());
   }
 
   void startInit({
@@ -118,6 +120,7 @@ class IsmChatPageController extends GetxController
     if (conversationController.currentConversation != null) {
       _currentUser();
       conversation = conversationController.currentConversation;
+      // Allow UI to render before heavy operations
       await Future.delayed(Duration.zero);
       try {
         final arguments = Get.arguments as Map<String, dynamic>? ?? {};
@@ -951,16 +954,21 @@ class IsmChatPageController extends GetxController
 
   void addParticipantSearch(String query) {
     if (query.trim().isEmpty) {
+      // Reset to all eligible users when search is cleared
       groupEligibleUser = groupEligibleUserDuplicate;
       return;
     }
-    groupEligibleUser = groupEligibleUserDuplicate
-        .where(
-          (e) =>
-              e.userDetails.userName.didMatch(query) ||
-              e.userDetails.userIdentifier.didMatch(query),
-        )
-        .toList();
+
+    // Use debounce to delay API call until user stops typing (matches 1-to-1 chat behavior)
+    ismChatDebounce.run(() {
+      // Call API with search query to get filtered results from server
+      getEligibleMembers(
+        conversationId: conversation?.conversationId ?? '',
+        limit: 20,
+        searchTag: query.trim(),
+        isLoading: false,
+      );
+    });
   }
 
   void startTimer() {
@@ -1605,8 +1613,8 @@ class IsmChatPageController extends GetxController
   /// - The conversation ID is null or empty
   void checkUserStatus() {
     // Get the configurable interval from properties, defaulting to 1 minute
-    final interval = IsmChatProperties
-        .chatPageProperties.conversationDetailsApiInterval;
+    final interval =
+        IsmChatProperties.chatPageProperties.conversationDetailsApiInterval;
 
     conversationDetailsApTimer = Timer.periodic(
       interval,

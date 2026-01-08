@@ -94,19 +94,32 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                   Positioned(
                     top: IsmChatDimens.eight,
                     right: IsmChatDimens.zero,
-                    child: Container(
-                      height: IsmChatDimens.eight,
-                      width: IsmChatDimens.eight,
-                      decoration: BoxDecoration(
-                        color: Get.isRegistered<IsmChatMqttController>() &&
-                                Get.find<IsmChatMqttController>()
-                                        .connectionState ==
-                                    IsmChatConnectionState.connected
-                            ? IsmChatColors.greenColor
-                            : IsmChatColors.redColor,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
+                    child: Get.isRegistered<IsmChatMqttController>()
+                        ? Obx(() {
+                            final mqttController =
+                                Get.find<IsmChatMqttController>();
+                            final isConnected =
+                                mqttController.connectionState ==
+                                    IsmChatConnectionState.connected;
+                            return Container(
+                              height: IsmChatDimens.eight,
+                              width: IsmChatDimens.eight,
+                              decoration: BoxDecoration(
+                                color: isConnected
+                                    ? IsmChatColors.greenColor
+                                    : IsmChatColors.redColor,
+                                shape: BoxShape.circle,
+                              ),
+                            );
+                          })
+                        : Container(
+                            height: IsmChatDimens.eight,
+                            width: IsmChatDimens.eight,
+                            decoration: BoxDecoration(
+                              color: IsmChatColors.redColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                   )
                 ]),
                 IsmChatDimens.boxWidth8,

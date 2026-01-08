@@ -132,10 +132,11 @@ class _IsmChatOpenConversationViewState
                                   final chatPagecontroller =
                                       IsmChatUtility.chatPageController;
                                   chatPagecontroller.messages.clear();
-                                  chatPagecontroller.startInit(
-                                    isBroadcasts: true,
-                                  );
                                   chatPagecontroller.closeOverlay();
+                                  // Defer initialization to allow UI to render first
+                                  Future.microtask(() => chatPagecontroller.startInit(
+                                    isBroadcasts: true,
+                                  ));
                                   chatPagecontroller.messages.add(
                                     IsmChatMessageModel(
                                       body: '',
