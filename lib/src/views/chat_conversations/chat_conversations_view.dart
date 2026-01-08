@@ -502,6 +502,7 @@ class _CreateChatBottomSheet extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
+              IsmChatRoute.goBack();
               IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
             },
             child: Row(
