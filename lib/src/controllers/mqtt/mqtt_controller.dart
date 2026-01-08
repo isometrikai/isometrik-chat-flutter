@@ -28,7 +28,11 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
   IsmChatUserConfig? userConfig;
 
   /// Current state of the MQTT connection.
-  IsmChatConnectionState connectionState = IsmChatConnectionState.disconnected;
+  final Rx<IsmChatConnectionState> _connectionState =
+      IsmChatConnectionState.disconnected.obs;
+  IsmChatConnectionState get connectionState => _connectionState.value;
+  set connectionState(IsmChatConnectionState value) =>
+      _connectionState.value = value;
 
   /// MQTT-specific configuration settings.
   IsmChatMqttConfig? mqttConfig;
