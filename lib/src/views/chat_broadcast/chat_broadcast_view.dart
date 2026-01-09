@@ -66,10 +66,14 @@ class IsmChatBroadCastView extends StatelessWidget {
                         itemCount: controller.broadcastList.length,
                         itemBuilder: (_, index) {
                           var broadcast = controller.broadcastList[index];
-                          var members = broadcast.metaData?.membersDetail
+                          var allMembers = broadcast.metaData?.membersDetail
                                   ?.map((e) => e.memberName)
                                   .toList() ??
                               [];
+                          // Show only first 3 member names
+                          var members = allMembers.take(3).toList();
+                          var remainingCount =
+                              allMembers.length > 3 ? allMembers.length - 3 : 0;
                           return Slidable(
                             direction: Axis.horizontal,
                             closeOnScroll: true,
@@ -79,11 +83,19 @@ class IsmChatBroadCastView extends StatelessWidget {
                               motion: const StretchMotion(),
                               children: [
                                 SlidableAction(
-                                  onPressed: (_) async {
-                                    await IsmChatRoute.goToRoute(
-                                        IsmChatEditBroadcastView(
-                                      broadcast: broadcast,
-                                    ));
+                                  onPressed: (context) async {
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            IsmChatEditBroadcastView(
+                                          broadcast: broadcast,
+                                        ),
+                                      ),
+                                    );
+                                    // Refresh broadcast list when returning from edit
+                                    await controller.getBroadCast(
+                                      isShowLoader: false,
+                                    );
                                   },
                                   flex: 1,
                                   backgroundColor: IsmChatColors.greenColor,
@@ -115,7 +127,7 @@ class IsmChatBroadCastView extends StatelessWidget {
                             child: ListTile(
                               dense: true,
                               onTap: () async {
-                                final members = broadcast
+                                final membersForNavigation = broadcast
                                         .metaData?.membersDetail
                                         ?.map((e) => UserDetails(
                                             userId: e.memberId ?? '',
@@ -125,8 +137,8 @@ class IsmChatBroadCastView extends StatelessWidget {
                                         .toList() ??
                                     [];
                                 IsmChatUtility.conversationController
-                                    .goToBroadcastMessage(
-                                        members, broadcast.groupcastId ?? '');
+                                    .goToBroadcastMessage(membersForNavigation,
+                                        broadcast.groupcastId ?? '');
                               },
                               leading: Container(
                                 height: IsmChatDimens.fifty,
@@ -148,9 +160,9 @@ class IsmChatBroadCastView extends StatelessWidget {
                                 style: IsmChatStyles.w600Black14,
                               ),
                               subtitle: Text(
-                                members.join(
-                                  ',',
-                                ),
+                                remainingCount > 0
+                                    ? '${members.join(', ')} and $remainingCount more'
+                                    : members.join(', '),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
