@@ -65,9 +65,17 @@ class IsmChatDBWrapper {
     } else {
       try {
         final directory = await getApplicationDocumentsDirectory();
+
+        // Use path.join to ensure proper cross-platform path construction
+        // path.join handles path separators correctly on all platforms
         final dbPath = path.join(directory.path, dbName);
 
-        // Ensure the directory exists before creating the database
+        // Log the paths for debugging
+        IsmChatLog.info('Documents directory: ${directory.path}');
+        IsmChatLog.info('Database name: $dbName');
+        IsmChatLog.info('Database path: $dbPath');
+
+        // Ensure the database directory exists before creating the database
         final dbDirectory = Directory(dbPath);
         if (!dbDirectory.existsSync()) {
           await dbDirectory.create(recursive: true);
@@ -87,6 +95,7 @@ class IsmChatDBWrapper {
         );
       } catch (_, __) {
         IsmChatLog.error('IsmChat DB Create Error :- $_', __);
+        IsmChatLog.error('Stack trace: $__');
         rethrow;
       }
     }
