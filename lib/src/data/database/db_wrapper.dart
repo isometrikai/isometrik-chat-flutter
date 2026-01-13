@@ -66,20 +66,50 @@ class IsmChatDBWrapper {
       try {
         final directory = await getApplicationDocumentsDirectory();
 
+        // Normalize directory path - ensure it doesn't end with a separator
+        String normalizedDirPath = directory.path;
+        if (normalizedDirPath.endsWith('/') ||
+            normalizedDirPath.endsWith('\\')) {
+          normalizedDirPath =
+              normalizedDirPath.substring(0, normalizedDirPath.length - 1);
+        }
+
         // Use path.join to ensure proper cross-platform path construction
         // path.join handles path separators correctly on all platforms
-        final dbPath = path.join(directory.path, dbName);
+        final dbPath = path.join(normalizedDirPath, dbName);
+
+        // Validate the path was constructed correctly
+        if (!dbPath.contains(path.separator) ||
+            dbPath == normalizedDirPath ||
+            dbPath == dbName) {
+          throw Exception('Invalid database path constructed: $dbPath');
+        }
 
         // Log the paths for debugging
-        IsmChatLog.info('Documents directory: ${directory.path}');
+        IsmChatLog.info('Documents directory: $normalizedDirPath');
         IsmChatLog.info('Database name: $dbName');
         IsmChatLog.info('Database path: $dbPath');
+        IsmChatLog.info('Path separator: ${path.separator}');
 
-        // Ensure the database directory exists before creating the database
-        final dbDirectory = Directory(dbPath);
-        if (!dbDirectory.existsSync()) {
-          await dbDirectory.create(recursive: true);
+        // Ensure the parent Documents directory exists
+        final parentDir = Directory(normalizedDirPath);
+        if (!parentDir.existsSync()) {
+          await parentDir.create(recursive: true);
         }
+
+        // Verify parent directory exists and is accessible
+        if (!parentDir.existsSync()) {
+          throw Exception(
+              'Failed to access parent directory: $normalizedDirPath');
+        }
+
+        // IMPORTANT: Pass only the parent directory path to BoxCollection
+        // BoxCollection will create a subdirectory with the collection name (dbName) itself
+        // This ensures Hive handles path construction correctly internally
+        // Passing the full dbPath can cause Hive to reconstruct paths incorrectly on iOS
+        IsmChatLog.info(
+            'Opening BoxCollection with parent directory: $normalizedDirPath');
+        IsmChatLog.info('BoxCollection will create subdirectory: $dbName');
 
         collection = await BoxCollection.open(
           dbName,
@@ -88,10 +118,10 @@ class IsmChatDBWrapper {
             _conversationBox,
             _pendingBox,
           },
-          path: dbPath,
+          path: normalizedDirPath,
         );
         IsmChatLog.success(
-          '[CREATED] - IsmChat databse at $dbPath',
+          '[CREATED] - IsmChat database collection "$dbName" at $normalizedDirPath',
         );
       } catch (_, __) {
         IsmChatLog.error('IsmChat DB Create Error :- $_', __);
