@@ -143,14 +143,36 @@ class IsmChatBroadcastController extends GetxController {
     String? customType,
     bool shouldCallBack = false,
   }) async {
+    // Preserve existing broadcast values if not provided
+    // This ensures at least one field is always included in the update
+    final existingBroadcast = broadcastList.firstWhereOrNull(
+      (b) => b.groupcastId == groupcastId,
+    );
+
+    // Use provided values, or fall back to existing values if not provided or empty
+    final finalGroupcastTitle =
+        (groupcastTitle != null && groupcastTitle.isNotEmpty)
+            ? groupcastTitle
+            : existingBroadcast?.groupcastTitle;
+    final finalGroupcastImageUrl =
+        (groupcastImageUrl != null && groupcastImageUrl.isNotEmpty)
+            ? groupcastImageUrl
+            : existingBroadcast?.groupcastImageUrl;
+    final finalCustomType = (customType != null && customType.isNotEmpty)
+        ? customType
+        : existingBroadcast?.customType?.toString();
+    final finalMetaData = metaData ?? existingBroadcast?.metaData?.toMap();
+    final finalSearchableTags =
+        searchableTags ?? existingBroadcast?.searchableTags;
+
     final response = await _viewModel.updateBroadcast(
       groupcastId: groupcastId,
-      customType: customType,
-      groupcastImageUrl: groupcastImageUrl,
-      groupcastTitle: groupcastTitle,
+      customType: finalCustomType,
+      groupcastImageUrl: finalGroupcastImageUrl,
+      groupcastTitle: finalGroupcastTitle,
       isloading: isloading,
-      metaData: metaData,
-      searchableTags: searchableTags,
+      metaData: finalMetaData,
+      searchableTags: finalSearchableTags,
     );
     if (response && shouldCallBack) {
       unawaited(getBroadCast(
@@ -206,21 +228,47 @@ class IsmChatBroadcastController extends GetxController {
       isloading: isloading,
     );
     if (response != null) {
-      final memberList = broadcast.metaData?.membersDetail ?? [];
-      memberList.removeWhere((e) => e.memberId == members.first);
-      broadcast.metaData?.copyWith(membersDetail: memberList);
-      unawaited(
-        updateBroadcast(
-          groupcastId: broadcast.groupcastId ?? '',
-          metaData: broadcast.metaData?.toMap(),
-        ),
+      // Get current broadcast from list to ensure we have latest metadata
+      final currentBroadcast = broadcastList.firstWhereOrNull(
+            (b) => b.groupcastId == broadcast.groupcastId,
+          ) ??
+          broadcast;
+
+      // Get existing membersDetail and remove all specified members
+      final existingMembers = currentBroadcast.metaData?.membersDetail ?? [];
+      final memberIdsToRemove = members.toSet();
+      final updatedMembers = existingMembers
+          .where((member) => !memberIdsToRemove.contains(member.memberId))
+          .toList();
+
+      // Create updated metadata with remaining members
+      final updatedMetadata = BroadcastMetadata(
+        membersDetail: updatedMembers,
       );
-      unawaited(getBroadCast(
+
+      // Update the broadcast object
+      if (this.broadcast?.groupcastId == broadcast.groupcastId) {
+        this.broadcast = this.broadcast!.copyWith(metaData: updatedMetadata);
+      }
+
+      // Update broadcast with updated metadata (remove members from metadata)
+      await updateBroadcast(
+        groupcastId: broadcast.groupcastId ?? '',
+        metaData: updatedMetadata.toMap(),
+        isloading: false,
+      );
+
+      // Refresh broadcast list to update member count and names
+      await getBroadCast(
         isShowLoader: false,
         isloading: false,
-      ));
+      );
+
+      // Refresh broadcast members list
       await getBroadcastMembers(
-          groupcastId: broadcast.groupcastId ?? '', isloading: true);
+        groupcastId: broadcast.groupcastId ?? '',
+        isloading: true,
+      );
     }
   }
 
@@ -359,23 +407,63 @@ class IsmChatBroadcastController extends GetxController {
               .toList(),
           isloading: true);
       if (response != null) {
-        final memberList = members
+        // Get current broadcast from list to ensure we have latest metadata
+        final currentBroadcast = broadcastList.firstWhereOrNull(
+              (b) => b.groupcastId == groupcastId,
+            ) ??
+            broadcast;
+
+        // Get existing membersDetail from current broadcast
+        final existingMembers = currentBroadcast?.metaData?.membersDetail ?? [];
+
+        // Create new member details list
+        final newMemberList = members
             .map(
               (e) => MembersDetail(memberId: e.userId, memberName: e.userName),
             )
             .toList();
-        broadcast?.metaData?.membersDetail?.addAll(memberList);
-        broadcast?.metaData?.copyWith(
-          membersDetail: broadcast?.metaData?.membersDetail,
+
+        // Merge existing and new members, avoiding duplicates
+        final allMembers = <MembersDetail>[];
+        final existingMemberIds =
+            existingMembers.map((e) => e.memberId).toSet();
+
+        // Add existing members
+        allMembers.addAll(existingMembers);
+
+        // Add new members that don't already exist
+        for (final newMember in newMemberList) {
+          if (!existingMemberIds.contains(newMember.memberId)) {
+            allMembers.add(newMember);
+          }
+        }
+
+        // Update broadcast metadata with all members
+        final updatedMetadata = BroadcastMetadata(
+          membersDetail: allMembers,
         );
+
+        // Update the broadcast object
+        if (broadcast != null) {
+          broadcast = broadcast!.copyWith(metaData: updatedMetadata);
+        }
+
         await getBroadcastMembers(
           groupcastId: groupcastId,
           isloading: true,
         );
+
+        // Refresh broadcast list to update member count
+        await getBroadCast(
+          isShowLoader: false,
+          isloading: false,
+        );
+
+        // Update broadcast with complete metadata including all members
         unawaited(
           updateBroadcast(
             groupcastId: groupcastId,
-            metaData: broadcast?.metaData?.toMap(),
+            metaData: updatedMetadata.toMap(),
             shouldCallBack: true,
           ),
         );

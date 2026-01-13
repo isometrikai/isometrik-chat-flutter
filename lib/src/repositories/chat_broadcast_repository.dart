@@ -66,11 +66,36 @@ class IsmChatBroadcastRepository {
     String? customType,
   }) async {
     try {
-      final payload = {
-        if (!groupcastTitle.isNullOrEmpty) 'groupcastTitle': groupcastTitle,
-        if (metaData != null) 'metaData': metaData,
+      final payload = <String, dynamic>{
         'groupcastId': groupcastId,
       };
+
+      // Include all optional fields - API requires at least one to be non-null
+      if (groupcastTitle != null && groupcastTitle.isNotEmpty) {
+        payload['groupcastTitle'] = groupcastTitle;
+      }
+      if (groupcastImageUrl != null && groupcastImageUrl.isNotEmpty) {
+        payload['groupcastImageUrl'] = groupcastImageUrl;
+      }
+      if (metaData != null && metaData.isNotEmpty) {
+        payload['metaData'] = metaData;
+      }
+      if (searchableTags != null && searchableTags.isNotEmpty) {
+        payload['searchableTags'] = searchableTags;
+      }
+      if (customType != null && customType.isNotEmpty) {
+        payload['customType'] = customType;
+      }
+
+      // Ensure at least one field is included (excluding groupcastId)
+      // API requires at least one of: searchableTags, metaData, customType, groupcastTitle, or groupcastImageUrl
+      if (payload.length == 1) {
+        // If only groupcastId is present, we need to include at least one field
+        // This should not happen if controller properly preserves existing values
+        // But as a fallback, include empty metaData
+        payload['metaData'] = {};
+      }
+
       var response = await _apiWrapper.patch(
         IsmChatAPI.chatGroupCast,
         headers: IsmChatUtility.tokenCommonHeader(),

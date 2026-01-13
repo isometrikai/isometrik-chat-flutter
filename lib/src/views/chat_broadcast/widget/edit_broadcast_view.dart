@@ -55,10 +55,17 @@ class IsmChatEditBroadcastView extends StatelessWidget {
             ],
           ),
           bottomSheet: GestureDetector(
-            onTap: () {
-              IsmChatRoute.goToRoute(IsmChatEligibleMembersView(
+            onTap: () async {
+              await IsmChatRoute.goToRoute(IsmChatEligibleMembersView(
                 groupcastId: broadcast.groupcastId ?? '',
               ));
+              // Refresh broadcast members and list when returning from eligible members
+              await controller.getBroadcastMembers(
+                groupcastId: broadcast.groupcastId ?? '',
+                isloading: false,
+              );
+              // Refresh broadcast list to update member count
+              await controller.getBroadCast(isShowLoader: false);
             },
             child: Container(
               margin: IsmChatDimens.edgeInsets20_10,
