@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 /// Create this in the apps main function.
@@ -63,7 +65,14 @@ class IsmChatDBWrapper {
     } else {
       try {
         final directory = await getApplicationDocumentsDirectory();
-        final path = '${directory.path}/$dbName';
+        final dbPath = path.join(directory.path, dbName);
+
+        // Ensure the directory exists before creating the database
+        final dbDirectory = Directory(dbPath);
+        if (!dbDirectory.existsSync()) {
+          await dbDirectory.create(recursive: true);
+        }
+
         collection = await BoxCollection.open(
           dbName,
           {
@@ -71,13 +80,14 @@ class IsmChatDBWrapper {
             _conversationBox,
             _pendingBox,
           },
-          path: path,
+          path: dbPath,
         );
         IsmChatLog.success(
-          '[CREATED] - IsmChat databse at $path',
+          '[CREATED] - IsmChat databse at $dbPath',
         );
       } catch (_, __) {
         IsmChatLog.error('IsmChat DB Create Error :- $_', __);
+        rethrow;
       }
     }
     if (collection == null) throw Exception('Error Creating IsmChat Database');
