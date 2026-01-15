@@ -210,10 +210,11 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                           );
                   },
                   onPageChanged: (value) async {
-                    controller.textEditingController.text =
-                        controller.webMedia[value].caption ?? '';
-                    controller.assetsIndex = value;
-                    controller.isVideoVisible = false;
+                    controller
+                      ..textEditingController.text =
+                          controller.webMedia[value].caption ?? ''
+                      ..assetsIndex = value
+                      ..isVideoVisible = false;
                   },
                 ),
               ),
@@ -240,10 +241,11 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                           var media = controller.webMedia[index];
                           return InkWell(
                             onTap: () async {
-                              controller.textEditingController.text =
-                                  media.caption ?? '';
-                              controller.assetsIndex = index;
-                              controller.isVideoVisible = false;
+                              controller
+                                ..textEditingController.text =
+                                    media.caption ?? ''
+                                ..assetsIndex = index
+                                ..isVideoVisible = false;
                               await controller.pageController.animateToPage(
                                   index,
                                   duration: const Duration(milliseconds: 100),

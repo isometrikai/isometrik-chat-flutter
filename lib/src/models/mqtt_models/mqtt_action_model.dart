@@ -93,10 +93,9 @@ class IsmChatMqttActionModel {
           final groupcastId = metaDataMap?['groupCastId'] as String? ?? '';
 
           // Use groupcastId for decryption if it's a broadcast message, otherwise use conversationId
-          final decryptionId =
-              isBroadcastMessage && (groupcastId?.isNotEmpty ?? false)
-                  ? groupcastId ?? ''
-                  : map['conversationId'] as String? ?? '';
+          final decryptionId = isBroadcastMessage && groupcastId.isNotEmpty
+              ? groupcastId
+              : map['conversationId'] as String? ?? '';
 
           return IsmChatUtility.decryptMessage(
             map['body'] as String? ?? '',

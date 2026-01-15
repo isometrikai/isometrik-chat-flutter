@@ -76,9 +76,9 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
             await controller.getMessagesFromDB(conversationId);
           }
           // Then get status updates and mark as read
-          controller.getMessageForStatus();
+          unawaited(controller.getMessageForStatus());
           await Future.delayed(const Duration(milliseconds: 100));
-          controller.readAllMessages();
+          unawaited(controller.readAllMessages());
         }));
         IsmChatLog.info('app chat in resumed');
       }
@@ -133,7 +133,7 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
         child: GetPlatform.isIOS
             ? _SwipeGestureDetector(
                 onSwipeRight:
-                    IsmChat.i.chatPageTag == null ? () => navigateBack() : null,
+                    IsmChat.i.chatPageTag == null ? navigateBack : null,
                 child: const _IsmChatPageView(),
               )
             : const _IsmChatPageView(),

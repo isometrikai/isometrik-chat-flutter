@@ -115,7 +115,7 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                         : Container(
                             height: IsmChatDimens.eight,
                             width: IsmChatDimens.eight,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: IsmChatColors.redColor,
                               shape: BoxShape.circle,
                             ),

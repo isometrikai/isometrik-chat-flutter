@@ -102,10 +102,9 @@ class IsmChatSocialMessage extends StatelessWidget {
                                       IsmChatUtility.conversationController;
                                   var conversationId = conversationcontroller
                                       .getConversationId(user!.first.userId);
-                                  conversationcontroller.contactDetails =
-                                      user.first;
-                                  conversationcontroller.userConversationId =
-                                      conversationId;
+                                  conversationcontroller
+                                    ..contactDetails = user.first
+                                    ..userConversationId = conversationId;
                                   if (IsmChatResponsive.isWeb(context)) {
                                     conversationcontroller
                                             .isRenderChatPageaScreen =

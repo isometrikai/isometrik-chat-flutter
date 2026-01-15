@@ -3,6 +3,9 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - lib/**/*.g.dart
+    - lib/domain/entities/*.dart
+    - lib/domain/entities/models/*.dart
+    - lib/app/utils/strings/polyglot.dart
   # strong-mode:
   # implicit-casts: false
   # implicit-dynamic: true
@@ -14,6 +17,13 @@ analyzer:
     parameter_assignments: warning
     missing_return: error
     todo: warning
+    unused_local_variable: warning
+    unused_element: warning
+    unused_field: warning
+    prefer_const_constructors_in_immutables: warning
+    prefer_const_constructors: warning
+    prefer_const_literals_to_create_immutables: warning
+    collection_methods_unrelated_type: ignore
     no_wildcard_variable_uses: ignore
     unintended_html_in_doc_comment: ignore
 
@@ -40,11 +50,13 @@ linter:
     - constant_identifier_names
     - control_flow_in_finally
     - curly_braces_in_flow_control_structures
+    - directives_ordering
     - empty_catches
     - empty_constructor_bodies
     - empty_statements
     - hash_and_equals
     - implementation_imports
+    - collection_methods_unrelated_type
     - library_names
     - library_prefixes
     - no_adjacent_strings_in_list
@@ -93,3 +105,9 @@ linter:
     - sort_pub_dependencies
     - sized_box_for_whitespace
     - always_use_package_imports
+    - camel_case_extensions
+    - cascade_invocations
+    - combinators_ordering
+    - prefer_if_null_operators
+    - prefer_const_constructors_in_immutables
+    - prefer_const_literals_to_create_immutables

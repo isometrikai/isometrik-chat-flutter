@@ -26,12 +26,12 @@ class IsmChatUserView extends StatelessWidget {
             controller.profileImage = controller.userDetails?.profileUrl ?? '';
           }
 
-          controller.userNameController.text =
-              controller.userDetails?.userName ?? '';
-          controller.userEmailController.text =
-              controller.userDetails?.userIdentifier ?? '';
-          controller.isUserNameType = false;
-          controller.isUserEmailType = false;
+          controller
+            ..userNameController.text = controller.userDetails?.userName ?? ''
+            ..userEmailController.text =
+                controller.userDetails?.userIdentifier ?? ''
+            ..isUserNameType = false
+            ..isUserEmailType = false;
         },
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,

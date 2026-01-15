@@ -353,10 +353,10 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                 .participnatsEditingController.text.isNotEmpty
                             ? IsmChatTapHandler(
                                 onTap: () {
-                                  controller.participnatsEditingController
-                                      .clear();
-                                  controller.onGroupSearch('');
-                                  controller.update();
+                                  controller
+                                    ..participnatsEditingController.clear()
+                                    ..onGroupSearch('')
+                                    ..update();
                                 },
                                 child: Icon(
                                   Icons.close_rounded,
@@ -368,8 +368,9 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                 color: IsmChatConfig.chatTheme.primaryColor,
                               ),
                         onChanged: (_) {
-                          controller.onGroupSearch(_);
-                          controller.update();
+                          controller
+                            ..onGroupSearch(_)
+                            ..update();
                         },
                       ),
                       Obx(

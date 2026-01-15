@@ -114,15 +114,15 @@ class IsmChatDelegate {
 
   void showThirdColumn() {
     if (IsmChatUtility.conversationControllerRegistered) {
-      final controller = IsmChatUtility.conversationController;
-      controller.isRenderChatPageaScreen = IsRenderChatPageScreen.outSideView;
+      IsmChatUtility.conversationController.isRenderChatPageaScreen =
+          IsRenderChatPageScreen.outSideView;
     }
   }
 
   void clostThirdColumn() {
     if (IsmChatUtility.conversationControllerRegistered) {
-      final controller = IsmChatUtility.conversationController;
-      controller.isRenderChatPageaScreen = IsRenderChatPageScreen.none;
+      IsmChatUtility.conversationController.isRenderChatPageaScreen =
+          IsRenderChatPageScreen.none;
     }
   }
 
@@ -137,8 +137,7 @@ class IsmChatDelegate {
 
   void changeCurrentConversation() {
     if (IsmChatUtility.conversationControllerRegistered) {
-      final controller = IsmChatUtility.conversationController;
-      controller.currentConversation = null;
+      IsmChatUtility.conversationController.currentConversation = null;
     }
   }
 
@@ -146,8 +145,9 @@ class IsmChatDelegate {
     if (IsmChatUtility.chatPageControllerRegistered) {
       final controller = IsmChatUtility.chatPageController;
       var conversationModel = controller.conversation;
-      controller.conversation = null;
-      controller.conversation = conversationModel;
+      controller
+        ..conversation = null
+        ..conversation = conversationModel;
     }
   }
 

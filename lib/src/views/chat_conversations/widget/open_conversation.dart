@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -55,12 +57,13 @@ class _IsmChatOpenConversationViewState
                             controller.debounce.run(
                               () {
                                 if (value.trim().isNotEmpty) {
-                                  controller.isLoadResponse = false;
-                                  controller.getPublicAndOpenConversation(
-                                    searchTag: value,
-                                    conversationType:
-                                        IsmChatConversationType.public.value,
-                                  );
+                                  controller
+                                    ..isLoadResponse = false
+                                    ..getPublicAndOpenConversation(
+                                      searchTag: value,
+                                      conversationType:
+                                          IsmChatConversationType.public.value,
+                                    );
                                 }
                               },
                             );
@@ -134,9 +137,10 @@ class _IsmChatOpenConversationViewState
                                   chatPagecontroller.messages.clear();
                                   chatPagecontroller.closeOverlay();
                                   // Defer initialization to allow UI to render first
-                                  Future.microtask(() => chatPagecontroller.startInit(
-                                    isBroadcasts: true,
-                                  ));
+                                  unawaited(Future.microtask(
+                                      () => chatPagecontroller.startInit(
+                                            isBroadcasts: true,
+                                          )));
                                   chatPagecontroller.messages.add(
                                     IsmChatMessageModel(
                                       body: '',

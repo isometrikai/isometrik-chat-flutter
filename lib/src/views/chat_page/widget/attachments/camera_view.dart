@@ -125,8 +125,9 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
 
                                 await controller.cameraController
                                     .startVideoRecording();
-                                controller.startTimer();
-                                controller.isRecording = true;
+                                controller
+                                  ..startTimer()
+                                  ..isRecording = true;
                               },
                               onLongPressEnd: (_) async {
                                 var file = await controller.cameraController

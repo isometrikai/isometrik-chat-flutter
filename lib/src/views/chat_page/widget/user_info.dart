@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -189,7 +191,8 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           IsmChatUtility.closeLoader();
                           controller.closeOverlay();
                           // Defer initialization to allow UI to render first
-                          Future.microtask(() => controller.startInit());
+                          unawaited(
+                              Future.microtask(() => controller.startInit()));
                         },
                         title: Text(
                           IsmChatStrings.message,

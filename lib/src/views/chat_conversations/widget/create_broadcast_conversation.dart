@@ -17,15 +17,16 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
           final converstaionController =
               Get.find<IsmChatConversationsController>(
                   tag: IsmChat.i.chatListPageTag);
-          converstaionController.callApiOrNot = true;
-          converstaionController.forwardedList.clear();
-          converstaionController.selectedUserList.clear();
-          converstaionController.showSearchField = false;
-          converstaionController.isLoadResponse = false;
-          converstaionController.getNonBlockUserList(
-            isGroupConversation: true,
-            opponentId: converstaionController.userDetails?.userId,
-          );
+          converstaionController
+            ..callApiOrNot = true
+            ..forwardedList.clear()
+            ..selectedUserList.clear()
+            ..showSearchField = false
+            ..isLoadResponse = false
+            ..getNonBlockUserList(
+              isGroupConversation: true,
+              opponentId: converstaionController.userDetails?.userId,
+            );
         },
         builder: (controller) => Scaffold(
           backgroundColor: IsmChatColors.whiteColor,
@@ -39,12 +40,13 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                     hintStyle: IsmChatStyles.w400White16,
                     onChanged: (value) {
                       controller.debounce.run(() {
-                        controller.isLoadResponse = false;
-                        controller.getNonBlockUserList(
-                          searchTag: value,
-                          opponentId: IsmChatConfig
-                              .communicationConfig.userConfig.userId,
-                        );
+                        controller
+                          ..isLoadResponse = false
+                          ..getNonBlockUserList(
+                            searchTag: value,
+                            opponentId: IsmChatConfig
+                                .communicationConfig.userConfig.userId,
+                          );
                       });
                       if (value.trim().isEmpty) {
                         controller.forwardedList =
@@ -139,12 +141,13 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                       var user = controller.selectedUserList[index];
                       return InkWell(
                         onTap: () {
-                          controller.isSelectedUser(user);
-                          controller.onForwardUserTap(
-                            controller.forwardedList.indexOf(
-                              controller.forwardedList.selectedUsers[index],
-                            ),
-                          );
+                          controller
+                            ..isSelectedUser(user)
+                            ..onForwardUserTap(
+                              controller.forwardedList.indexOf(
+                                controller.forwardedList.selectedUsers[index],
+                              ),
+                            );
                         },
                         child: SizedBox(
                           width: IsmChatDimens.fifty,
@@ -300,9 +303,10 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                                             : Colors.transparent,
                                         child: ListTile(
                                           onTap: () {
-                                            controller.onForwardUserTap(index);
-                                            controller.isSelectedUser(
-                                                user.userDetails);
+                                            controller
+                                              ..onForwardUserTap(index)
+                                              ..isSelectedUser(
+                                                  user.userDetails);
                                           },
                                           dense: true,
                                           mouseCursor: SystemMouseCursors.click,

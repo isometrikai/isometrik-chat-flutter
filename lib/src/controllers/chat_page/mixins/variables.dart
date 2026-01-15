@@ -1,7 +1,20 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatPageVariablesMixin on GetxController {
-  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
+  /// Gets the controller instance.
+  ///
+  /// This getter attempts to use the current instance (this) first,
+  /// and falls back to GetX lookup if needed. This prevents errors
+  /// when the controller is accessed before it's fully registered in GetX.
+  IsmChatPageController get _controller {
+    // If this is already an IsmChatPageController, use it directly
+    // This prevents the "controller not found" error during initialization
+    if (this is IsmChatPageController) {
+      return this as IsmChatPageController;
+    }
+    // Fallback to GetX lookup for cases where mixin might be used elsewhere
+    return IsmChatUtility.chatPageController;
+  }
 
   var messageFocusNode = FocusNode();
 

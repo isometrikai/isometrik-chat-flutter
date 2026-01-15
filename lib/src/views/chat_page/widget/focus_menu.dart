@@ -70,9 +70,10 @@ class IsmChatFocusMenu extends StatelessWidget {
                                   var item = message.focusMenuList[index];
                                   return IsmChatTapHandler(
                                     onTap: () {
-                                      controller.closeOverlay();
-                                      controller.onMenuItemSelected(
-                                          item, message, context);
+                                      controller
+                                        ..closeOverlay()
+                                        ..onMenuItemSelected(
+                                            item, message, context);
                                     },
                                     child: Container(
                                       height: IsmChatConfig
@@ -137,8 +138,7 @@ class IsmChatFocusMenu extends StatelessWidget {
       : IsmChatTapHandler(
           onTap: () {
             if (IsmChatResponsive.isWeb(context)) {
-              var controller = IsmChatUtility.chatPageController;
-              controller.closeOverlay();
+              IsmChatUtility.chatPageController.closeOverlay();
             } else {
               Navigator.pop(context);
             }
@@ -213,12 +213,13 @@ class IsmChatFocusMenu extends StatelessWidget {
                                           return IsmChatTapHandler(
                                             onTap: () {
                                               IsmChatRoute.goBack();
-                                              controller.closeOverlay();
-                                              controller.onMenuItemSelected(
-                                                item,
-                                                message,
-                                                context,
-                                              );
+                                              controller
+                                                ..closeOverlay()
+                                                ..onMenuItemSelected(
+                                                  item,
+                                                  message,
+                                                  context,
+                                                );
                                             },
                                             child: Container(
                                               height: IsmChatDimens.forty,

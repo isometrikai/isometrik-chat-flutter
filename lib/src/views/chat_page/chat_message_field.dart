@@ -144,15 +144,16 @@ class IsmChatMessageField extends StatelessWidget {
                                         .trim()
                                         .isNotEmpty &&
                                     controller.isMessageSent == false) {
-                                  controller.isMessageSent = true;
-                                  controller.sendTextMessage(
-                                    conversationId: controller
-                                            .conversation?.conversationId ??
-                                        '',
-                                    userId: controller.conversation
-                                            ?.opponentDetails?.userId ??
-                                        '',
-                                  );
+                                  controller
+                                    ..isMessageSent = true
+                                    ..sendTextMessage(
+                                      conversationId: controller
+                                              .conversation?.conversationId ??
+                                          '',
+                                      userId: controller.conversation
+                                              ?.opponentDetails?.userId ??
+                                          '',
+                                    );
                                 }
                               }
                             }
@@ -459,9 +460,10 @@ class _MicOrSendButton extends StatelessWidget {
               if (controller.showSendButton) {
                 if (controller.isEnableRecordingAudio) {
                   var audioPath = await controller.recordVoice.stop() ?? '';
-                  controller.forRecordTimer?.cancel();
-                  controller.showSendButton = false;
-                  controller.isEnableRecordingAudio = false;
+                  controller
+                    ..forRecordTimer?.cancel()
+                    ..showSendButton = false
+                    ..isEnableRecordingAudio = false;
                   String? sizeMedia;
                   WebMediaModel? webMediaModel;
                   if (await IsmChatProperties.chatPageProperties
@@ -497,17 +499,18 @@ class _MicOrSendButton extends StatelessWidget {
                     }
 
                     if (sizeMedia.size()) {
-                      controller.sendAudio(
-                        webMediaModel: webMediaModel,
-                        path: audioPath,
-                        conversationId:
-                            controller.conversation?.conversationId ?? '',
-                        userId:
-                            controller.conversation?.opponentDetails?.userId ??
-                                '',
-                        duration: Duration(seconds: controller.seconds),
-                      );
-                      controller.seconds = 0;
+                      controller
+                        ..sendAudio(
+                          webMediaModel: webMediaModel,
+                          path: audioPath,
+                          conversationId:
+                              controller.conversation?.conversationId ?? '',
+                          userId: controller
+                                  .conversation?.opponentDetails?.userId ??
+                              '',
+                          duration: Duration(seconds: controller.seconds),
+                        )
+                        ..seconds = 0;
                     } else {
                       await Get.dialog(
                         const IsmChatAlertDialogBox(
@@ -532,14 +535,15 @@ class _MicOrSendButton extends StatelessWidget {
                         controller.chatInputController.text.trim());
                     if (controller.chatInputController.text.trim().isNotEmpty &&
                         controller.isMessageSent == false) {
-                      controller.isMessageSent = true;
-                      controller.sendTextMessage(
-                        conversationId:
-                            controller.conversation?.conversationId ?? '',
-                        userId:
-                            controller.conversation?.opponentDetails?.userId ??
-                                '',
-                      );
+                      controller
+                        ..isMessageSent = true
+                        ..sendTextMessage(
+                          conversationId:
+                              controller.conversation?.conversationId ?? '',
+                          userId: controller
+                                  .conversation?.opponentDetails?.userId ??
+                              '',
+                        );
                     }
                   }
                 }
@@ -588,12 +592,13 @@ class _MicOrSendButton extends StatelessWidget {
                       controller.conversation?.lastMessageDetails?.userId ==
                           IsmChatConfig
                               .communicationConfig.userConfig.userId)) {
-                    controller.isEnableRecordingAudio = true;
-                    controller.showSendButton = true;
-                    controller.forRecordTimer =
-                        Timer.periodic(const Duration(seconds: 1), (_) {
-                      controller.seconds++;
-                    });
+                    controller
+                      ..isEnableRecordingAudio = true
+                      ..showSendButton = true
+                      ..forRecordTimer =
+                          Timer.periodic(const Duration(seconds: 1), (_) {
+                        controller.seconds++;
+                      });
                     String? audioPath;
                     if (!kIsWeb) {
                       final dir = await getApplicationDocumentsDirectory();
