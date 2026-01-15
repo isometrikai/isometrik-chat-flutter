@@ -8,7 +8,7 @@ environment:
   sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
-  app_settings: ^6.1.1
+  app_settings: ^7.0.0
   isometrik_chat_flutter:
     path: ../
   device_info_plus: ^12.1.0
@@ -27,7 +27,7 @@ dependencies:
   image_cropper: ^11.0.0
   path_provider: ^2.1.5
   url_strategy: ^0.3.0
-  flutter_svg: ^2.0.17
+  flutter_svg: ^2.2.3
   timezone: ^0.10.0
   go_router: ^15.0.0
 
