@@ -153,6 +153,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           ),
                         )
                       : Expanded(
+                          // ignore: avoid_unnecessary_containers
                           child: Container(
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
