@@ -480,11 +480,9 @@ class IsmChatDelegate {
     if (providedConversationId != null && providedConversationId.isNotEmpty) {
       conversation =
           conversationController.getConversation(providedConversationId);
-      if (conversation == null) {
-        // Try to get from database
-        conversation = await IsmChatConfig.dbWrapper
-            ?.getConversation(providedConversationId);
-      }
+      // Try to get from database
+      conversation ??= await IsmChatConfig.dbWrapper
+          ?.getConversation(providedConversationId);
     }
 
     // If conversation not found, try to find by userId
@@ -494,10 +492,8 @@ class IsmChatDelegate {
       if (foundConversationId.isNotEmpty) {
         conversation =
             conversationController.getConversation(foundConversationId);
-        if (conversation == null) {
-          conversation = await IsmChatConfig.dbWrapper
-              ?.getConversation(foundConversationId);
-        }
+        conversation ??=
+            await IsmChatConfig.dbWrapper?.getConversation(foundConversationId);
       }
     }
 
@@ -562,14 +558,13 @@ class IsmChatDelegate {
       }
     }
 
-    final chatPageController = IsmChatUtility.chatPageController;
-
     // Set the conversation in chat page controller
-    chatPageController.conversation = conversation;
+    IsmChatUtility.chatPageController.conversation = conversation;
 
     // Update local conversation
-    conversationController.updateLocalConversation(conversation);
-    conversationController.currentConversation = conversation;
+    conversationController
+      ..updateLocalConversation(conversation)
+      ..currentConversation = conversation;
 
     // Navigate to conversation info view
     if (IsmChatResponsive.isWeb(
@@ -827,10 +822,8 @@ class IsmChatDelegate {
       var conversation = conversationController.getConversation(conversationId);
 
       // If not found locally, try to get from database
-      if (conversation == null) {
-        conversation =
-            await IsmChatConfig.dbWrapper?.getConversation(conversationId);
-      }
+      conversation ??=
+          await IsmChatConfig.dbWrapper?.getConversation(conversationId);
 
       // If still not found, try to create from message data if available
       if (conversation == null && notificationData.containsKey('senderInfo')) {
@@ -854,8 +847,9 @@ class IsmChatDelegate {
 
       // If conversation found, navigate to it
       if (conversation != null) {
-        conversationController.updateLocalConversation(conversation);
-        conversationController.currentConversation = conversation;
+        conversationController
+          ..updateLocalConversation(conversation)
+          ..currentConversation = conversation;
 
         // Call onChatTap callback if available
         IsmChatProperties.conversationProperties.onChatTap?.call(
@@ -974,9 +968,7 @@ class IsmChatDelegate {
       }
 
       // If user details not in database, fetch from API
-      if (currentUser == null) {
-        currentUser = await repository.getUserData(isLoading: false);
-      }
+      currentUser ??= await repository.getUserData(isLoading: false);
 
       if (currentUser == null) {
         IsmChatLog.error(

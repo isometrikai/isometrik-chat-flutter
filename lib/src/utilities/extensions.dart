@@ -510,10 +510,10 @@ extension ModelConversion on IsmChatConversationModel {
           (u) => u.conversationId == conversationId,
         )
         .toList()
-        .unique();
-    users.sort(
-      (a, b) => a.userName.toLowerCase().compareTo(b.userName.toLowerCase()),
-    );
+        .unique()
+      ..sort(
+        (a, b) => a.userName.toLowerCase().compareTo(b.userName.toLowerCase()),
+      );
 
     return isGroup == true
         ? '${users.map((e) => e.userName).join(', ')} is ${IsmChatStrings.typing}'

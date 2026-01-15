@@ -60,8 +60,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
-    final controller = IsmChatUtility.conversationController;
-    controller.tabController = TabController(
+    IsmChatUtility.conversationController.tabController = TabController(
       length:
           IsmChatProperties.conversationProperties.allowedConversations.length,
       vsync: this,

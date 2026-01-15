@@ -106,11 +106,11 @@ class IsmChatConversationsRepository {
           }
         }
         return conversation;
-      }).toList();
-      listData.sort(
-        (a, b) => (a.lastMessageDetails?.sentAt ?? 0)
-            .compareTo(b.lastMessageDetails?.sentAt ?? 0),
-      );
+      }).toList()
+        ..sort(
+          (a, b) => (a.lastMessageDetails?.sentAt ?? 0)
+              .compareTo(b.lastMessageDetails?.sentAt ?? 0),
+        );
       return listData;
     } catch (e, st) {
       IsmChatLog.error('GetChatConversations error $e', st);
@@ -285,9 +285,8 @@ class IsmChatConversationsRepository {
       var payload = {
         'conversationId': conversationId,
       };
-      var event = events.toMap();
-      event
-          .addAll(payload.map((key, value) => MapEntry(key, value as dynamic)));
+      var event = events.toMap()
+        ..addAll(payload.map((key, value) => MapEntry(key, value as dynamic)));
       var response = await _apiWrapper.patch(
         IsmChatAPI.conversationSetting,
         payload: event,

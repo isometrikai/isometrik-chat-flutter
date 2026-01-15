@@ -205,9 +205,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           );
         }
       }
-      _controller.showCloseLoaderForMoble(showLoader: false);
-      _controller.isCameraView = false;
-      _controller.webMedia.clear();
+      _controller
+        ..showCloseLoaderForMoble(showLoader: false)
+        ..isCameraView = false
+        ..webMedia.clear();
     }
   }
 
@@ -1269,8 +1270,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             attachmentType:
                 ismChatChatMessageModel.attachments?.first.attachmentType,
           ).toMap()
-        ];
-        attachment.map((e) => e.removeWhere((key, value) => key == 'bytes'));
+        ]..map((e) => e.removeWhere((key, value) => key == 'bytes'));
 
         sendMessage(
           body: ismChatChatMessageModel.body,
@@ -1360,10 +1360,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             messages.sentAt != createdAt) {
           continue;
         }
-        messages.messageId = createdAt.toString();
-        messages.deliveredToAll = false;
-        messages.readByAll = false;
-        messages.isUploading = false;
+        messages
+          ..messageId = createdAt.toString()
+          ..deliveredToAll = false
+          ..readByAll = false
+          ..isUploading = false;
         _controller.messages[x] = messages;
       }
     }

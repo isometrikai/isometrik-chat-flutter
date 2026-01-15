@@ -455,8 +455,8 @@ class IsmChatPageViewModel {
         await IsmChatConfig.dbWrapper
             ?.saveConversation(conversation: conversation);
       }
-      final controller = IsmChatUtility.chatPageController;
-      controller.didReactedLast = true;
+      final controller = IsmChatUtility.chatPageController
+        ..didReactedLast = true;
       await controller.getMessagesFromDB(reaction.conversationId);
     }
 
@@ -505,8 +505,8 @@ class IsmChatPageViewModel {
         await IsmChatConfig.dbWrapper!
             .saveConversation(conversation: conversation);
       }
-      final controller = IsmChatUtility.chatPageController;
-      controller.didReactedLast = true;
+      final controller = IsmChatUtility.chatPageController
+        ..didReactedLast = true;
       await controller.getMessagesFromDB(reaction.conversationId);
     }
 

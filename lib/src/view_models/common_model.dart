@@ -126,10 +126,11 @@ class IsmChatCommonViewModel {
               messages.sentAt != createdAt) {
             continue;
           }
-          messages.messageId = response.messageId;
-          messages.deliveredToAll = false;
-          messages.readByAll = false;
-          messages.isUploading = false;
+          messages
+            ..messageId = response.messageId
+            ..deliveredToAll = false
+            ..readByAll = false
+            ..isUploading = false;
           chatPageController.messages[x] = messages;
         }
       } else {
@@ -143,13 +144,15 @@ class IsmChatCommonViewModel {
         if (pendingMessage != null &&
             [200, 403].contains(response.respone.errorCode)) {
           if (response.messageId.isNotEmpty) {
-            pendingMessage.messageId = response.messageId;
-            pendingMessage.deliveredToAll = false;
-            pendingMessage.readByAll = false;
-            pendingMessage.isUploading = false;
+            pendingMessage
+              ..messageId = response.messageId
+              ..deliveredToAll = false
+              ..readByAll = false
+              ..isUploading = false;
           } else if (response.respone.errorCode == 403) {
-            pendingMessage.messageId = '';
-            pendingMessage.isInvalidMessage = true;
+            pendingMessage
+              ..messageId = ''
+              ..isInvalidMessage = true;
           }
           chatPendingMessages?.messages
               ?.removeWhere((key, value) => key == '$createdAt');
@@ -161,8 +164,8 @@ class IsmChatCommonViewModel {
           }
           var conversationModel = await dbBox?.getConversation(conversationId);
           if (conversationModel != null) {
-            final messages = conversationModel.messages ?? {};
-            messages.addEntries({'$createdAt': pendingMessage}.entries);
+            final messages = (conversationModel.messages ?? {})
+              ..addEntries({'$createdAt': pendingMessage}.entries);
             conversationModel = conversationModel.copyWith(
               lastMessageDetails:
                   conversationModel.lastMessageDetails?.copyWith(
@@ -228,10 +231,11 @@ class IsmChatCommonViewModel {
 
       final pendingMessage = chatPendingMessages?.messages?['$createdAt'];
       if (pendingMessage != null) {
-        pendingMessage.messageId = response.$1;
-        pendingMessage.deliveredToAll = false;
-        pendingMessage.readByAll = false;
-        pendingMessage.isUploading = false;
+        pendingMessage
+          ..messageId = response.$1
+          ..deliveredToAll = false
+          ..readByAll = false
+          ..isUploading = false;
         chatPendingMessages?.messages
             ?.removeWhere((key, value) => key == '$createdAt');
         await dbBox?.saveConversation(
@@ -242,8 +246,8 @@ class IsmChatCommonViewModel {
         }
         var conversationModel = await dbBox?.getConversation(conversationId);
         if (conversationModel != null) {
-          final messages = conversationModel.messages ?? {};
-          messages.addEntries({'$createdAt': pendingMessage}.entries);
+          final messages = (conversationModel.messages ?? {})
+            ..addEntries({'$createdAt': pendingMessage}.entries);
           conversationModel = conversationModel.copyWith(
             lastMessageDetails: conversationModel.lastMessageDetails?.copyWith(
               reactionType: '',
@@ -286,8 +290,9 @@ class IsmChatCommonViewModel {
           list1.add(messages[x]);
         } else {
           result.add([...list1]);
-          list1.clear();
-          list1.add(messages[x]);
+          list1
+            ..clear()
+            ..add(messages[x]);
         }
         if (x == messages.length - 1 && list1.isNotEmpty) {
           result.add([...list1]);
@@ -299,12 +304,13 @@ class IsmChatCommonViewModel {
     }
 
     for (var message in result) {
-      allMessages.add(
-        IsmChatMessageModel.fromDate(
-          message.first.sentAt,
-        ),
-      );
-      allMessages.addAll(message);
+      allMessages
+        ..add(
+          IsmChatMessageModel.fromDate(
+            message.first.sentAt,
+          ),
+        )
+        ..addAll(message);
     }
     return allMessages;
   }

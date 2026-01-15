@@ -161,21 +161,22 @@ class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
       //   subscribedTopics = topics;
       // },
     );
-    mqttHelper.onConnectionChange((value) {
-      if (value) {
-        IsmChatConfig.mqttConnectionStatus
-            ?.call(IsmChatConnectionState.connected);
-      } else {
-        IsmChatConfig.mqttConnectionStatus
-            ?.call(IsmChatConnectionState.disconnected);
-      }
-    });
-    mqttHelper.onEvent(
-      (event) {
-        IsmChatLog.info('Mqtt event ${event.toMap()}');
-        onMqttEvent(event: event);
-      },
-    );
+    mqttHelper
+      ..onConnectionChange((value) {
+        if (value) {
+          IsmChatConfig.mqttConnectionStatus
+              ?.call(IsmChatConnectionState.connected);
+        } else {
+          IsmChatConfig.mqttConnectionStatus
+              ?.call(IsmChatConnectionState.disconnected);
+        }
+      })
+      ..onEvent(
+        (event) {
+          IsmChatLog.info('Mqtt event ${event.toMap()}');
+          onMqttEvent(event: event);
+        },
+      );
   }
 
   /// onConnected callback, it will be called when connection is established

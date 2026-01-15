@@ -142,11 +142,11 @@ class IsmChatCommonRepository {
           'searchableTags': [body],
         'mentionedUsers': mentionedUsers
       }.removeNullValues();
-      var headers = IsmChatUtility.tokenCommonHeader();
-      headers.addEntries(
-        {'Authorization': IsmChatConfig.paidWalletModel?.authToken ?? ''}
-            .entries,
-      );
+      var headers = IsmChatUtility.tokenCommonHeader()
+        ..addEntries(
+          {'Authorization': IsmChatConfig.paidWalletModel?.authToken ?? ''}
+              .entries,
+        );
       var response = await _apiWrapper.post(
         IsmChatConfig.paidWalletModel?.apiUrl ?? '',
         payload: payload,

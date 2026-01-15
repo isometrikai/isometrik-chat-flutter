@@ -90,8 +90,7 @@ class IsmChatPageController extends GetxController
         storeMediaImageList.add({x.body: <IsmChatMessageModel>[]});
         continue;
       }
-      var z = storeMediaImageList.last;
-      z.forEach((key, value) {
+      storeMediaImageList.last.forEach((key, value) {
         value.add(x);
       });
     }
@@ -103,7 +102,7 @@ class IsmChatPageController extends GetxController
     super.onInit();
     // Defer initialization to allow UI to render first
     // This improves perceived performance by showing the screen immediately
-    Future.microtask(() => startInit());
+    Future.microtask(startInit);
   }
 
   void startInit({
@@ -188,12 +187,13 @@ class IsmChatPageController extends GetxController
   }
 
   void _generateReactionList() async {
-    reactions.clear();
-    reactions.addAll(IsmChatEmoji.values
-        .expand((typesOfEmoji) => defaultEmojiSet.expand((categoryEmoji) =>
-            categoryEmoji.emoji
-                .where((emoji) => typesOfEmoji.emojiKeyword == emoji.name)))
-        .toList());
+    reactions
+      ..clear()
+      ..addAll(IsmChatEmoji.values
+          .expand((typesOfEmoji) => defaultEmojiSet.expand((categoryEmoji) =>
+              categoryEmoji.emoji
+                  .where((emoji) => typesOfEmoji.emojiKeyword == emoji.name)))
+          .toList());
   }
 
   void _getBackGroundAsset() {
@@ -410,9 +410,8 @@ class IsmChatPageController extends GetxController
 
   Future<void> getMentionedUserList(String data) async {
     userMentionedList.clear();
-    final mentionedList = data.split('@').toList();
-
-    mentionedList.removeWhere((e) => e.trim().isEmpty);
+    final mentionedList = (data.split('@').toList())
+      ..removeWhere((e) => e.trim().isEmpty);
 
     for (var x = 0; x < groupMembers.length; x++) {
       final checkerLength =
@@ -1535,20 +1534,21 @@ class IsmChatPageController extends GetxController
       name = file.path.split('/').last;
     }
     final extension = name.split('.').last;
-    webMedia.clear();
-    webMedia.add(
-      WebMediaModel(
-        dataSize: fileSize,
-        isVideo: false,
-        platformFile: IsmchPlatformFile(
-          name: name,
-          bytes: bytes,
-          path: file.path,
-          size: bytes.length,
-          extension: extension,
+    webMedia
+      ..clear()
+      ..add(
+        WebMediaModel(
+          dataSize: fileSize,
+          isVideo: false,
+          platformFile: IsmchPlatformFile(
+            name: name,
+            bytes: bytes,
+            path: file.path,
+            size: bytes.length,
+            extension: extension,
+          ),
         ),
-      ),
-    );
+      );
     IsmChatUtility.closeLoader();
   }
 
