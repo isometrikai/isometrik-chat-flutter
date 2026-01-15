@@ -44,17 +44,6 @@ extension MatchString on String {
       toLowerCase().startsWith('www');
 
   bool get isAlphabet => RegExp(r'^[A-Za-z]+$').hasMatch(this);
-
-  // List<String> get phoneNumerList {
-  //   var exp =
-  //       RegExp(r'[+]?[(]?[0-9]{2,3}[)]?[\-\s\.]?[0-9]{2,5}[\-\s\.]?[0-9]{4,5}');
-  //   var matches = exp.allMatches(this);
-  //   var phoneNumerList = <String>[];
-  //   for (var match in matches) {
-  //     phoneNumerList.add(substring(match.start, match.end));
-  //   }
-  //   return phoneNumerList;
-  // }
 }
 
 extension MessagePagination on int {
@@ -72,19 +61,6 @@ extension MessagePagination on int {
     endValue = endValue + increaseValue;
     return pagination(endValue: endValue, increaseValue: increaseValue);
   }
-
-  // int limitPagination({
-  //   int value = 30,
-  // }) {
-  //   if (this == 0) {
-  //     return this;
-  //   }
-  //   if (this <=value) {
-  //     return value;
-  //   }
-  //   value = value + 20;
-  //   return pagination(endValue: value);
-  // }
 }
 
 extension DistanceLatLng on LatLng {
@@ -1173,26 +1149,6 @@ extension OnMap on Map<dynamic, dynamic> {
     );
     return result;
   }
-
-  // Map<String, dynamic> removeNullValues() {
-  //   var result = <String, dynamic>{};
-  //   for (var entry in entries) {
-  //     var k = entry.key;
-  //     var v = entry.value;
-  //     if (v != null) {
-  //       if (!v.runtimeType.toString().contains('List') &&
-  //           v.runtimeType.toString().contains('Map')) {
-  //         result[k] = (v as Map<String, dynamic>).removeNullValues();
-  //       } else {
-  //         // if (v is String && v.trim().isEmpty) {
-  //         //   continue;
-  //         // }
-  //         result[k] = v;
-  //       }
-  //     }
-  //   }
-  //   return result;
-  // }
 
   IsmChatMessages get messageMap => {
         for (var entry in entries)

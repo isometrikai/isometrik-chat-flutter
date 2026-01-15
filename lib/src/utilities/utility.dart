@@ -58,24 +58,6 @@ class IsmChatUtility {
     }
   }
 
-  // /// Show loader
-  // static void showLoader() async {
-  //   var isLoaderOpen = Get.isDialogOpen;
-  //   if (isLoaderOpen != null) {
-  //     await IsmChatContextWidget.showDialogContext<void>(
-  //       const IsmChatLoadingDialog(),
-  //       barrierDismissible: false,
-  //     );
-  //   }
-  // }
-
-  // static void closeLoader() {
-  //   var isLoaderOpen = Get.isDialogOpen;
-  //   if (isLoaderOpen != null) {
-  //     IsmChatRoute.goBack()(closeOverlays: false, canPop: true);
-  //   }
-  // }
-
   /// Show error dialog from response model
   static Future<void> showInfoDialog(
     IsmChatResponseModel data, {
@@ -159,18 +141,6 @@ class IsmChatUtility {
 
     return header;
   }
-
-  // /// this is for change encoded string to decode string
-  // static String decodeString(String value) {
-  //   try {
-  //     return utf8.decode(value.runes.toList());
-  //   } catch (e) {
-  //     return value;
-  //   }
-  // }
-
-  // /// this is for change decode string to encode string
-  // static String encodeString(String value) => utf8.fuse(base64).encode(value);
 
   static String encryptMessage(String body, String conversationId) {
     if (conversationId.isEmpty) return body;
@@ -513,62 +483,6 @@ class IsmChatUtility {
     } on GalException catch (e, st) {
       IsmChatLog.error('error $e stack straas $st');
     }
-
-    // ********** With out package and create folder name and download any files
-    //  Directory? directory;
-    // if (GetPlatform.isAndroid) {
-    //   if (await IsmChatUtility.requestPermission(Permission.storage) &&
-    //       // access media location needed for android 10/Q
-    //       await IsmChatUtility.requestPermission(
-    //           Permission.accessMediaLocation) &&
-    //       // manage external storage needed for android 11/R
-    //       await IsmChatUtility.requestPermission(
-    //         Permission.manageExternalStorage,
-    //       )) {
-    //     directory = await path_provider.getExternalStorageDirectory();
-    //     var newPath = '';
-    //     var paths = directory!.path.split('/');
-    //     for (var x = 1; x < paths.length; x++) {
-    //       var folder = paths[x];
-    //       if (folder != 'Android') {
-    //         newPath += '/$folder';
-    //       } else {
-    //         break;
-    //       }
-    //     }
-    //     newPath = '$newPath/ChatApp';
-    //     directory = Directory(newPath);
-    //   } else {
-    //     await openAppSettings();
-    //     return;
-    //   }
-    // } else {
-    //   if (await IsmChatUtility.requestPermission(Permission.photos)) {
-    //     directory = await path_provider.getTemporaryDirectory();
-    //   } else {
-    //     await openAppSettings();
-    //     return;
-    //   }
-    // }
-
-    // if (!await directory.exists()) {
-    //   await directory.create(recursive: true);
-    // }
-    // if (await directory.exists()) {
-    //   var saveFile =
-    //       File('${directory.path}/${message.attachments?.first.name}');
-
-    //   await dio.download(
-    //     message.attachments?.first.mediaUrl ?? '',
-    //     saveFile.path,
-    //   );
-
-    //   if (GetPlatform.isIOS) {
-    //     await ImageGallerySaver
-    //     saveFile(saveFile.path,
-    //         name: message.attachments?.first.name, isReturnPathOfIOS: true);
-    //   }
-    // }
   }
 
   static Widget buildSusWidget(String susTag) => Container(
