@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on String and String? types for common
 /// string operations like URL validation, matching, color conversion, etc.
+library;
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -213,4 +214,3 @@ extension SizeOfMedia on String {
     return Uint8List(0);
   }
 }
-

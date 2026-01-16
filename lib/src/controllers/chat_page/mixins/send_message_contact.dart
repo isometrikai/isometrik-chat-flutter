@@ -1,25 +1,21 @@
-import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Mixin for handling contact message sending in the chat page controller.
-/// 
+///
 /// This mixin provides functionality for sending contact messages.
 /// It depends on:
 /// - `createConversation()` from send_message_core mixin
 /// - `sendMessage()` from send_message_core mixin
-mixin IsmChatPageSendMessageContactMixin on IsmChatPageController {
+mixin IsmChatPageSendMessageContactMixin {
   /// Gets the controller instance.
-  IsmChatPageController get _controller => this;
+  IsmChatPageController get _controller => this as IsmChatPageController;
 
   /// Sends a contact message.
-  /// 
+  ///
   /// [conversationId] - ID of the conversation
   /// [userId] - ID of the user
   /// [contacts] - List of contacts to send
-  /// 
+  ///
   /// Note: This method requires `createConversation` and `sendMessage`
   /// to be available through other mixins on the controller.
   void sendContact({
@@ -28,7 +24,7 @@ mixin IsmChatPageSendMessageContactMixin on IsmChatPageController {
     required List<Contact> contacts,
   }) async {
     // Note: createConversation is provided by send_message_core mixin
-    conversationId = await createConversation(
+    conversationId = await _controller.createConversation(
         conversationId: conversationId, userId: userId);
     final sentAt = DateTime.now().millisecondsSinceEpoch;
     final contactMessage = IsmChatMessageModel(
@@ -93,7 +89,7 @@ mixin IsmChatPageSendMessageContactMixin on IsmChatPageController {
             _controller.conversationController.userDetails?.userName ??
             '';
     // Note: sendMessage is provided by send_message_core mixin
-    sendMessage(
+    _controller.sendMessage(
       metaData: contactMessage.metaData,
       deviceId: contactMessage.deviceId ?? '',
       body: contactMessage.body,
@@ -108,4 +104,3 @@ mixin IsmChatPageSendMessageContactMixin on IsmChatPageController {
     );
   }
 }
-

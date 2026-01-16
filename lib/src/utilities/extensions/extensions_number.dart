@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on int and double types for pagination,
 /// time formatting, and other numeric operations.
+library;
 
 /// Extension for int to handle message pagination.
 extension MessagePagination on int {
@@ -49,4 +50,3 @@ extension TimerSecond on double {
     return '$data s';
   }
 }
-

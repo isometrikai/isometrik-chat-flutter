@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on SDK model classes like IsmChatConversationModel,
 /// IsmChatMessageModel, LastMessageDetails, etc. for common model operations.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -503,4 +504,3 @@ extension MentionMessage on IsmChatMessageModel {
     return '$mapKey';
   }
 }
-

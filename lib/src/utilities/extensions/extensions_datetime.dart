@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on DateTime and int (timestamp) types for
 /// date formatting, comparison, and conversion operations.
+library;
 
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -155,4 +156,3 @@ extension DateFormats on DateTime {
   /// Removes the time component from a DateTime, keeping only the date.
   DateTime removeTime() => DateTime(year, month, day).toLocal();
 }
-

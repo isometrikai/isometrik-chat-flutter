@@ -1,14 +1,11 @@
-import 'package:get/get.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Mixin for handling message reactions in the chat page controller.
 /// 
 /// This mixin provides functionality for adding reactions to messages.
 /// It is separated from the main send_message mixin to improve code organization
 /// and maintainability.
-mixin IsmChatPageSendMessageReactionsMixin on GetxController {
+mixin IsmChatPageSendMessageReactionsMixin {
   /// Gets the controller instance.
   /// 
   /// This getter attempts to use the current instance (this) first,

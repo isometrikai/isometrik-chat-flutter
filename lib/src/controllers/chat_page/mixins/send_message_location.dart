@@ -1,7 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Mixin for handling location message sending in the chat page controller.
 /// 
@@ -9,9 +6,9 @@ import '../chat_page_controller.dart';
 /// It depends on:
 /// - `createConversation()` from send_message_core mixin
 /// - `sendMessage()` from send_message_core mixin
-mixin IsmChatPageSendMessageLocationMixin on IsmChatPageController {
+mixin IsmChatPageSendMessageLocationMixin {
   /// Gets the controller instance.
-  IsmChatPageController get _controller => this;
+  IsmChatPageController get _controller => this as IsmChatPageController;
 
   /// Sends a location message.
   /// 
@@ -35,7 +32,7 @@ mixin IsmChatPageSendMessageLocationMixin on IsmChatPageController {
     required String userId,
   }) async {
     // Note: createConversation is provided by send_message_core mixin
-    conversationId = await createConversation(
+    conversationId = await _controller.createConversation(
         conversationId: conversationId, userId: userId);
     final sentAt = DateTime.now().millisecondsSinceEpoch;
     final locationMessage = IsmChatMessageModel(
@@ -107,7 +104,7 @@ mixin IsmChatPageSendMessageLocationMixin on IsmChatPageController {
             _controller.conversationController.userDetails?.userName ??
             '';
     // Note: sendMessage is provided by send_message_core mixin
-    sendMessage(
+    _controller.sendMessage(
       metaData: locationMessage.metaData,
       deviceId: locationMessage.deviceId ?? '',
       body: locationMessage.body,

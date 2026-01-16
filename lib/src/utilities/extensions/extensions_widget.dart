@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on Flutter widgets and UI-related enums
 /// for common UI operations like unfocus gestures, icons, etc.
+library;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -170,4 +171,3 @@ extension Conversation on IsmChatConversationType {
     }
   }
 }
-

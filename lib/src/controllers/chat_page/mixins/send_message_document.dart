@@ -1,11 +1,4 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:pdfx/pdfx.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Mixin for handling document message sending in the chat page controller.
 ///
@@ -13,9 +6,9 @@ import '../chat_page_controller.dart';
 /// It depends on:
 /// - `createConversation()` from send_message_core mixin
 /// - `ismPostMediaUrl()` from send_message_media mixin
-mixin IsmChatPageSendMessageDocumentMixin on IsmChatPageController {
+mixin IsmChatPageSendMessageDocumentMixin {
   /// Gets the controller instance.
-  IsmChatPageController get _controller => this;
+  IsmChatPageController get _controller => this as IsmChatPageController;
 
   /// Sends a document (PDF) message.
   ///
@@ -53,7 +46,7 @@ mixin IsmChatPageSendMessageDocumentMixin on IsmChatPageController {
 
       if (result?.files.isNotEmpty ?? false) {
         // Note: createConversation is provided by send_message_core mixin
-        conversationId = await createConversation(
+        conversationId = await _controller.createConversation(
             conversationId: conversationId, userId: userId);
         final resultFiles = result?.files ?? [];
         for (var x in resultFiles) {
@@ -166,7 +159,7 @@ mixin IsmChatPageSendMessageDocumentMixin on IsmChatPageController {
                 _controller.conversationController.userDetails?.userName ??
                 '';
         // Note: ismPostMediaUrl is provided by send_message_media mixin
-        await ismPostMediaUrl(
+        await _controller.ismPostMediaUrl(
           imageAndFile: false,
           bytes: bytes ?? Uint8List(0),
           createdAt: sentAt,

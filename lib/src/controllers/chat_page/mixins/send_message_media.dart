@@ -1,10 +1,4 @@
-import 'dart:async';
-
-import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:video_compress/video_compress.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Mixin for handling media message sending (images, videos) in the chat page controller.
 ///
@@ -13,9 +7,9 @@ import '../chat_page_controller.dart';
 /// - `createConversation()` from send_message_core mixin
 /// - `sendMessage()` from send_message_core mixin
 /// - `ismPostMediaUrl()` (defined in this mixin)
-mixin IsmChatPageSendMessageMediaMixin on IsmChatPageController {
+mixin IsmChatPageSendMessageMediaMixin {
   /// Gets the controller instance.
-  IsmChatPageController get _controller => this;
+  IsmChatPageController get _controller => this as IsmChatPageController;
 
   /// Validates and sends media files (mobile).
   void sendMedia() async {
@@ -142,7 +136,7 @@ mixin IsmChatPageSendMessageMediaMixin on IsmChatPageController {
     required WebMediaModel webMediaModel,
   }) async {
     // Note: createConversation is provided by send_message_core mixin
-    conversationId = await createConversation(
+    conversationId = await _controller.createConversation(
       conversationId: conversationId,
       userId: userId,
     );
@@ -246,7 +240,7 @@ mixin IsmChatPageSendMessageMediaMixin on IsmChatPageController {
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-    await ismPostMediaUrl(
+    await _controller.ismPostMediaUrl(
       imageAndFile: false,
       bytes: bytes ?? Uint8List(0),
       createdAt: sentAt,
@@ -277,7 +271,7 @@ mixin IsmChatPageSendMessageMediaMixin on IsmChatPageController {
     required WebMediaModel webMediaModel,
   }) async {
     // Note: createConversation is provided by send_message_core mixin
-    conversationId = await createConversation(
+    conversationId = await _controller.createConversation(
         conversationId: conversationId, userId: userId);
     IsmChatMessageModel? imageMessage;
     final sentAt = DateTime.now().millisecondsSinceEpoch;
@@ -356,7 +350,7 @@ mixin IsmChatPageSendMessageMediaMixin on IsmChatPageController {
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-    await ismPostMediaUrl(
+    await _controller.ismPostMediaUrl(
       bytes: bytes ?? Uint8List(0),
       createdAt: sentAt,
       ismChatChatMessageModel: imageMessage,
@@ -462,7 +456,7 @@ mixin IsmChatPageSendMessageMediaMixin on IsmChatPageController {
             _controller.conversationController.userDetails?.userName ??
             '';
     // Note: sendMessage is provided by send_message_core mixin
-    sendMessage(
+    _controller.sendMessage(
       metaData: imageMessage.metaData,
       deviceId: imageMessage.deviceId ?? '',
       body: imageMessage.body,
@@ -573,7 +567,7 @@ mixin IsmChatPageSendMessageMediaMixin on IsmChatPageController {
         ]..map((e) => e.removeWhere((key, value) => key == 'bytes'));
 
         // Note: sendMessage is provided by send_message_core mixin
-        sendMessage(
+        _controller.sendMessage(
           body: ismChatChatMessageModel.body,
           conversationId: ismChatChatMessageModel.conversationId ?? '',
           createdAt: createdAt,

@@ -1,33 +1,26 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Core mixin for message sending functionality in the chat page controller.
-/// 
+///
 /// This mixin provides the core message sending methods including:
 /// - `sendMessage()` - Generic message sending method
 /// - `sendTextMessage()` - Text message sending
 /// - `sendAboutTextMessage()` - About text message sending
 /// - `createConversation()` - Conversation creation
-/// 
+///
 /// This mixin depends on:
 /// - `sendBroadcastMessage()` from send_message_broadcast mixin (for broadcast messages)
-mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
+mixin IsmChatPageSendMessageCoreMixin {
   /// Gets the controller instance.
-  IsmChatPageController get _controller => this;
+  IsmChatPageController get _controller => this as IsmChatPageController;
 
   /// Core method for sending messages.
-  /// 
+  ///
   /// Handles sending messages through various channels:
   /// - Paid wallet messages (if configured)
   /// - Regular messages
   /// - Broadcast messages
-  /// 
+  ///
   /// [messageType] - Type of the message
   /// [deviceId] - Device ID
   /// [conversationId] - ID of the conversation
@@ -43,7 +36,7 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
   /// [isBroadcast] - Whether this is a broadcast message
   /// [sendPushNotification] - Whether to send push notification
   /// [encrypted] - Whether the message is encrypted
-  /// 
+  ///
   /// Note: This method requires `sendBroadcastMessage` to be available through
   /// send_message_broadcast mixin on the controller.
   void sendMessage({
@@ -147,7 +140,7 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
       }
     } else {
       // Note: sendBroadcastMessage is provided by send_message_broadcast mixin
-      await sendBroadcastMessage(
+      await _controller.sendBroadcastMessage(
         groupcastId: conversationId,
         messageType: messageType,
         deviceId: deviceId,
@@ -168,11 +161,11 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
   }
 
   /// Sends a text message.
-  /// 
+  ///
   /// [conversationId] - ID of the conversation
   /// [userId] - ID of the user
   /// [pushNotifications] - Whether to send push notifications
-  /// 
+  ///
   /// Note: This method requires `createConversation` and `sendMessage`
   /// to be available on the controller.
   void sendTextMessage({
@@ -180,7 +173,7 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
     required String userId,
     bool pushNotifications = true,
   }) async {
-    conversationId = await createConversation(
+    conversationId = await _controller.createConversation(
         conversationId: conversationId, userId: userId);
     final sentAt = DateTime.now().millisecondsSinceEpoch;
 
@@ -320,7 +313,7 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
             _controller.conversationController.userDetails?.userName ??
             '';
     final notificationBody = encrypted ? 'New Message' : textMessage.body;
-    sendMessage(
+    _controller.sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,
       deviceId: textMessage.deviceId ?? '',
@@ -340,12 +333,12 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
   }
 
   /// Sends an "about text" message.
-  /// 
+  ///
   /// [conversationId] - ID of the conversation
   /// [userId] - ID of the user
   /// [outSideMessage] - The outside message to send
   /// [pushNotifications] - Whether to send push notifications
-  /// 
+  ///
   /// Note: This method requires `sendMessage` to be available on the controller.
   void sendAboutTextMessage({
     required String conversationId,
@@ -428,7 +421,7 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-    sendMessage(
+    _controller.sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: aboutTextMessage.metaData,
       deviceId: aboutTextMessage.deviceId ?? '',
@@ -445,12 +438,12 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
   }
 
   /// Creates or retrieves a conversation.
-  /// 
+  ///
   /// [conversationId] - ID of the conversation (may be empty for new conversations)
   /// [userId] - ID of the user
-  /// 
+  ///
   /// Returns the conversation ID (existing or newly created).
-  /// 
+  ///
   /// Note: This method requires `createBroadcastConversation` to be available
   /// through send_message_broadcast mixin on the controller.
   Future<String> createConversation({
@@ -524,4 +517,3 @@ mixin IsmChatPageSendMessageCoreMixin on IsmChatPageController {
     return conversationId;
   }
 }
-

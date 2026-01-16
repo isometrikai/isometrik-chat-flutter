@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/views/chat_page/widget/messages/media_grid_message.dart';
 
 class MessageBubble extends StatelessWidget {
   MessageBubble({
@@ -66,8 +65,8 @@ class MessageBubble extends StatelessWidget {
 
     // Find the first message in the group by going backwards chronologically
     // (which means going forward in the reversed list)
-    int groupStartIndex = reversedIndex;
-    for (int i = reversedIndex; i >= 0; i--) {
+    var groupStartIndex = reversedIndex;
+    for (var i = reversedIndex; i >= 0; i--) {
       final msg = allMessages[i];
       final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
@@ -91,7 +90,7 @@ class MessageBubble extends StatelessWidget {
     }
 
     // Now collect all messages in the group starting from groupStartIndex
-    for (int i = groupStartIndex; i < allMessages.length; i++) {
+    for (var i = groupStartIndex; i < allMessages.length; i++) {
       final msg = allMessages[i];
       final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;

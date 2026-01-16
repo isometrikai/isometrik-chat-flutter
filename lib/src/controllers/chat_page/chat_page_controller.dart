@@ -33,6 +33,14 @@ import 'package:video_compress/video_compress.dart';
 part './mixins/get_message.dart';
 part './mixins/group_admin.dart';
 part './mixins/send_message.dart';
+part './mixins/send_message_reactions.dart';
+part './mixins/send_message_audio.dart';
+part './mixins/send_message_location.dart';
+part './mixins/send_message_contact.dart';
+part './mixins/send_message_document.dart';
+part './mixins/send_message_media.dart';
+part './mixins/send_message_broadcast.dart';
+part './mixins/send_message_core.dart';
 part './mixins/show_dialog.dart';
 part './mixins/taps_controller.dart';
 part './mixins/variables.dart';
@@ -41,6 +49,14 @@ part './mixins/variables.dart';
 class IsmChatPageController extends GetxController
     with
         IsmChatPageSendMessageMixin,
+        IsmChatPageSendMessageReactionsMixin,
+        IsmChatPageSendMessageAudioMixin,
+        IsmChatPageSendMessageLocationMixin,
+        IsmChatPageSendMessageContactMixin,
+        IsmChatPageSendMessageDocumentMixin,
+        IsmChatPageSendMessageMediaMixin,
+        IsmChatPageSendMessageBroadcastMixin,
+        IsmChatPageSendMessageCoreMixin,
         IsmChatPageGetMessageMixin,
         IsmChatGroupAdminMixin,
         IsmChatShowDialogMixin,

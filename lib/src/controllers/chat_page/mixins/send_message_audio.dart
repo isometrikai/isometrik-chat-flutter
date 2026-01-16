@@ -1,28 +1,23 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Mixin for handling audio message sending in the chat page controller.
-/// 
+///
 /// This mixin provides functionality for sending audio messages.
 /// It depends on:
 /// - `createConversation()` from send_message_core mixin
 /// - `ismPostMediaUrl()` from send_message_media mixin
-mixin IsmChatPageSendMessageAudioMixin on IsmChatPageController {
+mixin IsmChatPageSendMessageAudioMixin {
   /// Gets the controller instance.
-  IsmChatPageController get _controller => this;
+  IsmChatPageController get _controller => this as IsmChatPageController;
 
   /// Sends an audio message.
-  /// 
+  ///
   /// [path] - Path to the audio file (for mobile platforms)
   /// [conversationId] - ID of the conversation
   /// [userId] - ID of the user
   /// [webMediaModel] - Web media model (for web platform)
   /// [duration] - Duration of the audio
-  /// 
+  ///
   /// Note: This method requires `createConversation` and `ismPostMediaUrl`
   /// to be available through other mixins on the controller.
   void sendAudio({
@@ -33,7 +28,7 @@ mixin IsmChatPageSendMessageAudioMixin on IsmChatPageController {
     Duration? duration,
   }) async {
     // Note: createConversation is provided by send_message_core mixin
-    conversationId = await createConversation(
+    conversationId = await _controller.createConversation(
       conversationId: conversationId,
       userId: userId,
     );
@@ -131,7 +126,7 @@ mixin IsmChatPageSendMessageAudioMixin on IsmChatPageController {
             _controller.conversationController.userDetails?.userName ??
             '';
     // Note: ismPostMediaUrl is provided by send_message_media mixin
-    await ismPostMediaUrl(
+    await _controller.ismPostMediaUrl(
       imageAndFile: true,
       bytes: bytes,
       createdAt: sentAt,
@@ -144,4 +139,3 @@ mixin IsmChatPageSendMessageAudioMixin on IsmChatPageController {
     );
   }
 }
-

@@ -1,17 +1,15 @@
-import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-
-import '../chat_page_controller.dart';
+part of '../chat_page_controller.dart';
 
 /// Mixin for handling broadcast message sending in the chat page controller.
-/// 
+///
 /// This mixin provides functionality for sending broadcast messages and
 /// creating broadcast conversations.
-mixin IsmChatPageSendMessageBroadcastMixin on IsmChatPageController {
+mixin IsmChatPageSendMessageBroadcastMixin {
   /// Gets the controller instance.
-  IsmChatPageController get _controller => this;
+  IsmChatPageController get _controller => this as IsmChatPageController;
 
   /// Sends a broadcast message to multiple conversations.
-  /// 
+  ///
   /// [createdAt] - Timestamp when the message was created
   /// [groupcastId] - ID of the broadcast group
   /// [messageType] - Type of the message
@@ -97,7 +95,7 @@ mixin IsmChatPageSendMessageBroadcastMixin on IsmChatPageController {
   }
 
   /// Creates a broadcast conversation.
-  /// 
+  ///
   /// [groupcastTitle] - Title of the broadcast group
   /// [groupcastImageUrl] - Image URL for the broadcast group
   /// [membersId] - List of member IDs
@@ -105,7 +103,7 @@ mixin IsmChatPageSendMessageBroadcastMixin on IsmChatPageController {
   /// [searchableTags] - Optional searchable tags
   /// [metaData] - Optional metadata
   /// [customType] - Optional custom type
-  /// 
+  ///
   /// Returns the conversation ID of the created broadcast.
   Future<String?> createBroadcastConversation({
     bool isLoading = false,
@@ -126,4 +124,3 @@ mixin IsmChatPageSendMessageBroadcastMixin on IsmChatPageController {
         searchableTags: searchableTags,
       );
 }
-

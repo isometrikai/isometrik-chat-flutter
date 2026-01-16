@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on location-related types like LatLng
 /// and Placemark for distance calculations and address formatting.
+library;
 
 import 'dart:math';
 
@@ -44,4 +45,3 @@ extension AddressString on Placemark {
         postalCode
       ].join(', ');
 }
-

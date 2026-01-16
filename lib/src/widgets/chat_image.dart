@@ -202,7 +202,7 @@ class _NetworkImage extends StatelessWidget {
                     color: IsmChatConfig.chatTheme.primaryColor,
                   ),
                 )
-              : Center(
+              : const Center(
                   child: SizedBox(
                     width: 30,
                     height: 30,

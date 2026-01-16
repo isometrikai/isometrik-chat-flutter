@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on Map types for common map operations
 /// like removing null values and converting to message maps.
+library;
 
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -71,4 +72,3 @@ extension OnMap on Map<dynamic, dynamic> {
                 IsmChatMessageModel.fromMap(entry.value as Map<String, dynamic>)
       };
 }
-

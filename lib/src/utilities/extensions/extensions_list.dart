@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on List and Iterable types for common
 /// list operations like filtering, merging, and unique elements.
+library;
 
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -73,4 +74,3 @@ extension ListMerging<T> on List<List<T>?> {
     return result;
   }
 }
-

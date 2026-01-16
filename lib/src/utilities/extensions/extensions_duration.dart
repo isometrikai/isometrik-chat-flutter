@@ -2,6 +2,7 @@
 ///
 /// This file contains extensions on Duration type for formatting
 /// duration strings and generating wave samples for audio visualization.
+library;
 
 import 'dart:math';
 
@@ -49,4 +50,3 @@ extension DurationExtensions on Duration {
     return [h, m, s].where((e) => e != '00').join(' ');
   }
 }
-
