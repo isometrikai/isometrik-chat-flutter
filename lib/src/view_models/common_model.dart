@@ -144,11 +144,20 @@ class IsmChatCommonViewModel {
         if (pendingMessage != null &&
             [200, 403].contains(response.respone.errorCode)) {
           if (response.messageId.isNotEmpty) {
+
             pendingMessage
               ..messageId = response.messageId
               ..deliveredToAll = false
               ..readByAll = false
               ..isUploading = false;
+
+            // Update attachments if new ones are provided (e.g., after media upload)
+            if (attachments != null && attachments.isNotEmpty) {
+              final updatedAttachments =
+                  attachments.map((e) => AttachmentModel.fromMap(e)).toList();
+              pendingMessage.attachments = updatedAttachments;
+            }
+
           } else if (response.respone.errorCode == 403) {
             pendingMessage
               ..messageId = ''
