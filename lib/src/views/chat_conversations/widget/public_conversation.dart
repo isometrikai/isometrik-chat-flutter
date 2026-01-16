@@ -54,13 +54,14 @@ class _IsmChatPublicConversationViewState
                             onChanged: (value) {
                               controller.debounce.run(
                                 () {
-                                  controller.isLoadResponse = false;
-                                  controller.getPublicAndOpenConversation(
-                                    searchTag:
-                                        value.trim().isNotEmpty ? value : '',
-                                    conversationType:
-                                        IsmChatConversationType.public.value,
-                                  );
+                                  controller
+                                    ..isLoadResponse = false
+                                    ..getPublicAndOpenConversation(
+                                      searchTag:
+                                          value.trim().isNotEmpty ? value : '',
+                                      conversationType:
+                                          IsmChatConversationType.public.value,
+                                    );
                                 },
                               );
                             },

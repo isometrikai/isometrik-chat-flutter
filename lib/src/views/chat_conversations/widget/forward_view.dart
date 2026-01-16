@@ -87,12 +87,13 @@ class IsmChatForwardView extends StatelessWidget {
                         return;
                       }
                       controller.debounce.run(() {
-                        controller.isLoadResponse = false;
-                        controller.getNonBlockUserList(
-                          searchTag: value,
-                          opponentId: IsmChatConfig
-                              .communicationConfig.userConfig.userId,
-                        );
+                        controller
+                          ..isLoadResponse = false
+                          ..getNonBlockUserList(
+                            searchTag: value,
+                            opponentId: IsmChatConfig
+                                .communicationConfig.userConfig.userId,
+                          );
                       });
                     },
                   )
@@ -285,10 +286,9 @@ class IsmChatForwardView extends StatelessWidget {
                                                 }
                                               : () async {
                                                   controller
-                                                      .onForwardUserTap(index);
-
-                                                  controller.isSelectedUser(
-                                                      user.userDetails);
+                                                    ..onForwardUserTap(index)
+                                                    ..isSelectedUser(
+                                                        user.userDetails);
                                                 },
                                           dense: true,
                                           mouseCursor: SystemMouseCursors.click,

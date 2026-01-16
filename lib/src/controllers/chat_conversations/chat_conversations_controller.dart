@@ -560,12 +560,13 @@ class IsmChatConversationsController extends GetxController {
 
   /// Generates a list of emoji reactions for the chat application.
   void _generateReactionList() {
-    reactions.clear();
-    reactions.addAll(IsmChatEmoji.values
-        .expand((typesOfEmoji) => defaultEmojiSet.expand((categoryEmoji) =>
-            categoryEmoji.emoji
-                .where((emoji) => typesOfEmoji.emojiKeyword == emoji.name)))
-        .toList());
+    reactions
+      ..clear()
+      ..addAll(IsmChatEmoji.values
+          .expand((typesOfEmoji) => defaultEmojiSet.expand((categoryEmoji) =>
+              categoryEmoji.emoji
+                  .where((emoji) => typesOfEmoji.emojiKeyword == emoji.name)))
+          .toList());
   }
 
   /// This function will be used in [Forward Screen and New conversation screen] to Select or Unselect users
@@ -802,14 +803,14 @@ class IsmChatConversationsController extends GetxController {
     // Small delay to ensure initial load completes
     await Future.delayed(const Duration(milliseconds: 500));
 
-    int skip = forwardedList.length;
-    const int limit = 20;
-    bool hasMoreContacts = true;
+    var skip = forwardedList.length;
+    const limit = 20;
+    var hasMoreContacts = true;
 
     // Batch contacts before updating UI (update every 3 batches = 60 contacts)
-    final List<SelectedMembers> batchedContacts = [];
-    const int batchUpdateSize = 3; // Update UI every 3 API calls
-    int batchCount = 0;
+    final batchedContacts = <SelectedMembers>[];
+    const batchUpdateSize = 3; // Update UI every 3 API calls
+    var batchCount = 0;
 
     while (hasMoreContacts && callApiOrNot) {
       try {
@@ -836,14 +837,15 @@ class IsmChatConversationsController extends GetxController {
           }
 
           // Filter out duplicates and current user
-          final newUsers = users.where((user) {
-            return user.userId !=
-                    IsmChatConfig.communicationConfig.userConfig.userId &&
-                !forwardedList.any(
-                    (existing) => existing.userDetails.userId == user.userId) &&
-                !batchedContacts.any(
-                    (existing) => existing.userDetails.userId == user.userId);
-          }).toList();
+          final newUsers = users
+              .where((user) =>
+                  user.userId !=
+                      IsmChatConfig.communicationConfig.userConfig.userId &&
+                  !forwardedList.any((existing) =>
+                      existing.userDetails.userId == user.userId) &&
+                  !batchedContacts.any(
+                      (existing) => existing.userDetails.userId == user.userId))
+              .toList();
 
           if (newUsers.isNotEmpty) {
             final newMembers = newUsers
@@ -917,7 +919,7 @@ class IsmChatConversationsController extends GetxController {
   ///
   /// Returns a list of alphabet letters (A-Z) that have at least one contact
   List<String> getAvailableAlphabets() {
-    final Set<String> availableLetters = {};
+    final availableLetters = <String>{};
 
     for (var member in forwardedList) {
       if (member.userDetails.userName.isNotEmpty) {
@@ -1449,13 +1451,13 @@ class IsmChatConversationsController extends GetxController {
         return;
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.none;
-      final chatPagecontroller = IsmChatUtility.chatPageController;
-      chatPagecontroller.closeOverlay();
+      final chatPagecontroller = IsmChatUtility.chatPageController
+        ..closeOverlay();
       if (chatPagecontroller.showEmojiBoard) {
         chatPagecontroller.toggleEmojiBoard(false, false);
       }
       // Defer initialization to allow UI to render first
-      Future.microtask(() => chatPagecontroller.startInit());
+      unawaited(Future.microtask(chatPagecontroller.startInit));
     } else {
       await IsmChatRoute.goToRoute(IsmChatPageView(
         viewTag: IsmChat.i.chatPageTag,
@@ -1972,16 +1974,15 @@ class IsmChatConversationsController extends GetxController {
         IsmChatPageBinding().dependencies();
       }
       isRenderChatPageaScreen = IsRenderChatPageScreen.boradcastChatMessagePage;
-      final chatPagecontroller = IsmChatUtility.chatPageController;
-      chatPagecontroller.closeOverlay();
+      final chatPagecontroller = IsmChatUtility.chatPageController
+        ..closeOverlay();
       // Defer initialization to allow UI to render first
       Future.microtask(() => chatPagecontroller.startInit(isBroadcasts: true));
     } else {
       if (!IsmChatUtility.chatPageControllerRegistered) {
         IsmChatPageBinding().dependencies();
       }
-      final chatPagecontroller = IsmChatUtility.chatPageController;
-      chatPagecontroller.isBroadcast = true;
+      IsmChatUtility.chatPageController.isBroadcast = true;
       IsmChatRoute.goToRoute(const IsmChatBoradcastMessagePage());
     }
   }

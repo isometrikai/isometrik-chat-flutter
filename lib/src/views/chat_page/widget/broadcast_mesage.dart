@@ -39,12 +39,11 @@ class _IsmChatBoradcastMessagePageState
     var conversationController = IsmChatUtility.conversationController;
 
     if (IsmChatResponsive.isWeb(context)) {
-      var controller = IsmChatUtility.chatPageController;
-      controller.isBroadcast = false;
-      conversationController.currentConversation = null;
-      conversationController.currentConversationId = '';
-      conversationController.isRenderChatPageaScreen =
-          IsRenderChatPageScreen.none;
+      IsmChatUtility.chatPageController.isBroadcast = false;
+      conversationController
+        ..currentConversation = null
+        ..currentConversationId = ''
+        ..isRenderChatPageaScreen = IsRenderChatPageScreen.none;
       await Get.delete<IsmChatPageController>(
           force: true, tag: IsmChat.i.chatPageTag);
     } else {
@@ -216,7 +215,7 @@ class _BroadCastMessageState extends State<_BroadCastMessage> {
                     if (mounted) {
                       await Future.delayed(const Duration(milliseconds: 300));
                       if (mounted) {
-                        _fetchBroadcastTitle();
+                        unawaited(_fetchBroadcastTitle());
                       }
                     }
                   }

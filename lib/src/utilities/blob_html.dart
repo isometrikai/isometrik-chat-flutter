@@ -13,8 +13,7 @@ class IsmChatBlob {
   }
 
   static Future<Uint8List> blobUrlToBytes(String blobUrl) async {
-    final request = html.HttpRequest();
-    request
+    final request = html.HttpRequest()
       ..open('GET', blobUrl)
       ..responseType = 'arraybuffer';
 
@@ -62,19 +61,17 @@ class IsmChatBlob {
     final canvas = html.CanvasElement(
         width: videoElement.videoWidth, height: videoElement.videoHeight);
 
-    final context = canvas.context2D;
-    context.drawImageScaled(
-        videoElement, 0, 0, videoElement.videoWidth, videoElement.videoHeight);
+    canvas.context2D
+      ..drawImageScaled(
+          videoElement, 0, 0, videoElement.videoWidth, videoElement.videoHeight)
+      ..getImageData(0, 0, videoElement.videoWidth, videoElement.videoHeight);
     // Get the image data as a byte buffer and convert it to a base64 encoded string.
-    context.getImageData(
-        0, 0, videoElement.videoWidth, videoElement.videoHeight);
 
     final thumbnailBytes = await canvas.toBlob('image/jpeg');
     videoElement.remove();
     html.Url.revokeObjectUrl(url);
 
-    final reader = html.FileReader();
-    reader.readAsArrayBuffer(thumbnailBytes);
+    final reader = html.FileReader()..readAsArrayBuffer(thumbnailBytes);
     await reader.onLoadEnd.first;
 
     return Uint8List.fromList(reader.result as List<int>);
@@ -102,8 +99,7 @@ class IsmChatBlob {
             width: videoElement.videoWidth,
             height: videoElement.videoHeight,
           );
-          final context = canvas.context2D;
-          context.drawImage(videoElement, 0, 0);
+          canvas.context2D.drawImage(videoElement, 0, 0);
           final thumbnailUrl = canvas.toDataUrl('image/jpeg', quality);
           html.Url.revokeObjectUrl(url);
 
@@ -135,15 +131,16 @@ class IsmChatBlob {
     }
     // trigger download
     html.document.body?.append(anchor);
-    anchor.click();
-    anchor.remove();
+    anchor
+      ..click()
+      ..remove();
     return;
   }
 
   static void fileDownloadWithUrl(String url) {
-    var anchorElement = html.AnchorElement(href: url);
-    anchorElement.download = url;
-    anchorElement.click();
+    html.AnchorElement(href: url)
+      ..download = url
+      ..click();
   }
 
   static void permissionCamerAndAudio() async {

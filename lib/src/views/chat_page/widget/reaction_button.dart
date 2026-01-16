@@ -36,15 +36,16 @@ class ReactionGrid extends StatelessWidget {
                 emojiSize: IsmChatDimens.twenty,
                 onEmojiSelected: (_, emoji) {
                   IsmChatRoute.goBack();
-                  _controller.closeOverlay();
-                  _controller.addReacton(
-                    reaction: Reaction(
-                      reactionType: IsmChatEmoji.fromEmoji(reaciton),
-                      messageId: message.messageId ?? '',
-                      conversationId:
-                          _controller.conversation?.conversationId ?? '',
-                    ),
-                  );
+                  _controller
+                    ..closeOverlay()
+                    ..addReacton(
+                      reaction: Reaction(
+                        reactionType: IsmChatEmoji.fromEmoji(reaciton),
+                        messageId: message.messageId ?? '',
+                        conversationId:
+                            _controller.conversation?.conversationId ?? '',
+                      ),
+                    );
                 },
                 config: Config(
                   categoryViewConfig: CategoryViewConfig(

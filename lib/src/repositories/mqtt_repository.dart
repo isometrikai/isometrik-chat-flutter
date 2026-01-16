@@ -136,11 +136,11 @@ class IsmChatMqttRepository {
       final listData = (data['conversations'] as List<dynamic>)
           .cast<Map<String, dynamic>>()
           .map(IsmChatConversationModel.fromMap)
-          .toList();
-      listData.sort(
-        (a, b) => (a.lastMessageDetails?.sentAt ?? 0)
-            .compareTo(b.lastMessageDetails?.sentAt ?? 0),
-      );
+          .toList()
+        ..sort(
+          (a, b) => (a.lastMessageDetails?.sentAt ?? 0)
+              .compareTo(b.lastMessageDetails?.sentAt ?? 0),
+        );
       return listData;
     } catch (e, st) {
       IsmChatLog.error('GetChatConversations error $e', st);

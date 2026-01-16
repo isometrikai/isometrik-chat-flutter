@@ -42,14 +42,15 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
               )
       ..setLooping(false)
       ..initialize().then((_) {
-        _controller.addListener(() {
-          if (_controller.value.isBuffering == true) {
-            updateState();
-          } else {
-            updateState();
-          }
-        });
-        _controller.pause();
+        _controller
+          ..addListener(() {
+            if (_controller.value.isBuffering == true) {
+              updateState();
+            } else {
+              updateState();
+            }
+          })
+          ..pause();
       });
   }
 
@@ -75,14 +76,15 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
                 ? VideoPlayerController.networkUrl(Uri.parse(widget.path))
                 : VideoPlayerController.file(File(widget.path))
           ..initialize().then((_) {
-            _controller.addListener(() {
-              if (_controller.value.isBuffering == true) {
-                updateState();
-              } else {
-                updateState();
-              }
-            });
-            _controller.pause();
+            _controller
+              ..addListener(() {
+                if (_controller.value.isBuffering == true) {
+                  updateState();
+                } else {
+                  updateState();
+                }
+              })
+              ..pause();
           });
       });
     }
@@ -91,10 +93,11 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
 
   @override
   void dispose() {
-    _controller.removeListener(() {
-      _controller.pause();
-    });
-    _controller.dispose();
+    _controller
+      ..removeListener(() {
+        _controller.pause();
+      })
+      ..dispose();
     chatPageController.isVideoVisible = false;
     super.dispose();
   }

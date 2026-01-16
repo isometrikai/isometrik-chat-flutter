@@ -11,11 +11,11 @@ class IsmChatEligibleMembersView extends StatelessWidget {
   Widget build(BuildContext context) => GetX<IsmChatBroadcastController>(
         initState: (state) {
           IsmChatUtility.doLater(() async {
-            final controller = Get.find<IsmChatBroadcastController>();
-            controller.isApiCall = false;
-            controller.showSearchField = false;
-            controller.selectedUserList.clear();
-            controller.eligibleMembers.clear();
+            final controller = Get.find<IsmChatBroadcastController>()
+              ..isApiCall = false
+              ..showSearchField = false
+              ..selectedUserList.clear()
+              ..eligibleMembers.clear();
             await controller.getEligibleMembers(
               groupcastId: groupcastId,
             );
@@ -32,18 +32,19 @@ class IsmChatEligibleMembersView extends StatelessWidget {
                     hintStyle: IsmChatStyles.w400White16,
                     onChanged: (value) {
                       if (value.isNullOrEmpty) {
-                        controller.eligibleMembers =
-                            controller.eligibleMembersduplicate
-                                .map((e) => SelectedMembers(
-                                      isUserSelected:
-                                          controller.selectedUserList.any((d) =>
-                                              d.userId == e.userDetails.userId),
-                                      userDetails: e.userDetails,
-                                      isBlocked: e.isBlocked,
-                                      tagIndex: e.tagIndex,
-                                    ))
-                                .toList();
-                        controller.handleList(controller.eligibleMembers);
+                        controller
+                          ..eligibleMembers = controller
+                              .eligibleMembersduplicate
+                              .map((e) => SelectedMembers(
+                                    isUserSelected: controller.selectedUserList
+                                        .any((d) =>
+                                            d.userId == e.userDetails.userId),
+                                    userDetails: e.userDetails,
+                                    isBlocked: e.isBlocked,
+                                    tagIndex: e.tagIndex,
+                                  ))
+                              .toList()
+                          ..handleList(controller.eligibleMembers);
                         return;
                       }
                       controller.debounce.run(() async {
@@ -70,16 +71,16 @@ class IsmChatEligibleMembersView extends StatelessWidget {
                     controller.searchMemberController.clear();
                     if (!controller.showSearchField &&
                         controller.eligibleMembersduplicate.isNotEmpty) {
-                      controller.eligibleMembers = controller
-                          .eligibleMembersduplicate
-                          .map((e) => SelectedMembers(
-                              isUserSelected: controller.selectedUserList
-                                  .any((d) => d.userId == e.userDetails.userId),
-                              userDetails: e.userDetails,
-                              isBlocked: e.isBlocked,
-                              tagIndex: e.tagIndex))
-                          .toList();
-                      controller.handleList(controller.eligibleMembers);
+                      controller
+                        ..eligibleMembers = controller.eligibleMembersduplicate
+                            .map((e) => SelectedMembers(
+                                isUserSelected: controller.selectedUserList.any(
+                                    (d) => d.userId == e.userDetails.userId),
+                                userDetails: e.userDetails,
+                                isBlocked: e.isBlocked,
+                                tagIndex: e.tagIndex))
+                            .toList()
+                        ..handleList(controller.eligibleMembers);
                     }
                   },
                   icon: Icon(
@@ -112,10 +113,11 @@ class IsmChatEligibleMembersView extends StatelessWidget {
                             subTitle: (data) => data.userDetails.userIdentifier,
                             isSelected: (data) => data.isUserSelected,
                             onTap: (index, data) {
-                              controller.onEligibleMemberTap(index);
-                              controller.isSelectedMembers(
-                                data.userDetails,
-                              );
+                              controller
+                                ..onEligibleMemberTap(index)
+                                ..isSelectedMembers(
+                                  data.userDetails,
+                                );
                             },
                             onScollLoadMore: () {
                               controller.getEligibleMembers(
@@ -159,13 +161,15 @@ class IsmChatEligibleMembersView extends StatelessWidget {
                                           controller.selectedUserList[index];
                                       return InkWell(
                                         onTap: () {
-                                          controller.isSelectedMembers(user);
-                                          controller.onEligibleMemberTap(
-                                            controller.eligibleMembers.indexOf(
+                                          controller
+                                            ..isSelectedMembers(user)
+                                            ..onEligibleMemberTap(
                                               controller.eligibleMembers
-                                                  .selectedUsers[index],
-                                            ),
-                                          );
+                                                  .indexOf(
+                                                controller.eligibleMembers
+                                                    .selectedUsers[index],
+                                              ),
+                                            );
                                         },
                                         child: SizedBox(
                                           width: IsmChatDimens.fifty,

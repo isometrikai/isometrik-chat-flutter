@@ -1,7 +1,20 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatPageSendMessageMixin on GetxController {
-  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
+  /// Gets the controller instance.
+  /// 
+  /// This getter attempts to use the current instance (this) first,
+  /// and falls back to GetX lookup if needed. This prevents errors
+  /// when the controller is accessed before it's fully registered in GetX.
+  IsmChatPageController get _controller {
+    // If this is already an IsmChatPageController, use it directly
+    // This prevents the "controller not found" error during initialization
+    if (this is IsmChatPageController) {
+      return this as IsmChatPageController;
+    }
+    // Fallback to GetX lookup for cases where mixin might be used elsewhere
+    return IsmChatUtility.chatPageController;
+  }
 
   void sendMessage({
     required int messageType,
@@ -192,9 +205,10 @@ mixin IsmChatPageSendMessageMixin on GetxController {
           );
         }
       }
-      _controller.showCloseLoaderForMoble(showLoader: false);
-      _controller.isCameraView = false;
-      _controller.webMedia.clear();
+      _controller
+        ..showCloseLoaderForMoble(showLoader: false)
+        ..isCameraView = false
+        ..webMedia.clear();
     }
   }
 
@@ -1256,8 +1270,7 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             attachmentType:
                 ismChatChatMessageModel.attachments?.first.attachmentType,
           ).toMap()
-        ];
-        attachment.map((e) => e.removeWhere((key, value) => key == 'bytes'));
+        ]..map((e) => e.removeWhere((key, value) => key == 'bytes'));
 
         sendMessage(
           body: ismChatChatMessageModel.body,
@@ -1347,10 +1360,11 @@ mixin IsmChatPageSendMessageMixin on GetxController {
             messages.sentAt != createdAt) {
           continue;
         }
-        messages.messageId = createdAt.toString();
-        messages.deliveredToAll = false;
-        messages.readByAll = false;
-        messages.isUploading = false;
+        messages
+          ..messageId = createdAt.toString()
+          ..deliveredToAll = false
+          ..readByAll = false
+          ..isUploading = false;
         _controller.messages[x] = messages;
       }
     }

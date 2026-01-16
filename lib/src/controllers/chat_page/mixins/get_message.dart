@@ -1,7 +1,20 @@
 part of '../chat_page_controller.dart';
 
 mixin IsmChatPageGetMessageMixin on GetxController {
-  IsmChatPageController get _controller => IsmChatUtility.chatPageController;
+  /// Gets the controller instance.
+  ///
+  /// This getter attempts to use the current instance (this) first,
+  /// and falls back to GetX lookup if needed. This prevents errors
+  /// when the controller is accessed before it's fully registered in GetX.
+  IsmChatPageController get _controller {
+    // If this is already an IsmChatPageController, use it directly
+    // This prevents the "controller not found" error during initialization
+    if (this is IsmChatPageController) {
+      return this as IsmChatPageController;
+    }
+    // Fallback to GetX lookup for cases where mixin might be used elsewhere
+    return IsmChatUtility.chatPageController;
+  }
 
   Future<void> getMessagesFromDB(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
@@ -116,9 +129,10 @@ mixin IsmChatPageGetMessageMixin on GetxController {
                   IsmChatCustomMessageType.conversationCreated
               ? 0
               : _controller.messages.last.sentAt + 7000);
-      final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
-      messagesList.removeWhere(
-          (element) => element.customType == IsmChatCustomMessageType.date);
+      final messagesList = (List<IsmChatMessageModel>.from(
+          _controller.messages))
+        ..removeWhere(
+            (element) => element.customType == IsmChatCustomMessageType.date);
       final conversationID = _controller.conversation?.conversationId ?? '';
 
       final data = await _controller.viewModel.getChatMessages(
@@ -159,9 +173,10 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           (_controller.messages.isEmpty
               ? 0
               : _controller.messages.last.sentAt + 7000);
-      final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
-      messagesList.removeWhere(
-          (element) => element.customType == IsmChatCustomMessageType.date);
+      final messagesList = (List<IsmChatMessageModel>.from(
+          _controller.messages))
+        ..removeWhere(
+            (element) => element.customType == IsmChatCustomMessageType.date);
       final groupcastID = groupcastId.isNotEmpty
           ? groupcastId
           : _controller.conversation?.conversationId ?? '';
@@ -485,8 +500,9 @@ mixin IsmChatPageGetMessageMixin on GetxController {
                 ),
               );
             }
-            dbmessage.readByAll = messageStatus?.readByAll ?? false;
-            dbmessage.deliveredToAll = messageStatus?.deliveredToAll ?? false;
+            dbmessage
+              ..readByAll = messageStatus?.readByAll ?? false
+              ..deliveredToAll = messageStatus?.deliveredToAll ?? false;
             // If readByAll is true, deliveredToAll must also be true
             // (you can't read a message that hasn't been delivered)
             if (dbmessage.readByAll == true) {

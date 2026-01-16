@@ -593,8 +593,8 @@ class IsmChatPageRepository {
                 e as Map<String, dynamic>,
                 latlng: latlgn,
               ))
-          .toList();
-      predictionList.sort((a, b) => a.distance!.compareTo(b.distance!));
+          .toList()
+        ..sort((a, b) => a.distance!.compareTo(b.distance!));
       return predictionList;
     } catch (e, st) {
       IsmChatLog.error('Location $e', st);

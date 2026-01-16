@@ -136,11 +136,10 @@ class IsmChatTextMessage extends StatelessWidget {
                                                               user!.first
                                                                   .userId);
                                                   conversationcontroller
-                                                          .contactDetails =
-                                                      user.first;
-                                                  conversationcontroller
-                                                          .userConversationId =
-                                                      conversationId;
+                                                    ..contactDetails =
+                                                        user.first
+                                                    ..userConversationId =
+                                                        conversationId;
                                                   if (IsmChatResponsive.isWeb(
                                                       context)) {
                                                     conversationcontroller

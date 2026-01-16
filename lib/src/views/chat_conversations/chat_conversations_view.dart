@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,8 +60,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
       IsmChatCommonBinding().dependencies();
       IsmChatConversationsBinding().dependencies();
     }
-    var controller = IsmChatUtility.conversationController;
-    controller.tabController = TabController(
+    IsmChatUtility.conversationController.tabController = TabController(
       length:
           IsmChatProperties.conversationProperties.allowedConversations.length,
       vsync: this,
@@ -152,6 +153,7 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
                           ),
                         )
                       : Expanded(
+                          // ignore: avoid_unnecessary_containers
                           child: Container(
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -388,10 +390,10 @@ class _CreateChatBottomSheet extends StatelessWidget {
     IsmChatRoute.goBack();
     // Wait for bottom sheet to dismiss before navigating
     await Future.delayed(const Duration(milliseconds: 300));
-    IsmChatRoute.goToRoute(IsmChatCreateConversationView(
+    unawaited(IsmChatRoute.goToRoute(IsmChatCreateConversationView(
       isGroupConversation: isGroup,
       conversationType: conversationType,
-    ));
+    )));
   }
 
   @override
@@ -506,7 +508,8 @@ class _CreateChatBottomSheet extends StatelessWidget {
               IsmChatRoute.goBack();
               // Wait for bottom sheet to dismiss before navigating
               await Future.delayed(const Duration(milliseconds: 300));
-              IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
+              unawaited(
+                  IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView()));
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,

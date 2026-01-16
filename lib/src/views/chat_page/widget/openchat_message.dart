@@ -16,10 +16,10 @@ class IsmChatOpenChatMessagePage extends StatelessWidget {
     final conversationController = IsmChatUtility.conversationController;
     if (IsmChatResponsive.isWeb(context)) {
       controller.isBroadcast = false;
-      conversationController.currentConversation = null;
-      conversationController.currentConversationId = '';
-      conversationController.isRenderChatPageaScreen =
-          IsRenderChatPageScreen.none;
+      conversationController
+        ..currentConversation = null
+        ..currentConversationId = ''
+        ..isRenderChatPageaScreen = IsRenderChatPageScreen.none;
       await Get.delete<IsmChatPageController>(
           force: true, tag: IsmChat.i.chatPageTag);
     } else {

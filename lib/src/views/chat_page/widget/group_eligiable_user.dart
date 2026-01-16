@@ -39,13 +39,14 @@ class IsmChatGroupEligibleUser extends StatelessWidget {
         tag: IsmChat.i.chatPageTag,
         initState: (_) {
           var chatPageController = IsmChatUtility.chatPageController;
-          chatPageController.groupEligibleUser.clear();
-          chatPageController.canCallCurrentApi = false;
-          chatPageController.isMemberSearch = false;
-          chatPageController.getEligibleMembers(
-              conversationId:
-                  chatPageController.conversation?.conversationId ?? '',
-              limit: 20);
+          chatPageController
+            ..groupEligibleUser.clear()
+            ..canCallCurrentApi = false
+            ..isMemberSearch = false
+            ..getEligibleMembers(
+                conversationId:
+                    chatPageController.conversation?.conversationId ?? '',
+                limit: 20);
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,

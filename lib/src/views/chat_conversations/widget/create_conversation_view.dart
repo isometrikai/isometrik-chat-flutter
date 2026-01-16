@@ -181,13 +181,14 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                   var user = controller.selectedUserList[index];
                                   return InkWell(
                                     onTap: () {
-                                      controller.isSelectedUser(user);
-                                      controller.onForwardUserTap(
-                                        controller.forwardedList.indexOf(
-                                          controller.forwardedList
-                                              .selectedUsers[index],
-                                        ),
-                                      );
+                                      controller
+                                        ..isSelectedUser(user)
+                                        ..onForwardUserTap(
+                                          controller.forwardedList.indexOf(
+                                            controller.forwardedList
+                                                .selectedUsers[index],
+                                          ),
+                                        );
                                     },
                                     child: SizedBox(
                                       width: IsmChatDimens.fifty,

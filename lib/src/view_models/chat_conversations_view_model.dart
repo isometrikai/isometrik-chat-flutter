@@ -84,9 +84,9 @@ class IsmChatConversationsViewModel {
     if (response == null) {
       return null;
     }
-    final data = [...response.users];
-    data.removeWhere(
-        (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
+    final data = ([...response.users])
+      ..removeWhere(
+          (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
 
     if (opponentId != null) {
       data.removeWhere((e) => e.userId == opponentId);
@@ -112,9 +112,9 @@ class IsmChatConversationsViewModel {
     if (response == null) {
       return null;
     }
-    final data = [...response.users];
-    data.removeWhere(
-        (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
+    final data = ([...response.users])
+      ..removeWhere(
+          (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
     return IsmChatUserListModel(users: data, pageToken: response.pageToken);
   }
 

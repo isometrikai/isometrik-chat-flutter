@@ -29,19 +29,20 @@ class WebMediaPreview extends StatelessWidget {
                     ),
                     onTap: () {
                       // IsmChatRoute.goBack<void>();
-                      controller.webMedia.clear();
-                      controller.isVideoVisible = false;
-                      controller.isCameraView = false;
+                      controller
+                        ..webMedia.clear()
+                        ..isVideoVisible = false
+                        ..isCameraView = false;
                     },
                   ),
                   actions: [
                     if (controller.isCameraView)
                       TextButton(
                           onPressed: () async {
-                            controller.isCameraView = false;
-                            controller.webMedia.clear();
-                            controller.isVideoVisible = false;
-                            controller.isCameraView = false;
+                            controller
+                              ..isCameraView = false
+                              ..webMedia.clear()
+                              ..isVideoVisible = false;
 
                             await controller.initializeCamera();
                             controller.isCameraView = true;
@@ -106,8 +107,9 @@ class WebMediaPreview extends StatelessWidget {
                                   );
                                   return InkWell(
                                     onTap: () async {
-                                      controller.assetsIndex = index;
-                                      controller.isVideoVisible = false;
+                                      controller
+                                        ..assetsIndex = index
+                                        ..isVideoVisible = false;
                                     },
                                     child: Stack(
                                       alignment: Alignment.center,

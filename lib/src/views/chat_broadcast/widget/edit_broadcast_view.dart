@@ -12,14 +12,14 @@ class IsmChatEditBroadcastView extends StatelessWidget {
   Widget build(BuildContext context) => GetX<IsmChatBroadcastController>(
         initState: (state) {
           IsmChatUtility.doLater(() async {
-            final controller = Get.find<IsmChatBroadcastController>();
-            controller.broadcast = broadcast;
+            final controller = Get.find<IsmChatBroadcastController>()
+              ..broadcast = broadcast
+              ..broadcastMembers = null;
             if (IsmChatStrings.defaultString != broadcast.groupcastTitle) {
               controller.broadcastName.text = broadcast.groupcastTitle ?? '';
             } else {
               controller.broadcastName.clear();
             }
-            controller.broadcastMembers = null;
             await controller.getBroadcastMembers(
               groupcastId: broadcast.groupcastId ?? '',
             );

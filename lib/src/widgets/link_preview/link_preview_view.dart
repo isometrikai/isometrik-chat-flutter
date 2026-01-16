@@ -78,7 +78,7 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
 
   Future<MetaDataResponse?> _fetchMetadata(String url) async {
     // Try with retry logic (max 2 attempts)
-    for (int attempt = 1; attempt <= 2; attempt++) {
+    for (var attempt = 1; attempt <= 2; attempt++) {
       try {
         final proxyUrl =
             'https://api.allorigins.win/get?url=${Uri.encodeComponent(url)}';
