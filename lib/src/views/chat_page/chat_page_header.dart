@@ -30,142 +30,180 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
-        builder: (controller) => PreferredSize(
-          preferredSize: preferredSize,
-          child: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: IsmChatConfig
-                    .chatTheme.chatPageHeaderTheme?.systemUiOverlayStyle ??
-                SystemUiOverlayStyle(
-                  statusBarBrightness: Brightness.dark,
-                  statusBarIconBrightness: Brightness.light,
-                  statusBarColor: IsmChatConfig.chatTheme.primaryColor ??
+        builder: (controller) {
+          // Get the background color to determine icon brightness
+          final backgroundColor =
+              IsmChatConfig.chatTheme.chatPageHeaderTheme?.backgroundColor ??
+                  IsmChatConfig.chatTheme.primaryColor ??
+                  IsmChatColors.primaryColorLight;
+
+          // Determine if background is light or dark
+          // computeLuminance() returns a value between 0.0 (dark) and 1.0 (light)
+          // If luminance > 0.5, it's a light color, use dark icons
+          // If luminance <= 0.5, it's a dark color, use light icons
+          final isLightBackground = backgroundColor.computeLuminance() > 0.5;
+          final iconBrightness = isLightBackground
+              ? Brightness.dark // Dark icons for light backgrounds
+              : Brightness.light; // Light icons for dark backgrounds
+
+          // Determine status bar brightness (opposite of icon brightness for iOS)
+          final statusBarBrightness = isLightBackground
+              ? Brightness.light // Light status bar for light backgrounds
+              : Brightness.dark; // Dark status bar for dark backgrounds
+
+          // Get custom system UI overlay style if provided
+          final customStyle =
+              IsmChatConfig.chatTheme.chatPageHeaderTheme?.systemUiOverlayStyle;
+
+          // Always use calculated icon brightness and status bar brightness
+          // Make status bar transparent so it shows the header background color
+          // Merge with custom style if provided, but override icon/brightness settings
+          final systemUiOverlayStyle = customStyle != null
+              ? customStyle.copyWith(
+                  statusBarBrightness: statusBarBrightness,
+                  statusBarIconBrightness: iconBrightness,
+                  statusBarColor: Colors
+                      .transparent, // Transparent to show header background
+                )
+              : SystemUiOverlayStyle(
+                  statusBarBrightness: statusBarBrightness,
+                  statusBarIconBrightness: iconBrightness,
+                  statusBarColor: Colors
+                      .transparent, // Transparent to show header background
+                );
+
+          return PreferredSize(
+            preferredSize: preferredSize,
+            child: AnnotatedRegion<SystemUiOverlayStyle>(
+              sized: false,
+              value: systemUiOverlayStyle,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: IsmChatConfig
+                          .chatTheme.chatPageHeaderTheme?.backgroundColor ??
+                      IsmChatConfig.chatTheme.primaryColor ??
                       IsmChatColors.primaryColorLight,
                 ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: IsmChatConfig
-                        .chatTheme.chatPageHeaderTheme?.backgroundColor ??
-                    IsmChatConfig.chatTheme.primaryColor ??
-                    IsmChatColors.primaryColorLight,
-              ),
-              child: SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      height: IsmChatDimens.appBarHeight,
-                      color: IsmChatConfig
-                              .chatTheme.chatPageHeaderTheme?.backgroundColor ??
-                          IsmChatConfig.chatTheme.primaryColor,
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          if (!IsmChatResponsive.isWeb(context)) ...[
-                            IconButton(
-                              onPressed: () async {
-                                var updateLastMessage = false;
-                                controller.closeOverlay();
-                                if (IsmChat.i.chatPageTag == null) {
-                                  IsmChatRoute.goBack<void>();
-                                  updateLastMessage =
-                                      await controller.updateLastMessage();
-                                }
-                                IsmChatProperties
-                                    .chatPageProperties.header?.onBackTap
-                                    ?.call(updateLastMessage);
-                              },
-                              icon: Icon(
-                                Icons.arrow_back_rounded,
-                                // IsmChat.i.chatPageTag == null
-                                //     ? Icons.arrow_back_rounded
-                                //     : Icons.close_rounded,
-                                color: IsmChatConfig.chatTheme
-                                        .chatPageHeaderTheme?.iconColor ??
-                                    IsmChatColors.whiteColor,
-                              ),
-                            )
-                          ] else ...[
-                            IsmChatDimens.boxWidth16,
-                          ],
-                          IsmChatTapHandler(
-                            onTap: onTap,
-                            child: IsmChatProperties.chatPageProperties.header
-                                    ?.profileImageBuilder
-                                    ?.call(
-                                        context,
-                                        controller.conversation,
-                                        controller.conversation?.profileUrl ??
-                                            '') ??
-                                IsmChatImage.profile(
-                                  IsmChatProperties.chatPageProperties.header
-                                          ?.profileImageUrl
-                                          ?.call(
-                                              context,
-                                              controller.conversation,
-                                              controller.conversation
-                                                      ?.profileUrl ??
-                                                  '') ??
-                                      controller.conversation?.profileUrl ??
-                                      '',
-                                  name: IsmChatProperties
-                                          .chatPageProperties.header?.title
-                                          ?.call(
-                                              context,
-                                              controller.conversation,
-                                              controller
-                                                      .conversation?.chatName ??
-                                                  '') ??
-                                      controller.conversation?.chatName,
-                                  dimensions: IsmChatDimens.fifty,
-                                  isNetworkImage: (IsmChatProperties
-                                              .chatPageProperties
-                                              .header
-                                              ?.profileImageUrl
-                                              ?.call(
-                                                  context,
-                                                  controller.conversation,
-                                                  controller.conversation
-                                                          ?.profileUrl ??
-                                                      '') ??
-                                          controller.conversation?.profileUrl ??
-                                          '')
-                                      .isValidUrl,
+                child: SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        height: IsmChatDimens.appBarHeight,
+                        color: IsmChatConfig.chatTheme.chatPageHeaderTheme
+                                ?.backgroundColor ??
+                            IsmChatConfig.chatTheme.primaryColor,
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            if (!IsmChatResponsive.isWeb(context)) ...[
+                              IconButton(
+                                onPressed: () async {
+                                  var updateLastMessage = false;
+                                  controller.closeOverlay();
+                                  if (IsmChat.i.chatPageTag == null) {
+                                    IsmChatRoute.goBack<void>();
+                                    updateLastMessage =
+                                        await controller.updateLastMessage();
+                                  }
+                                  IsmChatProperties
+                                      .chatPageProperties.header?.onBackTap
+                                      ?.call(updateLastMessage);
+                                },
+                                icon: Icon(
+                                  Icons.arrow_back_rounded,
+                                  // IsmChat.i.chatPageTag == null
+                                  //     ? Icons.arrow_back_rounded
+                                  //     : Icons.close_rounded,
+                                  color: IsmChatConfig.chatTheme
+                                          .chatPageHeaderTheme?.iconColor ??
+                                      IsmChatColors.whiteColor,
                                 ),
-                          ),
-                          IsmChatDimens.boxWidth8,
-                          _TitleSubTitleWidget(
-                            onTap: onTap,
-                            controller: controller,
-                          ),
-                          if (IsmChatProperties
-                                  .chatPageProperties.header?.actionBuilder !=
-                              null) ...[
-                            IsmChatProperties
-                                    .chatPageProperties.header?.actionBuilder
-                                    ?.call(
-                                  context,
-                                  controller.conversation,
-                                ) ??
-                                const SizedBox.square()
+                              )
+                            ] else ...[
+                              IsmChatDimens.boxWidth16,
+                            ],
+                            IsmChatTapHandler(
+                              onTap: onTap,
+                              child: IsmChatProperties.chatPageProperties.header
+                                      ?.profileImageBuilder
+                                      ?.call(
+                                          context,
+                                          controller.conversation,
+                                          controller.conversation?.profileUrl ??
+                                              '') ??
+                                  IsmChatImage.profile(
+                                    IsmChatProperties.chatPageProperties.header
+                                            ?.profileImageUrl
+                                            ?.call(
+                                                context,
+                                                controller.conversation,
+                                                controller.conversation
+                                                        ?.profileUrl ??
+                                                    '') ??
+                                        controller.conversation?.profileUrl ??
+                                        '',
+                                    name: IsmChatProperties
+                                            .chatPageProperties.header?.title
+                                            ?.call(
+                                                context,
+                                                controller.conversation,
+                                                controller.conversation
+                                                        ?.chatName ??
+                                                    '') ??
+                                        controller.conversation?.chatName,
+                                    dimensions: IsmChatDimens.fifty,
+                                    isNetworkImage: (IsmChatProperties
+                                                .chatPageProperties
+                                                .header
+                                                ?.profileImageUrl
+                                                ?.call(
+                                                    context,
+                                                    controller.conversation,
+                                                    controller.conversation
+                                                            ?.profileUrl ??
+                                                        '') ??
+                                            controller
+                                                .conversation?.profileUrl ??
+                                            '')
+                                        .isValidUrl,
+                                  ),
+                            ),
+                            IsmChatDimens.boxWidth8,
+                            _TitleSubTitleWidget(
+                              onTap: onTap,
+                              controller: controller,
+                            ),
+                            if (IsmChatProperties
+                                    .chatPageProperties.header?.actionBuilder !=
+                                null) ...[
+                              IsmChatProperties
+                                      .chatPageProperties.header?.actionBuilder
+                                      ?.call(
+                                    context,
+                                    controller.conversation,
+                                  ) ??
+                                  const SizedBox.square()
+                            ],
+                            _PopupMenuWidget(
+                              controller: controller,
+                            ),
                           ],
-                          _PopupMenuWidget(
-                            controller: controller,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    IsmChatProperties.chatPageProperties.header?.bottom?.call(
-                          context,
-                          controller.conversation,
-                        ) ??
-                        const SizedBox.shrink(),
-                  ],
+                      IsmChatProperties.chatPageProperties.header?.bottom?.call(
+                            context,
+                            controller.conversation,
+                          ) ??
+                          const SizedBox.shrink(),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       );
 }
 
