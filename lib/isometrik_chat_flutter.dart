@@ -23,7 +23,16 @@ export 'src/view_models/view_models.dart';
 export 'src/views/views.dart';
 export 'src/widgets/widgets.dart';
 
-part 'isometrik_chat_flutter_delegate.dart';
+part 'delegate/isometrik_chat_flutter_delegate.dart';
+part 'delegate/delegate_cleanup.dart';
+part 'delegate/delegate_conversation.dart';
+part 'delegate/delegate_initialization.dart';
+part 'delegate/delegate_message.dart';
+part 'delegate/delegate_mqtt.dart';
+part 'delegate/delegate_navigation.dart';
+part 'delegate/delegate_notification.dart';
+part 'delegate/delegate_ui.dart';
+part 'delegate/delegate_user.dart';
 
 /// The main class for interacting with the Isometrik Flutter Chat SDK.
 class IsmChat {
