@@ -200,10 +200,12 @@ class UserDetails {
           return true;
         }
 
-        // If last active was within 30 seconds, consider user online
-        // Using 30 seconds to match the update interval
-        // If user updates every 30 seconds and goes to background, they'll show offline after 30 seconds
-        if (diffSeconds >= 0 && diffSeconds <= 30) {
+        // If last active was within 35 seconds, consider user online
+        // Using 35 seconds (5 seconds buffer) to account for:
+        // - Network delays in timer updates
+        // - Timer execution timing variations
+        // - Ensures continuous online status when timer runs every 30 seconds
+        if (diffSeconds >= 0 && diffSeconds <= 35) {
           return true;
         }
 
