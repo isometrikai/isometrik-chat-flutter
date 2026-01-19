@@ -482,37 +482,56 @@ mixin IsmChatPageSendMessageCoreMixin {
       unawaited(
         _controller.getConverstaionDetails(),
       );
-    } else if (isBroadcastConversation &&
-        (conversationId.isEmpty || chatConversationResponse == null)) {
-      // Note: createBroadcastConversation is provided by send_message_broadcast mixin
-      conversationId = await _controller.createBroadcastConversation(
-            groupcastImageUrl:
-                'https://png.pngtree.com/element_our/20190528/ourmid/pngtree-speaker-broadcast-icon-image_1144351.jpg',
-            groupcastTitle: IsmChatStrings.defaultString,
-            customType: 'broadcast',
-            membersId: _controller.conversation?.members
-                    ?.map((e) => e.userId)
-                    .toList() ??
-                [],
-            metaData: {
-              'membersDetail': _controller.conversation?.members
-                      ?.map((e) => {
-                            'memberName': e.userName,
-                            'memberId': e.userId,
-                          })
+    } else if (isBroadcastConversation) {
+      // Check if conversation already has a conversationId (existing broadcast)
+      final existingConversationId = _controller.conversation?.conversationId;
+
+      // Only create new broadcast if:
+      // 1. The conversationId parameter is empty AND
+      // 2. The conversation object doesn't have a conversationId AND
+      // 3. The conversation is not found in local database
+      if (conversationId.isEmpty &&
+          (existingConversationId == null || existingConversationId.isEmpty) &&
+          chatConversationResponse == null) {
+        // Note: createBroadcastConversation is provided by send_message_broadcast mixin
+        conversationId = await _controller.createBroadcastConversation(
+              groupcastImageUrl:
+                  'https://png.pngtree.com/element_our/20190528/ourmid/pngtree-speaker-broadcast-icon-image_1144351.jpg',
+              groupcastTitle: IsmChatStrings.defaultString,
+              customType: 'broadcast',
+              membersId: _controller.conversation?.members
+                      ?.map((e) => e.userId)
                       .toList() ??
-                  []
-            },
-            searchableTags: [
-              IsmChatConfig.communicationConfig.userConfig.userName ??
-                  _controller.conversationController.userDetails?.userName ??
-                  '',
-              _controller.conversation?.chatName ?? ''
-            ],
-          ) ??
-          '';
-      _controller.conversation =
-          _controller.conversation?.copyWith(conversationId: conversationId);
+                  [],
+              metaData: {
+                'membersDetail': _controller.conversation?.members
+                        ?.map((e) => {
+                              'memberName': e.userName,
+                              'memberId': e.userId,
+                            })
+                        .toList() ??
+                    []
+              },
+              searchableTags: [
+                IsmChatConfig.communicationConfig.userConfig.userName ??
+                    _controller.conversationController.userDetails?.userName ??
+                    '',
+                _controller.conversation?.chatName ?? ''
+              ],
+            ) ??
+            '';
+        _controller.conversation =
+            _controller.conversation?.copyWith(conversationId: conversationId);
+      } else {
+        // Use existing conversationId from conversation object if available
+        conversationId = existingConversationId ?? conversationId;
+        // Update conversation with the correct conversationId if it wasn't set
+        if (conversationId.isNotEmpty &&
+            (_controller.conversation?.conversationId?.isEmpty ?? true)) {
+          _controller.conversation = _controller.conversation
+              ?.copyWith(conversationId: conversationId);
+        }
+      }
     }
     return conversationId;
   }
