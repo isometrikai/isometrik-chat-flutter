@@ -6,6 +6,7 @@ mixin IsmChatPageVariablesMixin on GetxController {
   /// This getter attempts to use the current instance (this) first,
   /// and falls back to GetX lookup if needed. This prevents errors
   /// when the controller is accessed before it's fully registered in GetX.
+  // ignore: unused_element
   IsmChatPageController get _controller {
     // If this is already an IsmChatPageController, use it directly
     // This prevents the "controller not found" error during initialization

@@ -4,8 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:isometrik_chat_flutter/src/res/res.dart';
-import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
 
 /// Widget to display multiple images/videos in a grid layout similar to WhatsApp
 class IsmChatMediaGridMessage extends StatelessWidget {
@@ -147,7 +145,7 @@ class IsmChatMediaGridMessage extends StatelessWidget {
                     if (showRemainingCount)
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
+                          color: Colors.black.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Center(
@@ -171,7 +169,7 @@ class IsmChatMediaGridMessage extends StatelessWidget {
                     if (isVideo && !showRemainingCount)
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Center(
@@ -185,7 +183,7 @@ class IsmChatMediaGridMessage extends StatelessWidget {
                     if (message.isUploading == true && !showRemainingCount)
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Center(
@@ -215,9 +213,8 @@ class IsmChatMediaGridMessage extends StatelessWidget {
     );
   }
 
-  bool _hasCaption(List<IsmChatMessageModel> messages) {
-    return messages.any((msg) => msg.metaData?.caption?.isNotEmpty == true);
-  }
+  bool _hasCaption(List<IsmChatMessageModel> messages) =>
+      messages.any((msg) => msg.metaData?.caption?.isNotEmpty == true);
 
   Widget _buildCaption(BuildContext context) {
     // Get the first message with a caption, or use the last message
@@ -252,7 +249,7 @@ class IsmChatMediaGridMessage extends StatelessWidget {
         fit: BoxFit.cover,
         placeholder: (context, url) => Container(
           color: IsmChatColors.greyColor.applyIsmOpacity(0.2),
-          child: Center(
+          child: const Center(
             child: SizedBox(
               width: 30,
               height: 30,

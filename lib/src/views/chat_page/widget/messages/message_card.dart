@@ -100,8 +100,8 @@ class _MessageCardState extends State<MessageCard>
     final groupedMessages = <IsmChatMessageModel>[];
 
     // Find the first message in the group
-    int groupStartIndex = reversedIndex;
-    for (int i = reversedIndex; i >= 0; i--) {
+    var groupStartIndex = reversedIndex;
+    for (var i = reversedIndex; i >= 0; i--) {
       final msg = allMessages[i];
       final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
@@ -116,7 +116,7 @@ class _MessageCardState extends State<MessageCard>
     }
 
     // Collect all messages in the group
-    for (int i = groupStartIndex; i < allMessages.length; i++) {
+    for (var i = groupStartIndex; i < allMessages.length; i++) {
       final msg = allMessages[i];
       final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
@@ -328,9 +328,10 @@ class _MessageCardState extends State<MessageCard>
                                 IsmChatDimens.boxWidth2,
                                 Icon(
                                   // If readByAll is true, deliveredToAll must also be true
-                                // Always show double checkmark if read
-                                (widget.message.readByAll ?? false) ||
-                                        (widget.message.deliveredToAll ?? false)
+                                  // Always show double checkmark if read
+                                  (widget.message.readByAll ?? false) ||
+                                          (widget.message.deliveredToAll ??
+                                              false)
                                       ? Icons.done_all_rounded
                                       : Icons.done_rounded,
                                   color: widget.message.readByAll ?? false
