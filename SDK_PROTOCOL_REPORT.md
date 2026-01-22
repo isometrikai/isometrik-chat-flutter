@@ -184,7 +184,7 @@ IsmChat.i.initialize(
 4. `isometrik_chat_flutter.dart` - **1,349 lines** ❌
 5. `extensions.dart` - **25 lines** ✅ (Refactored into 9 files: ~1,354 lines total)
 6. `isometrik_chat_flutter_delegate.dart` - **47 lines** ✅ (Refactored into 9 mixins: ~1,237 lines total)
-7. `mqtt_event.dart` (mixin) - **1,072 lines** ❌
+7. `mqtt_event.dart` (mixin) - **40 lines** ✅ (Refactored: January 21, 2026 - 13 mixins created)
 
 **Files 400-1000 lines (HIGH PRIORITY):**
 - `chat_message_field.dart` - 903 lines
@@ -419,10 +419,44 @@ IsmChat.i.initialize(
   - Reduced from 1,989 → 56 lines (97.2% reduction)
   - All methods use `_controller` pattern for cross-mixin access
   - Total: ~2,205 lines across 15 mixins + 56 line main file
+- `mqtt_event.dart` refactoring (January 21, 2026):
+  - Created 13 mixins (variables, utilities, event_processing, message_handlers, message_status, typing_events, group_operations, conversation_operations, reactions, block_unblock, broadcast, observer_operations, calls)
+  - Fixed all linting errors (undefined_method, always_use_package_imports, unused_element)
+  - Reduced from 1,072 → 40 lines (96.3% reduction)
+  - All handler methods made public for cross-mixin access
+  - All imports converted to package imports
+  - `IsmChatMqttController` updated to use all mixins directly
+  - Total: ~1,400 lines across 13 mixins + 40 line main file
+
+#### 7. MQTT Event Mixin Refactoring ✅ (January 21, 2026)
+- **Original:** `lib/src/controllers/mqtt/mixins/mqtt_event.dart` - 1,072 lines
+- **Refactored:** 40 lines (96.3% reduction)
+- **Strategy:** Split into 13 focused mixins:
+  - `variables.dart` (53 lines) - State variables, queues, controllers
+  - `utilities.dart` (49 lines) - Helper methods
+  - `event_processing.dart` (233 lines) - Main event routing
+  - `message_handlers.dart` (179 lines) - Message processing
+  - `message_status.dart` (275 lines) - Delivery and read status
+  - `typing_events.dart` (34 lines) - Typing indicators
+  - `group_operations.dart` (179 lines) - Group management
+  - `conversation_operations.dart` (74 lines) - Conversation management
+  - `reactions.dart` (83 lines) - Message reactions
+  - `block_unblock.dart` (50 lines) - User blocking
+  - `broadcast.dart` (107 lines) - Broadcast messages
+  - `observer_operations.dart` (57 lines) - Observer functionality
+  - `calls.dart` (40 lines) - One-to-one calls
+- **Features:**
+  - All mixins are separate files with package imports
+  - All handler methods made public for cross-mixin access
+  - All variables made public in `variables.dart` mixin
+  - No linting errors (all resolved)
+  - All mixins properly integrated into `IsmChatMqttController`
+  - All methods use type checks (`self is MixinType`) for cross-mixin access
+  - Total: ~1,400 lines across 13 mixins + 40 line main file
 
 ### Critical Actions (Immediate):
 
-1. **CRITICAL:** Continue refactoring files > 1000 lines (3 remaining files: isometrik_chat_flutter.dart, mqtt_event.dart)
+1. **CRITICAL:** Continue refactoring files > 1000 lines (1 remaining file: `isometrik_chat_flutter.dart` - 1,349 lines)
 2. **HIGH:** Create architecture documentation
 3. **HIGH:** Add module-level MD files
 4. **HIGH:** Improve code documentation
