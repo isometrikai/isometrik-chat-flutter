@@ -66,6 +66,25 @@ This directory contains comprehensive documentation for the Isometrik Chat Flutt
   - API endpoints
   - Data flow
 
+### Feature & Issue Tracking
+
+- **[FEATURES.md](./FEATURES.md)** - Feature list and status
+  - 21 core features documented
+  - Platform compatibility matrix
+  - Known limitations
+  - Feature flags
+
+- **[KNOWN_ISSUES.md](./KNOWN_ISSUES.md)** - Known issues and workarounds
+  - Issue status tracking
+  - Platform-specific issues
+  - Workarounds and fixes
+  - Reporting guidelines
+
+- **[ROADMAP.md](./ROADMAP.md)** - Feature roadmap
+  - Planned features by quarter (Q1-Q4 2026)
+  - Long-term goals (2027+)
+  - Version history
+  - Priority levels
 
 ### Reports
 
