@@ -4,6 +4,67 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Data model representing a chat message.
+///
+/// This model contains all information about a message including content,
+/// sender, attachments, status, and metadata.
+///
+/// **Key Properties:**
+/// - `messageId` - Unique message identifier
+/// - `conversationId` - Parent conversation ID
+/// - `body` - Message content (text, encrypted, etc.)
+/// - `messageType` - Type (text, image, file, location, etc.)
+/// - `senderInfo` - Sender details
+/// - `sentAt` - Timestamp when message was sent
+/// - `attachments` - File attachments
+/// - `reactions` - Message reactions
+/// - `status` - Delivery/read status
+/// - `metaData` - Custom metadata
+///
+/// **Message Types:**
+/// - Text messages
+/// - Images
+/// - Files/Documents
+/// - Audio/Voice
+/// - Video
+/// - Location
+/// - Contact
+/// - And more...
+///
+/// **Serialization:**
+/// - `fromMap()` - Create from Map (JSON)
+/// - `fromJson()` - Create from JSON string
+/// - `toMap()` - Convert to Map
+/// - `toJson()` - Convert to JSON string
+///
+/// **Usage:**
+/// ```dart
+/// // From API response
+/// final message = IsmChatMessageModel.fromMap(jsonMap);
+///
+/// // Access properties
+/// print(message.body);
+/// print(message.messageType);
+///
+/// // Create new message
+/// final newMessage = IsmChatMessageModel(
+///   body: 'Hello',
+///   messageType: IsmChatMessageType.text,
+///   conversationId: 'conv123',
+///   sentAt: DateTime.now().millisecondsSinceEpoch,
+///   sentByMe: true,
+///   customType: '',
+/// );
+/// ```
+///
+/// **Encryption:**
+/// Messages can be encrypted. The `body` field is automatically decrypted
+/// when creating from API response if encryption is enabled.
+///
+/// **See Also:**
+/// - [IsmChatConversationModel] - Conversation model
+/// - [UserDetails] - User information model
+/// - [MODULE_MODELS.md] - Models documentation
 class IsmChatMessageModel {
   IsmChatMessageModel({
     required this.body,

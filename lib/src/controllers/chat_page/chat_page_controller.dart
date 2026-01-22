@@ -56,7 +56,57 @@ part './mixins/message_management.dart';
 part './mixins/block_unblock.dart';
 part './mixins/other_operations.dart';
 
-/// A GetxController that provides common functionality for Isometrik Chat Flutter.
+/// Controller for managing the chat page (individual conversation view).
+///
+/// This controller handles all functionality related to displaying and interacting
+/// with a single chat conversation. It uses the mixin pattern extensively,
+/// composing 25 focused mixins to organize functionality.
+///
+/// **Architecture:**
+/// - **Size**: 98 lines (reduced from 2,038 lines - 95.2% reduction)
+/// - **Mixins**: 25 mixins organized by functionality
+/// - **Pattern**: Mixin composition pattern
+///
+/// **Key Responsibilities:**
+/// - Message sending and receiving
+/// - UI state management
+/// - Media operations (camera, gallery, files)
+/// - Scroll navigation
+/// - Contact and group operations
+/// - Message management (delete, forward, reply)
+/// - Block/unblock functionality
+/// - Voice messages
+/// - Location sharing
+///
+/// **Mixins:**
+/// - **Message Operations**: send_message, get_message, message_operations
+/// - **UI Management**: ui_state_management, scroll_navigation
+/// - **Media**: camera_operations, media_operations
+/// - **Lifecycle**: lifecycle_initialization
+/// - **Utilities**: utility_methods, contact_group_operations
+/// - And 15 more...
+///
+/// **Usage:**
+/// ```dart
+/// // Get controller instance
+/// final controller = Get.find<IsmChatPageController>();
+///
+/// // Send a message
+/// await controller.sendMessage(text: 'Hello');
+///
+/// // Get messages
+/// final messages = controller.messages;
+/// ```
+///
+/// **Dependencies:**
+/// - [IsmChatPageViewModel] - View model for business logic
+/// - [IsmChatConversationsController] - Conversations controller
+/// - [IsmChatCommonController] - Common controller
+///
+/// **See Also:**
+/// - [MODULE_CONTROLLERS.md] - Controllers documentation
+/// - [REFACTORING_CHAT_PAGE_CONTROLLER.md] - Refactoring documentation
+/// - [ARCHITECTURE.md] - Architecture documentation
 class IsmChatPageController extends GetxController
     with
         IsmChatPageSendMessageMixin,
@@ -85,14 +135,46 @@ class IsmChatPageController extends GetxController
         IsmChatPageBlockUnblockMixin,
         IsmChatPageOtherOperationsMixin,
         GetTickerProviderStateMixin {
+  /// Creates a new instance of [IsmChatPageController].
+  ///
+  /// **Parameters:**
+  /// - `viewModel`: The view model instance that provides business logic
+  ///   and data access for this controller.
   IsmChatPageController(this.viewModel);
+
+  /// The view model instance for this controller.
+  ///
+  /// The view model provides business logic and coordinates with repositories
+  /// for data access. It's exposed as a public getter so mixins can access it.
   final IsmChatPageViewModel viewModel;
 
+  /// Gets the conversations controller instance.
+  ///
+  /// This provides access to the conversations controller, which is useful
+  /// for operations that need to update the conversation list (e.g., after
+  /// sending a message).
+  ///
+  /// **Returns:**
+  /// - [IsmChatConversationsController]: The conversations controller instance.
   IsmChatConversationsController get conversationController =>
       IsmChatUtility.conversationController;
 
+  /// Gets the common controller instance.
+  ///
+  /// The common controller provides shared functionality used across
+  /// multiple controllers.
+  ///
+  /// **Returns:**
+  /// - [IsmChatCommonController]: The common controller instance.
   IsmChatCommonController get commonController =>
       Get.find<IsmChatCommonController>();
 
+  /// Checks if this controller is registered in GetX.
+  ///
+  /// This is useful for checking if the controller is available before
+  /// performing operations that depend on it.
+  ///
+  /// **Returns:**
+  /// - `bool`: `true` if the controller is registered, `false` otherwise.
   bool get controllerIsRegister => IsmChatUtility.chatPageControllerRegistered;
 }

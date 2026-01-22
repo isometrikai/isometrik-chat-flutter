@@ -3,9 +3,40 @@ part of '../isometrik_chat_flutter.dart';
 /// Conversation operations mixin for IsmChat.
 ///
 /// This mixin contains methods related to conversation CRUD operations.
+/// It provides functionality for managing conversations including creating,
+/// reading, updating, deleting, and searching conversations.
+///
+/// **Key Responsibilities:**
+/// - Conversation CRUD operations
+/// - Conversation search and filtering
+/// - Conversation metadata management
+/// - Conversation settings management
+/// - Conversation counts and statistics
+///
+/// **Usage:**
+/// ```dart
+/// // Get all conversations
+/// final conversations = await IsmChat.i.getAllConversationFromDB();
+///
+/// // Update conversation
+/// await IsmChat.i.updateConversation(
+///   conversationId: 'conv123',
+///   metaData: IsmChatMetaData(title: 'New Title'),
+/// );
+/// ```
+///
+/// **See Also:**
+/// - [IsmChatConversationModel] - Conversation data model
+/// - [MODULE_CONTROLLERS.md] - Controllers documentation
 mixin IsmChatConversationOperationsMixin {
   /// Gets the delegate instance.
-  /// Access _delegate directly since we're in the same library (part of).
+  ///
+  /// This getter provides access to the [IsmChatDelegate] instance.
+  /// Since this mixin is `part of` the main library, we can access
+  /// the private `_delegate` field through a dynamic cast.
+  ///
+  /// **Returns:**
+  /// - [IsmChatDelegate]: The delegate instance that handles implementation.
   IsmChatDelegate get _delegate => (this as dynamic)._delegate as IsmChatDelegate;
 
   /// Call this function to get all conversation list from the local database.

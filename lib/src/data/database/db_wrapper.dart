@@ -6,24 +6,83 @@ import 'package:hive/hive.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
-/// Create this in the apps main function.
+/// Database wrapper for local data storage.
+///
+/// This class provides an abstraction layer over the Hive database (BoxCollection)
+/// for storing chat data locally. It manages three main data boxes:
+/// - User details box
+/// - Conversation box
+/// - Pending messages box
+///
+/// **Architecture:**
+/// - Uses Hive (BoxCollection) for local storage
+/// - Provides type-safe access to stored data
+/// - Handles database initialization and box creation
+///
+/// **Usage:**
+/// ```dart
+/// // Create database instance (typically in app initialization)
+/// final db = await IsmChatDBWrapper.create('chat_db');
+///
+/// // Save conversation
+/// await db.saveConversation(conversation);
+///
+/// // Get conversations
+/// final conversations = await db.getConversations();
+/// ```
+///
+/// **Data Boxes:**
+/// - `_userBox`: Stores user details
+/// - `_conversationBox`: Stores conversation data
+/// - `_pendingBox`: Stores pending messages (messages queued for sending)
+///
+/// **See Also:**
+/// - [MODULE_DATA.md] - Data module documentation
+/// - [ARCHITECTURE.md] - Architecture documentation
+///
+/// **Note:** Create this instance in the app's main function or during
+/// SDK initialization to ensure the database is ready before use.
 class IsmChatDBWrapper {
+  /// Private constructor for creating a database wrapper instance.
+  ///
+  /// **Parameters:**
+  /// - `collection`: The BoxCollection instance from Hive.
+  ///
+  /// **Note:** Use [create] factory method to create instances.
   IsmChatDBWrapper._create(this.collection);
 
-  /// The Store of this presenter.
+  /// The Hive BoxCollection instance for this database.
+  ///
+  /// This collection manages all the data boxes (user, conversation, pending).
+  /// It's initialized when the database is created.
   late final BoxCollection collection;
 
+  /// Box name constant for user details storage.
   static const String _userBox = 'user';
+
+  /// Box name constant for conversation storage.
   static const String _conversationBox = 'conversation';
+
+  /// Box name constant for pending messages storage.
   static const String _pendingBox = 'pending';
 
-  /// A Box of user Details.
+  /// Box for storing user details.
+  ///
+  /// This box stores user information including profile data, online status,
+  /// and other user-related metadata.
   late final CollectionBox<IsmChatConversationMap> userDetailsBox;
 
-  /// A Box of Conversation model
+  /// Box for storing conversation data.
+  ///
+  /// This box stores all conversation information including conversation metadata,
+  /// members, and associated messages.
   late final CollectionBox<IsmChatConversationMap> chatConversationBox;
 
-  /// A Box of Pending message.
+  /// Box for storing pending messages.
+  ///
+  /// This box stores messages that are queued for sending (e.g., when offline
+  /// or when network is unavailable). These messages are sent when connectivity
+  /// is restored.
   late final CollectionBox<IsmChatMessageMap> pendingMessageBox;
 
   Future<void> _createBox() async {
@@ -43,7 +102,30 @@ class IsmChatDBWrapper {
     pendingMessageBox = boxes2[0];
   }
 
-  /// Create an instance of HiveBox to use throughout the presenter.
+  /// Creates a new database wrapper instance.
+  ///
+  /// This factory method initializes the Hive database and creates all necessary
+  /// boxes. It should be called during app initialization (typically in the
+  /// main function or SDK initialization).
+  ///
+  /// **Parameters:**
+  /// - `databaseName`: Optional database name. If not provided, uses the default
+  ///   name from [IsmChatConfig.dbName].
+  ///
+  /// **Returns:**
+  /// - `Future<IsmChatDBWrapper>`: The initialized database wrapper instance.
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final db = await IsmChatDBWrapper.create('my_chat_db');
+  /// ```
+  ///
+  /// **Platform Support:**
+  /// - **Web**: Uses IndexedDB via Hive
+  /// - **Mobile**: Uses file-based storage via Hive
+  ///
+  /// **Throws:**
+  /// - May throw exceptions if database initialization fails.
   static Future<IsmChatDBWrapper> create([String? databaseName]) async {
     final dbName = databaseName ?? IsmChatConfig.dbName;
     BoxCollection? collection;

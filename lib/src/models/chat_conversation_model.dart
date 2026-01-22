@@ -3,6 +3,44 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Data model representing a chat conversation.
+///
+/// This model contains all information about a conversation including metadata,
+/// members, messages, and conversation settings.
+///
+/// **Key Properties:**
+/// - `conversationId` - Unique conversation identifier
+/// - `conversationTitle` - Display title of the conversation
+/// - `conversationType` - Type (private, group, broadcast)
+/// - `members` - List of conversation members
+/// - `messages` - Map of messages in the conversation
+/// - `lastMessageDetails` - Details of the last message
+/// - `unreadMessagesCount` - Count of unread messages
+/// - `metaData` - Custom metadata
+///
+/// **Serialization:**
+/// - `fromMap()` - Create from Map (JSON)
+/// - `fromJson()` - Create from JSON string
+/// - `toMap()` - Convert to Map
+/// - `toJson()` - Convert to JSON string
+///
+/// **Usage:**
+/// ```dart
+/// // From API response
+/// final conversation = IsmChatConversationModel.fromMap(jsonMap);
+///
+/// // Access properties
+/// print(conversation.conversationTitle);
+/// print(conversation.unreadMessagesCount);
+///
+/// // Convert to JSON
+/// final json = conversation.toJson();
+/// ```
+///
+/// **See Also:**
+/// - [IsmChatMessageModel] - Message model
+/// - [UserDetails] - User information model
+/// - [MODULE_MODELS.md] - Models documentation
 class IsmChatConversationModel {
   factory IsmChatConversationModel.fromJson(String source) =>
       IsmChatConversationModel.fromMap(
