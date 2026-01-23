@@ -7,8 +7,28 @@ enum IsmChatMessageType {
   reply(2),
   admin(3);
 
+  /// Creates an [IsmChatMessageType] with the given integer value.
   const IsmChatMessageType(this.value);
 
+  /// The integer value associated with this message type.
+  ///
+  /// This value is used for serialization when sending/receiving messages
+  /// from the API.
+  final int value;
+
+  /// Creates an [IsmChatMessageType] from an integer value.
+  ///
+  /// **Parameters:**
+  /// - `value`: The integer value from API/database.
+  ///
+  /// **Returns:**
+  /// - [IsmChatMessageType]: The corresponding enum value, or `normal` if
+  ///   the value doesn't match any known type.
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final type = IsmChatMessageType.fromValue(1); // forward
+  /// ```
   factory IsmChatMessageType.fromValue(int value) {
     switch (value) {
       case 0:
@@ -23,8 +43,6 @@ enum IsmChatMessageType {
         return IsmChatMessageType.normal;
     }
   }
-
-  final int value;
 
   @override
   String toString() =>

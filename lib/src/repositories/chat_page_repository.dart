@@ -3,9 +3,75 @@ import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Repository for chat page (message) operations.
+///
+/// This repository provides data access methods for message-related operations.
+/// It abstracts the API layer, allowing controllers to work with a clean interface
+/// without directly dealing with HTTP requests and responses.
+///
+/// **Responsibilities:**
+/// - Message retrieval (from API)
+/// - Message sending
+/// - Message updates
+/// - Message deletion
+/// - Media upload
+/// - Broadcast messages
+///
+/// **Pattern:**
+/// - Uses Repository pattern to abstract data access
+/// - Delegates actual API calls to [IsmChatApiWrapper]
+/// - Handles error cases and returns null on failure
+///
+/// **Usage:**
+/// ```dart
+/// final repository = IsmChatPageRepository();
+/// final messages = await repository.getChatMessages(
+///   conversationId: 'conv123',
+///   limit: 20,
+/// );
+/// ```
+///
+/// **See Also:**
+/// - [MODULE_REPOSITORIES.md] - Repositories documentation
+/// - [IsmChatApiWrapper] - API wrapper for HTTP calls
+/// - [ARCHITECTURE.md] - Architecture documentation
 class IsmChatPageRepository {
+  /// The API wrapper instance for making HTTP requests.
+  ///
+  /// This wrapper handles error handling, retry logic, and request/response
+  /// processing. It's initialized once and reused for all API calls.
   final _apiWrapper = IsmChatApiWrapper();
 
+  /// Retrieves chat messages from the API.
+  ///
+  /// Fetches messages for a specific conversation with support for pagination
+  /// and search functionality.
+  ///
+  /// **Parameters:**
+  /// - `conversationId`: The ID of the conversation to retrieve messages from. (Required)
+  /// - `lastMessageTimestamp`: Timestamp of the last message for pagination. Defaults to `0`.
+  /// - `limit`: Maximum number of messages to retrieve. Defaults to `20`.
+  /// - `skip`: Number of messages to skip (for pagination). Defaults to `0`.
+  /// - `searchText`: Optional search text to filter messages. If provided, searches
+  ///   messages containing this text.
+  /// - `isLoading`: Whether to show loading indicator during the API call.
+  ///   Defaults to `false`.
+  ///
+  /// **Returns:**
+  /// - `Future<List<IsmChatMessageModel>?>`: List of messages, or `null` if an error occurs.
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final messages = await repository.getChatMessages(
+  ///   conversationId: 'conv123',
+  ///   lastMessageTimestamp: 1643723400,
+  ///   limit: 30,
+  ///   searchText: 'hello',
+  /// );
+  /// ```
+  ///
+  /// **Note:** If `searchText` is provided, the API uses a different endpoint
+  /// that supports text search. Otherwise, it uses pagination based on timestamp.
   Future<List<IsmChatMessageModel>?> getChatMessages({
     required String conversationId,
     int lastMessageTimestamp = 0,

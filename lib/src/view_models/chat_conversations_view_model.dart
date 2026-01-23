@@ -1,8 +1,46 @@
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// View model for the conversations controller.
+///
+/// This view model provides business logic and coordinates between the
+/// controller and repository layers. It handles data transformation and
+/// business rules for conversation operations.
+///
+/// **Responsibilities:**
+/// - Conversation retrieval and processing
+/// - Conversation merging (API + Database)
+/// - Conversation filtering and sorting
+/// - Business logic for conversation operations
+///
+/// **Architecture:**
+/// - Part of MVVM pattern (Model-View-ViewModel)
+/// - Coordinates between Controller and Repository
+/// - Handles data transformation
+///
+/// **Usage:**
+/// ```dart
+/// final viewModel = IsmChatConversationsViewModel(repository);
+/// final conversations = await viewModel.getChatConversations(
+///   skip: 0,
+///   chatLimit: 20,
+/// );
+/// ```
+///
+/// **See Also:**
+/// - [IsmChatConversationsController] - Controller that uses this view model
+/// - [IsmChatConversationsRepository] - Repository for data access
+/// - [ARCHITECTURE.md] - Architecture documentation
 class IsmChatConversationsViewModel {
+  /// Creates a new instance of [IsmChatConversationsViewModel].
+  ///
+  /// **Parameters:**
+  /// - `_repository`: The repository instance for data access.
   IsmChatConversationsViewModel(this._repository);
 
+  /// The repository instance for conversation operations.
+  ///
+  /// This repository provides access to the API and database for retrieving
+  /// and managing conversations.
   final IsmChatConversationsRepository _repository;
 
   Future<List<IsmChatConversationModel>> getChatConversations({

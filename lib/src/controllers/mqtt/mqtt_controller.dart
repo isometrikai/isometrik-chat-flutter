@@ -6,7 +6,21 @@ import 'package:isometrik_chat_flutter/src/controllers/mqtt/mixins/mqtt_event.da
 
 /// A controller class that handles MQTT communication for the chat functionality.
 /// This controller manages MQTT connections, message handling, and various chat events.
-class IsmChatMqttController extends GetxController with IsmChatMqttEventMixin {
+class IsmChatMqttController extends GetxController
+    with
+        IsmChatMqttEventVariablesMixin,
+        IsmChatMqttEventUtilitiesMixin,
+        IsmChatMqttEventProcessingMixin,
+        IsmChatMqttEventMessageHandlersMixin,
+        IsmChatMqttEventMessageStatusMixin,
+        IsmChatMqttEventTypingEventsMixin,
+        IsmChatMqttEventGroupOperationsMixin,
+        IsmChatMqttEventConversationOperationsMixin,
+        IsmChatMqttEventReactionsMixin,
+        IsmChatMqttEventBlockUnblockMixin,
+        IsmChatMqttEventBroadcastMixin,
+        IsmChatMqttEventObserverOperationsMixin,
+        IsmChatMqttEventCallsMixin {
   /// Creates a new instance of `IsmChatMqttController`.
   ///
   /// Requires an `IsmChatMqttViewModel` instance to handle business logic.
