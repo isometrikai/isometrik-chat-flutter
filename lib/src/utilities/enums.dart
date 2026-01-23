@@ -44,8 +44,6 @@ enum IsmChatMessageType {
     }
   }
 
-  final int value;
-
   @override
   String toString() =>
       '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
