@@ -317,7 +317,7 @@ mixin IsmChatConversationsVariablesMixin on GetxController {
   final _forwardedListSkip = <SelectedMembers>[].obs;
   List<SelectedMembers> get forwardedListSkip => _forwardedListSkip;
   set forwardedListSkip(List<SelectedMembers> value) {
-    _forwardedList.value = value;
+    _forwardedListSkip.value = value;
   }
 
   /// Observable boolean indicating if the controller has been initialized.

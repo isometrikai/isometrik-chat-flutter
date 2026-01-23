@@ -82,7 +82,7 @@ class IsmChatPageRepository {
   }) async {
     try {
       String? url;
-      if (searchText != null || searchText?.isNotEmpty == true) {
+      if (searchText != null && searchText.isNotEmpty) {
         url =
             '${IsmChatAPI.chatMessages}?conversationId=$conversationId&searchTag=$searchText&sort=-1&limit=$limit&skip=$skip';
       } else {
@@ -126,7 +126,7 @@ class IsmChatPageRepository {
   }) async {
     try {
       String? url;
-      if (searchText != null || searchText?.isNotEmpty == true) {
+      if (searchText != null && searchText.isNotEmpty) {
         url =
             '${IsmChatAPI.chatGroupCastMessages}?groupcastId=$groupcastId&searchTag=$searchText&sort=$sort&limit=$limit&skip=$skip';
       } else {

@@ -457,7 +457,7 @@ class IsmChatConversationsRepository {
       String? searchText}) async {
     try {
       String? url;
-      if (searchText != null || searchText?.isNotEmpty == true) {
+      if (searchText != null && searchText.isNotEmpty) {
         url =
             '${IsmChatAPI.getObserver}?conversationId=$conversationId&searchTag=$searchText&sort=-1&limit=$limit&skip=$skip';
       } else {
