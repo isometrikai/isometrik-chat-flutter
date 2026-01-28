@@ -59,7 +59,7 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
           metaData: _controller.conversation?.metaData ?? IsmChatMetaData());
       return;
     }
-    IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
+    // IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
     await Future.wait([
       _controller.conversationController.getBlockUser(),
       if (fromUser == false) ...[
