@@ -141,6 +141,7 @@ enum IsmChatCustomMessageType {
       'addMember': IsmChatCustomMessageType.addMember,
       'addAdmin': IsmChatCustomMessageType.addAdmin,
       'revokeAdmin': IsmChatCustomMessageType.removeAdmin,
+      'removeAdmin': IsmChatCustomMessageType.removeAdmin,
       'memberLeave': IsmChatCustomMessageType.memberLeave,
       'conversationTitleUpdated':
           IsmChatCustomMessageType.conversationTitleUpdated,

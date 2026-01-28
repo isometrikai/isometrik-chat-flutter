@@ -153,21 +153,128 @@ mixin IsmChatMqttEventGroupOperationsMixin {
         self is IsmChatMqttEventVariablesMixin) {
       final utils = self as IsmChatMqttEventUtilitiesMixin;
       final vars = self as IsmChatMqttEventVariablesMixin;
-      if (utils.isSenderMe(actionModel.userDetails?.userId)) return;
+      // Don't skip if sender is me - we want to receive the event and message
+      // when we make someone admin or remove admin
       if (vars.messageId == actionModel.sentAt.toString()) return;
       vars.messageId = actionModel.sentAt.toString();
+
+      if (!IsmChatUtility.conversationControllerRegistered) {
+        return;
+      }
+      final conversationController = IsmChatUtility.conversationController;
+
+      // Save the admin add/remove message to the database
+      var conversation = await IsmChatConfig.dbWrapper
+          ?.getConversation(actionModel.conversationId ?? '');
+      final allMessages = conversation?.messages;
+
+      // Get initiator info (person who made the change)
+      final initiatorId = actionModel.initiatorId ??
+          actionModel.initiatorDetails?.userId ??
+          actionModel.userDetails?.userId ??
+          '';
+      final initiatorName = actionModel.initiatorName ??
+          actionModel.initiatorDetails?.userName ??
+          actionModel.userDetails?.userName ??
+          '';
+
+      // Get member info (person who was made/removed as admin)
+      final memberId = actionModel.memberId ?? '';
+      final memberName = actionModel.memberName ?? '';
+
+      allMessages?.addEntries(
+        {
+          '${actionModel.sentAt}': IsmChatMessageModel(
+            members: actionModel.members,
+            initiatorId: initiatorId,
+            initiatorName: initiatorName,
+            // Set userId and userName for initiator getter to work
+            userId: initiatorId,
+            userName: initiatorName,
+            customType: IsmChatCustomMessageType.fromAction(
+                    actionModel.action.name) ??
+                IsmChatCustomMessageType.fromString(actionModel.action.name),
+            body: '',
+            sentAt: actionModel.sentAt,
+            sentByMe: utils.isSenderMe(initiatorId),
+            isGroup: true,
+            conversationId: actionModel.conversationId,
+            memberId: memberId,
+            memberName: memberName,
+            senderInfo: UserDetails(
+              userProfileImageUrl:
+                  actionModel.initiatorDetails?.profileImageUrl ??
+                      actionModel.userDetails?.profileImageUrl ??
+                      '',
+              userName: initiatorName,
+              userIdentifier: actionModel.initiatorDetails?.userIdentifier ??
+                  actionModel.userDetails?.userIdentifier ??
+                  '',
+              userId: initiatorId,
+              online: true,
+              lastSeen: 0,
+            ),
+          )
+        }.entries,
+      );
+
+      // Update conversation last message details
+      if (conversation != null) {
+        conversation = conversation.copyWith(
+          lastMessageDetails: LastMessageDetails(
+            sentByMe: utils.isSenderMe(initiatorId),
+            showInConversation: true,
+            sentAt: actionModel.sentAt,
+            senderName: initiatorName,
+            messageType: 0,
+            messageId: '',
+            conversationId: actionModel.conversationId ?? '',
+            body: '',
+            customType:
+                IsmChatCustomMessageType.fromString(actionModel.action.name),
+            senderId: initiatorId,
+            userId: memberId,
+            memberName: memberName,
+            members:
+                actionModel.members?.map((e) => e.memberName ?? '').toList(),
+            reactionType: '',
+          ),
+        );
+        await IsmChatConfig.dbWrapper
+            ?.saveConversation(conversation: conversation);
+        await conversationController.getConversationsFromDB();
+      }
+
+      // Update chat page if it's open for this conversation
       if (IsmChatUtility.chatPageControllerRegistered) {
         final controller = IsmChatUtility.chatPageController;
         if (controller.conversation?.conversationId ==
-                actionModel.conversationId &&
-            actionModel.memberId ==
-                IsmChatConfig.communicationConfig.userConfig.userId &&
-            controller.conversation?.lastMessageSentAt != actionModel.sentAt) {
-          await controller.getMessagesFromAPI(
-            lastMessageTimestamp: controller.messages.last.sentAt,
+            actionModel.conversationId) {
+          controller.conversation = controller.conversation?.copyWith(
+            lastMessageDetails: LastMessageDetails(
+              sentByMe: utils.isSenderMe(initiatorId),
+              showInConversation: true,
+              sentAt: actionModel.sentAt,
+              senderName: initiatorName,
+              messageType: 0,
+              messageId: '',
+              conversationId: actionModel.conversationId ?? '',
+              body: '',
+              customType:
+                  IsmChatCustomMessageType.fromString(actionModel.action.name),
+              senderId: initiatorId,
+              userId: memberId,
+              memberName: memberName,
+              members:
+                  actionModel.members?.map((e) => e.memberName ?? '').toList(),
+              reactionType: '',
+            ),
           );
+          await controller.getMessagesFromDB(actionModel.conversationId ?? '');
         }
       }
+
+      // Refresh conversation list if current user is affected
       if (actionModel.memberId ==
               IsmChatConfig.communicationConfig.userConfig.userId &&
           IsmChatUtility.conversationControllerRegistered) {
