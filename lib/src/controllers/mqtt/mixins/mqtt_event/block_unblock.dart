@@ -28,6 +28,41 @@ mixin IsmChatMqttEventBlockUnblockMixin {
 
         if (controller.conversation?.conversationId ==
             actionModel.conversationId) {
+          // Create block/unblock message in metadata (same as direct block/unblock)
+          final isBlockAction = actionModel.action ==
+                  IsmChatActionEvents.userBlock ||
+              actionModel.action == IsmChatActionEvents.userBlockConversation;
+          final isUnblockAction = actionModel.action ==
+                  IsmChatActionEvents.userUnblock ||
+              actionModel.action == IsmChatActionEvents.userUnblockConversation;
+
+          if (isBlockAction || isUnblockAction) {
+            controller.conversation = controller.conversation?.copyWith(
+              metaData: controller.conversation?.metaData?.copyWith(
+                blockedMessage: IsmChatMessageModel(
+                  action: isBlockAction
+                      ? 'userBlockConversation'
+                      : 'userUnblockConversation',
+                  initiatorId: actionModel.initiatorDetails?.userId ?? '',
+                  initiatorName: actionModel.initiatorDetails?.userName ?? '',
+                  userId: actionModel.initiatorDetails?.userId ?? '',
+                  userName: actionModel.initiatorDetails?.userName ?? '',
+                  body: '',
+                  conversationId: actionModel.conversationId ?? '',
+                  customType: isBlockAction
+                      ? IsmChatCustomMessageType.block
+                      : IsmChatCustomMessageType.unblock,
+                  sentAt: actionModel.sentAt,
+                  sentByMe: false,
+                ),
+              ),
+            );
+            await IsmChatUtility.conversationController.updateConversation(
+                conversationId: actionModel.conversationId ?? '',
+                metaData:
+                    controller.conversation?.metaData ?? IsmChatMetaData());
+          }
+
           await controller.getConverstaionDetails();
           final lastTs = controller.messages.isNotEmpty
               ? controller.messages.last.sentAt
