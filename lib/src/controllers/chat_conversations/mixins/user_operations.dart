@@ -179,7 +179,7 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
       return false;
     }
     unawaited(_controller.getBlockUser());
-    IsmChatUtility.showToast(IsmChatStrings.unBlockedSuccessfully);
+    // IsmChatUtility.showToast(IsmChatStrings.unBlockedSuccessfully);
     if (fromUser) {
       return false;
     }

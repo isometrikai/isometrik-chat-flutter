@@ -146,7 +146,9 @@ class IsmChatUserView extends StatelessWidget {
                         hint: IsmChatStrings.addYourName,
                         hintStyle: IsmChatStyles.w600Black16,
                         onChanged: (value) {},
-                        cursorColor: Colors.transparent,
+                        cursorColor: controller.isUserNameType
+                            ? IsmChatConfig.chatTheme.primaryColor
+                            : Colors.transparent,
                         suffixIcon: IconButton(
                           onPressed: () async {
                             controller.isUserNameType =
@@ -188,7 +190,9 @@ class IsmChatUserView extends StatelessWidget {
                         hintStyle: IsmChatStyles.w600Black16,
                         textInputAction: TextInputAction.done,
                         onChanged: (value) {},
-                        cursorColor: Colors.transparent,
+                        cursorColor: controller.isUserEmailType
+                            ? IsmChatConfig.chatTheme.primaryColor
+                            : Colors.transparent,
                         suffixIcon: IconButton(
                           onPressed: () async {
                             controller.isUserEmailType =

@@ -32,38 +32,131 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
 
   @override
   void initState() {
+    super.initState();
     if (widget.conversationId.isNotEmpty) {
-      getMessages();
+      // Try to load from chat page controller first (fastest - already in memory)
+      loadMessagesFromController();
+      // Then load from local DB (fast)
+      getMessagesFromLocal();
     }
     if (!conversationController.blockUsers.isNullOrEmpty) {
       isUserBlock = conversationController.blockUsers
           .any((e) => e.userId == widget.user?.userId);
     }
-    super.initState();
   }
 
-  void getMessages() async {
+  /// Loads media messages from chat page controller if conversation is already loaded (fastest)
+  void loadMessagesFromController() {
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      final chatController = IsmChatUtility.chatPageController;
+      if (chatController.conversation?.conversationId ==
+              widget.conversationId &&
+          chatController.messages.isNotEmpty) {
+        // Use messages already loaded in memory
+        mediaList = chatController.messages
+            .where((e) => [
+                  IsmChatCustomMessageType.video,
+                  IsmChatCustomMessageType.image,
+                  IsmChatCustomMessageType.audio
+                ].contains(e.customType))
+            .toList();
+        mediaListLinks = chatController.messages
+            .where(
+                (e) => [IsmChatCustomMessageType.link].contains(e.customType))
+            .toList();
+        mediaListDocs = chatController.messages
+            .where(
+                (e) => [IsmChatCustomMessageType.file].contains(e.customType))
+            .toList();
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    }
+  }
+
+  /// Loads media messages from local database (fast)
+  void getMessagesFromLocal() async {
+    // If we already have data from controller, skip DB load
+    if (mediaList.isNotEmpty ||
+        mediaListLinks.isNotEmpty ||
+        mediaListDocs.isNotEmpty) {
+      return;
+    }
+
     var messages =
         await IsmChatConfig.dbWrapper?.getMessage(widget.conversationId);
-    if (messages != null) {
-      mediaList = messages.values
+    if (messages != null && messages.isNotEmpty) {
+      final filteredMedia = messages.values
           .where((e) => [
                 IsmChatCustomMessageType.video,
                 IsmChatCustomMessageType.image,
                 IsmChatCustomMessageType.audio
               ].contains(e.customType))
           .toList();
-      mediaListLinks = messages.values
-          .where((e) => [
-                IsmChatCustomMessageType.link,
-              ].contains(e.customType))
+      final filteredLinks = messages.values
+          .where((e) => [IsmChatCustomMessageType.link].contains(e.customType))
           .toList();
-      mediaListDocs = messages.values
-          .where((e) => [
-                IsmChatCustomMessageType.file,
-              ].contains(e.customType))
+      final filteredDocs = messages.values
+          .where((e) => [IsmChatCustomMessageType.file].contains(e.customType))
           .toList();
-      setState(() {});
+
+      if (mounted) {
+        setState(() {
+          mediaList = filteredMedia;
+          mediaListLinks = filteredLinks;
+          mediaListDocs = filteredDocs;
+        });
+      }
+    } else {
+      // If local DB has no data, fetch from API
+      await getMessagesFromAPI();
+    }
+  }
+
+  /// Fetches media messages from API if local count is 0
+  Future<void> getMessagesFromAPI() async {
+    try {
+      // Use chat page view model to fetch messages from API
+      final chatPageViewModel = IsmChatPageViewModel(IsmChatPageRepository());
+
+      // Fetch all messages for the conversation (with large limit)
+      final allMessages = await chatPageViewModel.getChatMessages(
+        conversationId: widget.conversationId,
+        lastMessageTimestamp: 0,
+        limit: 1000, // Large limit to get all messages
+        skip: 0,
+        isLoading: false,
+      );
+
+      if (allMessages.isNotEmpty && mounted) {
+        // Filter messages by custom type
+        final filteredMediaList = allMessages
+            .where((e) => [
+                  IsmChatCustomMessageType.video,
+                  IsmChatCustomMessageType.image,
+                  IsmChatCustomMessageType.audio
+                ].contains(e.customType))
+            .toList();
+
+        final filteredLinkList = allMessages
+            .where(
+                (e) => [IsmChatCustomMessageType.link].contains(e.customType))
+            .toList();
+
+        final filteredDocList = allMessages
+            .where(
+                (e) => [IsmChatCustomMessageType.file].contains(e.customType))
+            .toList();
+
+        setState(() {
+          mediaList = filteredMediaList;
+          mediaListLinks = filteredLinkList;
+          mediaListDocs = filteredDocList;
+        });
+      }
+    } catch (e) {
+      IsmChatLog.error('Error fetching media messages from API: $e');
     }
   }
 

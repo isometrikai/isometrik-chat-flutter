@@ -170,11 +170,12 @@ mixin IsmChatPageMessageManagementMixin on GetxController {
     if (pendingMessges.isNotEmpty) {
       await IsmChatConfig.dbWrapper?.removePendingMessage(
           _controller.conversation?.conversationId ?? '', pendingMessges);
-      await _controller.getMessagesFromDB(_controller.conversation!.conversationId!);
+      await _controller
+          .getMessagesFromDB(_controller.conversation!.conversationId!);
       _controller.selectedMessage.clear();
       _controller.isMessageSeleted = false;
     }
-    IsmChatUtility.showToast('Deleted your message');
+    // IsmChatUtility.showToast('Deleted your message');
   }
 
   /// Deletes message for me only.
@@ -188,11 +189,12 @@ mixin IsmChatPageMessageManagementMixin on GetxController {
     if (pendingMessges.isNotEmpty) {
       await IsmChatConfig.dbWrapper?.removePendingMessage(
           _controller.conversation?.conversationId ?? '', pendingMessges);
-      await _controller.getMessagesFromDB(_controller.conversation?.conversationId ?? '');
+      await _controller
+          .getMessagesFromDB(_controller.conversation?.conversationId ?? '');
       _controller.selectedMessage.clear();
       _controller.isMessageSeleted = false;
     }
-    IsmChatUtility.showToast('Deleted your message');
+    // IsmChatUtility.showToast('Deleted your message');
   }
 
   /// Clears all messages in the conversation.

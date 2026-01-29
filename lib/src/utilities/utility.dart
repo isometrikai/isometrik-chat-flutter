@@ -262,11 +262,22 @@ class IsmChatUtility {
     try {
       bytes = file.readAsBytesSync();
     } catch (_) {
-      bytes = Uint8List.fromList(
-          await File.fromUri(Uri.parse(file.path)).readAsBytes());
+      try {
+        bytes = Uint8List.fromList(
+            await File.fromUri(Uri.parse(file.path)).readAsBytes());
+      } catch (e, st) {
+        IsmChatLog.error('Failed to read file: ${file.path}', st);
+        return '0 B'; // Return default value
+      }
     }
+
+    // If bytes is empty, return default value
+    if (bytes.isEmpty) {
+      return '0 B';
+    }
+
     var dataSize = IsmChatUtility.formatBytes(
-      int.parse(bytes.length.toString()),
+      bytes.length,
     );
     return dataSize;
   }
@@ -274,7 +285,7 @@ class IsmChatUtility {
   /// Returns data size representation of a provided file
   static Future<String> bytesToSize(List<int> bytes) async {
     var dataSize = IsmChatUtility.formatBytes(
-      int.parse(bytes.length.toString()),
+      bytes.length,
     );
     return dataSize;
   }
