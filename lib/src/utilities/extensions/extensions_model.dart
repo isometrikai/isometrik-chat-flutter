@@ -169,7 +169,8 @@ extension LastMessageBody on LastMessageDetails {
   String get messageBody {
     switch (customType) {
       case IsmChatCustomMessageType.reply:
-        return 'Replied to $body';
+        //return 'Replied to $body';
+        return body;
       case IsmChatCustomMessageType.image:
         return 'Image';
       case IsmChatCustomMessageType.video:
@@ -246,9 +247,9 @@ extension LastMessageBody on LastMessageDetails {
   Widget get icon {
     IconData? iconData;
     switch (customType) {
-      case IsmChatCustomMessageType.reply:
-        iconData = Icons.reply_rounded;
-        break;
+      // case IsmChatCustomMessageType.reply:
+      //   iconData = Icons.reply_rounded;
+      //   break;
       case IsmChatCustomMessageType.image:
         iconData = Icons.image_rounded;
         break;
@@ -308,6 +309,7 @@ extension LastMessageBody on LastMessageDetails {
       case IsmChatCustomMessageType.conversationTitleUpdated:
       case IsmChatCustomMessageType.date:
       case IsmChatCustomMessageType.text:
+      case IsmChatCustomMessageType.reply:
       default:
     }
 
