@@ -189,7 +189,7 @@ mixin IsmChatGroupAdminMixin on GetxController {
       return;
     }
     if (updateConversation) {
-      IsmChatUtility.showToast('You has made $userName a admin of this group',
+      IsmChatUtility.showToast('You made $userName an admin of this group',
           timeOutInSec: 2);
       await _controller.getConverstaionDetails(
         isLoading: false,
@@ -207,7 +207,8 @@ mixin IsmChatGroupAdminMixin on GetxController {
     if (response?.hasError ?? true) {
       return;
     }
-    IsmChatUtility.showToast('You has removed $userName a admin of this group',
+    IsmChatUtility.showToast(
+        'You removed $userName from being an admin of this group',
         timeOutInSec: 2);
     await _controller.getConverstaionDetails(
       isLoading: false,

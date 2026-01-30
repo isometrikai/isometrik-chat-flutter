@@ -27,7 +27,7 @@ class IsmChatAddRevokeAdmin extends StatelessWidget {
           ),
           padding: IsmChatDimens.edgeInsets8_4,
           child: Text(
-            '${message.initiator} has ${isAdded ? 'made' : 'removed'} ${message.memberName ?? ''} a admin of this group'
+            '${message.initiator} ${isAdded ? 'made' : 'removed'} ${message.memberName ?? ''} ${isAdded ? 'an' : 'from being an'} admin of this group'
                 .trim(), //'${message.initiator} ${isAdded ? 'added' : 'removed'} $_user ${isAdded ? 'as' : 'as an '} Admin'.trim()
 
             textAlign: TextAlign.center,
