@@ -26,15 +26,16 @@ mixin IsmChatPageContactGroupOperationsMixin on GetxController {
       }
     }
 
-    _controller.commonController.handleSorSelectedContact(_controller.contactList);
+    _controller.commonController
+        .handleSorSelectedContact(_controller.contactList);
   }
 
   /// Handles contact selection/deselection in the contact screen.
   void onSelectedContactTap(int index, SelectedContact contact) {
     _controller.contactList[index].isConotactSelected =
         !_controller.contactList[index].isConotactSelected;
-    final checkContact =
-        _controller.contactSelectedList.any((e) => e.contact.id == contact.contact.id);
+    final checkContact = _controller.contactSelectedList
+        .any((e) => e.contact.id == contact.contact.id);
     if (checkContact) {
       _controller.contactSelectedList
           .removeWhere((e) => e.contact.id == contact.contact.id);
@@ -47,8 +48,8 @@ mixin IsmChatPageContactGroupOperationsMixin on GetxController {
   void setContatWithSelectedContact() {
     var temContactList = <SelectedContact>[];
     for (final contact in _controller.searchContactList) {
-      final checkContact =
-          _controller.contactSelectedList.any((e) => e.contact.id == contact.contact.id);
+      final checkContact = _controller.contactSelectedList
+          .any((e) => e.contact.id == contact.contact.id);
       contact.isConotactSelected = checkContact;
       temContactList.add(contact);
     }
@@ -63,23 +64,36 @@ mixin IsmChatPageContactGroupOperationsMixin on GetxController {
   }
 
   /// Searches group members based on the provided query.
+  /// Ensures the current user always appears first in the list.
   void onGroupSearch(String query) {
+    // Get current user ID to ensure they appear first in the list
+    final currentUserId = IsmChatConfig.communicationConfig.userConfig.userId;
+
     if (query.trim().isEmpty) {
-      _controller.groupMembers = _controller.conversation!.members!;
-      return;
+      _controller.groupMembers = List.from(_controller.conversation!.members!);
+    } else {
+      _controller.groupMembers = _controller.conversation!.members!
+          .where(
+            (e) => [
+              e.userName,
+              e.userIdentifier,
+            ].any(
+              (e) => e.toLowerCase().contains(
+                    query.toLowerCase(),
+                  ),
+            ),
+          )
+          .toList();
     }
-    _controller.groupMembers = _controller.conversation!.members!
-        .where(
-          (e) => [
-            e.userName,
-            e.userIdentifier,
-          ].any(
-            (e) => e.toLowerCase().contains(
-                  query.toLowerCase(),
-                ),
-          ),
-        )
-        .toList();
+
+    // Sort members: current user first, then others alphabetically
+    _controller.groupMembers.sort((a, b) {
+      // If one is the current user, it should come first
+      if (a.userId == currentUserId) return -1;
+      if (b.userId == currentUserId) return 1;
+      // Otherwise, sort alphabetically by username
+      return a.userName.toLowerCase().compareTo(b.userName.toLowerCase());
+    });
   }
 
   /// Searches for participants to add to a group.
@@ -124,7 +138,8 @@ mixin IsmChatPageContactGroupOperationsMixin on GetxController {
     final remainingText = tempList.sublist(0, tempList.length - 1).join('@');
     final updatedText = '$remainingText@${value.capitalizeFirst} ';
     _controller.showMentionUserList = false;
-    _controller.chatInputController.value = _controller.chatInputController.value.copyWith(
+    _controller.chatInputController.value =
+        _controller.chatInputController.value.copyWith(
       text: updatedText,
       selection: TextSelection.collapsed(
         offset: updatedText.length,
@@ -145,7 +160,10 @@ mixin IsmChatPageContactGroupOperationsMixin on GetxController {
         final isMember = mentionedList.where(
           (e) =>
               checkerLength == e.trim().length &&
-              _controller.groupMembers[x].userName.trim().toLowerCase().contains(
+              _controller.groupMembers[x].userName
+                  .trim()
+                  .toLowerCase()
+                  .contains(
                     e.trim().substring(0, checkerLength).toLowerCase(),
                   ),
         );
@@ -162,5 +180,3 @@ mixin IsmChatPageContactGroupOperationsMixin on GetxController {
     }
   }
 }
-
-
