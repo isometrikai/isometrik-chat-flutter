@@ -21,7 +21,7 @@ mixin IsmChatShowDialogMixin on GetxController {
     if (!isGroupDelete) {
       await IsmChatContextWidget.showDialogContext(
         content: IsmChatAlertDialogBox(
-          title: IsmChatStrings.deleteAllMessage,
+          title: IsmChatStrings.clearAllMessages,
           actionLabels: const [IsmChatStrings.clearChat],
           callbackActions: [
             () => _controller.clearAllMessages(

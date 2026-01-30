@@ -529,7 +529,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               onPressed: () async {
                                 await IsmChatContextWidget.showDialogContext(
                                   content: IsmChatAlertDialogBox(
-                                    title: IsmChatStrings.deleteAllMessage,
+                                    title: IsmChatStrings.clearAllMessages,
                                     actionLabels: const [
                                       IsmChatStrings.clearChat
                                     ],
