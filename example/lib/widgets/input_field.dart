@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:isometrik_chat_flutter_example/res/dimens.dart';
 import 'package:isometrik_chat_flutter_example/res/res.dart';
 import 'package:isometrik_chat_flutter_example/utilities/validator.dart';
@@ -77,6 +78,9 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine if this is an email field - check if _textInputType is emailAddress
+    final bool isEmailField = _textInputType == TextInputType.emailAddress;
+
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -118,6 +122,18 @@ class InputField extends StatelessWidget {
       obscureText: obscureText,
       obscuringCharacter: obscureCharacter,
       onChanged: onchange,
+      // Convert all input to lowercase for email fields
+      // This prevents capital letters from being entered in email fields
+      inputFormatters: isEmailField
+          ? [
+              TextInputFormatter.withFunction(
+                (oldValue, newValue) => TextEditingValue(
+                  text: newValue.text.toLowerCase(),
+                  selection: newValue.selection,
+                ),
+              ),
+            ]
+          : null,
     );
   }
 }

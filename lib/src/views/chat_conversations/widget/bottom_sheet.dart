@@ -18,7 +18,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
                 IsmChatRoute.goBack();
                 await IsmChatContextWidget.showDialogContext(
                   content: IsmChatAlertDialogBox(
-                    title: IsmChatStrings.deleteAllMessage,
+                    title: IsmChatStrings.clearAllMessages,
                     actionLabels: const [IsmChatStrings.clearChat],
                     callbackActions: [
                       () => controller.clearAllMessages(

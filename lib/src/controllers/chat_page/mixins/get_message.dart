@@ -304,9 +304,20 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
         if (responeData.members != null) {
           _controller.groupMembers = responeData.members ?? [];
-          _controller.groupMembers.sort((a, b) =>
-              a.userName.toLowerCase().compareTo(b.userName.toLowerCase()));
           _controller.groupMembers.removeWhere((e) => e.userId.isEmpty);
+
+          // Get current user ID to ensure they appear first in the list
+          final currentUserId =
+              IsmChatConfig.communicationConfig.userConfig.userId;
+
+          // Sort members: current user first, then others alphabetically
+          _controller.groupMembers.sort((a, b) {
+            // If one is the current user, it should come first
+            if (a.userId == currentUserId) return -1;
+            if (b.userId == currentUserId) return 1;
+            // Otherwise, sort alphabetically by username
+            return a.userName.toLowerCase().compareTo(b.userName.toLowerCase());
+          });
         }
 
         IsmChatLog.success('Updated conversation');
