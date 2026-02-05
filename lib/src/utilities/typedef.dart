@@ -185,10 +185,12 @@ typedef NotificationBodyCallback = String Function(
 /// - [IsmChatConversationModel] - The current conversation
 /// - [List<WebMediaModel>] - The selected media (images and/or videos)
 ///
-/// Return `true` to indicate the delegate handled the media, `false` otherwise.
-/// If `true` is returned, the SDK will not proceed with normal media sending.
-/// The delegate should show paid/free screen and send message from outside SDK.
-typedef PaidMediaSendCallback = Future<bool> Function(
+/// Return [PaidMediaSendResult]:
+/// - [PaidMediaSendResult.handled] – delegate handled the media; SDK will not send.
+/// - [PaidMediaSendResult.send] or [PaidMediaSendResult.send(metaData)] –
+///   SDK continues with the same upload-and-send flow; if [metaData] is
+///   provided, it is passed directly as the message metadata for each media sent.
+typedef PaidMediaSendCallback = Future<PaidMediaSendResult> Function(
   BuildContext,
   IsmChatConversationModel?,
   List<WebMediaModel>,

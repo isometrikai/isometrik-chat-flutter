@@ -20,6 +20,7 @@ export 'mention.dart';
 export 'message_reaction.dart';
 export 'message_status_model.dart';
 export 'meta_data_model.dart';
+export 'paid_media_send_result.dart';
 export 'mqtt_models/mqtt_models.dart';
 export 'platformfile_model.dart';
 export 'popup_item_model.dart';

@@ -157,23 +157,23 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                 onPressed: () async {
                   if (webMediaModel?.dataSize.size() ?? false) {
                     // Paid media: delegate when user taps send
+                    Map<String, dynamic>? paidMediaMetaData;
                     if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
                         IsmChat.i.onPaidMediaSend != null) {
                       final ctx = IsmChatConfig.kNavigatorKey.currentContext ??
                           IsmChatConfig.context;
-                      if (ctx != null) {
-                        final handled = await IsmChat.i.onPaidMediaSend!(
-                          ctx,
-                          controller.conversation,
-                          [webMediaModel!],
-                        );
-                        if (handled) {
-                          IsmChatRoute.goBack();
-                          IsmChatRoute.goBack();
-                          controller.webMedia.clear();
-                          return;
-                        }
+                      final result = await IsmChat.i.onPaidMediaSend!(
+                        ctx,
+                        controller.conversation,
+                        [webMediaModel!],
+                      );
+                      if (result.handled) {
+                        IsmChatRoute.goBack();
+                        IsmChatRoute.goBack();
+                        controller.webMedia.clear();
+                        return;
                       }
+                      paidMediaMetaData = result.metaData;
                     }
                     IsmChatRoute.goBack();
                     IsmChatRoute.goBack();
@@ -192,6 +192,7 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                         userId:
                             controller.conversation?.opponentDetails?.userId ??
                                 '',
+                        metaDataFromDelegate: paidMediaMetaData,
                       );
                     }
                   } else {
