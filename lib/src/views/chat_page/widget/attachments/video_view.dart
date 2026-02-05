@@ -156,6 +156,25 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                 backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                 onPressed: () async {
                   if (webMediaModel?.dataSize.size() ?? false) {
+                    // Paid media: delegate when user taps send
+                    if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+                        IsmChat.i.onPaidMediaSend != null) {
+                      final ctx = IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context;
+                      if (ctx != null) {
+                        final handled = await IsmChat.i.onPaidMediaSend!(
+                          ctx,
+                          controller.conversation,
+                          [webMediaModel!],
+                        );
+                        if (handled) {
+                          IsmChatRoute.goBack();
+                          IsmChatRoute.goBack();
+                          controller.webMedia.clear();
+                          return;
+                        }
+                      }
+                    }
                     IsmChatRoute.goBack();
                     IsmChatRoute.goBack();
                     if (await IsmChatProperties.chatPageProperties

@@ -89,6 +89,24 @@ class IsmChatImageEditView extends StatelessWidget {
                   backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                   onPressed: () async {
                     if (controller.webMedia.first.dataSize.size()) {
+                      // Paid media: delegate when user taps send
+                      if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+                          IsmChat.i.onPaidMediaSend != null) {
+                        final ctx = IsmChatConfig.kNavigatorKey.currentContext ??
+                            IsmChatConfig.context;
+                        if (ctx != null) {
+                          final handled = await IsmChat.i.onPaidMediaSend!(
+                            ctx,
+                            controller.conversation,
+                            [controller.webMedia.first],
+                          );
+                          if (handled) {
+                            IsmChatRoute.goBack();
+                            controller.webMedia.clear();
+                            return;
+                          }
+                        }
+                      }
                       IsmChatRoute.goBack();
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
