@@ -72,7 +72,7 @@ class IsmChatMqttController extends GetxController
   IsmChatCommunicationConfig? _config;
 
   /// Chat delegate for handling chat-related callbacks.
-  final chatDelegate = const IsmChatDelegate();
+  final chatDelegate = IsmChatDelegate();
 
   /// Sets up the MQTT controller with necessary configurations.
   ///

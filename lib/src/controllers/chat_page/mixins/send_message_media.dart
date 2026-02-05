@@ -64,6 +64,27 @@ mixin IsmChatPageSendMessageMediaMixin {
   /// Sends photos and videos for web platform.
   void sendPhotoAndVideoForWeb() async {
     if (_controller.webMedia.isNotEmpty) {
+      // Check if paid media handling is enabled and delegate
+      if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+          IsmChat.i.onPaidMediaSend != null) {
+        final context = IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context;
+        final handled = await IsmChat.i.onPaidMediaSend!(
+          context,
+          _controller.conversation,
+          _controller.webMedia,
+        );
+        
+        // If delegate handled the media, clear it and return
+        if (handled) {
+          _controller
+            ..showCloseLoaderForMoble(showLoader: false)
+            ..isCameraView = false
+            ..webMedia.clear();
+          return;
+        }
+      }
+      
       _controller.showCloseLoaderForMoble();
 
       for (var media in _controller.webMedia) {
@@ -92,6 +113,24 @@ mixin IsmChatPageSendMessageMediaMixin {
   /// Sends photos and videos for mobile platform.
   void sendPhotoAndVideo() async {
     if (_controller.webMedia.isNotEmpty) {
+      // Check if paid media handling is enabled and delegate
+      if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+          IsmChat.i.onPaidMediaSend != null) {
+        final context = IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context;
+        final handled = await IsmChat.i.onPaidMediaSend!(
+          context,
+          _controller.conversation,
+          _controller.webMedia,
+        );
+        
+        // If delegate handled the media, clear it and return
+        if (handled) {
+          _controller.webMedia.clear();
+          return;
+        }
+      }
+      
       for (var media in _controller.webMedia) {
         if (await IsmChatProperties
                 .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
