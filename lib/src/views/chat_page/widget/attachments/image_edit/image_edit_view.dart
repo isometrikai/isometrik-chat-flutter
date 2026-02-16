@@ -89,6 +89,24 @@ class IsmChatImageEditView extends StatelessWidget {
                   backgroundColor: IsmChatConfig.chatTheme.primaryColor,
                   onPressed: () async {
                     if (controller.webMedia.first.dataSize.size()) {
+                      // Paid media: delegate when user taps send
+                      Map<String, dynamic>? paidMediaMetaData;
+                      if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+                          IsmChat.i.onPaidMediaSend != null) {
+                        final ctx = IsmChatConfig.kNavigatorKey.currentContext ??
+                            IsmChatConfig.context;
+                        final result = await IsmChat.i.onPaidMediaSend!(
+                          ctx,
+                          controller.conversation,
+                          [controller.webMedia.first],
+                        );
+                        if (result.handled) {
+                          IsmChatRoute.goBack();
+                          controller.webMedia.clear();
+                          return;
+                        }
+                        paidMediaMetaData = result.metaData;
+                      }
                       IsmChatRoute.goBack();
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
@@ -102,6 +120,7 @@ class IsmChatImageEditView extends StatelessWidget {
                                   .conversation?.opponentDetails?.userId ??
                               '',
                           webMediaModel: controller.webMedia.first,
+                          metaDataFromDelegate: paidMediaMetaData,
                         );
                       }
                     } else {

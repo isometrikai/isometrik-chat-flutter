@@ -64,6 +64,27 @@ mixin IsmChatPageSendMessageMediaMixin {
   /// Sends photos and videos for web platform.
   void sendPhotoAndVideoForWeb() async {
     if (_controller.webMedia.isNotEmpty) {
+      // Check if paid media handling is enabled and delegate
+      Map<String, dynamic>? paidMediaMetaData;
+      if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+          IsmChat.i.onPaidMediaSend != null) {
+        final context = IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context;
+        final result = await IsmChat.i.onPaidMediaSend!(
+          context,
+          _controller.conversation,
+          _controller.webMedia,
+        );
+        if (result.handled) {
+          _controller
+            ..showCloseLoaderForMoble(showLoader: false)
+            ..isCameraView = false
+            ..webMedia.clear();
+          return;
+        }
+        paidMediaMetaData = result.metaData;
+      }
+
       _controller.showCloseLoaderForMoble();
 
       for (var media in _controller.webMedia) {
@@ -73,12 +94,14 @@ mixin IsmChatPageSendMessageMediaMixin {
             conversationId: _controller.conversation?.conversationId ?? '',
             userId: _controller.conversation?.opponentDetails?.userId ?? '',
             webMediaModel: media,
+            metaDataFromDelegate: paidMediaMetaData,
           );
         } else {
           await sendVideo(
             webMediaModel: media,
             conversationId: _controller.conversation?.conversationId ?? '',
             userId: _controller.conversation?.opponentDetails?.userId ?? '',
+            metaDataFromDelegate: paidMediaMetaData,
           );
         }
       }
@@ -92,6 +115,24 @@ mixin IsmChatPageSendMessageMediaMixin {
   /// Sends photos and videos for mobile platform.
   void sendPhotoAndVideo() async {
     if (_controller.webMedia.isNotEmpty) {
+      // Check if paid media handling is enabled and delegate
+      Map<String, dynamic>? paidMediaMetaData;
+      if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+          IsmChat.i.onPaidMediaSend != null) {
+        final context = IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context;
+        final result = await IsmChat.i.onPaidMediaSend!(
+          context,
+          _controller.conversation,
+          _controller.webMedia,
+        );
+        if (result.handled) {
+          _controller.webMedia.clear();
+          return;
+        }
+        paidMediaMetaData = result.metaData;
+      }
+
       for (var media in _controller.webMedia) {
         if (await IsmChatProperties
                 .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
@@ -108,12 +149,14 @@ mixin IsmChatPageSendMessageMediaMixin {
               webMediaModel: media,
               conversationId: _controller.conversation?.conversationId ?? '',
               userId: _controller.conversation?.opponentDetails?.userId ?? '',
+              metaDataFromDelegate: paidMediaMetaData,
             );
           } else {
             await sendImage(
               conversationId: _controller.conversation?.conversationId ?? '',
               userId: _controller.conversation?.opponentDetails?.userId ?? '',
               webMediaModel: media,
+              metaDataFromDelegate: paidMediaMetaData,
             );
           }
         }
@@ -134,6 +177,7 @@ mixin IsmChatPageSendMessageMediaMixin {
     required String conversationId,
     required String userId,
     required WebMediaModel webMediaModel,
+    Map<String, dynamic>? metaDataFromDelegate,
   }) async {
     // Note: createConversation is provided by send_message_core mixin
     conversationId = await _controller.createConversation(
@@ -206,6 +250,7 @@ mixin IsmChatPageSendMessageMediaMixin {
         messageSentAt: sentAt,
         isDownloaded: true,
         caption: webMediaModel.caption,
+        customMetaData: metaDataFromDelegate,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.video,
@@ -269,6 +314,7 @@ mixin IsmChatPageSendMessageMediaMixin {
     required String conversationId,
     required String userId,
     required WebMediaModel webMediaModel,
+    Map<String, dynamic>? metaDataFromDelegate,
   }) async {
     // Note: createConversation is provided by send_message_core mixin
     conversationId = await _controller.createConversation(
@@ -316,6 +362,7 @@ mixin IsmChatPageSendMessageMediaMixin {
         messageSentAt: sentAt,
         isDownloaded: true,
         caption: webMediaModel.caption,
+        customMetaData: metaDataFromDelegate,
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.image,
