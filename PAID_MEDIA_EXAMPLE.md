@@ -4,11 +4,10 @@ This guide shows how to handle paid media functionality in your app outside the 
 
 ## Overview
 
-When `enablePaidMediaHandling` is enabled, the SDK will call your delegate callback when the user clicks send with selected media (images/videos). You can then:
-1. Show a paid/free screen
-2. Upload media to your server
-3. Send the message from outside the SDK
-4. The message will appear in the chat UI
+When `enablePaidMediaHandling` is enabled, the SDK calls your delegate when the user taps send with selected media (images/videos). You return a [PaidMediaSendResult]:
+
+- **Handled** – You take care of sending (e.g. your own paid flow). SDK does not send.
+- **Send** – SDK continues with its normal upload-and-send flow. Optionally pass **custom metadata** (e.g. `isPaid`, `planId`); the SDK merges it with the message metadata ([IsmChatMetaData.customMetaData]) for each media message sent.
 
 ## Step 1: Enable Paid Media Handling
 
@@ -24,24 +23,34 @@ final chatPageProperties = IsmChatPageProperties(
 
 ## Step 2: Set Up the Delegate Callback
 
+The callback returns [PaidMediaSendResult]:
+
+- `PaidMediaSendResult.handled()` – You handled sending; SDK will not send.
+- `PaidMediaSendResult.send()` – SDK sends using its normal upload-and-send flow.
+- `PaidMediaSendResult.send(metaData)` – Same as above, but the given map is merged into each message’s metadata (top-level).
+
 ```dart
 // In your app initialization (e.g., main.dart or app setup)
 IsmChat.i.onPaidMediaSend = (context, conversation, media) async {
-  // This is called when user clicks send with selected media
-  
   // Show your paid/free screen
-  final shouldSend = await _showPaidFreeScreen(context, media);
-  
-  if (shouldSend) {
-    // Upload and send media from outside SDK
+  final choice = await _showPaidFreeScreen(context, media);
+
+  if (choice == 'handled') {
+    // We send from outside SDK
     await _handlePaidMedia(context, conversation, media);
-    
-    // Return true - SDK won't send, we handled it
-    return true;
+    return PaidMediaSendResult.handled();
   }
-  
-  // Return false - let SDK proceed with normal sending
-  return false;
+
+  if (choice == 'send_with_metadata') {
+    // SDK sends; pass metaData directly with the message
+    return PaidMediaSendResult.send({
+      'isPaid': true,
+      'planId': 'premium',
+    });
+  }
+
+  // SDK sends with no extra metadata
+  return PaidMediaSendResult.send();
 };
 ```
 
