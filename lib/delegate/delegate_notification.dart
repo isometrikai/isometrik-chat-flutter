@@ -132,7 +132,7 @@ mixin IsmChatDelegateNotificationMixin {
 
       // If conversation found, navigate to it
       if (conversation != null) {
-        conversationController
+        await conversationController
           ..updateLocalConversation(conversation)
           ..currentConversation = conversation;
 

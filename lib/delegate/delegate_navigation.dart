@@ -163,7 +163,7 @@ mixin IsmChatDelegateNavigationMixin {
     IsmChatUtility.chatPageController.conversation = conversation;
 
     // Update local conversation
-    conversationController
+    await conversationController
       ..updateLocalConversation(conversation)
       ..currentConversation = conversation;
 
@@ -266,7 +266,7 @@ mixin IsmChatDelegateNavigationMixin {
         ?.call(
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             conversation);
-    controller.updateLocalConversation(conversation);
+    await controller.updateLocalConversation(conversation);
     if (storyMediaUrl == null) {
       await controller.goToChatPage();
     } else {
@@ -309,7 +309,7 @@ mixin IsmChatDelegateNavigationMixin {
         ?.call(
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             ismChatConversation);
-    controller.updateLocalConversation(ismChatConversation);
+    await controller.updateLocalConversation(ismChatConversation);
     await controller.goToChatPage();
   }
 }
