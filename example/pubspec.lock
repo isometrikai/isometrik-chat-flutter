@@ -635,6 +635,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_video_thumbnail_plus:
+    dependency: transitive
+    description:
+      name: flutter_video_thumbnail_plus
+      sha256: "0bf98547192483d0a61c57ec4ac6c5f09b9f50bc3b9982886b0181535a78cf9c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

@@ -29,6 +29,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_slidable: ^4.0.0
   flutter_svg: ^2.2.3
+  flutter_video_thumbnail_plus: ^1.0.5
   flutter_web_plugins:
     sdk: flutter
   fluttertoast: ^9.0.0
