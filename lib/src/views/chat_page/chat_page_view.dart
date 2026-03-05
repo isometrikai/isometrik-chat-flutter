@@ -66,7 +66,8 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       final controller = IsmChatUtility.chatPageController;
       if (AppLifecycleState.resumed == state &&
           !(controller.conversation?.conversationId.isNullOrEmpty == true)) {
-        mqttController.isAppInBackground = false;
+        // mqttController.isAppInBackground = false;
+
         // Fetch new messages that arrived while app was in background
         // This ensures messages are displayed on receiver's screen
         unawaited(controller.getMessagesFromAPI().then((_) async {
@@ -87,7 +88,8 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     }
 
     if (AppLifecycleState.paused == state) {
-      mqttController.isAppInBackground = true;
+      // Don't set isAppInBackground to avoid disconnection
+      // mqttController.isAppInBackground = true;
       IsmChatLog.info('app chat in background');
     }
     if (AppLifecycleState.detached == state) {
