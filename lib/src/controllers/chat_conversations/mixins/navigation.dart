@@ -37,7 +37,8 @@ mixin IsmChatConversationsNavigationMixin on GetxController {
   ///
   /// `members`: List of members to include in the broadcast.
   /// `conversationId`: The ID of the conversation for the broadcast.
-  void goToBroadcastMessage(List<UserDetails> members, String conversationId) {
+  Future<void> goToBroadcastMessage(
+      List<UserDetails> members, String conversationId) async {
     final conversation = IsmChatConversationModel(
       members: members,
       conversationImageUrl: IsmChatAssets.noImage,
@@ -45,14 +46,15 @@ mixin IsmChatConversationsNavigationMixin on GetxController {
       conversationId: conversationId,
     );
 
-    _controller.updateLocalConversation(conversation);
+    await _controller.updateLocalConversation(conversation);
     if (IsmChatResponsive.isWeb(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       IsmChatRoute.goBack();
       if (!IsmChatUtility.chatPageControllerRegistered) {
         IsmChatPageBinding().dependencies();
       }
-      _controller.isRenderChatPageaScreen = IsRenderChatPageScreen.boradcastChatMessagePage;
+      _controller.isRenderChatPageaScreen =
+          IsRenderChatPageScreen.boradcastChatMessagePage;
       final chatPagecontroller = IsmChatUtility.chatPageController
         ..closeOverlay();
       // Defer initialization to allow UI to render first
@@ -66,4 +68,3 @@ mixin IsmChatConversationsNavigationMixin on GetxController {
     }
   }
 }
-

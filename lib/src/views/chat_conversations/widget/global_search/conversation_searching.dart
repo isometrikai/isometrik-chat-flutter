@@ -92,7 +92,7 @@ class IsmChatConversationSearchView extends StatelessWidget {
                                       conversation,
                                     );
                                   }
-                                  controller
+                                  await controller
                                       .updateLocalConversation(conversation);
                                   await controller.goToChatPage();
                                 },

@@ -23,6 +23,8 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
   TextEditingController textEditingController = TextEditingController();
 
   WebMediaModel? webMediaModel;
+  bool isLoading = true;
+  bool hasError = false;
 
   final controller = IsmChatUtility.chatPageController;
 
@@ -33,40 +35,57 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
   }
 
   void _voidConfig(XFile file) async {
-    var name = '';
-    if (kIsWeb) {
-      name = '${DateTime.now().millisecondsSinceEpoch}.png';
-    } else {
-      name = file.path.split('/').last;
-    }
-    var bytes = await file.readAsBytes();
-    final extension = name.split('.').last;
-    var dataSize = IsmChatUtility.formatBytes(bytes.length);
-    var platformFile = IsmchPlatformFile(
-      name: name,
-      size: bytes.length,
-      bytes: bytes,
-      path: file.path,
-      extension: extension,
-    );
+    try {
+      setState(() {
+        isLoading = true;
+        hasError = false;
+      });
 
-    var thumbnailBytes = Uint8List(0);
-    if (kIsWeb) {
-      thumbnailBytes =
-          await IsmChatBlob.getVideoThumbnailBytes(bytes) ?? Uint8List(0);
-    } else {
-      thumbnailBytes = await VideoCompress.getByteThumbnail(file.path,
-              quality: 50, position: 1) ??
-          Uint8List(0);
-    }
+      var name = '';
+      if (kIsWeb) {
+        name = '${DateTime.now().millisecondsSinceEpoch}.png';
+      } else {
+        name = file.path.split('/').last;
+      }
+      var bytes = await file.readAsBytes();
+      final extension = name.split('.').last;
+      var dataSize = IsmChatUtility.formatBytes(bytes.length);
+      var platformFile = IsmchPlatformFile(
+        name: name,
+        size: bytes.length,
+        bytes: bytes,
+        path: file.path,
+        extension: extension,
+      );
 
-    platformFile.thumbnailBytes = thumbnailBytes;
-    webMediaModel = WebMediaModel(
-      dataSize: dataSize,
-      isVideo: true,
-      platformFile: platformFile,
-    );
-    safeUpdate();
+      var thumbnailBytes = Uint8List(0);
+      if (kIsWeb) {
+        thumbnailBytes =
+            await IsmChatBlob.getVideoThumbnailBytesWithPackage(bytes) ??
+                Uint8List(0);
+      } else {
+        thumbnailBytes = await VideoCompress.getByteThumbnail(file.path,
+                quality: 50, position: 1) ??
+            Uint8List(0);
+      }
+
+      platformFile.thumbnailBytes = thumbnailBytes;
+      webMediaModel = WebMediaModel(
+        dataSize: dataSize,
+        isVideo: true,
+        platformFile: platformFile,
+      );
+
+      setState(() {
+        isLoading = false;
+        hasError = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+    }
   }
 
   void _startInit() async {
@@ -126,7 +145,45 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
             child: Stack(
           fit: StackFit.expand,
           children: [
-            VideoViewPage(path: webMediaModel?.platformFile.path ?? ''),
+            if (isLoading)
+              const Center(
+                child: CircularProgressIndicator(
+                  color: IsmChatColors.whiteColor,
+                ),
+              )
+            else if (hasError)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: IsmChatColors.whiteColor,
+                      size: 50,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Failed to load video',
+                      style: IsmChatStyles.w600White16,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        _startInit();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: IsmChatConfig.chatTheme.primaryColor,
+                      ),
+                      child: const Text(
+                        'Retry',
+                        style: TextStyle(color: IsmChatColors.whiteColor),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              VideoViewPage(path: webMediaModel?.platformFile.path ?? ''),
           ],
         )),
         floatingActionButton: Padding(

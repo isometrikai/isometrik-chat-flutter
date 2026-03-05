@@ -318,7 +318,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                 IsmChatProperties
                                     .conversationProperties.onChatTap
                                     ?.call(context, conversation);
-                                controller
+                                await controller
                                     .updateLocalConversation(conversation);
                                 await controller.goToChatPage();
                               },
@@ -460,7 +460,7 @@ class _AlphabetAwareAzListViewState extends State<_AlphabetAwareAzListView> {
                     IsmChatRoute.goBack<void>();
                     IsmChatProperties.conversationProperties.onChatTap
                         ?.call(_, ismChatConversation);
-                    widget.controller
+                    await widget.controller
                         .updateLocalConversation(ismChatConversation);
                     await widget.controller.goToChatPage();
                   }

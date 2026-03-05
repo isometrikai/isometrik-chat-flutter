@@ -118,7 +118,7 @@ class _IsmChatOpenConversationViewState
                                             .kNavigatorKey.currentContext ??
                                         IsmChatConfig.context,
                                     data);
-                                controller.updateLocalConversation(data);
+                                await controller.updateLocalConversation(data);
 
                                 if (IsmChatResponsive.isWeb(IsmChatConfig
                                         .kNavigatorKey.currentContext ??

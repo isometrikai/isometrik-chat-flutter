@@ -154,8 +154,8 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                       bytes.length.toString(),
                                     ),
                                   );
-                                  var thumbnailBytes =
-                                      await IsmChatBlob.getVideoThumbnailBytes(
+                                  var thumbnailBytes = await IsmChatBlob
+                                      .getVideoThumbnailBytesWithPackage(
                                     bytes,
                                   );
                                   controller.webMedia.add(

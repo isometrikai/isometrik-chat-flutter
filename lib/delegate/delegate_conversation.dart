@@ -153,7 +153,7 @@ mixin IsmChatDelegateConversationMixin {
     var controller = IsmChatUtility.conversationController;
     final conversation = controller.getConversation(conversationId);
     if (conversation != null) {
-      controller.updateLocalConversation(conversation);
+      await controller.updateLocalConversation(conversation);
     }
     return conversation;
   }
