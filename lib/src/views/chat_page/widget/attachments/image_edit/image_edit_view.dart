@@ -105,8 +105,9 @@ class IsmChatImageEditView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: ConstrainedBox(
+                            // Fixed height for ~3 lines (16px font + line spacing)
                             constraints: const BoxConstraints(
-                              maxHeight: 150.0,
+                              maxHeight: 96.0,
                             ),
                             child: Scrollbar(
                               child: IsmChatInputField(
@@ -118,7 +119,8 @@ class IsmChatImageEditView extends StatelessWidget {
                                 cursorColor: IsmChatColors.whiteColor,
                                 style: IsmChatStyles.w400White16,
                                 controller: controller.textEditingController,
-                                maxLines: null,
+                                // 3 lines visible, then scrollable
+                                maxLines: 3,
                                 minLines: 1,
                                 textInputAction: TextInputAction.newline,
                                 onChanged: (value) {

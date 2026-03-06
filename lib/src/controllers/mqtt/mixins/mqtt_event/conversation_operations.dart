@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/src/controllers/mqtt/mixins/mqtt_event/utilities.dart';
@@ -28,7 +31,9 @@ mixin IsmChatMqttEventConversationOperationsMixin {
     }
   }
 
-  /// Handles updates to conversation details.
+  /// Handles updates to conversation details (e.g. conversationDetailsUpdated
+  /// with blockedMessage in metaData). Calls conversation details API and
+  /// forces UI refresh when user is on the same chat screen.
   ///
   /// * `actionModel`: The action model containing updated conversation details.
   void handleConversationUpdate(IsmChatMqttActionModel actionModel) async {
@@ -36,18 +41,35 @@ mixin IsmChatMqttEventConversationOperationsMixin {
     if (self is IsmChatMqttEventUtilitiesMixin) {
       final utils = self as IsmChatMqttEventUtilitiesMixin;
       if (utils.isSenderMe(actionModel.userDetails?.userId)) return;
-      if (IsmChatUtility.chatPageControllerRegistered) {
+      final convId = actionModel.conversationId ?? '';
+      if (IsmChatUtility.chatPageControllerRegistered &&
+          convId.isNotEmpty &&
+          IsmChatUtility.chatPageController.conversation?.conversationId ==
+              convId) {
         final controller = IsmChatUtility.chatPageController;
-        if (controller.conversation?.conversationId ==
-            actionModel.conversationId) {
-          await controller.getConverstaionDetails();
-          if (controller.messages.isNotEmpty) {
-            await controller.getMessagesFromAPI(
-              lastMessageTimestamp: controller.messages.last.sentAt,
-            );
-          } else {
-            await controller.getMessagesFromAPI();
+        // Ensure conversation-details API runs (guard can block otherwise)
+        controller.isCoverationApiDetails = true;
+        await controller.getConverstaionDetails();
+        // Rebuild message list so block/unblock from metaData shows in UI
+        await controller.getMessagesFromDB(convId);
+        // Force UI update on UI thread so changes are visible immediately
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (!IsmChatUtility.chatPageControllerRegistered) return;
+          final c = IsmChatUtility.chatPageController;
+          if (c.conversation?.conversationId != convId) return;
+          c.update();
+          if (IsmChatUtility.conversationControllerRegistered) {
+            IsmChatUtility.conversationController.currentConversation =
+                c.conversation;
+            IsmChatUtility.conversationController.update();
           }
+        });
+        if (controller.messages.isNotEmpty) {
+          unawaited(controller.getMessagesFromAPI(
+            lastMessageTimestamp: controller.messages.last.sentAt,
+          ));
+        } else {
+          unawaited(controller.getMessagesFromAPI());
         }
       }
       if (IsmChatUtility.conversationControllerRegistered) {
