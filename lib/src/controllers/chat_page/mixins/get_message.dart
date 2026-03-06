@@ -38,13 +38,15 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
     var localMessages = messages.values.toList();
-    if (localMessages.isEmpty &&
-        _controller.conversation?.metaData?.blockedMessage != null) {
-      localMessages.add(
-        IsmChatMessageModel.fromJson(
-          _controller.conversation?.metaData?.blockedMessage?.toJson() ?? '',
-        ),
+    // Always add block/unblock message when set (for real-time MQTT and empty-chat case)
+    if (_controller.conversation?.metaData?.blockedMessage != null) {
+      final blockMsg = IsmChatMessageModel.fromJson(
+        _controller.conversation!.metaData!.blockedMessage!.toJson(),
       );
+      if (!localMessages.any((m) =>
+          m.customType == blockMsg.customType && m.sentAt == blockMsg.sentAt)) {
+        localMessages.add(blockMsg);
+      }
     }
     if (localMessages.isNotEmpty) {
       localMessages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
