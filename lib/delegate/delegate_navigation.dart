@@ -5,6 +5,89 @@ part of '../isometrik_chat_flutter.dart';
 /// This mixin contains methods related to navigating to conversations from outside
 /// the chat context, such as from push notifications or external app triggers.
 mixin IsmChatDelegateNavigationMixin {
+  /// Creates a group conversation with API-only flow.
+  ///
+  /// If [conversationImageUrl] is not provided and [groupImageBytes] with
+  /// [groupImageExtension] is provided, SDK uploads image using presigned URL
+  /// flow and uses uploaded media URL for group creation.
+  ///
+  /// This method does not navigate or open any chat page.
+  /// Returns `true` when group conversation API succeeds, otherwise `false`.
+  Future<bool> createGroup({
+    required List<String> members,
+    required String groupTitle,
+    String groupImage = '',
+    Uint8List? groupImageBytes,
+    String? groupImageExtension,
+    IsmChatMetaData? metaData,
+    bool pushNotifications = true,
+    String? customType,
+    IsmChatConversationType conversationType = IsmChatConversationType.private,
+  }) async {
+    String uploadedConversationImageUrl = groupImage;
+
+    final shouldUploadImage = uploadedConversationImageUrl.isEmpty &&
+        groupImageBytes != null &&
+        groupImageBytes.isNotEmpty &&
+        (groupImageExtension?.isNotEmpty == true);
+
+    if (shouldUploadImage) {
+      if (!Get.isRegistered<IsmChatCommonController>()) {
+        IsmChatCommonBinding().dependencies();
+      }
+      final commonController = Get.find<IsmChatCommonController>();
+      final presignedUrlResponse = await commonController.getPresignedUrl(
+        isLoading: true,
+        userIdentifier: IsmChatConfig.communicationConfig.userConfig.userEmail ??
+            IsmChatConfig.communicationConfig.userConfig.userName ??
+            IsmChatConfig.communicationConfig.userConfig.userId,
+        mediaExtension: groupImageExtension!,
+        bytes: groupImageBytes,
+      );
+      if (presignedUrlResponse != null) {
+        final uploadResponseCode = await commonController.updatePresignedUrl(
+          presignedUrl: presignedUrlResponse.presignedUrl,
+          bytes: groupImageBytes,
+          isLoading: true,
+        );
+        if (uploadResponseCode == 200) {
+          uploadedConversationImageUrl = presignedUrlResponse.mediaUrl ?? '';
+        }
+      }
+    }
+    final conversation = IsmChatConversationModel(
+      userIds: members,
+      messagingDisabled: false,
+      conversationImageUrl: uploadedConversationImageUrl,
+      conversationTitle: groupTitle,
+      isGroup: true,
+      unreadMessagesCount: 0,
+      lastMessageDetails: null,
+      lastMessageSentAt: 0,
+      membersCount: members.length,
+      conversationType: conversationType,
+      metaData: metaData,
+      customType: customType,
+      pushNotifications: pushNotifications,
+    );
+    if (!Get.isRegistered<IsmChatCommonController>()) {
+      IsmChatCommonBinding().dependencies();
+    }
+    final createdConversation = await Get.find<IsmChatCommonController>()
+        .createConversation(
+      conversation: conversation,
+      isGroup: true,
+      userId: members,
+      metaData: metaData,
+      searchableTags: const [''],
+      pushNotifications: pushNotifications,
+      conversationType: conversationType,
+    );
+
+    return createdConversation != null &&
+        (createdConversation.conversationId?.isNotEmpty ?? false);
+  }
+
   /// Opens the conversation info screen for any user from outside the chat context.
   ///
   /// This method allows the host app to display conversation/contact info for any user

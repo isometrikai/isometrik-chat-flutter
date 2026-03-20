@@ -99,6 +99,60 @@ mixin IsmChatNavigationOperationsMixin {
     );
   }
 
+  /// Creates a group conversation from app side using API-only flow.
+  ///
+  /// This method does not open chat page or navigate to any UI.
+  /// Returns `true` when group creation succeeds, otherwise `false`.
+  ///
+  /// Example:
+  /// ```dart
+  /// final isCreated = await IsmChat.i.createGroup(
+  ///   members: ['user_1', 'user_2'],
+  ///   groupTitle: 'My Team',
+  ///   groupImage: 'https://example.com/group.jpg',
+  /// );
+  /// if (isCreated) {
+  ///   // group created
+  /// }
+  /// ```
+  Future<bool> createGroup({
+    required List<String> members,
+    required String groupTitle,
+    String groupImage = '',
+    Uint8List? groupImageBytes,
+    String? groupImageExtension,
+    IsmChatMetaData? metaData,
+    bool pushNotifications = true,
+    String? customType,
+    IsmChatConversationType conversationType = IsmChatConversationType.private,
+  }) async {
+    assert(
+      members.isNotEmpty && groupTitle.isNotEmpty,
+      '''Input Error: Please make sure that required fields are filled out.
+      members and groupTitle cannot be empty.''',
+    );
+    assert(
+      groupImage.isNotEmpty ||
+          (groupImageBytes != null &&
+              groupImageBytes.isNotEmpty &&
+              (groupImageExtension?.isNotEmpty == true)),
+      '''Input Error: Please provide either conversationImageUrl or both
+      groupImageBytes and groupImageExtension.''',
+    );
+
+    return await _delegate.createGroup(
+      members: members,
+      groupTitle: groupTitle,
+      groupImage: groupImage,
+      groupImageBytes: groupImageBytes,
+      groupImageExtension: groupImageExtension,
+      metaData: metaData,
+      pushNotifications: pushNotifications,
+      customType: customType,
+      conversationType: conversationType,
+    );
+  }
+
   /// Initiates a chat from outside the chat screen with a pre-existing conversation.
   ///
   /// This function allows you to start a conversation with a user from anywhere in your app,
