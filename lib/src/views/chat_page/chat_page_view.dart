@@ -66,7 +66,8 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       final controller = IsmChatUtility.chatPageController;
       if (AppLifecycleState.resumed == state &&
           !(controller.conversation?.conversationId.isNullOrEmpty == true)) {
-        mqttController.isAppInBackground = false;
+        // mqttController.isAppInBackground = false;
+
         // Fetch new messages that arrived while app was in background
         // This ensures messages are displayed on receiver's screen
         unawaited(controller.getMessagesFromAPI().then((_) async {
@@ -74,18 +75,21 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
           final conversationId = controller.conversation?.conversationId ?? '';
           if (conversationId.isNotEmpty) {
             await controller.getMessagesFromDB(conversationId);
+            // Get status updates first to ensure proper read/delivered state
+            await controller.getMessageForStatus();
+            // Then mark messages as read - this will trigger proper blue tick updates
+            await controller.readAllMessages();
+            // Refresh messages one more time to ensure UI updates with latest status
+            await controller.getMessagesFromDB(conversationId);
           }
-          // Then get status updates and mark as read
-          unawaited(controller.getMessageForStatus());
-          await Future.delayed(const Duration(milliseconds: 100));
-          unawaited(controller.readAllMessages());
         }));
         IsmChatLog.info('app chat in resumed');
       }
     }
 
     if (AppLifecycleState.paused == state) {
-      mqttController.isAppInBackground = true;
+      // Don't set isAppInBackground to avoid disconnection
+      // mqttController.isAppInBackground = true;
       IsmChatLog.info('app chat in background');
     }
     if (AppLifecycleState.detached == state) {

@@ -271,7 +271,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                             );
                           }
 
-                          conversationController
+                          await conversationController
                               .updateLocalConversation(conversationModel);
                           controller.messages.clear();
                           if (widget.fromMessagePage) {

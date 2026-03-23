@@ -43,37 +43,75 @@ class IsmChatImageMessage extends StatelessWidget {
                 if (message.metaData?.caption?.isNotEmpty == true) ...[
                   Padding(
                     padding: IsmChatDimens.edgeInsetsTop5,
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: isExpandedNotifier,
-                      builder: (context, isExpanded, _) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            message.metaData?.caption ?? '',
-                            style: message.style,
-                            textAlign: TextAlign.start,
-                            overflow: isExpanded
-                                ? TextOverflow.visible
-                                : TextOverflow.ellipsis,
-                            maxLines: isExpanded ? null : 3,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final caption = message.metaData?.caption ?? '';
+                        // Determine if caption is overflowing right now given expansion state:
+                        final textSpan = TextSpan(
+                          text: caption,
+                          style: message.style,
+                        );
+                        final textPainter = TextPainter(
+                          text: textSpan,
+                          maxLines: isExpandedNotifier.value ? null : 3,
+                          textDirection: TextDirection.ltr,
+                        )..layout(
+                            maxWidth: constraints.maxWidth > 0
+                                ? constraints.maxWidth
+                                : context.width * 0.7);
+
+                        final didOverflow = textPainter.didExceedMaxLines;
+
+                        return ValueListenableBuilder<bool>(
+                          valueListenable: isExpandedNotifier,
+                          builder: (context, isExpanded, _) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                caption,
+                                style: message.style,
+                                textAlign: TextAlign.start,
+                                overflow: isExpanded
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                                maxLines: isExpanded ? null : 3,
+                              ),
+                              if (!isExpanded && didOverflow)
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: IsmChatDimens.edgeInsets0,
+                                    minimumSize: const Size(0, 0),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () {
+                                    isExpandedNotifier.value = true;
+                                  },
+                                  child: Text(
+                                    'Show more',
+                                    style: message.readTextStyle,
+                                  ),
+                                ),
+                              if (isExpanded)
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: IsmChatDimens.edgeInsets0,
+                                    minimumSize: const Size(0, 0),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () {
+                                    isExpandedNotifier.value = false;
+                                  },
+                                  child: Text(
+                                    'Show less',
+                                    style: message.readTextStyle,
+                                  ),
+                                ),
+                            ],
                           ),
-                          if (_isCaptionOverflowing(context))
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                padding: IsmChatDimens.edgeInsets0,
-                                minimumSize: const Size(0, 0),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              onPressed: () {
-                                isExpandedNotifier.value = !isExpanded;
-                              },
-                              child: Text(
-                                isExpanded ? 'Show less' : 'Show more',
-                                style: message.readTextStyle,
-                              ),
-                            ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   )
                 ]

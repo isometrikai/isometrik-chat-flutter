@@ -97,7 +97,7 @@ class _ConversationList extends StatelessWidget {
               if (IsmChatProperties.conversationProperties.shouldGoToChatPage
                       ?.call(context, conversation) ??
                   true) {
-                controller.updateLocalConversation(conversation);
+                await controller.updateLocalConversation(conversation);
                 await controller.goToChatPage();
               }
             },
@@ -263,7 +263,7 @@ class _SlidableWidgetState extends State<_SlidableWidget>
               if (IsmChatProperties.conversationProperties.shouldGoToChatPage
                       ?.call(context, widget.conversation) ??
                   true) {
-                controller.updateLocalConversation(widget.conversation);
+                await controller.updateLocalConversation(widget.conversation);
 
                 await controller.goToChatPage();
               }

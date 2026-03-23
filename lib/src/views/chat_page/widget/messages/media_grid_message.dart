@@ -7,7 +7,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Widget to display multiple images/videos in a grid layout similar to WhatsApp
 class IsmChatMediaGridMessage extends StatelessWidget {
-  const IsmChatMediaGridMessage({
+  IsmChatMediaGridMessage({
     super.key,
     required this.messages,
     required this.sentByMe,
@@ -15,6 +15,9 @@ class IsmChatMediaGridMessage extends StatelessWidget {
 
   final List<IsmChatMessageModel> messages;
   final bool sentByMe;
+
+  /// Tracks expand/collapse state for long captions (show more / show less).
+  final isExpandedNotifier = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -228,13 +231,54 @@ class IsmChatMediaGridMessage extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Text(
-      caption,
-      style: messageWithCaption.style,
-      textAlign: TextAlign.start,
-      overflow: TextOverflow.ellipsis,
-      maxLines: 3,
+    return ValueListenableBuilder<bool>(
+      valueListenable: isExpandedNotifier,
+      builder: (context, isExpanded, _) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            caption,
+            style: messageWithCaption.style,
+            textAlign: TextAlign.start,
+            overflow: isExpanded
+                ? TextOverflow.visible
+                : TextOverflow.ellipsis,
+            maxLines: isExpanded ? null : 3,
+          ),
+          if (_isCaptionOverflowing(context, caption, messageWithCaption.style))
+            TextButton(
+              style: TextButton.styleFrom(
+                padding: IsmChatDimens.edgeInsets0,
+                minimumSize: const Size(0, 0),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              onPressed: () {
+                isExpandedNotifier.value = !isExpanded;
+              },
+              child: Text(
+                isExpanded ? 'Show less' : 'Show more',
+                style: messageWithCaption.readTextStyle,
+              ),
+            ),
+        ],
+      ),
     );
+  }
+
+  /// Returns true if caption exceeds 3 lines so we can show "Show more" button.
+  bool _isCaptionOverflowing(
+    BuildContext context,
+    String caption,
+    TextStyle style,
+  ) {
+    if (caption.isEmpty) return false;
+    final textPainter = TextPainter(
+      text: TextSpan(text: caption, style: style),
+      maxLines: 3,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: MediaQuery.sizeOf(context).width * 0.7);
+    return textPainter.didExceedMaxLines;
   }
 
   Widget _buildGridImage(

@@ -221,7 +221,8 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     if (conversationId.isNullOrEmpty) return;
 
     if (deleteFromServer) {
-      final response = await _controller.viewModel.deleteChat(conversationId ?? '');
+      final response =
+          await _controller.viewModel.deleteChat(conversationId ?? '');
       if (response?.hasError ?? true) return;
     }
     if (shouldUpdateLocal) {
@@ -242,15 +243,20 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     if (conversationId == null || conversationId.isEmpty) {
       return;
     }
-    return _controller.viewModel.clearAllMessages(conversationId, fromServer: fromServer);
+    return _controller.viewModel
+        .clearAllMessages(conversationId, fromServer: fromServer);
   }
 
   /// Updates the current conversation with new details.
   ///
   /// `conversation`: The conversation model to update.
-  void updateLocalConversation(IsmChatConversationModel conversation) {
+  Future<void> updateLocalConversation(
+      IsmChatConversationModel conversation) async {
     _controller.currentConversation = conversation;
     _controller.currentConversationId = conversation.conversationId ?? '';
+
+    // Save conversation to database to persist metadata and other changes
+    await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
   }
 
   /// Updates a conversation's metadata on the server.
@@ -307,4 +313,3 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     }
   }
 }
-

@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
+import 'dart:io';
+import 'package:flutter_video_thumbnail_plus/flutter_video_thumbnail_plus.dart';
+import 'package:flutter/services.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:flutter_video_thumbnail_plus/flutter_video_thumbnail_plus.dart';
 
 class IsmChatBlob {
   /// call function for create blob url with bytes
@@ -39,42 +43,126 @@ class IsmChatBlob {
   }
 
   /// call function for create video thumbanil with bytes
-  static Future<Uint8List?> getVideoThumbnailBytes(Uint8List videoBytes) async {
-    final blob = html.Blob([videoBytes], 'video/mp4');
-    final url = html.Url.createObjectUrlFromBlob(blob);
+  // static Future<Uint8List?> getVideoThumbnailBytes(Uint8List videoBytes) async {
+  //   final blob = html.Blob([videoBytes], 'video/mp4');
+  //   final url = html.Url.createObjectUrlFromBlob(blob);
 
-    final videoElement = html.VideoElement()
-      ..src = url
-      // ..crossOrigin = 'anonymous'
-      ..autoplay = false
-      ..controls = false
-      ..muted = true
-      // ..preload = 'metadata'
-      ..style.display = 'none';
+  //   final videoElement = html.VideoElement()
+  //     ..src = url
+  //     // ..crossOrigin = 'anonymous'
+  //     ..autoplay = false
+  //     ..controls = false
+  //     ..muted = true
+  //     // ..preload = 'metadata'
+  //     ..style.display = 'none';
 
-    await videoElement.onLoadedMetadata.first;
+  //   await videoElement.onLoadedMetadata.first;
 
-    await videoElement.play();
-    await Future.delayed(const Duration(seconds: 1));
-    videoElement.pause();
+  //   await videoElement.play();
+  //   await Future.delayed(const Duration(seconds: 1));
+  //   videoElement.pause();
 
-    final canvas = html.CanvasElement(
-        width: videoElement.videoWidth, height: videoElement.videoHeight);
+  //   final canvas = html.CanvasElement(
+  //       width: videoElement.videoWidth, height: videoElement.videoHeight);
 
-    canvas.context2D
-      ..drawImageScaled(
-          videoElement, 0, 0, videoElement.videoWidth, videoElement.videoHeight)
-      ..getImageData(0, 0, videoElement.videoWidth, videoElement.videoHeight);
-    // Get the image data as a byte buffer and convert it to a base64 encoded string.
+  //   canvas.context2D
+  //     ..drawImageScaled(
+  //         videoElement, 0, 0, videoElement.videoWidth, videoElement.videoHeight)
+  //     ..getImageData(0, 0, videoElement.videoWidth, videoElement.videoHeight);
+  //   // Get the image data as a byte buffer and convert it to a base64 encoded string.
 
-    final thumbnailBytes = await canvas.toBlob('image/jpeg');
-    videoElement.remove();
-    html.Url.revokeObjectUrl(url);
+  //   final thumbnailBytes = await canvas.toBlob('image/jpeg');
+  //   videoElement.remove();
+  //   html.Url.revokeObjectUrl(url);
 
-    final reader = html.FileReader()..readAsArrayBuffer(thumbnailBytes);
-    await reader.onLoadEnd.first;
+  //   final reader = html.FileReader()..readAsArrayBuffer(thumbnailBytes);
+  //   await reader.onLoadEnd.first;
 
-    return Uint8List.fromList(reader.result as List<int>);
+  //   return Uint8List.fromList(reader.result as List<int>);
+  // }
+
+  static Future<Uint8List?> getVideoThumbnailBytesWithPackage(
+      Uint8List videoBytes) async {
+    try {
+      print('=== TESTING NEW PACKAGE FUNCTION ===');
+      print(
+          'Starting thumbnail generation with flutter_video_thumbnail_plus for ${videoBytes.length} bytes');
+      print('Platform: ${kIsWeb ? "Web" : "Mobile"}');
+
+      if (kIsWeb) {
+        // Web implementation - use thumbnailDataWeb for direct byte processing
+        print('🌐 WEB: Using thumbnailDataWeb for direct byte processing');
+
+        try {
+          // Generate thumbnail using package with bytes directly
+          final thumbnailData =
+              await FlutterVideoThumbnailPlus.thumbnailDataWeb(
+            videoBytes: videoBytes,
+            quality: 100,
+          );
+
+          if (thumbnailData != null && thumbnailData.isNotEmpty) {
+            print(
+                '✅ SUCCESS: Web thumbnail generated: ${thumbnailData.length} bytes');
+            return thumbnailData;
+          } else {
+            print('❌ FAILED: Web package returned empty data');
+            return null;
+          }
+        } catch (e) {
+          print('❌ ERROR: Web package failed: $e');
+          print('Stack trace: ${StackTrace.current}');
+          return null;
+        }
+      } else {
+        // Mobile implementation - save to temporary file first
+        print('📱 MOBILE: Creating temporary file for thumbnail generation');
+
+        try {
+          // Create a temporary file
+          final tempDir = await Directory.systemTemp.createTemp();
+          final tempFile = File(
+              '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}.mp4');
+          await tempFile.writeAsBytes(videoBytes);
+          print('Created temp file: ${tempFile.path}');
+          print('Temp file exists: ${await tempFile.exists()}');
+          print('Temp file size: ${await tempFile.length()} bytes');
+
+          // Generate thumbnail using the package with file path
+          print(
+              'Calling FlutterVideoThumbnailPlus.thumbnailData with file path...');
+          final thumbnailData = await FlutterVideoThumbnailPlus.thumbnailData(
+            video: tempFile.path,
+            imageFormat: ImageFormat.jpeg,
+            maxHeight: 720,
+            maxWidth: 1280,
+            quality: 95,
+          );
+
+          print('Package returned: ${thumbnailData?.length ?? 0} bytes');
+
+          // Clean up temp file
+          await tempFile.delete();
+          print('Deleted temp file');
+
+          if (thumbnailData != null && thumbnailData.isNotEmpty) {
+            print(
+                '✅ SUCCESS: Mobile thumbnail generated: ${thumbnailData.length} bytes');
+            return thumbnailData;
+          } else {
+            print('❌ FAILED: Mobile package returned empty data');
+            return null;
+          }
+        } catch (e) {
+          print('❌ ERROR: Mobile package failed: $e');
+          print('Stack trace: ${StackTrace.current}');
+          return null;
+        }
+      }
+    } catch (e) {
+      print('❌ ERROR: Test function failed: $e');
+      return null;
+    }
   }
 
   ///generate video thumbnail in web...

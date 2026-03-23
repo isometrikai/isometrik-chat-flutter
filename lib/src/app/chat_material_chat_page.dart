@@ -91,7 +91,7 @@ class _IsmChatPageState extends State<IsmChatPage> {
     while (!IsmChatUtility.conversationControllerRegistered) {
       await Future.delayed(const Duration(milliseconds: 500));
     }
-    IsmChatUtility.conversationController
+    await IsmChatUtility.conversationController
         .updateLocalConversation(widget.conversation);
   }
 

@@ -19,7 +19,11 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
 
   @override
   void dispose() {
-    controller.cameraController.dispose();
+    // Prevent CameraPreview from building with a disposed controller on rebuild.
+    controller.areCamerasInitialized = false;
+    try {
+      controller.cameraController.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
@@ -82,7 +86,10 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                         onPressed: () async {
                           if (IsmChatResponsive.isWeb(context)) {
                             controller.isCameraView = false;
-                            await controller.cameraController.dispose();
+                            controller.areCamerasInitialized = false;
+                            try {
+                              await controller.cameraController.dispose();
+                            } catch (_) {}
                           } else {
                             IsmChatRoute.goBack();
                           }
@@ -132,7 +139,10 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                               onLongPressEnd: (_) async {
                                 var file = await controller.cameraController
                                     .stopVideoRecording();
-                                await controller.cameraController.dispose();
+                                controller.areCamerasInitialized = false;
+                                try {
+                                  await controller.cameraController.dispose();
+                                } catch (_) {}
                                 setState(() {
                                   controller.isRecording = false;
                                   controller.forRecordTimer?.cancel();
@@ -154,8 +164,8 @@ class _CameraScreenViewState extends State<IsmChatCameraView> {
                                       bytes.length.toString(),
                                     ),
                                   );
-                                  var thumbnailBytes =
-                                      await IsmChatBlob.getVideoThumbnailBytes(
+                                  var thumbnailBytes = await IsmChatBlob
+                                      .getVideoThumbnailBytesWithPackage(
                                     bytes,
                                   );
                                   controller.webMedia.add(

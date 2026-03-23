@@ -304,19 +304,31 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                       child: Row(
                         children: [
                           Expanded(
-                            child: IsmChatInputField(
-                              fillColor: IsmChatColors.greyColor,
-                              autofocus: false,
-                              padding: IsmChatDimens.edgeInsets0,
-                              hint: IsmChatStrings.addCaption,
-                              hintStyle: IsmChatStyles.w400White16,
-                              cursorColor: IsmChatColors.whiteColor,
-                              style: IsmChatStyles.w400White16,
-                              controller: controller.textEditingController,
-                              onChanged: (value) {
-                                controller.webMedia[controller.assetsIndex]
-                                    .caption = value;
-                              },
+                            child: ConstrainedBox(
+                              // Fixed height for ~3 lines (16px font + line spacing)
+                              constraints: const BoxConstraints(
+                                maxHeight: 96.0,
+                              ),
+                              child: Scrollbar(
+                                child: IsmChatInputField(
+                                  fillColor: IsmChatColors.greyColor,
+                                  autofocus: false,
+                                  padding: IsmChatDimens.edgeInsets0,
+                                  hint: IsmChatStrings.addCaption,
+                                  hintStyle: IsmChatStyles.w400White16,
+                                  cursorColor: IsmChatColors.whiteColor,
+                                  style: IsmChatStyles.w400White16,
+                                  controller: controller.textEditingController,
+                                  // 3 lines visible, then scrollable
+                                  maxLines: 3,
+                                  minLines: 1,
+                                  textInputAction: TextInputAction.newline,
+                                  onChanged: (value) {
+                                    controller.webMedia[controller.assetsIndex]
+                                        .caption = value;
+                                  },
+                                ),
+                              ),
                             ),
                           ),
                           IsmChatDimens.boxWidth8,

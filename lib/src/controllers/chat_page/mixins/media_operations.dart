@@ -34,10 +34,17 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
           extension: extension,
         );
         if (IsmChatConstants.videoExtensions.contains(extension)) {
-          final thumbnailBytes =
-              await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
-          if (thumbnailBytes != null) {
-            platformFile.thumbnailBytes = thumbnailBytes;
+          try {
+            print(
+                'Generating thumbnail for video: ${x?.name}, size: ${bytes?.length} bytes');
+            final thumbnailBytes =
+                await IsmChatBlob.getVideoThumbnailBytesWithPackage(
+                    bytes ?? Uint8List(0));
+            print(
+                'Thumbnail generation result: ${thumbnailBytes?.length ?? 0} bytes');
+
+            // Always add the video, even if thumbnail fails
+            platformFile.thumbnailBytes = thumbnailBytes ?? Uint8List(0);
             _controller.webMedia.add(
               WebMediaModel(
                 isVideo: true,
@@ -45,6 +52,19 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
                 dataSize: dataSize,
               ),
             );
+            print('Video added to webMedia successfully');
+          } catch (e) {
+            print('Error in video thumbnail generation: $e');
+            // Fallback: add video without thumbnail if thumbnail generation fails
+            platformFile.thumbnailBytes = Uint8List(0);
+            _controller.webMedia.add(
+              WebMediaModel(
+                isVideo: true,
+                platformFile: platformFile,
+                dataSize: dataSize,
+              ),
+            );
+            print('Video added to webMedia with fallback (no thumbnail)');
           }
         } else {
           _controller.webMedia.add(
@@ -88,10 +108,16 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
         extension: extension,
       );
       if (IsmChatConstants.videoExtensions.contains(extension)) {
-        final thumbnailBytes =
-            await IsmChatBlob.getVideoThumbnailBytes(bytes ?? Uint8List(0));
-        if (thumbnailBytes != null) {
-          platformFile.thumbnailBytes = thumbnailBytes;
+        try {
+          print(
+              'Generating thumbnail for video: $name, size: ${bytes?.length} bytes');
+          final thumbnailBytes =
+              await IsmChatBlob.getVideoThumbnailBytesWithPackage(
+                  bytes ?? Uint8List(0));
+          print(
+              'Thumbnail generation result: ${thumbnailBytes?.length ?? 0} bytes');
+          // print('Raw thumbnail bytes: ${thumbnailBytes?.take(50).toList() ?? []}'); // Commented out to avoid byte spam
+          platformFile.thumbnailBytes = thumbnailBytes ?? Uint8List(0);
           _controller.webMedia.add(
             WebMediaModel(
               isVideo: true,
@@ -99,6 +125,18 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
               dataSize: dataSize,
             ),
           );
+          print('Video added to webMedia successfully');
+        } catch (e) {
+          print('Error in video thumbnail generation: $e');
+          platformFile.thumbnailBytes = Uint8List(0);
+          _controller.webMedia.add(
+            WebMediaModel(
+              isVideo: true,
+              platformFile: platformFile,
+              dataSize: dataSize,
+            ),
+          );
+          print('Video added to webMedia with fallback (no thumbnail)');
         }
       } else {
         _controller.webMedia.add(
@@ -304,5 +342,3 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
     }
   }
 }
-
-

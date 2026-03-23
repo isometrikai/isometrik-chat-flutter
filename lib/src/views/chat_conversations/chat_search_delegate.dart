@@ -63,8 +63,8 @@ class IsmChatSearchDelegate extends SearchDelegate<void> {
                 itemBuilder: (_, index) {
                   var conversation = _controller.suggestions[index];
                   return GestureDetector(
-                    onTap: () {
-                      _controller.updateLocalConversation(conversation);
+                    onTap: () async {
+                      await _controller.updateLocalConversation(conversation);
                       onChatTap(_, conversation, false);
                     },
                     child: IsmChatConversationCard(
