@@ -165,7 +165,8 @@ class IsmChatMetaData {
         groupCastId: groupCastId ?? this.groupCastId,
       );
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
+  Map<String, dynamic> toMap() =>
+      <String, dynamic>{
         'locationAddress': locationAddress,
         'locationSubAddress': locationSubAddress,
         'profilePic': profilePic,
@@ -173,7 +174,6 @@ class IsmChatMetaData {
         'firstName': firstName,
         'contacts': contacts?.map((x) => x.toMap()).toList(),
         'customType': customType,
-        'customMetaData': customMetaData,
         'assetList': assetList,
         'duration': duration?.inSeconds,
         'captionMessage': caption,
@@ -186,7 +186,8 @@ class IsmChatMetaData {
         'blockedMessage': blockedMessage?.toMap(),
         'isBroadCastMessage': isBroadCastMessage,
         'groupCastId': groupCastId,
-      }.removeNullValues();
+      }.removeNullValues()
+        ..addAll(customMetaData ?? {});
 
   String toJson() => json.encode(toMap());
 

@@ -36,6 +36,7 @@ class IsmChatPageProperties {
     this.backgroundImageUrl,
     this.canReplayMessage,
     this.conversationDetailsApiInterval = const Duration(minutes: 1),
+    this.enablePaidMediaHandling = false,
   });
 
   final Widget? placeholder;
@@ -162,4 +163,24 @@ class IsmChatPageProperties {
   /// )
   /// ```
   final Duration conversationDetailsApiInterval;
+
+  /// Enable paid media handling for external processing.
+  ///
+  /// When enabled, selected media (images/videos) will be delegated to external handler
+  /// via [IsmChat.i.onPaidMediaSend] when user clicks send button, instead of being
+  /// sent through the normal SDK flow.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// Example:
+  /// ```dart
+  /// IsmChatPageProperties(
+  ///   enablePaidMediaHandling: true,
+  /// )
+  /// ```
+  ///
+  /// **Note:** When enabled, you must set the delegate callback:
+  /// - [IsmChat.i.onPaidMediaSend] - Called when user clicks send with selected media.
+  ///   The delegate should show paid/free screen and send message from outside SDK.
+  final bool enablePaidMediaHandling;
 }

@@ -31,6 +31,7 @@ part 'delegate/delegate_message.dart';
 part 'delegate/delegate_mqtt.dart';
 part 'delegate/delegate_navigation.dart';
 part 'delegate/delegate_notification.dart';
+part 'delegate/delegate_paid_media.dart';
 part 'delegate/delegate_ui.dart';
 part 'delegate/delegate_user.dart';
 
@@ -43,6 +44,7 @@ part 'mixins/user_operations.dart';
 part 'mixins/message_operations.dart';
 part 'mixins/navigation_operations.dart';
 part 'mixins/notification_operations.dart';
+part 'mixins/paid_media_operations.dart';
 part 'mixins/cleanup_operations.dart';
 part 'mixins/update_operations.dart';
 
@@ -95,6 +97,7 @@ class IsmChat
         IsmChatMessageOperationsMixin,
         IsmChatNavigationOperationsMixin,
         IsmChatNotificationOperationsMixin,
+        IsmChatPaidMediaOperationsMixin,
         IsmChatCleanupOperationsMixin,
         IsmChatUpdateOperationsMixin {
   /// Factory constructor for creating a new instance of [IsmChat].
@@ -136,7 +139,7 @@ class IsmChat
   /// ```dart
   /// await IsmChat.i.initialize(...);
   /// ```
-  static IsmChat i = IsmChat._(const IsmChatDelegate());
+  static IsmChat i = IsmChat._(IsmChatDelegate());
 
   /// The static instance of [IsmChat].
   ///

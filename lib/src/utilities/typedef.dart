@@ -176,3 +176,22 @@ typedef MessageRecordsCallback
 
 typedef NotificationBodyCallback = String Function(
     String, IsmChatCustomMessageType);
+
+/// Callback for handling paid media when user clicks send.
+///
+/// This callback is invoked when user clicks send button with selected media
+/// (images or videos) and paid media handling is enabled. The callback receives:
+/// - [BuildContext] - The current build context
+/// - [IsmChatConversationModel] - The current conversation
+/// - [List<WebMediaModel>] - The selected media (images and/or videos)
+///
+/// Return [PaidMediaSendResult]:
+/// - [PaidMediaSendResult.handled] – delegate handled the media; SDK will not send.
+/// - [PaidMediaSendResult.send] or [PaidMediaSendResult.send(metaData)] –
+///   SDK continues with the same upload-and-send flow; if [metaData] is
+///   provided, it is passed directly as the message metadata for each media sent.
+typedef PaidMediaSendCallback = Future<PaidMediaSendResult> Function(
+  BuildContext,
+  IsmChatConversationModel?,
+  List<WebMediaModel>,
+);
