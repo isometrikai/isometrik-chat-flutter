@@ -12,7 +12,7 @@ mixin IsmChatDelegateUserMixin {
     String? userProfileImageUrl,
     String? userName,
     String? userIdentifier,
-    IsmChatMetaData? metaData,
+    Map<String, dynamic>? metaData,
     bool isLoading = false,
   }) async {
     final repository = IsmChatConversationsRepository();
@@ -20,7 +20,7 @@ mixin IsmChatDelegateUserMixin {
       userProfileImageUrl: userProfileImageUrl,
       userName: userName,
       userIdentifier: userIdentifier,
-      metaData: metaData?.toMap(),
+      metaData: metaData,
       isloading: isLoading,
     );
     return updatedUser != null;
