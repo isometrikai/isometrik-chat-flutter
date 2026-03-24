@@ -53,7 +53,7 @@ mixin IsmChatUserOperationsMixin {
   /// ```dart
   /// final user = await IsmChat.i.getUserData(isLoading: true);
   /// ```
-  Future<UserDetails?> getUserData({bool isLoading = false}) async =>
+  Future<Map<String, dynamic>?> getUserData({bool isLoading = false}) async =>
       await _delegate.getUserData(isLoading: isLoading);
 
   /// Updates current user's metadata on server.

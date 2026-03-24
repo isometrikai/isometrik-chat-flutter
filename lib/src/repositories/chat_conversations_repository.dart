@@ -160,6 +160,26 @@ class IsmChatConversationsRepository {
     }
   }
 
+  Future<Map<String, dynamic>?> getIsometrikUserData(
+      {bool isLoading = false}) async {
+    try {
+      var response = await _apiWrapper.get(
+        IsmChatAPI.userDetails,
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+      if (response.hasError) {
+        return null;
+      }
+
+      var data = jsonDecode(response.data) as Map<String, dynamic>;
+      return data;
+    } catch (e, st) {
+      IsmChatLog.error('GetUserDataError $e', st);
+      return null;
+    }
+  }
+
   Future<UserDetails?> updateUserData({
     String? userProfileImageUrl,
     String? userName,

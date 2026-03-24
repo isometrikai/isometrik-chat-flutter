@@ -8,16 +8,10 @@ mixin IsmChatDelegateUserMixin {
   /// Gets current user data.
   ///
   /// Returns [UserDetails] on success, otherwise `null`.
-  Future<UserDetails?> getUserData({bool isLoading = false}) async {
+  Future<Map<String, dynamic>?> getUserData({bool isLoading = false}) async {
     final repository = IsmChatConversationsRepository();
-    final user = await repository.getUserData(isLoading: isLoading);
-    if (user != null) {
-      await IsmChatConfig.dbWrapper?.userDetailsBox.put(
-        IsmChatStrings.userData,
-        user.toJson(),
-      );
-    }
-    return user;
+    final data = await repository.getIsometrikUserData(isLoading: isLoading);
+    return data;
   }
 
   /// Updates current user's metadata.
