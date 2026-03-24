@@ -44,6 +44,34 @@ mixin IsmChatUserOperationsMixin {
   /// ```
   Future<int> get unreadCount async => await _delegate.unreadCount;
 
+  /// Updates current user's metadata on server.
+  ///
+  /// This method exposes public API to update user metadata fields using the
+  /// SDK's existing user update endpoint.
+  ///
+  /// Returns `true` if update succeeds, otherwise `false`.
+  ///
+  /// Example:
+  /// ```dart
+  /// final updated = await IsmChat.i.updateUserMetaData(
+  ///   metaData: IsmChatMetaData(customMetaData: {'role': 'admin'}),
+  /// );
+  /// ```
+  Future<bool> updateUser({
+    String? userProfileImageUrl,
+    String? userName,
+    String? userIdentifier,
+    IsmChatMetaData? metaData,
+    bool isLoading = false,
+  }) async =>
+      await _delegate.updateUser(
+        userProfileImageUrl: userProfileImageUrl,
+        userName: userName,
+        userIdentifier: userIdentifier,
+        metaData: metaData,
+        isLoading: isLoading,
+      );
+
   /// Unblock a user.
   ///
   /// This function unblocks a user. It returns a future that resolves to void.

@@ -5,6 +5,27 @@ part of '../isometrik_chat_flutter.dart';
 /// This mixin contains methods related to user operations such as blocking/unblocking,
 /// getting blocked users, and updating user activity timestamps.
 mixin IsmChatDelegateUserMixin {
+  /// Updates current user's metadata.
+  ///
+  /// Returns `true` if update succeeds, otherwise `false`.
+  Future<bool> updateUser({
+    String? userProfileImageUrl,
+    String? userName,
+    String? userIdentifier,
+    IsmChatMetaData? metaData,
+    bool isLoading = false,
+  }) async {
+    final repository = IsmChatConversationsRepository();
+    final updatedUser = await repository.updateUserData(
+      userProfileImageUrl: userProfileImageUrl,
+      userName: userName,
+      userIdentifier: userIdentifier,
+      metaData: metaData?.toMap(),
+      isloading: isLoading,
+    );
+    return updatedUser != null;
+  }
+
   /// Unblocks a user.
   Future<void> unblockUser({
     required String opponentId,
