@@ -461,7 +461,10 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                       ?.call(context, member) ??
                                   member.metaData?.aboutText?.title ??
                                   ''),
-                              leading: IsmChatImage.profile(member.profileUrl),
+                              leading: IsmChatImage.profile(
+                                member.profileUrl,
+                                name: member.userName.capitalizeFirst ?? '',
+                              ),
                             );
                           },
                         ),
