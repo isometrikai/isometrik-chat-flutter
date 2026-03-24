@@ -163,6 +163,9 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                             child: IsmChatImage.profile(
                               controller.conversation?.profileUrl ?? '',
                               dimensions: IsmChatDimens.hundred,
+                              name: controller.conversation?.chatName
+                                      ?.capitalizeFirst ??
+                                  '',
                             ),
                           ),
                           if (controller.conversation?.isGroup ?? false)
