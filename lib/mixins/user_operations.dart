@@ -45,6 +45,17 @@ mixin IsmChatUserOperationsMixin {
   /// ```
   Future<int> get unreadCount async => await _delegate.unreadCount;
 
+  /// Gets current user's data from server.
+  ///
+  /// Returns [UserDetails] on success, otherwise `null`.
+  ///
+  /// Example:
+  /// ```dart
+  /// final user = await IsmChat.i.getUserData(isLoading: true);
+  /// ```
+  Future<UserDetails?> getUserData({bool isLoading = false}) async =>
+      await _delegate.getUserData(isLoading: isLoading);
+
   /// Updates current user's metadata on server.
   ///
   /// This method exposes public API to update user metadata fields using the
