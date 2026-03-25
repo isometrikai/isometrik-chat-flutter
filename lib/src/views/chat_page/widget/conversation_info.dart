@@ -330,13 +330,25 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               onPressed: () {
                                 controller.participnatsEditingController
                                     .clear();
-                                if (IsmChatResponsive.isWeb(context)) {
-                                  IsmChatUtility.conversationController
-                                          .isRenderChatPageaScreen =
-                                      IsRenderChatPageScreen.groupEligibleView;
+                                if (IsmChatProperties
+                                        .chatPageProperties
+                                        .onAddGroupMembersTap !=
+                                    null) {
+                                  IsmChatProperties
+                                      .chatPageProperties.onAddGroupMembersTap!
+                                      .call(
+                                    context,
+                                    controller.conversation,
+                                  );
                                 } else {
-                                  IsmChatRoute.goToRoute(
-                                      const IsmChatGroupEligibleUser());
+                                  if (IsmChatResponsive.isWeb(context)) {
+                                    IsmChatUtility.conversationController
+                                            .isRenderChatPageaScreen =
+                                        IsRenderChatPageScreen.groupEligibleView;
+                                  } else {
+                                    IsmChatRoute.goToRoute(
+                                        const IsmChatGroupEligibleUser());
+                                  }
                                 }
                               },
                               icon: Icon(
