@@ -4,9 +4,10 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:photo_view/photo_view.dart';
 
 class IsmChatProfilePicView extends StatelessWidget {
-  const IsmChatProfilePicView({super.key, this.user});
+  const IsmChatProfilePicView({super.key, this.userName, this.imageUrl});
 
-  final UserDetails? user;
+  final String? userName;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -25,13 +26,13 @@ class IsmChatProfilePicView extends StatelessWidget {
           ),
           backgroundColor: IsmChatColors.blackColor,
           title: Text(
-            user?.userName ?? '',
+            userName ?? '',
             style: IsmChatStyles.w600White18,
           ),
         ),
         body: Center(
             child: PhotoView(
-          imageProvider: NetworkImage(user?.profileUrl ?? ''),
+          imageProvider: NetworkImage(imageUrl ?? ''),
           loadingBuilder: (context, event) => const IsmChatLoadingDialog(),
           wantKeepAlive: true,
         )),
