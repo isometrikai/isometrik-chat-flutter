@@ -157,7 +157,27 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                           IsmChatTapHandler(
                             onTap: () {
                               IsmChatRoute.goToRoute(IsmChatProfilePicView(
-                                user: controller.conversation?.opponentDetails,
+                                userName:
+                                    controller.conversation?.isGroup == true
+                                        ? controller
+                                                .conversation
+                                                ?.conversationTitle
+                                                ?.capitalizeFirst ??
+                                            ''
+                                        : controller
+                                                .conversation
+                                                ?.opponentDetails
+                                                ?.userName
+                                                .capitalizeFirst ??
+                                            '',
+                                imageUrl:
+                                    controller.conversation?.isGroup == true
+                                        ? controller.conversation
+                                                ?.conversationImageUrl ??
+                                            ''
+                                        : controller.conversation
+                                                ?.opponentDetails?.profileUrl ??
+                                            '',
                               ));
                             },
                             child: IsmChatImage.profile(
@@ -330,8 +350,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               onPressed: () {
                                 controller.participnatsEditingController
                                     .clear();
-                                if (IsmChatProperties
-                                        .chatPageProperties
+                                if (IsmChatProperties.chatPageProperties
                                         .onAddGroupMembersTap !=
                                     null) {
                                   IsmChatProperties
@@ -344,7 +363,8 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                                   if (IsmChatResponsive.isWeb(context)) {
                                     IsmChatUtility.conversationController
                                             .isRenderChatPageaScreen =
-                                        IsRenderChatPageScreen.groupEligibleView;
+                                        IsRenderChatPageScreen
+                                            .groupEligibleView;
                                   } else {
                                     IsmChatRoute.goToRoute(
                                         const IsmChatGroupEligibleUser());
