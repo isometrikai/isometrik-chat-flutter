@@ -22,22 +22,20 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
     final messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
-
-    if (messages == null) {
-      _controller.messages.clear();
-      return;
-    }
+    // If local cache is empty, continue with an empty map so we can still
+    // render the base conversation-created row and let API sync fill messages.
+    final safeMessages = messages ?? <String, IsmChatMessageModel>{};
     if (IsmChatConfig.shouldPendingMessageSend) {
       var pendingmessages = await IsmChatConfig.dbWrapper
           ?.getMessage(conversationId, IsmChatDbBox.pending);
       if (pendingmessages != null) {
-        messages.addAll(pendingmessages);
+        safeMessages.addAll(pendingmessages);
       }
     } else {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
-    var localMessages = messages.values.toList();
+    var localMessages = safeMessages.values.toList();
     // Always add block/unblock message when set (for real-time MQTT and empty-chat case)
     if (_controller.conversation?.metaData?.blockedMessage != null) {
       final blockMsg = IsmChatMessageModel.fromJson(
@@ -127,10 +125,12 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         _controller.isMessagesLoading = true;
       }
       final timeStamp = lastMessageTimestamp ??
-          (_controller.messages.last.customType ==
-                  IsmChatCustomMessageType.conversationCreated
+          (_controller.messages.isEmpty
               ? 0
-              : _controller.messages.last.sentAt + 7000);
+              : (_controller.messages.last.customType ==
+                      IsmChatCustomMessageType.conversationCreated
+                  ? 0
+                  : _controller.messages.last.sentAt + 7000));
       final messagesList = (List<IsmChatMessageModel>.from(
           _controller.messages))
         ..removeWhere(

@@ -21,18 +21,27 @@ mixin IsmChatPageOtherOperationsMixin on GetxController {
     required int adminCount,
     required bool isUserAdmin,
   }) async {
+    final conversationId = _controller.conversation?.conversationId ?? '';
+    if (conversationId.isEmpty) return;
     if (adminCount == 1 && isUserAdmin) {
       final members = _controller.groupMembers.where((e) => !e.isAdmin).toList();
       final member = members[Random().nextInt(members.length)];
       await _controller.makeAdmin(member.userId, member.userName, false);
     }
-    final didLeft = await _controller.leaveConversation(_controller.conversation!.conversationId!);
+    final didLeft = await _controller.leaveConversation(conversationId);
     if (didLeft) {
+      _controller.conversationController
+        ..currentConversation = null
+        ..currentConversationId = ''
+        ..isRenderChatPageaScreen = IsRenderChatPageScreen.none;
+      _controller
+        ..messages.clear()
+        ..selectedMessage.clear()
+        ..isMessageSeleted = false;
       IsmChatRoute.goBack(); // to Chat Page
       IsmChatRoute.goBack(); // to Conversation Page
       await Future.wait([
-        IsmChatConfig.dbWrapper!
-            .removeConversation(_controller.conversation!.conversationId!),
+        IsmChatConfig.dbWrapper!.removeConversation(conversationId),
         _controller.conversationController.getChatConversations(),
       ]);
     }
