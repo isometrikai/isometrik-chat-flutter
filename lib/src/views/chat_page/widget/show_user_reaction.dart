@@ -160,12 +160,27 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                         }
                       },
                       child: ListTile(
-                        title: Text(showOwnUser
-                            ? IsmChatStrings.you
-                            : widget._controller.conversation?.isGroup ?? false
-                                ? reactionUser?.userName ?? ''
-                                : widget._controller.conversation?.chatName ??
-                                    ''),
+                        // Show "You" for self, else prefer first+last name.
+                        // Fallback to username when first/last is unavailable.
+                        title: Text(
+                          showOwnUser
+                              ? IsmChatStrings.you
+                              : () {
+                                  final firstName =
+                                      reactionUser?.metaData?.firstName ?? '';
+                                  final lastName =
+                                      reactionUser?.metaData?.lastName ?? '';
+                                  final fullName =
+                                      '$firstName $lastName'.trim();
+                                  if (fullName.isNotEmpty) {
+                                    return fullName;
+                                  }
+                                  return reactionUser?.userName ??
+                                      widget
+                                          ._controller.conversation?.chatName ??
+                                      '';
+                                }(),
+                        ),
                         trailing: SizedBox(
                           height: IsmChatDimens.thirtyTwo,
                           width: IsmChatDimens.thirtyTwo,
@@ -186,13 +201,16 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                             ),
                           ),
                         ),
-                        subtitle: showOwnUser
-                            ? const Text(IsmChatStrings.removeReaction)
-                            : widget._controller.conversation?.isGroup ?? false
-                                ? Text(reactionUser?.userIdentifier ?? '')
-                                : Text(widget._controller.conversation
-                                        ?.opponentDetails?.userIdentifier ??
-                                    ''),
+                        subtitle: Text(
+                          showOwnUser
+                              ? IsmChatStrings.removeReaction
+                              : (widget._controller.conversation?.isGroup ??
+                                      false)
+                                  ? (reactionUser?.userName ?? '')
+                                  : (widget._controller.conversation
+                                          ?.opponentDetails?.userName ??
+                                      ''),
+                        ),
                         leading: IsmChatImage.profile(showOwnUser
                             ? IsmChatConfig.communicationConfig.userConfig
                                         .userProfile?.isNotEmpty ==
@@ -245,22 +263,37 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                             }
                           },
                           child: ListTile(
-                            title: Text(showOwnUser
-                                ? IsmChatStrings.you
-                                : widget._controller.conversation?.isGroup ??
-                                        false
-                                    ? reactionUser?.userName ?? ''
-                                    : widget._controller.conversation
-                                            ?.chatName ??
-                                        ''),
-                            subtitle: showOwnUser
-                                ? const Text(IsmChatStrings.removeReaction)
-                                : widget._controller.conversation?.isGroup ??
-                                        false
-                                    ? Text(reactionUser?.userIdentifier ?? '')
-                                    : Text(widget._controller.conversation
-                                            ?.opponentDetails?.userIdentifier ??
-                                        ''),
+                            title: Text(
+                              showOwnUser
+                                  ? IsmChatStrings.you
+                                  : () {
+                                      final firstName =
+                                          reactionUser?.metaData?.firstName ??
+                                              '';
+                                      final lastName =
+                                          reactionUser?.metaData?.lastName ??
+                                              '';
+                                      final fullName =
+                                          '$firstName $lastName'.trim();
+                                      if (fullName.isNotEmpty) {
+                                        return fullName;
+                                      }
+                                      return reactionUser?.userName ??
+                                          widget._controller.conversation
+                                              ?.chatName ??
+                                          '';
+                                    }(),
+                            ),
+                            subtitle: Text(
+                              showOwnUser
+                                  ? IsmChatStrings.removeReaction
+                                  : (widget._controller.conversation?.isGroup ??
+                                          false)
+                                      ? (reactionUser?.userName ?? '')
+                                      : (widget._controller.conversation
+                                              ?.opponentDetails?.userName ??
+                                          ''),
+                            ),
                             leading: IsmChatImage.profile(showOwnUser
                                 ? IsmChatConfig.communicationConfig.userConfig
                                             .userProfile?.isNotEmpty ==
