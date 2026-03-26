@@ -77,6 +77,7 @@ mixin IsmChatPageSendMessageContactMixin {
     );
 
     _controller.messages.add(contactMessage);
+    unawaited(_controller.scrollDown());
     _controller.isreplying = false;
 
     if (!_controller.isBroadcast) {

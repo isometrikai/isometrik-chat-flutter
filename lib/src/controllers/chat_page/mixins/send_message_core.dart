@@ -235,6 +235,7 @@ mixin IsmChatPageSendMessageCoreMixin {
       ).toList(),
     );
     _controller.messages.add(textMessage);
+    unawaited(_controller.scrollDown());
     _controller.isreplying = false;
     _controller.chatInputController.clear();
     _controller.isMessageSent = false;
@@ -407,6 +408,7 @@ mixin IsmChatPageSendMessageCoreMixin {
       ),
     );
     _controller.messages.add(aboutTextMessage);
+    unawaited(_controller.scrollDown());
     _controller.isreplying = false;
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!

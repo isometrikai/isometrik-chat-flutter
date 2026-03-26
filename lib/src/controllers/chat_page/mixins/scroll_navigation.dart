@@ -32,7 +32,10 @@ mixin IsmChatPageScrollNavigationMixin on GetxController {
             lastMessageTimestamp: 0,
           );
         }
-        _controller.toggleEmojiBoard(false, false);
+        // Keep keyboard focus while scrolling/sending; only collapse emoji panel.
+        if (_controller.showEmojiBoard) {
+          _controller.showEmojiBoard = false;
+        }
         if (IsmChatDimens.percentHeight(1) * 0.3 <
             (_controller.messagesScrollController.offset)) {
           _controller.showDownSideButton = true;

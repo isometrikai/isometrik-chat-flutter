@@ -141,6 +141,7 @@ mixin IsmChatPageSendMessageDocumentMixin {
 
       if (documentMessage != null) {
         _controller.messages.add(documentMessage);
+        unawaited(_controller.scrollDown());
         _controller.isreplying = false;
 
         if (!_controller.isBroadcast) {

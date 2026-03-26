@@ -110,6 +110,7 @@ mixin IsmChatPageSendMessageAudioMixin {
     );
 
     _controller.messages.add(audioMessage);
+    unawaited(_controller.scrollDown());
 
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper
