@@ -19,9 +19,16 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   Future<void> getMessagesFromDB(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
     _controller.closeOverlay();
+    final requestedConversationId = conversationId;
 
     final messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
+    // Guard against race conditions: if user switched chat while this async DB
+    // read was running, ignore this result so messages from old chat don't show.
+    if ((_controller.conversation?.conversationId ?? '') !=
+        requestedConversationId) {
+      return;
+    }
     // If local cache is empty, continue with an empty map so we can still
     // render the base conversation-created row and let API sync fill messages.
     final safeMessages = messages ?? <String, IsmChatMessageModel>{};
@@ -136,6 +143,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         ..removeWhere(
             (element) => element.customType == IsmChatCustomMessageType.date);
       final conversationID = _controller.conversation?.conversationId ?? '';
+      final requestedConversationId = conversationID;
 
       final data = await _controller.viewModel.getChatMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
@@ -143,6 +151,13 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         lastMessageTimestamp: timeStamp,
         isBroadcast: isBroadcast,
       );
+      // Guard against race conditions: do not apply API results if active chat
+      // changed before response came back.
+      if ((_controller.conversation?.conversationId ?? '') !=
+          requestedConversationId) {
+        _controller.canCallCurrentApi = false;
+        return;
+      }
 
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = false;
@@ -182,12 +197,19 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       final groupcastID = groupcastId.isNotEmpty
           ? groupcastId
           : _controller.conversation?.conversationId ?? '';
+      final requestedConversationId = groupcastID;
       final data = await _controller.viewModel.getBroadcastMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
         groupcastId: groupcastID,
         lastMessageTimestamp: timeStamp,
         isBroadcast: isBroadcast,
       );
+      // Same chat-isolation guard for broadcast messages.
+      if ((_controller.conversation?.conversationId ?? '') !=
+          requestedConversationId) {
+        _controller.canCallCurrentApi = false;
+        return;
+      }
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = false;
       }
