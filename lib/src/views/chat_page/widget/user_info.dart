@@ -164,6 +164,12 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
       tag: IsmChat.i.chatPageTag,
       builder: (controller) {
+        // Clear previous references to prevent memory leaks
+        // (Optional: assign empty lists before populating)
+        // This ensures no residual data persists across rebuilds
+        mediaList = [];
+        mediaListLinks = [];
+        mediaListDocs = [];
         final isDocumentAllowed = IsmChatProperties
             .chatPageProperties.attachments
             .contains(IsmChatAttachmentType.document);

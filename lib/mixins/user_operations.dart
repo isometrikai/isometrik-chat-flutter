@@ -47,8 +47,6 @@ mixin IsmChatUserOperationsMixin {
 
   /// Gets current user's data from server.
   ///
-  /// Returns [UserDetails] on success, otherwise `null`.
-  ///
   /// Example:
   /// ```dart
   /// final user = await IsmChat.i.getUserData(isLoading: true);
