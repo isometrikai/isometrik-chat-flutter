@@ -150,6 +150,7 @@ class IsmChatStrings {
   static const String loremIpsum =
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod';
   static const String demoDate = '25 Dec 2016';
+  static const String mediaLinks = 'Media and Links ';
   static const String mediaLinksAndDocs = 'Media, Links and Docs';
   static const String links = 'Links';
   static const String docs = 'Docs';

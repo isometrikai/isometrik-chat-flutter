@@ -22,8 +22,9 @@ class IsmChatConversationCreatedMessage extends StatelessWidget {
           ) ??
           '';
     } else {
-      name =
-          '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}';
+      // name =
+      // '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}';
+      name = message.userName ?? '';
     }
     return Center(
       child: Container(
