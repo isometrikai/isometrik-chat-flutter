@@ -85,6 +85,7 @@ mixin IsmChatPageSendMessageLocationMixin {
     );
 
     _controller.messages.add(locationMessage);
+    unawaited(_controller.scrollDown());
     _controller.isreplying = false;
     _controller.chatInputController.clear();
 

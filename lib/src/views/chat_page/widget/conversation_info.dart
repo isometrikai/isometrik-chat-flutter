@@ -67,526 +67,552 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
             await controller.getConverstaionDetails();
           }
         },
-        builder: (controller) => Scaffold(
-          backgroundColor: IsmChatColors.blueGreyColor,
-          appBar: IsmChatAppBar(
-            height: IsmChatDimens.fiftyFive,
-            onBack: !IsmChatResponsive.isWeb(context)
-                ? null
-                : () {
-                    IsmChatUtility.conversationController
-                        .isRenderChatPageaScreen = IsRenderChatPageScreen.none;
-                  },
-            title: Text(
-              controller.conversation?.isGroup ?? false
-                  ? IsmChatStrings.groupInfo
-                  : IsmChatStrings.contactInfo,
-              style: IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
-                  IsmChatStyles.w600White18,
-            ),
-            action: [
-              if (controller.conversation?.isGroup ?? false)
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: IsmChatDimens.five, top: IsmChatDimens.two),
-                  child: PopupMenuButton(
-                    icon: Icon(
-                      Icons.more_vert,
-                      color: IsmChatConfig
-                              .chatTheme.chatPageHeaderTheme?.iconColor ??
-                          IsmChatColors.whiteColor,
-                    ),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 1,
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.edit,
-                              color: IsmChatColors.blackColor,
-                            ),
-                            IsmChatDimens.boxWidth8,
-                            const Text(IsmChatStrings.changeGroupTitle)
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 2,
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.photo,
-                              color: IsmChatColors.blackColor,
-                            ),
-                            IsmChatDimens.boxWidth8,
-                            const Text(IsmChatStrings.changeGroupPhoto)
-                          ],
-                        ),
-                      ),
-                    ],
-                    elevation: 2,
-                    onSelected: (value) {
-                      if (value == 1) {
-                        controller.showDialogForChangeGroupTitle();
-                      } else {
-                        controller.showDialogForChangeGroupProfile();
-                      }
+        builder: (controller) {
+          final isDocumentAllowed = IsmChatProperties
+              .chatPageProperties.attachments
+              .contains(IsmChatAttachmentType.document);
+          final mediaLinksDocsCount = conversationController.mediaList.length +
+              conversationController.mediaListLinks.length +
+              (isDocumentAllowed
+                  ? conversationController.mediaListDocs.length
+                  : 0);
+          return Scaffold(
+            backgroundColor: IsmChatColors.blueGreyColor,
+            appBar: IsmChatAppBar(
+              height: IsmChatDimens.fiftyFive,
+              onBack: !IsmChatResponsive.isWeb(context)
+                  ? null
+                  : () {
+                      IsmChatUtility
+                              .conversationController.isRenderChatPageaScreen =
+                          IsRenderChatPageScreen.none;
                     },
-                  ),
-                ),
-            ],
-          ),
-          resizeToAvoidBottomInset: false,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Padding(
-                padding: IsmChatDimens.edgeInsets16_0_16_0,
-                child: Column(
-                  children: [
-                    IsmChatDimens.boxHeight16,
-                    IsmChatTapHandler(
-                      onTap: controller.conversation?.isGroup ?? false
-                          ? () {
-                              controller.showDialogForChangeGroupProfile();
-                            }
-                          : null,
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          IsmChatTapHandler(
-                            onTap: () {
-                              IsmChatRoute.goToRoute(IsmChatProfilePicView(
-                                user: controller.conversation?.opponentDetails,
-                              ));
-                            },
-                            child: IsmChatImage.profile(
-                              controller.conversation?.profileUrl ?? '',
-                              dimensions: IsmChatDimens.hundred,
-                            ),
-                          ),
-                          if (controller.conversation?.isGroup ?? false)
-                            CircleAvatar(
-                              radius: IsmChatDimens.forteen,
-                              child: Icon(
-                                Icons.edit_outlined,
-                                size: IsmChatDimens.eighteen,
-                              ),
-                            )
-                        ],
+              title: Text(
+                controller.conversation?.isGroup ?? false
+                    ? IsmChatStrings.groupInfo
+                    : IsmChatStrings.contactInfo,
+                style:
+                    IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
+                        IsmChatStyles.w600White18,
+              ),
+              action: [
+                if (controller.conversation?.isGroup ?? false)
+                  Padding(
+                    padding: EdgeInsets.only(
+                        right: IsmChatDimens.five, top: IsmChatDimens.two),
+                    child: PopupMenuButton(
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: IsmChatConfig
+                                .chatTheme.chatPageHeaderTheme?.iconColor ??
+                            IsmChatColors.whiteColor,
                       ),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 1,
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.edit,
+                                color: IsmChatColors.blackColor,
+                              ),
+                              IsmChatDimens.boxWidth8,
+                              const Text(IsmChatStrings.changeGroupTitle)
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 2,
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.photo,
+                                color: IsmChatColors.blackColor,
+                              ),
+                              IsmChatDimens.boxWidth8,
+                              const Text(IsmChatStrings.changeGroupPhoto)
+                            ],
+                          ),
+                        ),
+                      ],
+                      elevation: 2,
+                      onSelected: (value) {
+                        if (value == 1) {
+                          controller.showDialogForChangeGroupTitle();
+                        } else {
+                          controller.showDialogForChangeGroupProfile();
+                        }
+                      },
                     ),
-                    IsmChatDimens.boxHeight5,
-                    IsmChatTapHandler(
+                  ),
+              ],
+            ),
+            resizeToAvoidBottomInset: false,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Padding(
+                  padding: IsmChatDimens.edgeInsets16_0_16_0,
+                  child: Column(
+                    children: [
+                      IsmChatDimens.boxHeight16,
+                      IsmChatTapHandler(
                         onTap: controller.conversation?.isGroup ?? false
                             ? () {
-                                controller.groupTitleController.text =
-                                    controller.conversation?.chatName ?? '';
-                                controller.showDialogForChangeGroupTitle();
+                                controller.showDialogForChangeGroupProfile();
                               }
                             : null,
-                        child: Text(
-                          controller.conversation?.chatName ?? '',
-                          textAlign: TextAlign.center,
-                          style: IsmChatStyles.w600Black27,
-                        )),
-                    if (!(controller.conversation?.isGroup ?? false)) ...[
-                      Text(
-                        controller.conversation?.opponentDetails
-                                ?.userIdentifier ??
-                            '',
-                        style: IsmChatStyles.w500GreyLight17,
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            IsmChatTapHandler(
+                              onTap: () {
+                                IsmChatRoute.goToRoute(IsmChatProfilePicView(
+                                  userName:
+                                      controller.conversation?.isGroup == true
+                                          ? controller
+                                                  .conversation
+                                                  ?.conversationTitle
+                                                  ?.capitalizeFirst ??
+                                              ''
+                                          : controller
+                                                  .conversation
+                                                  ?.opponentDetails
+                                                  ?.userName
+                                                  .capitalizeFirst ??
+                                              '',
+                                  imageUrl:
+                                      controller.conversation?.isGroup == true
+                                          ? controller.conversation
+                                                  ?.conversationImageUrl ??
+                                              ''
+                                          : controller
+                                                  .conversation
+                                                  ?.opponentDetails
+                                                  ?.profileUrl ??
+                                              '',
+                                ));
+                              },
+                              child: IsmChatImage.profile(
+                                controller.conversation?.profileUrl ?? '',
+                                dimensions: IsmChatDimens.hundred,
+                                name: controller.conversation?.chatName
+                                        .capitalizeFirst ??
+                                    '',
+                              ),
+                            ),
+                            if (controller.conversation?.isGroup ?? false)
+                              CircleAvatar(
+                                radius: IsmChatDimens.forteen,
+                                child: Icon(
+                                  Icons.edit_outlined,
+                                  size: IsmChatDimens.eighteen,
+                                ),
+                              )
+                          ],
+                        ),
                       ),
-                    ],
-                    if (controller.conversation?.isGroup ?? false) ...[
-                      Text(
-                        '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
-                        style: IsmChatStyles.w400Grey14,
-                      ),
-                    ],
-                    IsmChatDimens.boxHeight10,
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (controller.conversation?.isGroup ?? false) ...[
-                          Padding(
-                            padding: IsmChatDimens.edgeInsets10_5_10_10,
-                            child: Text(
-                                '${IsmChatStrings.createdOn} ${controller.conversation?.createdAt?.toLastMessageTimeString} ${IsmChatStrings.by} ${controller.conversation?.createdByUserName}'),
-                          ),
-                        ],
-                        if ((!(controller.conversation?.isGroup ?? false)) &&
-                            IsmChatProperties
-                                    .conversationProperties.opponentSubTitle !=
-                                null) ...[
+                      IsmChatDimens.boxHeight5,
+                      IsmChatTapHandler(
+                          onTap: controller.conversation?.isGroup ?? false
+                              ? () {
+                                  controller.groupTitleController.text =
+                                      controller.conversation?.chatName ?? '';
+                                  controller.showDialogForChangeGroupTitle();
+                                }
+                              : null,
+                          child: Text(
+                            controller.conversation?.chatName ?? '',
+                            textAlign: TextAlign.center,
+                            style: IsmChatStyles.w600Black27,
+                          )),
+                      if (!(controller.conversation?.isGroup ?? false)) ...[
+                        Text(
+                          controller.conversation?.opponentDetails
+                                  ?.userIdentifier ??
+                              '',
+                          style: IsmChatStyles.w500GreyLight17,
+                        ),
+                      ],
+                      if (controller.conversation?.isGroup ?? false) ...[
+                        Text(
+                          '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
+                          style: IsmChatStyles.w400Grey14,
+                        ),
+                      ],
+                      IsmChatDimens.boxHeight10,
+                      Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (controller.conversation?.isGroup ?? false) ...[
+                            Padding(
+                              padding: IsmChatDimens.edgeInsets10_5_10_10,
+                              child: Text(
+                                  '${IsmChatStrings.createdOn} ${controller.conversation?.createdAt?.toLastMessageTimeString} ${IsmChatStrings.by} ${controller.conversation?.createdByUserName}'),
+                            ),
+                          ],
+                          if ((!(controller.conversation?.isGroup ?? false)) &&
+                              IsmChatProperties.conversationProperties
+                                      .opponentSubTitle !=
+                                  null) ...[
+                            Container(
+                              width: IsmChatDimens.percentWidth(1),
+                              padding: IsmChatDimens.edgeInsets16_8_16_8,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    IsmChatDimens.sixteen),
+                                color: IsmChatColors.whiteColor,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    IsmChatStrings.aboutMe,
+                                    style: IsmChatStyles.w400Black16,
+                                  ),
+                                  IsmChatDimens.boxHeight5,
+                                  Text(
+                                    IsmChatProperties.conversationProperties
+                                            .opponentSubTitle
+                                            ?.call(
+                                                context,
+                                                controller.conversation
+                                                    ?.opponentDetails) ??
+                                        '',
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IsmChatDimens.boxHeight10,
+                          ],
                           Container(
-                            width: IsmChatDimens.percentWidth(1),
                             padding: IsmChatDimens.edgeInsets16_8_16_8,
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(IsmChatDimens.sixteen),
                               color: IsmChatColors.whiteColor,
                             ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  IsmChatStrings.aboutMe,
-                                  style: IsmChatStyles.w400Black16,
-                                ),
-                                IsmChatDimens.boxHeight5,
-                                Text(
-                                  IsmChatProperties.conversationProperties
-                                          .opponentSubTitle
-                                          ?.call(
-                                              context,
-                                              controller.conversation
-                                                  ?.opponentDetails) ??
-                                      '',
-                                ),
-                              ],
+                            child: IsmChatTapHandler(
+                              onTap: () {
+                                if (IsmChatResponsive.isWeb(context)) {
+                                  IsmChatUtility.conversationController
+                                          .isRenderChatPageaScreen =
+                                      IsRenderChatPageScreen
+                                          .coversationMediaView;
+                                } else {
+                                  IsmChatRoute.goToRoute(
+                                    IsmMedia(
+                                      mediaList:
+                                          conversationController.mediaList,
+                                      mediaListLinks:
+                                          conversationController.mediaListLinks,
+                                      mediaListDocs: isDocumentAllowed
+                                          ? conversationController.mediaListDocs
+                                          : const [],
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  SvgPicture.asset(
+                                    IsmChatAssets.gallarySvg,
+                                  ),
+                                  IsmChatDimens.boxWidth12,
+                                  Text(
+                                    isDocumentAllowed
+                                        ? IsmChatStrings.mediaLinksAndDocs
+                                        : IsmChatStrings.mediaLinks,
+                                    style: IsmChatStyles.w500Black16,
+                                  ),
+                                  const Spacer(),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '$mediaLinksDocsCount',
+                                        style: IsmChatStyles.w500GreyLight17,
+                                      ),
+                                      IsmChatDimens.boxWidth4,
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: IsmChatColors.greyColorLight,
+                                        size: IsmChatDimens.fifteen,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          IsmChatDimens.boxHeight10,
                         ],
+                      ),
+                      if (controller.conversation?.isGroup ?? false) ...[
+                        IsmChatDimens.boxHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: IsmChatDimens.edgeInsets10,
+                              child: Text(
+                                '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
+                                style: IsmChatStyles.w500Black16,
+                              ),
+                            ),
+                            if (controller
+                                    .conversation!.usersOwnDetails?.isAdmin ??
+                                false)
+                              IconButton(
+                                onPressed: () {
+                                  controller.participnatsEditingController
+                                      .clear();
+                                  if (IsmChatProperties.chatPageProperties
+                                          .onAddGroupMembersTap !=
+                                      null) {
+                                    IsmChatProperties.chatPageProperties
+                                        .onAddGroupMembersTap!
+                                        .call(
+                                      context,
+                                      controller.conversation,
+                                    );
+                                  } else {
+                                    if (IsmChatResponsive.isWeb(context)) {
+                                      IsmChatUtility.conversationController
+                                              .isRenderChatPageaScreen =
+                                          IsRenderChatPageScreen
+                                              .groupEligibleView;
+                                    } else {
+                                      IsmChatRoute.goToRoute(
+                                          const IsmChatGroupEligibleUser());
+                                    }
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.group_add_outlined,
+                                  color: IsmChatConfig.chatTheme.primaryColor,
+                                ),
+                              )
+                          ],
+                        ),
+                        IsmChatInputField(
+                          autofocus: false,
+                          hint: 'Search using name or email',
+                          cursorColor: IsmChatConfig.chatTheme.primaryColor,
+                          style: IsmChatStyles.w400Black16,
+                          controller: controller.participnatsEditingController,
+                          suffixIcon: controller
+                                  .participnatsEditingController.text.isNotEmpty
+                              ? IsmChatTapHandler(
+                                  onTap: () {
+                                    controller
+                                      ..participnatsEditingController.clear()
+                                      ..onGroupSearch('')
+                                      ..update();
+                                  },
+                                  child: Icon(
+                                    Icons.close_rounded,
+                                    color: IsmChatConfig.chatTheme.primaryColor,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.search_rounded,
+                                  color: IsmChatConfig.chatTheme.primaryColor,
+                                ),
+                          onChanged: (_) {
+                            controller
+                              ..onGroupSearch(_)
+                              ..update();
+                          },
+                        ),
+                        Obx(
+                          () => ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            separatorBuilder: (_, index) =>
+                                IsmChatDimens.boxWidth4,
+                            itemCount: controller.groupMembers.length,
+                            itemBuilder: (_, index) {
+                              var member = controller.groupMembers[index];
+                              return ListTile(
+                                onTap: member.isAdmin
+                                    ? (controller.conversation?.usersOwnDetails
+                                                    ?.isAdmin ??
+                                                false) &&
+                                            controller
+                                                    .conversation
+                                                    ?.usersOwnDetails
+                                                    ?.memberId !=
+                                                member.userId
+                                        ? () {
+                                            IsmChatContextWidget
+                                                .showDialogContext(
+                                              content: IsmChatGroupAdminDialog(
+                                                  user: member,
+                                                  isAdmin: true,
+                                                  groupName: controller
+                                                          .conversation
+                                                          ?.conversationTitle ??
+                                                      ''),
+                                            );
+                                          }
+                                        : IsmChatConfig.communicationConfig
+                                                    .userConfig.userId ==
+                                                member.userId
+                                            ? null
+                                            : () async {
+                                                await controller
+                                                    .showUserDetails(
+                                                  member,
+                                                  fromMessagePage: false,
+                                                );
+                                              }
+                                    : controller.conversation?.usersOwnDetails
+                                                ?.isAdmin ??
+                                            false
+                                        ? () {
+                                            IsmChatContextWidget
+                                                .showDialogContext(
+                                              content: IsmChatGroupAdminDialog(
+                                                user: member,
+                                                groupName: controller
+                                                        .conversation
+                                                        ?.conversationTitle ??
+                                                    '',
+                                              ),
+                                            );
+                                          }
+                                        : IsmChatConfig.communicationConfig
+                                                    .userConfig.userId ==
+                                                member.userId
+                                            ? null
+                                            : () async {
+                                                await controller
+                                                    .showUserDetails(
+                                                  member,
+                                                  fromMessagePage: false,
+                                                );
+                                              },
+                                trailing: member.isAdmin
+                                    ? Text(
+                                        IsmChatStrings.admin,
+                                        style: IsmChatStyles.w600Black12
+                                            .copyWith(
+                                                color: IsmChatConfig
+                                                    .chatTheme.primaryColor),
+                                      )
+                                    : controller.conversation?.usersOwnDetails
+                                                ?.isAdmin ??
+                                            false
+                                        ? const Icon(
+                                            Icons.more_vert,
+                                            color: IsmChatColors.blackColor,
+                                          )
+                                        : null,
+                                title: Text(IsmChatConfig.communicationConfig
+                                            .userConfig.userId ==
+                                        member.userId
+                                    ? IsmChatStrings.you
+                                    : member.userName),
+                                subtitle: Text(IsmChatProperties
+                                        .conversationProperties.opponentSubTitle
+                                        ?.call(context, member) ??
+                                    member.metaData?.aboutText?.title ??
+                                    ''),
+                                leading: IsmChatImage.profile(
+                                  member.profileUrl,
+                                  name: member.userName.capitalizeFirst ?? '',
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        IsmChatDimens.boxHeight20,
                         Container(
-                          padding: IsmChatDimens.edgeInsets16_8_16_8,
+                          padding: IsmChatDimens.edgeInsets16,
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(IsmChatDimens.sixteen),
                             color: IsmChatColors.whiteColor,
                           ),
-                          child: IsmChatTapHandler(
-                            onTap: () {
-                              if (IsmChatResponsive.isWeb(context)) {
-                                IsmChatUtility.conversationController
-                                        .isRenderChatPageaScreen =
-                                    IsRenderChatPageScreen.coversationMediaView;
-                              } else {
-                                IsmChatRoute.goToRoute(
-                                  IsmMedia(
-                                    mediaList: conversationController.mediaList,
-                                    mediaListLinks:
-                                        conversationController.mediaListLinks,
-                                    mediaListDocs:
-                                        conversationController.mediaListDocs,
-                                  ),
-                                );
-                              }
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                SvgPicture.asset(
-                                  IsmChatAssets.gallarySvg,
-                                ),
-                                IsmChatDimens.boxWidth12,
-                                Text(
-                                  IsmChatStrings.mediaLinksAndDocs,
-                                  style: IsmChatStyles.w500Black16,
-                                ),
-                                const Spacer(),
-                                Row(
-                                  children: [
-                                    Text(
-                                      '${conversationController.mediaList.length + conversationController.mediaListLinks.length + conversationController.mediaListDocs.length}',
-                                      style: IsmChatStyles.w500GreyLight17,
-                                    ),
-                                    IsmChatDimens.boxWidth4,
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: IsmChatColors.greyColorLight,
-                                      size: IsmChatDimens.fifteen,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (controller.conversation?.isGroup ?? false) ...[
-                      IsmChatDimens.boxHeight10,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: IsmChatDimens.edgeInsets10,
-                            child: Text(
-                              '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
-                              style: IsmChatStyles.w500Black16,
-                            ),
-                          ),
-                          if (controller
-                                  .conversation!.usersOwnDetails?.isAdmin ??
-                              false)
-                            IconButton(
-                              onPressed: () {
-                                controller.participnatsEditingController
-                                    .clear();
-                                if (IsmChatResponsive.isWeb(context)) {
-                                  IsmChatUtility.conversationController
-                                          .isRenderChatPageaScreen =
-                                      IsRenderChatPageScreen.groupEligibleView;
-                                } else {
-                                  IsmChatRoute.goToRoute(
-                                      const IsmChatGroupEligibleUser());
-                                }
-                              },
-                              icon: Icon(
-                                Icons.group_add_outlined,
-                                color: IsmChatConfig.chatTheme.primaryColor,
-                              ),
-                            )
-                        ],
-                      ),
-                      IsmChatInputField(
-                        autofocus: false,
-                        hint: 'Search using name or email',
-                        cursorColor: IsmChatConfig.chatTheme.primaryColor,
-                        style: IsmChatStyles.w400Black16,
-                        controller: controller.participnatsEditingController,
-                        suffixIcon: controller
-                                .participnatsEditingController.text.isNotEmpty
-                            ? IsmChatTapHandler(
-                                onTap: () {
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextButton.icon(
+                                onPressed: () async {
                                   controller
-                                    ..participnatsEditingController.clear()
-                                    ..onGroupSearch('')
-                                    ..update();
+                                      .showDialogForClearChatAndDeleteGroup();
                                 },
-                                child: Icon(
-                                  Icons.close_rounded,
-                                  color: IsmChatConfig.chatTheme.primaryColor,
+                                icon: const Icon(
+                                  Icons.clear_all_rounded,
+                                  color: IsmChatColors.blackColor,
                                 ),
-                              )
-                            : Icon(
-                                Icons.search_rounded,
-                                color: IsmChatConfig.chatTheme.primaryColor,
+                                label: Text(
+                                  IsmChatStrings.clearChat,
+                                  style: IsmChatStyles.w600Black16,
+                                ),
                               ),
-                        onChanged: (_) {
-                          controller
-                            ..onGroupSearch(_)
-                            ..update();
-                        },
-                      ),
-                      Obx(
-                        () => ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          separatorBuilder: (_, index) =>
-                              IsmChatDimens.boxWidth4,
-                          itemCount: controller.groupMembers.length,
-                          itemBuilder: (_, index) {
-                            var member = controller.groupMembers[index];
-                            return ListTile(
-                              onTap: member.isAdmin
-                                  ? (controller.conversation?.usersOwnDetails
-                                                  ?.isAdmin ??
-                                              false) &&
-                                          controller.conversation
-                                                  ?.usersOwnDetails?.memberId !=
-                                              member.userId
-                                      ? () {
-                                          IsmChatContextWidget
-                                              .showDialogContext(
-                                            content: IsmChatGroupAdminDialog(
-                                                user: member,
-                                                isAdmin: true,
-                                                groupName: controller
-                                                        .conversation
-                                                        ?.conversationTitle ??
-                                                    ''),
-                                          );
-                                        }
-                                      : IsmChatConfig.communicationConfig
-                                                  .userConfig.userId ==
-                                              member.userId
-                                          ? null
-                                          : () async {
-                                              await controller.showUserDetails(
-                                                member,
-                                                fromMessagePage: false,
-                                              );
-                                            }
-                                  : controller.conversation?.usersOwnDetails
-                                              ?.isAdmin ??
-                                          false
-                                      ? () {
-                                          IsmChatContextWidget
-                                              .showDialogContext(
-                                            content: IsmChatGroupAdminDialog(
-                                              user: member,
-                                              groupName: controller.conversation
-                                                      ?.conversationTitle ??
-                                                  '',
-                                            ),
-                                          );
-                                        }
-                                      : IsmChatConfig.communicationConfig
-                                                  .userConfig.userId ==
-                                              member.userId
-                                          ? null
-                                          : () async {
-                                              await controller.showUserDetails(
-                                                member,
-                                                fromMessagePage: false,
-                                              );
-                                            },
-                              trailing: member.isAdmin
-                                  ? Text(
-                                      IsmChatStrings.admin,
-                                      style: IsmChatStyles.w600Black12.copyWith(
-                                          color: IsmChatConfig
-                                              .chatTheme.primaryColor),
-                                    )
-                                  : controller.conversation?.usersOwnDetails
-                                              ?.isAdmin ??
-                                          false
-                                      ? const Icon(
-                                          Icons.more_vert,
-                                          color: IsmChatColors.blackColor,
-                                        )
-                                      : null,
-                              title: Text(IsmChatConfig.communicationConfig
-                                          .userConfig.userId ==
-                                      member.userId
-                                  ? IsmChatStrings.you
-                                  : member.userName),
-                              subtitle: Text(IsmChatProperties
-                                      .conversationProperties.opponentSubTitle
-                                      ?.call(context, member) ??
-                                  member.metaData?.aboutText?.title ??
-                                  ''),
-                              leading: IsmChatImage.profile(member.profileUrl),
-                            );
-                          },
+                              IsmChatDimens.boxHeight10,
+                              Divider(
+                                thickness: 1,
+                                color: IsmChatColors.greyColorLight
+                                    .applyIsmOpacity(.3),
+                              ),
+                              IsmChatDimens.boxHeight5,
+                              TextButton.icon(
+                                onPressed: controller.showDialogExitButton,
+                                icon: const Icon(
+                                  Icons.logout_rounded,
+                                  color: IsmChatColors.redColor,
+                                ),
+                                label: Text(
+                                  IsmChatStrings.exitGroup,
+                                  style: IsmChatStyles.w600red16,
+                                ),
+                              ),
+                              IsmChatDimens.boxHeight5,
+                            ],
+                          ),
                         ),
-                      ),
-                      IsmChatDimens.boxHeight20,
-                      Container(
-                        padding: IsmChatDimens.edgeInsets16,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(IsmChatDimens.sixteen),
-                          color: IsmChatColors.whiteColor,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextButton.icon(
-                              onPressed: () async {
-                                controller
-                                    .showDialogForClearChatAndDeleteGroup();
-                              },
-                              icon: const Icon(
-                                Icons.clear_all_rounded,
-                                color: IsmChatColors.blackColor,
+                        IsmChatDimens.boxHeight32,
+                      ] else ...[
+                        IsmChatDimens.boxHeight32,
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(IsmChatDimens.sixteen),
+                            color: IsmChatColors.whiteColor,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextButton.icon(
+                                onPressed: () async {
+                                  await IsmChatContextWidget.showDialogContext(
+                                    content: IsmChatAlertDialogBox(
+                                      title: IsmChatStrings.clearAllMessages,
+                                      actionLabels: const [
+                                        IsmChatStrings.clearChat
+                                      ],
+                                      callbackActions: [
+                                        () => controller.clearAllMessages(
+                                            '${controller.conversation?.conversationId}'),
+                                      ],
+                                    ),
+                                  );
+                                  IsmChatRoute.goBack();
+                                },
+                                icon: const Icon(
+                                  Icons.clear_all_outlined,
+                                  color: IsmChatColors.redColor,
+                                ),
+                                label: Text(
+                                  IsmChatStrings.clearChat,
+                                  style: IsmChatStyles.w600red16,
+                                ),
                               ),
-                              label: Text(
-                                IsmChatStrings.clearChat,
-                                style: IsmChatStyles.w600Black16,
-                              ),
-                            ),
-                            IsmChatDimens.boxHeight10,
-                            Divider(
-                              thickness: 1,
-                              color: IsmChatColors.greyColorLight
-                                  .applyIsmOpacity(.3),
-                            ),
-                            IsmChatDimens.boxHeight5,
-                            TextButton.icon(
-                              onPressed: controller.showDialogExitButton,
-                              icon: const Icon(
-                                Icons.logout_rounded,
-                                color: IsmChatColors.redColor,
-                              ),
-                              label: Text(
-                                IsmChatStrings.exitGroup,
-                                style: IsmChatStyles.w600red16,
-                              ),
-                            ),
-                            IsmChatDimens.boxHeight5,
-                          ],
-                        ),
-                      ),
-                      IsmChatDimens.boxHeight32,
-                    ] else ...[
-                      IsmChatDimens.boxHeight32,
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(IsmChatDimens.sixteen),
-                          color: IsmChatColors.whiteColor,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextButton.icon(
-                              onPressed: () async {
-                                await IsmChatContextWidget.showDialogContext(
-                                  content: IsmChatAlertDialogBox(
-                                    title: IsmChatStrings.clearAllMessages,
-                                    actionLabels: const [
-                                      IsmChatStrings.clearChat
-                                    ],
-                                    callbackActions: [
-                                      () => controller.clearAllMessages(
-                                          '${controller.conversation?.conversationId}'),
-                                    ],
-                                  ),
-                                );
-                                IsmChatRoute.goBack();
-                              },
-                              icon: const Icon(
-                                Icons.clear_all_outlined,
-                                color: IsmChatColors.redColor,
-                              ),
-                              label: Text(
-                                IsmChatStrings.clearChat,
-                                style: IsmChatStyles.w600red16,
-                              ),
-                            ),
-                            Divider(
-                              height: 0,
-                              thickness: 1,
-                              color: IsmChatColors.greyColorLight
-                                  .applyIsmOpacity(.3),
-                            ),
-                            TextButton.icon(
-                              onPressed: () async {
-                                await IsmChatContextWidget.showDialogContext(
-                                  content: IsmChatAlertDialogBox(
-                                    title: '${IsmChatStrings.deleteChat}?',
-                                    actionLabels: const [
-                                      IsmChatStrings.deleteChat
-                                    ],
-                                    callbackActions: [
-                                      () => IsmChatUtility
-                                          .conversationController
-                                          .deleteChat(
-                                              '${controller.conversation?.conversationId}'),
-                                    ],
-                                  ),
-                                );
-                                IsmChatRoute.goBack();
-                                IsmChatRoute.goBack();
-                              },
-                              icon: const Icon(
-                                Icons.delete_forever_outlined,
-                                color: IsmChatColors.redColor,
-                              ),
-                              label: Text(
-                                IsmChatStrings.deleteChat,
-                                style: IsmChatStyles.w600red16,
-                              ),
-                            ),
-                            if (controller
-                                    .conversation?.isOpponentDetailsEmpty ==
-                                false) ...[
                               Divider(
                                 height: 0,
                                 thickness: 1,
@@ -595,28 +621,66 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               ),
                               TextButton.icon(
                                 onPressed: () async {
-                                  await controller.handleBlockUnblock(true);
+                                  await IsmChatContextWidget.showDialogContext(
+                                    content: IsmChatAlertDialogBox(
+                                      title: '${IsmChatStrings.deleteChat}?',
+                                      actionLabels: const [
+                                        IsmChatStrings.deleteChat
+                                      ],
+                                      callbackActions: [
+                                        () => IsmChatUtility
+                                            .conversationController
+                                            .deleteChat(
+                                                '${controller.conversation?.conversationId}'),
+                                      ],
+                                    ),
+                                  );
+                                  IsmChatRoute.goBack();
+                                  IsmChatRoute.goBack();
                                 },
                                 icon: const Icon(
-                                  Icons.block_outlined,
+                                  Icons.delete_forever_outlined,
                                   color: IsmChatColors.redColor,
                                 ),
                                 label: Text(
-                                  '${controller.conversation?.isBlockedByMe == true ? IsmChatStrings.unblock : IsmChatStrings.block} ${controller.conversation?.chatName ?? ''}',
+                                  IsmChatStrings.deleteChat,
                                   style: IsmChatStyles.w600red16,
                                 ),
-                              )
-                            ]
-                          ],
+                              ),
+                              if (controller
+                                      .conversation?.isOpponentDetailsEmpty ==
+                                  false) ...[
+                                Divider(
+                                  height: 0,
+                                  thickness: 1,
+                                  color: IsmChatColors.greyColorLight
+                                      .applyIsmOpacity(.3),
+                                ),
+                                TextButton.icon(
+                                  onPressed: () async {
+                                    await controller.handleBlockUnblock(true);
+                                  },
+                                  icon: const Icon(
+                                    Icons.block_outlined,
+                                    color: IsmChatColors.redColor,
+                                  ),
+                                  label: Text(
+                                    '${controller.conversation?.isBlockedByMe == true ? IsmChatStrings.unblock : IsmChatStrings.block} ${controller.conversation?.chatName ?? ''}',
+                                    style: IsmChatStyles.w600red16,
+                                  ),
+                                )
+                              ]
+                            ],
+                          ),
                         ),
-                      ),
-                      IsmChatDimens.boxHeight10,
+                        IsmChatDimens.boxHeight10,
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ).withUnfocusGestureDetctor(context),
+          ).withUnfocusGestureDetctor(context);
+        },
       );
 }

@@ -6,7 +6,8 @@ part of '../isometrik_chat_flutter.dart';
 mixin IsmChatUserOperationsMixin {
   /// Gets the delegate instance.
   /// Access _delegate directly since we're in the same library (part of).
-  IsmChatDelegate get _delegate => (this as dynamic)._delegate as IsmChatDelegate;
+  IsmChatDelegate get _delegate =>
+      (this as dynamic)._delegate as IsmChatDelegate;
 
   /// Call this function to get the list of non-blocked users.
   ///
@@ -43,6 +44,43 @@ mixin IsmChatUserOperationsMixin {
   /// print('Total unread conversations: $count');
   /// ```
   Future<int> get unreadCount async => await _delegate.unreadCount;
+
+  /// Gets current user's data from server.
+  ///
+  /// Example:
+  /// ```dart
+  /// final user = await IsmChat.i.getUserData(isLoading: true);
+  /// ```
+  Future<Map<String, dynamic>?> getUserData({bool isLoading = false}) async =>
+      await _delegate.getUserData(isLoading: isLoading);
+
+  /// Updates current user's metadata on server.
+  ///
+  /// This method exposes public API to update user metadata fields using the
+  /// SDK's existing user update endpoint.
+  ///
+  /// Returns `true` if update succeeds, otherwise `false`.
+  ///
+  /// Example:
+  /// ```dart
+  /// final updated = await IsmChat.i.updateUser(
+  ///   metaData: {'role': 'admin'},
+  /// );
+  /// ```
+  Future<bool> updateUser({
+    String? userProfileImageUrl,
+    String? userName,
+    String? userIdentifier,
+    Map<String, dynamic>? metaData,
+    bool isLoading = false,
+  }) async =>
+      await _delegate.updateUser(
+        userProfileImageUrl: userProfileImageUrl,
+        userName: userName,
+        userIdentifier: userIdentifier,
+        metaData: metaData,
+        isLoading: isLoading,
+      );
 
   /// Unblock a user.
   ///
@@ -155,4 +193,3 @@ mixin IsmChatUserOperationsMixin {
   Future<void> updateLastActiveTimestamp({bool isLoading = false}) async =>
       await _delegate.updateLastActiveTimestamp(isLoading: isLoading);
 }
-

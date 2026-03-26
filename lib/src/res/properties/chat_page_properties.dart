@@ -14,6 +14,7 @@ class IsmChatPageProperties {
     this.attachmentConfig,
     this.messageAllowedConfig,
     this.onForwardTap,
+    this.onAddGroupMembersTap,
     this.emojiIcon,
     this.meessageFieldFocusNode,
     this.messageFieldSuffix,
@@ -95,6 +96,12 @@ class IsmChatPageProperties {
   ///
   /// `IsmChatConversationModel` gives data of current chat, it could be used for local storage or state variables
   final ConversationVoidCallback? onForwardTap;
+
+  /// Optional callback when admin taps add-members in group info.
+  ///
+  /// If provided, host app handles navigation.
+  /// If null, SDK opens default `IsmChatGroupEligibleUser` screen.
+  final ConversationVoidCallback? onAddGroupMembersTap;
 
   /// It is an optional parameter for Message send text fieled
   /// You can check keyboard open or not with this parameter

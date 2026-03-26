@@ -53,6 +53,10 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
       _controller
         .._currentUser()
         ..conversation = _controller.conversationController.currentConversation;
+      // Reset previous chat data before loading another conversation to avoid
+      // cross-chat message leakage when controller is reused (e.g. web/tab).
+      // Without this, old messages can flash/show in a newly opened chat.
+      _controller.messages.clear();
       // Allow UI to render before heavy operations
       await Future.delayed(Duration.zero);
       try {

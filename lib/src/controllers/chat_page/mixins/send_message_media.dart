@@ -268,6 +268,7 @@ mixin IsmChatPageSendMessageMediaMixin {
     );
 
     _controller.messages.add(videoMessage);
+    unawaited(_controller.scrollDown());
     _controller.isreplying = false;
 
     if (!_controller.isBroadcast) {
@@ -380,6 +381,7 @@ mixin IsmChatPageSendMessageMediaMixin {
     );
 
     _controller.messages.add(imageMessage);
+    unawaited(_controller.scrollDown());
     _controller.isreplying = false;
 
     if (!_controller.isBroadcast) {
@@ -487,6 +489,7 @@ mixin IsmChatPageSendMessageMediaMixin {
     );
 
     _controller.messages.add(imageMessage);
+    unawaited(_controller.scrollDown());
     _controller.isreplying = false;
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!

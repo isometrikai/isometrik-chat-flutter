@@ -19,25 +19,30 @@ mixin IsmChatPageGetMessageMixin on GetxController {
   Future<void> getMessagesFromDB(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
     _controller.closeOverlay();
+    final requestedConversationId = conversationId;
 
     final messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
-
-    if (messages == null) {
-      _controller.messages.clear();
+    // Guard against race conditions: if user switched chat while this async DB
+    // read was running, ignore this result so messages from old chat don't show.
+    if ((_controller.conversation?.conversationId ?? '') !=
+        requestedConversationId) {
       return;
     }
+    // If local cache is empty, continue with an empty map so we can still
+    // render the base conversation-created row and let API sync fill messages.
+    final safeMessages = messages ?? <String, IsmChatMessageModel>{};
     if (IsmChatConfig.shouldPendingMessageSend) {
       var pendingmessages = await IsmChatConfig.dbWrapper
           ?.getMessage(conversationId, IsmChatDbBox.pending);
       if (pendingmessages != null) {
-        messages.addAll(pendingmessages);
+        safeMessages.addAll(pendingmessages);
       }
     } else {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
-    var localMessages = messages.values.toList();
+    var localMessages = safeMessages.values.toList();
     // Always add block/unblock message when set (for real-time MQTT and empty-chat case)
     if (_controller.conversation?.metaData?.blockedMessage != null) {
       final blockMsg = IsmChatMessageModel.fromJson(
@@ -127,15 +132,18 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         _controller.isMessagesLoading = true;
       }
       final timeStamp = lastMessageTimestamp ??
-          (_controller.messages.last.customType ==
-                  IsmChatCustomMessageType.conversationCreated
+          (_controller.messages.isEmpty
               ? 0
-              : _controller.messages.last.sentAt + 7000);
+              : (_controller.messages.last.customType ==
+                      IsmChatCustomMessageType.conversationCreated
+                  ? 0
+                  : _controller.messages.last.sentAt + 7000));
       final messagesList = (List<IsmChatMessageModel>.from(
           _controller.messages))
         ..removeWhere(
             (element) => element.customType == IsmChatCustomMessageType.date);
       final conversationID = _controller.conversation?.conversationId ?? '';
+      final requestedConversationId = conversationID;
 
       final data = await _controller.viewModel.getChatMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
@@ -143,6 +151,13 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         lastMessageTimestamp: timeStamp,
         isBroadcast: isBroadcast,
       );
+      // Guard against race conditions: do not apply API results if active chat
+      // changed before response came back.
+      if ((_controller.conversation?.conversationId ?? '') !=
+          requestedConversationId) {
+        _controller.canCallCurrentApi = false;
+        return;
+      }
 
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = false;
@@ -182,12 +197,19 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       final groupcastID = groupcastId.isNotEmpty
           ? groupcastId
           : _controller.conversation?.conversationId ?? '';
+      final requestedConversationId = groupcastID;
       final data = await _controller.viewModel.getBroadcastMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
         groupcastId: groupcastID,
         lastMessageTimestamp: timeStamp,
         isBroadcast: isBroadcast,
       );
+      // Same chat-isolation guard for broadcast messages.
+      if ((_controller.conversation?.conversationId ?? '') !=
+          requestedConversationId) {
+        _controller.canCallCurrentApi = false;
+        return;
+      }
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = false;
       }

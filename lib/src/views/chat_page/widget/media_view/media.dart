@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// IsmMedia class is for showing the conversation media
@@ -25,10 +24,15 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
   final chatPageController = IsmChatUtility.chatPageController;
 
   TabController? _tabController;
+  bool get _isDocumentAllowed =>
+      IsmChatProperties.chatPageProperties.attachments
+          .contains(IsmChatAttachmentType.document);
+  int get _tabCount => _isDocumentAllowed ? 3 : 2;
+  double get _tabContainerWidth => _isDocumentAllowed ? 276 : 184;
 
   @override
   void initState() {
-    _tabController = TabController(vsync: this, length: 3);
+    _tabController = TabController(vsync: this, length: _tabCount);
     _tabController?.addListener(_handleTabSelection);
     super.initState();
   }
@@ -45,20 +49,24 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) => DefaultTabController(
-        length: 3,
+        length: _tabCount,
         child: Scaffold(
           appBar: AppBar(
             surfaceTintColor: IsmChatColors.whiteColor,
             elevation: IsmChatDimens.three,
             shadowColor: Colors.grey,
             title: Container(
+              width: _tabContainerWidth,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(IsmChatDimens.eight),
                 color: IsmChatColors.darkBlueGreyColor,
               ),
-              child: _TabBarView(tabController: _tabController),
+              child: _TabBarView(
+                tabController: _tabController,
+                isDocumentAllowed: _isDocumentAllowed,
+              ),
             ),
-            centerTitle: GetPlatform.isAndroid ? true : false,
+            centerTitle: true,
             leading: IconButton(
               onPressed: IsmChatResponsive.isWeb(context)
                   ? () {
@@ -80,7 +88,8 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
               children: [
                 IsmMediaView(mediaList: widget.mediaList),
                 IsmLinksView(mediaListLinks: widget.mediaListLinks),
-                IsmDocsView(mediaListDocs: widget.mediaListDocs),
+                if (_isDocumentAllowed)
+                  IsmDocsView(mediaListDocs: widget.mediaListDocs),
               ],
             ),
           ),
@@ -91,9 +100,34 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
 class _TabBarView extends StatelessWidget {
   const _TabBarView({
     required TabController? tabController,
+    required this.isDocumentAllowed,
   }) : _tabController = tabController;
 
   final TabController? _tabController;
+  final bool isDocumentAllowed;
+
+  Widget _tabItem({
+    required int index,
+    required String label,
+  }) {
+    final isSelected = _tabController?.index == index;
+    return Container(
+      margin: IsmChatDimens.edgeInsets4,
+      height: IsmChatDimens.twentySeven,
+      width: double.infinity,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(IsmChatDimens.six),
+        color: isSelected
+            ? IsmChatColors.whiteColor
+            : IsmChatColors.darkBlueGreyColor,
+      ),
+      child: Text(
+        label,
+        style: IsmChatStyles.w600Black16,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => TabBar(
@@ -111,64 +145,11 @@ class _TabBarView extends StatelessWidget {
         labelPadding: IsmChatDimens.edgeInsets2_0,
         labelStyle: IsmChatStyles.w600Black16,
         splashBorderRadius: BorderRadius.zero,
-        isScrollable: true,
-        tabAlignment: TabAlignment.start,
+        isScrollable: false,
         tabs: [
-          Row(
-            children: [
-              Container(
-                  margin: IsmChatDimens.edgeInsets4,
-                  height: IsmChatDimens.twentySeven,
-                  width: IsmChatDimens.seventyEight,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(IsmChatDimens.six),
-                    color: _tabController?.index == 0
-                        ? IsmChatColors.whiteColor
-                        : IsmChatColors.darkBlueGreyColor,
-                  ),
-                  child: const Tab(
-                    text: IsmChatStrings.media,
-                  )),
-              if (_tabController?.index == 2)
-                Container(
-                  height: IsmChatDimens.twenty,
-                  width: IsmChatDimens.two,
-                  color: IsmChatColors.greyColor.applyIsmOpacity(.1),
-                )
-            ],
-          ),
-          Container(
-              margin: IsmChatDimens.edgeInsets4,
-              height: IsmChatDimens.twentySeven,
-              width: IsmChatDimens.seventyEight,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(IsmChatDimens.six),
-                color: _tabController?.index == 1
-                    ? IsmChatColors.whiteColor
-                    : IsmChatColors.darkBlueGreyColor,
-              ),
-              child: const Tab(text: IsmChatStrings.links)),
-          Row(
-            children: [
-              if (_tabController?.index == 0)
-                Container(
-                  height: IsmChatDimens.twenty,
-                  width: IsmChatDimens.two,
-                  color: IsmChatColors.greyColor.applyIsmOpacity(.1),
-                ),
-              Container(
-                  margin: IsmChatDimens.edgeInsets4,
-                  height: IsmChatDimens.twentySeven,
-                  width: IsmChatDimens.seventyEight,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(IsmChatDimens.six),
-                    color: _tabController?.index == 2
-                        ? IsmChatColors.whiteColor
-                        : IsmChatColors.darkBlueGreyColor,
-                  ),
-                  child: const Tab(text: IsmChatStrings.docs)),
-            ],
-          ),
+          _tabItem(index: 0, label: IsmChatStrings.media),
+          _tabItem(index: 1, label: IsmChatStrings.links),
+          if (isDocumentAllowed) _tabItem(index: 2, label: IsmChatStrings.docs),
         ],
       );
 }

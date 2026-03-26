@@ -226,6 +226,22 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       if (response?.hasError ?? true) return;
     }
     if (shouldUpdateLocal) {
+      final isCurrentConversation =
+          _controller.currentConversationId == conversationId;
+      if (isCurrentConversation) {
+        _controller.currentConversation = null;
+        _controller.currentConversationId = '';
+        _controller.isRenderChatPageaScreen = IsRenderChatPageScreen.none;
+        if (IsmChatUtility.chatPageControllerRegistered) {
+          final chatPageController = IsmChatUtility.chatPageController;
+          chatPageController
+            ..messages.clear()
+            ..conversation = null
+            ..isMessageSeleted = false
+            ..selectedMessage.clear()
+            ..closeOverlay();
+        }
+      }
       await IsmChatConfig.dbWrapper?.removeConversation(conversationId ?? '');
       await _controller.getConversationsFromDB();
       if (deleteFromServer) {
