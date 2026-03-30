@@ -61,7 +61,10 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
       case IsmChatFocusMenuType.selectMessage:
         _controller.selectedMessage.clear();
         _controller.isMessageSeleted = true;
-        _controller.selectedMessage.add(message);
+        final groupedMessages = _getGroupedMediaMessagesForSelection(message);
+        for (final groupedMessage in groupedMessages) {
+          _addSelectedMessageIfMissing(groupedMessage);
+        }
         break;
     }
   }
@@ -69,16 +72,111 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
   /// Handles message selection/deselection.
   void onMessageSelect(IsmChatMessageModel ismChatChatMessageModel) {
     if (_controller.isMessageSeleted) {
-      if (_controller.selectedMessage.contains(ismChatChatMessageModel)) {
-        _controller.selectedMessage.removeWhere(
-            (e) => e.messageId == ismChatChatMessageModel.messageId);
+      final groupedMessages =
+          _getGroupedMediaMessagesForSelection(ismChatChatMessageModel);
+      final allGroupedSelected = groupedMessages.every(
+        (groupedMessage) => _controller.selectedMessage.any((selectedMessage) =>
+            _messageIdentity(selectedMessage) ==
+            _messageIdentity(groupedMessage)),
+      );
+
+      if (allGroupedSelected) {
+        for (final groupedMessage in groupedMessages) {
+          _controller.selectedMessage.removeWhere(
+            (message) =>
+                _messageIdentity(message) == _messageIdentity(groupedMessage),
+          );
+        }
       } else {
-        _controller.selectedMessage.add(ismChatChatMessageModel);
+        for (final groupedMessage in groupedMessages) {
+          _addSelectedMessageIfMissing(groupedMessage);
+        }
       }
+
       if (_controller.selectedMessage.isEmpty) {
         _controller.isMessageSeleted = false;
       }
     }
+  }
+
+  void _addSelectedMessageIfMissing(IsmChatMessageModel message) {
+    final alreadySelected = _controller.selectedMessage.any(
+      (selectedMessage) =>
+          _messageIdentity(selectedMessage) == _messageIdentity(message),
+    );
+    if (!alreadySelected) {
+      _controller.selectedMessage.add(message);
+    }
+  }
+
+  List<IsmChatMessageModel> _getGroupedMediaMessagesForSelection(
+    IsmChatMessageModel message,
+  ) {
+    final isImage = message.customType == IsmChatCustomMessageType.image;
+    final isVideo = message.customType == IsmChatCustomMessageType.video;
+    if (!isImage && !isVideo) {
+      return [message];
+    }
+
+    final allMessages = _controller.messages
+        .where((msg) => msg.customType != IsmChatCustomMessageType.date)
+        .toList();
+    if (allMessages.isEmpty) {
+      return [message];
+    }
+
+    final currentIndex = allMessages.indexWhere(
+      (msg) => _messageIdentity(msg) == _messageIdentity(message),
+    );
+    if (currentIndex == -1) {
+      return [message];
+    }
+
+    final currentMessage = allMessages[currentIndex];
+    final sentByMe = currentMessage.sentByMe;
+    const timeWindow = 10000; // 10 seconds in milliseconds.
+    final groupedMessages = <IsmChatMessageModel>[];
+
+    var groupStartIndex = currentIndex;
+    for (var i = currentIndex; i >= 0; i--) {
+      final msg = allMessages[i];
+      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
+      if (!msgIsImage && !msgIsVideo) break;
+      if (msg.sentByMe != sentByMe) break;
+
+      final timeDiff = (msg.sentAt - currentMessage.sentAt).abs();
+      if (timeDiff > timeWindow) break;
+      groupStartIndex = i;
+    }
+
+    for (var i = groupStartIndex; i < allMessages.length; i++) {
+      final msg = allMessages[i];
+      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
+      if (!msgIsImage && !msgIsVideo) break;
+      if (msg.sentByMe != sentByMe) break;
+
+      final timeDiff = (msg.sentAt - allMessages[groupStartIndex].sentAt).abs();
+      if (timeDiff > timeWindow && groupedMessages.isNotEmpty) break;
+      groupedMessages.add(msg);
+    }
+
+    return groupedMessages.length >= 2 ? groupedMessages : [message];
+  }
+
+  String _messageIdentity(IsmChatMessageModel message) {
+    final messageId = message.messageId ?? '';
+    if (messageId.isNotEmpty) {
+      return 'id:$messageId';
+    }
+
+    final firstAttachment = message.attachments?.isNotEmpty == true
+        ? message.attachments!.first
+        : null;
+    final mediaUrl = firstAttachment?.mediaUrl ?? '';
+    final thumbnailUrl = firstAttachment?.thumbnailUrl ?? '';
+    return 'tmp:${message.sentAt}:${message.sentByMe}:${message.customType?.value ?? -1}:$mediaUrl:$thumbnailUrl:${message.body}';
   }
 
   /// Shows overlay for message focus menu (mobile).
@@ -405,4 +503,3 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
     }
   }
 }
-

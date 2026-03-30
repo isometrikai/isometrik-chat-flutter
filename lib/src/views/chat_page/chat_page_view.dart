@@ -231,9 +231,16 @@ class _IsmChatPageView extends StatelessWidget {
                         onPressed: () async {
                           // Convert selected messages to map format
                           var selectedMessage = <String, IsmChatMessageModel>{};
-                          for (var message in controller.selectedMessage) {
-                            selectedMessage
-                                .addEntries({message.key: message}.entries);
+                          for (var i = 0;
+                              i < controller.selectedMessage.length;
+                              i++) {
+                            final message = controller.selectedMessage[i];
+                            final messageId = message.messageId ?? '';
+                            final stableKey =
+                                messageId.isNotEmpty ? messageId : message.key;
+                            // Add index suffix to prevent key collisions for media
+                            // groups where multiple messages can share same timestamp key.
+                            selectedMessage['${stableKey}_$i'] = message;
                           }
                           // Check if all messages are from current user
                           var messageSenderSide =
