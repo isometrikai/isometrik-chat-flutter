@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmChatConverstaionInfoView extends StatelessWidget {
+class IsmChatConverstaionInfoView extends StatefulWidget {
   /// Creates a conversation info view widget.
   ///
   /// **Parameters:**
@@ -14,7 +14,7 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
   /// **Usage:**
   /// - When called from within chat context: `IsmChatConverstaionInfoView()`
   /// - When called from outside: `IsmChatConverstaionInfoView(conversationId: '...', conversation: ...)`
-  IsmChatConverstaionInfoView({
+  const IsmChatConverstaionInfoView({
     super.key,
     this.conversationId,
     this.conversation,
@@ -26,7 +26,48 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
   /// Optional conversation model to display
   final IsmChatConversationModel? conversation;
 
+  @override
+  State<IsmChatConverstaionInfoView> createState() =>
+      _IsmChatConverstaionInfoViewState();
+}
+
+class _IsmChatConverstaionInfoViewState
+    extends State<IsmChatConverstaionInfoView> {
   final conversationController = IsmChatUtility.conversationController;
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _participantsSearchFocusNode = FocusNode();
+  final GlobalKey _participantsSearchKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _participantsSearchFocusNode.addListener(_handleParticipantsSearchFocus);
+  }
+
+  @override
+  void dispose() {
+    _participantsSearchFocusNode.removeListener(_handleParticipantsSearchFocus);
+    _participantsSearchFocusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _handleParticipantsSearchFocus() {
+    if (_participantsSearchFocusNode.hasFocus) {
+      _pinSearchBarToTop();
+    }
+  }
+
+  Future<void> _pinSearchBarToTop() async {
+    final searchContext = _participantsSearchKey.currentContext;
+    if (searchContext == null) return;
+    await Scrollable.ensureVisible(
+      searchContext,
+      alignment: 0.02,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
+    );
+  }
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
@@ -39,23 +80,23 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
           var controller = IsmChatUtility.chatPageController;
 
           // If conversation is provided, set it directly
-          if (conversation != null) {
-            controller.conversation = conversation;
+          if (widget.conversation != null) {
+            controller.conversation = widget.conversation;
           }
 
           // If conversationId is provided but conversation is not set, fetch details
-          if (conversationId != null &&
-              conversationId!.isNotEmpty &&
-              conversation == null) {
+          if (widget.conversationId != null &&
+              widget.conversationId!.isNotEmpty &&
+              widget.conversation == null) {
             // Try to get conversation from controller or database
             final existingConversation = controller.conversationController
-                .getConversation(conversationId!);
+                .getConversation(widget.conversationId!);
             if (existingConversation != null) {
               controller.conversation = existingConversation;
             } else {
               // Try to get from database
               final dbConversation = await IsmChatConfig.dbWrapper
-                  ?.getConversation(conversationId!);
+                  ?.getConversation(widget.conversationId!);
               if (dbConversation != null) {
                 controller.conversation = dbConversation;
               }
@@ -147,9 +188,11 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                   ),
               ],
             ),
-            resizeToAvoidBottomInset: false,
+            // Keep participants list visible while typing in search.
+            resizeToAvoidBottomInset: true,
             body: SafeArea(
               child: SingleChildScrollView(
+                controller: _scrollController,
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 child: Padding(
@@ -397,35 +440,41 @@ class IsmChatConverstaionInfoView extends StatelessWidget {
                               )
                           ],
                         ),
-                        IsmChatInputField(
-                          autofocus: false,
-                          hint: 'Search using name or email',
-                          cursorColor: IsmChatConfig.chatTheme.primaryColor,
-                          style: IsmChatStyles.w400Black16,
-                          controller: controller.participnatsEditingController,
-                          suffixIcon: controller
-                                  .participnatsEditingController.text.isNotEmpty
-                              ? IsmChatTapHandler(
-                                  onTap: () {
-                                    controller
-                                      ..participnatsEditingController.clear()
-                                      ..onGroupSearch('')
-                                      ..update();
-                                  },
-                                  child: Icon(
-                                    Icons.close_rounded,
+                        Container(
+                          key: _participantsSearchKey,
+                          child: IsmChatInputField(
+                            autofocus: false,
+                            focusNode: _participantsSearchFocusNode,
+                            hint: 'Search using name or email',
+                            cursorColor: IsmChatConfig.chatTheme.primaryColor,
+                            style: IsmChatStyles.w400Black16,
+                            controller:
+                                controller.participnatsEditingController,
+                            suffixIcon: controller.participnatsEditingController
+                                    .text.isNotEmpty
+                                ? IsmChatTapHandler(
+                                    onTap: () {
+                                      controller
+                                        ..participnatsEditingController.clear()
+                                        ..onGroupSearch('')
+                                        ..update();
+                                    },
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      color:
+                                          IsmChatConfig.chatTheme.primaryColor,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.search_rounded,
                                     color: IsmChatConfig.chatTheme.primaryColor,
                                   ),
-                                )
-                              : Icon(
-                                  Icons.search_rounded,
-                                  color: IsmChatConfig.chatTheme.primaryColor,
-                                ),
-                          onChanged: (_) {
-                            controller
-                              ..onGroupSearch(_)
-                              ..update();
-                          },
+                            onChanged: (_) {
+                              controller
+                                ..onGroupSearch(_)
+                                ..update();
+                            },
+                          ),
                         ),
                         Obx(
                           () => ListView.separated(
