@@ -359,17 +359,33 @@ class IsmChatPageViewModel {
   Future<void> deleteMessageForEveryone(
     IsmChatMessages messages,
   ) async {
-    messages.removeWhere((key, value) => value.messageId == '');
+    messages.removeWhere(
+      (key, value) => (value.messageId ?? '').trim().isEmpty,
+    );
     if (messages.isEmpty) {
       return;
     }
     final conversationId = messages.values.first.conversationId ?? '';
-    final response = await _repository.deleteMessageForEveryone(
-      conversationId: conversationId,
-      messages: messages.values.map((e) => e.messageId).join(','),
-    );
-    if (response == null || response.hasError) {
+    final messageIds = messages.values
+        .map((e) => (e.messageId ?? '').trim())
+        .where((id) => id.isNotEmpty)
+        .toSet()
+        .toList();
+
+    if (messageIds.isEmpty) {
       return;
+    }
+
+    // Delete each message ID individually for compatibility with servers
+    // that only honor the first ID from a comma-separated query param.
+    for (final messageId in messageIds) {
+      final response = await _repository.deleteMessageForEveryone(
+        conversationId: conversationId,
+        messages: messageId,
+      );
+      if (response == null || response.hasError) {
+        return;
+      }
     }
     var conversation =
         await IsmChatConfig.dbWrapper?.getConversation(conversationId);

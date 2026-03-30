@@ -22,6 +22,21 @@ class IsmChatFocusMenu extends StatelessWidget {
 
   final controller = IsmChatUtility.chatPageController;
 
+  int? _messageReversedIndexForGridPreview() {
+    final allMessages = controller.messages
+        .where((msg) => msg.customType != IsmChatCustomMessageType.date)
+        .toList();
+    if (allMessages.isEmpty) return null;
+
+    final chronologicalIndex = allMessages.indexWhere(
+      (msg) => msg.key == message.key,
+    );
+    if (chronologicalIndex == -1) return null;
+
+    // MessageBubble expects index from reversed list.
+    return allMessages.length - 1 - chronologicalIndex;
+  }
+
   @override
   Widget build(BuildContext context) => IsmChatResponsive.isWeb(context)
       ? IsmChatTapHandler(
@@ -187,6 +202,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                                 MessageBubble(
                                   message: message,
                                   showMessageInCenter: false,
+                                  index: _messageReversedIndexForGridPreview(),
                                 ),
                           ),
                           IsmChatDimens.boxHeight8,

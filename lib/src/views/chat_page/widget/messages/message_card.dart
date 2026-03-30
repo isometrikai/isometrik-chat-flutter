@@ -199,6 +199,12 @@ class _MessageCardState extends State<MessageCard>
                 focusColor: IsmChatColors.transparent,
                 highlightColor: IsmChatColors.transparent,
                 onTap: () {
+                  // Video message preview is handled by thumbnail tap
+                  // inside `IsmChatVideoMessage` to avoid caption taps opening media.
+                  if (widget.message.customType ==
+                      IsmChatCustomMessageType.video) {
+                    return;
+                  }
                   controller.onMessageTap(
                     context: context,
                     message: widget.message,
