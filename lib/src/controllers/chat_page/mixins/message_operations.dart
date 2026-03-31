@@ -31,6 +31,15 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
         break;
       case IsmChatFocusMenuType.forward:
         _controller.conversationController.forwardedList.clear();
+        // If host app provides custom forward handling, delegate and skip
+        // opening SDK's default forward screen.
+        if (IsmChatProperties.chatPageProperties.onForwardTap != null) {
+          IsmChatProperties.chatPageProperties.onForwardTap!(
+            context,
+            _controller.conversation,
+          );
+          break;
+        }
 
         if (IsmChatResponsive.isWeb(
             IsmChatConfig.kNavigatorKey.currentContext ??
