@@ -89,7 +89,7 @@ class IsmChatPageProperties {
 
   /// It is an optional parameter you can use for forward to user list
   /// you can use for show user list in forward screen
-  final ConversationVoidCallback? forwardToUserList;
+  final ForwardMessageInfoBuilder? forwardToUserList;
 
   /// Required parameter
   ///

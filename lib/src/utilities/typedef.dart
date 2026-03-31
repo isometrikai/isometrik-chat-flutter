@@ -63,6 +63,12 @@ typedef MessageWidgetBuilder = Widget? Function(
   bool,
 );
 
+typedef ForwardMessageInfoBuilder = Widget? Function(
+  BuildContext,
+  List<IsmChatMessageModel>,
+  IsmChatConversationModel?,
+);
+
 typedef MessageSenderInfoBuilder = Widget? Function(
   BuildContext,
   IsmChatMessageModel,

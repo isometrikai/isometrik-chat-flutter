@@ -36,6 +36,7 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
         if (IsmChatProperties.chatPageProperties.forwardToUserList != null) {
           IsmChatProperties.chatPageProperties.forwardToUserList!(
             context,
+            _controller.selectedMessage,
             _controller.conversation,
           );
           break;
