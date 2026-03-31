@@ -13,6 +13,7 @@ class IsmChatPageProperties {
     this.isAllowedDeleteChatFromLocal = false,
     this.attachmentConfig,
     this.messageAllowedConfig,
+    this.forwardToUserList,
     this.onForwardTap,
     this.onAddGroupMembersTap,
     this.emojiIcon,
@@ -85,6 +86,10 @@ class IsmChatPageProperties {
   /// It is an optional parameter you can use for attachments configuration
   /// you can use for size and how to show per Lines
   final AttachmentConfig? attachmentConfig;
+
+  /// It is an optional parameter you can use for forward to user list
+  /// you can use for show user list in forward screen
+  final ConversationVoidCallback? forwardToUserList;
 
   /// Required parameter
   ///
