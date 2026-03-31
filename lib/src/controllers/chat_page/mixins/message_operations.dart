@@ -34,9 +34,12 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
         // If host app provides custom forward handling, delegate and skip
         // opening SDK's default forward screen.
         if (IsmChatProperties.chatPageProperties.forwardToUserList != null) {
+          final messagesToForward = _controller.selectedMessage.isNotEmpty
+              ? List<IsmChatMessageModel>.from(_controller.selectedMessage)
+              : _getGroupedMediaMessagesForSelection(message);
           IsmChatProperties.chatPageProperties.forwardToUserList!(
             context,
-            _controller.selectedMessage,
+            messagesToForward,
             _controller.conversation,
           );
           break;
