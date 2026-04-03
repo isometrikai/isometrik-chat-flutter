@@ -215,7 +215,8 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                   if (webMediaModel?.dataSize.size() ?? false) {
                     // Paid media: delegate when user taps send
                     Map<String, dynamic>? paidMediaMetaData;
-                    if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+                    if (IsmChatProperties
+                            .chatPageProperties.enablePaidMediaHandling &&
                         IsmChat.i.onPaidMediaSend != null) {
                       final ctx = IsmChatConfig.kNavigatorKey.currentContext ??
                           IsmChatConfig.context;
@@ -240,7 +241,8 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                                 IsmChatConfig.kNavigatorKey.currentContext ??
                                     IsmChatConfig.context,
                                 controller.conversation,
-                                IsmChatCustomMessageType.video) ??
+                                IsmChatCustomMessageType.video,
+                                controller.chatInputController.text.trim()) ??
                         true) {
                       await controller.sendVideo(
                         webMediaModel: webMediaModel!,

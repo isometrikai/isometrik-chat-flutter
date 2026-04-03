@@ -171,8 +171,7 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                                   ),
                             ),
                             IsmChatDimens.boxWidth8,
-                            Flexible(
-                              fit: FlexFit.loose,
+                            Expanded(
                               child: _TitleSubTitleWidget(
                                 onTap: onTap,
                                 controller: controller,
