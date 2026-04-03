@@ -93,7 +93,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         body: '', sentAt: 0, customType: null, sentByMe: false);
     var dummymessages = List<IsmChatMessageModel>.from(messages);
     for (var x in dummymessages) {
-      if (x.customType != IsmChatCustomMessageType.oneToOneCall) {
+      if (!_isSdkCallBubbleCustomType(x.customType)) {
         continue;
       }
       if (x.meetingId != filterMessage.meetingId) {
@@ -113,11 +113,29 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
       var fliterIndex = messages.indexWhere((e) => e.meetingId == x.meetingId);
       if (fliterIndex != -1) {
-        messages[fliterIndex] = filterMessage;
+        // Merged row may pick [sentByMe] from a follow-up event (e.g. hang-up)
+        // with wrong flags; normalize from initiator/sender like [fromMap].
+        messages[fliterIndex] = filterMessage.copyWith(
+          sentByMe: IsmChatMessageModel.resolveSentByMe(filterMessage),
+        );
       }
     }
+    // Never show standalone "meetingCreated" rows; merge logic above still uses
+    // them to carry [meetingType] into the follow-up call event for the same [meetingId].
+    messages.removeWhere(
+      (e) =>
+          e.action == IsmChatActionEvents.meetingCreated.name &&
+          _isSdkCallBubbleCustomType(e.customType),
+    );
     return messages;
   }
+
+  /// Call / meeting rows that share [meetingId] and merge in [filterMessages].
+  bool _isSdkCallBubbleCustomType(IsmChatCustomMessageType? t) =>
+      t == IsmChatCustomMessageType.oneToOneCall ||
+      t == IsmChatCustomMessageType.audioCall ||
+      t == IsmChatCustomMessageType.videoCall ||
+      t == IsmChatCustomMessageType.groupCall;
 
   Future<void> getMessagesFromAPI({
     bool forPagination = false,

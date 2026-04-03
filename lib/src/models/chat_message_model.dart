@@ -125,6 +125,51 @@ class IsmChatMessageModel {
   factory IsmChatMessageModel.fromJson(String source) =>
       IsmChatMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
+  /// Derives [sentByMe] from sender / initiator fields.
+  ///
+  /// Call payloads often omit [senderInfo] but set [initiatorId] or top-level
+  /// [userId]. The previous logic used `initiatorId != null`, so an **empty
+  /// string** was treated as a valid initiator and always made [sentByMe]
+  /// false. We trim and fall through to [userId] / [createdBy] when needed.
+  static bool resolveSentByMe(IsmChatMessageModel model) {
+    if (!IsmChatConfig.configInitilized) {
+      return model.sentByMe;
+    }
+    final currentUserId =
+        IsmChatConfig.communicationConfig.userConfig.userId;
+
+    final fromMeta = model.metaData?.senderInfo?.userId.trim();
+    final fromSender = model.senderInfo?.userId.trim();
+    final senderId = (fromMeta != null && fromMeta.isNotEmpty)
+        ? fromMeta
+        : fromSender;
+    if (senderId != null && senderId.isNotEmpty) {
+      return senderId == currentUserId;
+    }
+
+    final member = model.memberId?.trim();
+    if (member != null && member.isNotEmpty) {
+      return member == currentUserId;
+    }
+
+    final initiator = model.initiatorId?.trim();
+    if (initiator != null && initiator.isNotEmpty) {
+      return initiator == currentUserId;
+    }
+
+    final uid = (model.userId ?? '').trim();
+    if (uid.isNotEmpty) {
+      return uid == currentUserId;
+    }
+
+    final created = model.createdBy?.trim();
+    if (created != null && created.isNotEmpty) {
+      return created == currentUserId;
+    }
+
+    return true;
+  }
+
   factory IsmChatMessageModel.fromMap(Map<String, dynamic> map) {
     // Check if this is a broadcast message and get groupcastId from metaData for decryption
     final metaDataMap = map['metaData'] as Map<String, dynamic>?;
@@ -318,16 +363,7 @@ class IsmChatMessageModel {
                   model.customType != IsmChatCustomMessageType.text
               ? model.customType
               : IsmChatCustomMessageType.withBody(model),
-          sentByMe: model.senderInfo != null
-              ? model.senderInfo?.userId ==
-                  IsmChatConfig.communicationConfig.userConfig.userId
-              : model.memberId != null
-                  ? IsmChatConfig.communicationConfig.userConfig.userId ==
-                      model.memberId
-                  : model.initiatorId != null
-                      ? model.initiatorId ==
-                          IsmChatConfig.communicationConfig.userConfig.userId
-                      : true,
+          sentByMe: resolveSentByMe(model),
           isGroup: model.conversationDetails?.isNotEmpty == true
               ? model.conversationDetails!['isGroup']
               : false,
