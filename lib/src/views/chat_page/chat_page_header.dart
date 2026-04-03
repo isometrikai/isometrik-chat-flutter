@@ -286,47 +286,42 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                 );
                               }
 
-                              // For groups, show member list
+                              // For groups, the member list must stay within the [Expanded]
+                              // title column — a fixed % of *screen* width was wider than
+                              // that column and caused [Row] overflow, clipping
+                              // [actionBuilder] and the overflow menu on mobile.
                               if (controller.conversation?.isGroup == true) {
-                                return SizedBox(
-                                  width: IsmChatResponsive.isWeb(context)
-                                      ? null
-                                      : IsmChatDimens.percentWidth(.55),
-                                  child: Text(
-                                    controller.conversation?.members
-                                                ?.isNullOrEmpty ==
-                                            true
-                                        ? controller.isBroadcast
-                                            ? '${controller.conversation?.membersCount} ${IsmChatStrings.participants.toUpperCase()}'
-                                            : IsmChatStrings.tapInfo
-                                        : (controller.conversation?.members ??
-                                                [])
-                                            .map(
-                                            (e) {
-                                              if (e.userId ==
-                                                  IsmChatConfig
-                                                      .communicationConfig
-                                                      .userConfig
-                                                      .userId) {
-                                                return IsmChatStrings.you;
-                                              }
-                                              final name =
-                                                  '${e.metaData?.firstName ?? ''} ${e.metaData?.lastName ?? ''} ';
-                                              if (name.trim().isNotEmpty) {
-                                                return name;
-                                              } else {
-                                                return e.userName;
-                                              }
-                                            },
-                                          ).join(', '),
-                                    style: IsmChatConfig
-                                            .chatTheme
-                                            .chatPageHeaderTheme
-                                            ?.subtileStyle ??
-                                        IsmChatStyles.w400White12,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
+                                return Text(
+                                  controller.conversation?.members
+                                              ?.isNullOrEmpty ==
+                                          true
+                                      ? controller.isBroadcast
+                                          ? '${controller.conversation?.membersCount} ${IsmChatStrings.participants.toUpperCase()}'
+                                          : IsmChatStrings.tapInfo
+                                      : (controller.conversation?.members ?? [])
+                                          .map(
+                                          (e) {
+                                            if (e.userId ==
+                                                IsmChatConfig
+                                                    .communicationConfig
+                                                    .userConfig
+                                                    .userId) {
+                                              return IsmChatStrings.you;
+                                            }
+                                            final name =
+                                                '${e.metaData?.firstName ?? ''} ${e.metaData?.lastName ?? ''} ';
+                                            if (name.trim().isNotEmpty) {
+                                              return name;
+                                            } else {
+                                              return e.userName;
+                                            }
+                                          },
+                                        ).join(', '),
+                                  style: IsmChatConfig.chatTheme
+                                          .chatPageHeaderTheme?.subtileStyle ??
+                                      IsmChatStyles.w400White12,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 );
                               }
 
