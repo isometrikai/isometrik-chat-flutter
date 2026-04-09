@@ -215,6 +215,25 @@ class _TitleSubTitleWidget extends StatelessWidget {
   final IsmChatPageController controller;
   final VoidCallback? onTap;
 
+  String _resolvedHeaderTitle() {
+    final conversation = controller.conversation;
+    if (conversation == null) return '';
+
+    // Keep group title as-is.
+    if (conversation.isGroup == true) {
+      return conversation.chatName;
+    }
+
+    final firstName = conversation.opponentDetails?.metaData?.firstName ?? '';
+    final lastName = conversation.opponentDetails?.metaData?.lastName ?? '';
+    final fullName = '$firstName $lastName'.trim();
+    if (fullName.isNotEmpty) {
+      return fullName;
+    }
+
+    return conversation.opponentDetails?.userName ?? conversation.chatName;
+  }
+
   @override
   Widget build(BuildContext context) => IsmChatTapHandler(
         onTap: onTap,
@@ -226,14 +245,13 @@ class _TitleSubTitleWidget extends StatelessWidget {
             Flexible(
               child: IsmChatProperties.chatPageProperties.header?.titleBuilder
                       ?.call(context, controller.conversation,
-                          controller.conversation?.chatName ?? '') ??
+                          _resolvedHeaderTitle()) ??
                   Text(
                     IsmChatProperties.chatPageProperties.header?.title?.call(
                             context,
                             controller.conversation,
-                            controller.conversation?.chatName ?? '') ??
-                        controller.conversation?.chatName ??
-                        '',
+                            _resolvedHeaderTitle()) ??
+                        _resolvedHeaderTitle(),
                     style: IsmChatConfig
                             .chatTheme.chatPageHeaderTheme?.titleStyle ??
                         IsmChatStyles.w600White16,
