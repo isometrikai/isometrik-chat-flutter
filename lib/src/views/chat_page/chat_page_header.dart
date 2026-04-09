@@ -237,7 +237,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                     style: IsmChatConfig
                             .chatTheme.chatPageHeaderTheme?.titleStyle ??
                         IsmChatStyles.w600White16,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
             ),
