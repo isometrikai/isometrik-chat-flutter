@@ -61,8 +61,9 @@ class IsmChatMediaGridMessage extends StatelessWidget {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment:
-          sentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      // Keep caption and grid left-aligned within bubble for both sides.
+      // Sender alignment is already handled by parent message bubble.
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 3),
@@ -241,9 +242,7 @@ class IsmChatMediaGridMessage extends StatelessWidget {
             caption,
             style: messageWithCaption.style,
             textAlign: TextAlign.start,
-            overflow: isExpanded
-                ? TextOverflow.visible
-                : TextOverflow.ellipsis,
+            overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             maxLines: isExpanded ? null : 3,
           ),
           if (_isCaptionOverflowing(context, caption, messageWithCaption.style))
