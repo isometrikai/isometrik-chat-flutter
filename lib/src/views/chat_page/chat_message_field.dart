@@ -135,8 +135,7 @@ class IsmChatMessageField extends StatelessWidget {
                                           controller.conversation,
                                           controller.isreplying
                                               ? IsmChatCustomMessageType.reply
-                                              : IsmChatCustomMessageType
-                                                  .text,
+                                              : IsmChatCustomMessageType.text,
                                           controller.chatInputController.text
                                               .trim()) ??
                                   true) {
@@ -903,6 +902,13 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                       context: context,
                       builder: (context) => const IsmChatAttachmentCard(),
                       elevation: 0,
+                      clipBehavior: Clip.antiAlias,
+                      backgroundColor: IsmChatColors.whiteColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(IsmChatDimens.twentyFour),
+                        ),
+                      ),
                     );
                   }
                 }
