@@ -43,6 +43,7 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
   BuildContext,
   IsmChatConversationModel,
   bool,
+  Map<String, dynamic>,
 );
 
 typedef ConversationStringCallback = String? Function(
