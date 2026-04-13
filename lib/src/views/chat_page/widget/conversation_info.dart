@@ -69,6 +69,14 @@ class _IsmChatConverstaionInfoViewState
     );
   }
 
+  /// Prefer "First Last" for display name; fallback to username.
+  String _memberDisplayName(UserDetails member) {
+    final fullName =
+        '${member.metaData?.firstName ?? ''} ${member.metaData?.lastName ?? ''}'
+            .trim();
+    return fullName.isNotEmpty ? fullName : member.userName;
+  }
+
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
@@ -564,15 +572,13 @@ class _IsmChatConverstaionInfoViewState
                                             .userConfig.userId ==
                                         member.userId
                                     ? IsmChatStrings.you
-                                    : member.userName),
-                                subtitle: Text(IsmChatProperties
-                                        .conversationProperties.opponentSubTitle
-                                        ?.call(context, member) ??
-                                    member.metaData?.aboutText?.title ??
-                                    ''),
+                                    : _memberDisplayName(member)),
+                                subtitle: Text(member.userName),
                                 leading: IsmChatImage.profile(
                                   member.profileUrl,
-                                  name: member.userName.capitalizeFirst ?? '',
+                                  name: _memberDisplayName(member)
+                                          .capitalizeFirst ??
+                                      '',
                                 ),
                               );
                             },

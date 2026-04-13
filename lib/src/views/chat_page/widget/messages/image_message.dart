@@ -26,18 +26,27 @@ class IsmChatImageMessage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  constraints: BoxConstraints(
-                    maxHeight: (IsmChatResponsive.isWeb(context))
-                        ? context.height * .35
-                        : context.height * .6,
-                  ),
-                  child: IsmChatImage(
-                    message.attachments?.first.mediaUrl ?? '',
-                    isNetworkImage:
-                        message.attachments?.first.mediaUrl?.isValidUrl ??
-                            false,
-                    isBytes: (IsmChatResponsive.isWeb(context)) ? true : false,
+                IsmChatTapHandler(
+                  onTap: () {
+                    if (IsmChatUtility.chatPageControllerRegistered) {
+                      IsmChatUtility.chatPageController
+                          .tapForMediaPreview(message);
+                    }
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: (IsmChatResponsive.isWeb(context))
+                          ? context.height * .35
+                          : context.height * .6,
+                    ),
+                    child: IsmChatImage(
+                      message.attachments?.first.mediaUrl ?? '',
+                      isNetworkImage:
+                          message.attachments?.first.mediaUrl?.isValidUrl ??
+                              false,
+                      isBytes:
+                          (IsmChatResponsive.isWeb(context)) ? true : false,
+                    ),
                   ),
                 ),
                 if (message.metaData?.caption?.isNotEmpty == true) ...[
@@ -134,21 +143,4 @@ class IsmChatImageMessage extends StatelessWidget {
     );
   }
 
-  bool _isCaptionOverflowing(BuildContext context) {
-    final caption = message.metaData?.caption ?? '';
-    if (caption.isEmpty) return false;
-
-    final textSpan = TextSpan(
-      text: caption,
-      style: message.style,
-    );
-
-    final textPainter = TextPainter(
-      text: textSpan,
-      maxLines: 3,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: context.width * 0.7);
-
-    return textPainter.didExceedMaxLines;
-  }
 }

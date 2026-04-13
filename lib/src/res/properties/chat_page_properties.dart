@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 class IsmChatPageProperties {
@@ -13,6 +14,7 @@ class IsmChatPageProperties {
     this.isAllowedDeleteChatFromLocal = false,
     this.attachmentConfig,
     this.messageAllowedConfig,
+    this.forwardToUserList,
     this.onForwardTap,
     this.onAddGroupMembersTap,
     this.emojiIcon,
@@ -33,6 +35,10 @@ class IsmChatPageProperties {
     this.loggedInUser,
     this.messageStatus,
     this.textFieldActions,
+    this.inputFormatters,
+    this.enableInteractiveSelection = true,
+    this.contextMenuBuilder,
+    this.messageInputHintText,
     this.shouldShowHoverHold,
     this.backgroundImageUrl,
     this.canReplayMessage,
@@ -85,6 +91,10 @@ class IsmChatPageProperties {
   /// It is an optional parameter you can use for attachments configuration
   /// you can use for size and how to show per Lines
   final AttachmentConfig? attachmentConfig;
+
+  /// It is an optional parameter you can use for forward to user list
+  /// you can use for show user list in forward screen
+  final ForwardMessageInfoBuilder? forwardToUserList;
 
   /// Required parameter
   ///
@@ -147,6 +157,30 @@ class IsmChatPageProperties {
   final IsmChatMessgaeStatusProperties? messageStatus;
 
   final Widget? textFieldActions;
+
+  /// Input formatters for the message composer field.
+  ///
+  /// Example:
+  /// ```dart
+  /// inputFormatters: [
+  ///   FilteringTextInputFormatter.deny(RegExp(r'\\n')),
+  /// ],
+  /// ```
+  final List<TextInputFormatter>? inputFormatters;
+
+  /// Whether selection handles/copy-paste interaction is enabled
+  /// in the message composer field.
+  final bool enableInteractiveSelection;
+
+  /// Custom context menu builder for the message composer field.
+  ///
+  /// Useful for custom copy/paste menus on iOS/Android/Desktop.
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
+
+  /// Hint text for the message input field.
+  ///
+  /// Defaults to [IsmChatStrings.hintText] when null.
+  final String? messageInputHintText;
 
   final bool? Function(
           BuildContext, IsmChatConversationModel?, IsmChatMessageModel)?

@@ -43,6 +43,7 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
   BuildContext,
   IsmChatConversationModel,
   bool,
+  Map<String, dynamic>,
 );
 
 typedef ConversationStringCallback = String? Function(
@@ -61,6 +62,12 @@ typedef MessageWidgetBuilder = Widget? Function(
   IsmChatMessageModel,
   IsmChatCustomMessageType,
   bool,
+);
+
+typedef ForwardMessageInfoBuilder = Widget? Function(
+  BuildContext,
+  List<IsmChatMessageModel>,
+  IsmChatConversationModel?,
 );
 
 typedef MessageSenderInfoBuilder = Widget? Function(
@@ -164,6 +171,7 @@ typedef ConditionConversationCustomeTypeCallback = Future<bool?>? Function(
   BuildContext,
   IsmChatConversationModel?,
   IsmChatCustomMessageType,
+  String?,
 );
 
 typedef ConditionCallback = void Function(bool);

@@ -7,6 +7,15 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
   /// Gets the controller instance.
   IsmChatPageController get _controller => this as IsmChatPageController;
 
+  /// Returns opponent metadata in raw API-like JSON form.
+  ///
+  /// We pass `customMetaData` directly because this preserves the incoming API
+  /// payload shape better than rebuilding from model fields.
+  Map<String, dynamic> _opponentMetaDataJson() => Map<String, dynamic>.from(
+        _controller.conversation?.opponentDetails?.metaData?.customMetaData ??
+            const <String, dynamic>{},
+      );
+
   /// Blocks a user.
   Future<void> blockUser({
     required String opponentId,
@@ -43,7 +52,8 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
                   IsmChatConfig.kNavigatorKey.currentContext ??
                       IsmChatConfig.context,
                   _controller.conversation!,
-                  userBlockOrNot) ??
+                  userBlockOrNot,
+                  _opponentMetaDataJson()) ??
           false;
     } else {
       blokedUser = await _controller.viewModel.blockUser(
@@ -98,6 +108,7 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
                     IsmChatConfig.context,
                 _controller.conversation!,
                 userBlockOrNot,
+                _opponentMetaDataJson(),
               ) ??
               false;
     } else {

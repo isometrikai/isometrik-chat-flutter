@@ -68,8 +68,8 @@ mixin IsmChatPageSendMessageMediaMixin {
       Map<String, dynamic>? paidMediaMetaData;
       if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
           IsmChat.i.onPaidMediaSend != null) {
-        final context = IsmChatConfig.kNavigatorKey.currentContext ??
-            IsmChatConfig.context;
+        final context =
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
         final result = await IsmChat.i.onPaidMediaSend!(
           context,
           _controller.conversation,
@@ -119,8 +119,8 @@ mixin IsmChatPageSendMessageMediaMixin {
       Map<String, dynamic>? paidMediaMetaData;
       if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
           IsmChat.i.onPaidMediaSend != null) {
-        final context = IsmChatConfig.kNavigatorKey.currentContext ??
-            IsmChatConfig.context;
+        final context =
+            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
         final result = await IsmChat.i.onPaidMediaSend!(
           context,
           _controller.conversation,
@@ -142,7 +142,8 @@ mixin IsmChatPageSendMessageMediaMixin {
                     IsmChatUtility.chatPageController.conversation!,
                     media.isVideo
                         ? IsmChatCustomMessageType.video
-                        : IsmChatCustomMessageType.image) ??
+                        : IsmChatCustomMessageType.image,
+                    _controller.chatInputController.text.trim()) ??
             true) {
           if (media.isVideo) {
             await sendVideo(

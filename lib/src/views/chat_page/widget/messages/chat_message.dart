@@ -69,6 +69,9 @@ class IsmChatMessageWrapper extends StatelessWidget {
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
       case IsmChatCustomMessageType.oneToOneCall:
         return IsmOneToOneCallMessage(message);
+      case IsmChatCustomMessageType.audioCall:
+      case IsmChatCustomMessageType.videoCall:
+      case IsmChatCustomMessageType.groupCall:
       case IsmChatCustomMessageType.productLink:
       case IsmChatCustomMessageType.socialLink:
       case IsmChatCustomMessageType.collectionLink:
@@ -164,6 +167,9 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
         return IsmChatObserverLeaveAndJoin(message, didLeft: true);
       case IsmChatCustomMessageType.oneToOneCall:
         return IsmOneToOneCallMessage(message);
+      case IsmChatCustomMessageType.audioCall:
+      case IsmChatCustomMessageType.videoCall:
+      case IsmChatCustomMessageType.groupCall:
       case IsmChatCustomMessageType.productLink:
       case IsmChatCustomMessageType.socialLink:
       case IsmChatCustomMessageType.collectionLink:

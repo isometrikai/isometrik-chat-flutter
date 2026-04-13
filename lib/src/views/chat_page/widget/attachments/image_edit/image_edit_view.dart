@@ -91,10 +91,12 @@ class IsmChatImageEditView extends StatelessWidget {
                     if (controller.webMedia.first.dataSize.size()) {
                       // Paid media: delegate when user taps send
                       Map<String, dynamic>? paidMediaMetaData;
-                      if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
+                      if (IsmChatProperties
+                              .chatPageProperties.enablePaidMediaHandling &&
                           IsmChat.i.onPaidMediaSend != null) {
-                        final ctx = IsmChatConfig.kNavigatorKey.currentContext ??
-                            IsmChatConfig.context;
+                        final ctx =
+                            IsmChatConfig.kNavigatorKey.currentContext ??
+                                IsmChatConfig.context;
                         final result = await IsmChat.i.onPaidMediaSend!(
                           ctx,
                           controller.conversation,
@@ -111,7 +113,8 @@ class IsmChatImageEditView extends StatelessWidget {
                       if (await IsmChatProperties.chatPageProperties
                               .messageAllowedConfig?.isMessgeAllowed
                               ?.call(context, controller.conversation,
-                                  IsmChatCustomMessageType.image) ??
+                                  IsmChatCustomMessageType.image,
+                                  controller.chatInputController.text.trim()) ??
                           true) {
                         await controller.sendImage(
                           conversationId:
