@@ -55,6 +55,16 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
   Map<String, dynamic>,
 );
 
+/// Post-success callback for block/unblock.
+///
+/// Called **after** SDK successfully blocks or unblocks a user.
+typedef BlockUnblockSuccessCallback = Future<void> Function(
+  BuildContext context,
+  IsmChatConversationModel conversation,
+  bool didBlock,
+  Map<String, dynamic> opponentMetaData,
+);
+
 typedef ConversationStringCallback = String? Function(
   BuildContext,
   IsmChatConversationModel?,

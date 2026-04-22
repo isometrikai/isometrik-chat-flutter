@@ -76,6 +76,18 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
     updateState();
   }
 
+  Future<void> _openLink(String url) async {
+    final uri = Uri.tryParse(url.convertToValidUrl);
+    if (uri == null) return;
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
   Future<MetaDataResponse?> _fetchMetadata(String url) async {
     // Try with retry logic (max 2 attempts)
     for (var attempt = 1; attempt <= 2; attempt++) {
@@ -184,34 +196,37 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading || _isError) {
-      return ListView(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: IsmChatDimens.edgeInsets10_0,
-        shrinkWrap: true,
-        children: [
-          IsmChatDimens.boxHeight10,
-          Text(
-            _isLoading
-                ? IsmChatStrings.fetchingPreview
-                : IsmChatStrings.errorLoadingPreview,
-            style: widget.message.style.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: (widget.message.style.fontSize ?? 0) + 2),
-          ),
-          IsmChatDimens.boxHeight10,
-          Text(
-            widget.url,
-            style: widget.message.style.copyWith(
-              decoration: TextDecoration.underline,
-              decorationColor: _getLinkPreviewColor(),
-              color: _getLinkPreviewColor(),
+      return IsmChatTapHandler(
+        onTap: () => _openLink(widget.url),
+        child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: IsmChatDimens.edgeInsets10_0,
+          shrinkWrap: true,
+          children: [
+            IsmChatDimens.boxHeight10,
+            Text(
+              _isLoading
+                  ? IsmChatStrings.fetchingPreview
+                  : IsmChatStrings.errorLoadingPreview,
+              style: widget.message.style.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: (widget.message.style.fontSize ?? 0) + 2),
             ),
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            textAlign: TextAlign.start,
-          ),
-        ],
+            IsmChatDimens.boxHeight10,
+            Text(
+              widget.url,
+              style: widget.message.style.copyWith(
+                decoration: TextDecoration.underline,
+                decorationColor: _getLinkPreviewColor(),
+                color: _getLinkPreviewColor(),
+              ),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              textAlign: TextAlign.start,
+            ),
+          ],
+        ),
       );
     } else {
       return _buildMetadataContent();
@@ -219,7 +234,7 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
   }
 
   Widget _buildMetadataContent() => IsmChatTapHandler(
-        onTap: () => launchUrl(Uri.parse(widget.url.convertToValidUrl)),
+        onTap: () => _openLink(widget.url),
         child: ListView(
           physics: const NeverScrollableScrollPhysics(),
           padding: IsmChatDimens.edgeInsets10_0,

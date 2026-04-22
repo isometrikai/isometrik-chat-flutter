@@ -20,9 +20,7 @@ class IsmChatAudioMessage extends StatelessWidget {
     final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
         ?.call(context, message);
     return Material(
-      color: message.sentByMe
-          ? IsmChatConfig.chatTheme.primaryColor
-          : IsmChatConfig.chatTheme.backgroundColor,
+      color: Colors.transparent,
       child: BlurFilter(
         isBlured: data?.shouldBlured ?? false,
         sigmaX: data?.sigmaX ?? 10,
@@ -34,6 +32,12 @@ class IsmChatAudioMessage extends StatelessWidget {
               audioSrc: url,
               noise: noise,
               me: message.sentByMe,
+              playIcon:
+                  IsmChatProperties.chatPageProperties.voiceMessagePlayIcon,
+              pauseIcon:
+                  IsmChatProperties.chatPageProperties.voiceMessagePauseIcon,
+              loadingIcon:
+                  IsmChatProperties.chatPageProperties.voiceMessageLoadingIcon,
               meBgColor: IsmChatConfig.chatTheme.chatPageTheme?.selfMessageTheme
                       ?.audioMessageBGColor ??
                   IsmChatConfig.chatTheme.primaryColor ??
@@ -44,6 +48,10 @@ class IsmChatAudioMessage extends StatelessWidget {
                   IsmChatColors.primaryColorLight,
               mePlayIconColor: IsmChatConfig.chatTheme.primaryColor ??
                   IsmChatColors.primaryColorLight,
+              meProgressOverlayColor: IsmChatProperties
+                  .chatPageProperties.voiceMessageProgressOverlayColorMe,
+              opponentProgressOverlayColor: IsmChatProperties
+                  .chatPageProperties.voiceMessageProgressOverlayColorOpponent,
               duration: duration,
             ),
             if (message.isUploading == true)

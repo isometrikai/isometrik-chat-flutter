@@ -21,6 +21,7 @@ class IsmChatPageProperties {
     this.meessageFieldFocusNode,
     this.messageFieldSuffix,
     this.onCallBlockUnblock,
+    this.onBlockUnblockSuccess,
     this.onCoverstaionStatus,
     this.messageSenderProfileBuilder,
     this.messageSenderNameBuilder,
@@ -45,6 +46,13 @@ class IsmChatPageProperties {
     this.conversationDetailsApiInterval = const Duration(minutes: 1),
     this.enablePaidMediaHandling = false,
     this.contactMessageAvatarBuilder,
+    this.voiceMessagePlayIcon,
+    this.voiceMessagePauseIcon,
+    this.voiceMessageLoadingIcon,
+    this.voiceMessageWaveColorMe,
+    this.voiceMessageWaveColorOpponent,
+    this.voiceMessageProgressOverlayColorMe,
+    this.voiceMessageProgressOverlayColorOpponent,
   });
 
   final Widget? placeholder;
@@ -126,8 +134,19 @@ class IsmChatPageProperties {
   /// Future<ConversationVoidCallback>? onCallBlockUnblock
   /// ```
   ///
-  /// `IsmChatConversationModel` gives data of current chat, it could be used for local storage or state variables
+  /// Deprecated: The SDK now performs block/unblock internally.
+  ///
+  /// Use [onBlockUnblockSuccess] for app-side customizations after success.
+  @Deprecated('SDK now blocks/unblocks internally; use onBlockUnblockSuccess')
   final FutureConversationVoidCallback? onCallBlockUnblock;
+
+  /// Called **after** the SDK successfully blocks/unblocks a user.
+  ///
+  /// Use this for app-side customizations (toast/snackbar, analytics, navigation,
+  /// refreshing your own state).
+  ///
+  /// - `didBlock`: true when block succeeded, false when unblock succeeded.
+  final BlockUnblockSuccessCallback? onBlockUnblockSuccess;
 
   /// Required parameter
   ///
@@ -235,4 +254,40 @@ class IsmChatPageProperties {
   /// Note: This does not affect the main message sender profile; for that use
   /// [messageSenderProfileBuilder].
   final ContactMessageAvatarBuilder? contactMessageAvatarBuilder;
+
+  /// Icon widget for **play** in voice message button.
+  ///
+  /// If null, SDK uses the default `Icons.play_arrow`.
+  final Widget? voiceMessagePlayIcon;
+
+  /// Icon widget for **pause** in voice message button.
+  ///
+  /// If null, SDK uses the default `Icons.pause`.
+  final Widget? voiceMessagePauseIcon;
+
+  /// Icon/widget shown while voice message is loading/configuring.
+  ///
+  /// If null, SDK uses a small `CircularProgressIndicator`.
+  final Widget? voiceMessageLoadingIcon;
+
+  /// Waveform/bar color for voice messages sent by me.
+  ///
+  /// Used by the cached noise widget created in `IsmChatPageController.getNoise`.
+  /// If null, SDK defaults to white.
+  final Color? voiceMessageWaveColorMe;
+
+  /// Waveform/bar color for voice messages sent by opponent.
+  ///
+  /// If null, SDK defaults to grey.
+  final Color? voiceMessageWaveColorOpponent;
+
+  /// Moving progress overlay color for voice messages sent by me.
+  ///
+  /// If null, SDK derives it from `meBgColor` with opacity.
+  final Color? voiceMessageProgressOverlayColorMe;
+
+  /// Moving progress overlay color for voice messages sent by opponent.
+  ///
+  /// If null, SDK derives it from `opponentBgColor` with opacity.
+  final Color? voiceMessageProgressOverlayColorOpponent;
 }
