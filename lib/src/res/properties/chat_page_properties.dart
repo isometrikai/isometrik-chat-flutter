@@ -44,6 +44,7 @@ class IsmChatPageProperties {
     this.canReplayMessage,
     this.conversationDetailsApiInterval = const Duration(minutes: 1),
     this.enablePaidMediaHandling = false,
+    this.contactMessageAvatarBuilder,
   });
 
   final Widget? placeholder;
@@ -224,4 +225,14 @@ class IsmChatPageProperties {
   /// - [IsmChat.i.onPaidMediaSend] - Called when user clicks send with selected media.
   ///   The delegate should show paid/free screen and send message from outside SDK.
   final bool enablePaidMediaHandling;
+
+  /// Customize the avatar/profile UI shown inside a **contact message bubble**.
+  ///
+  /// This is used by `IsmChatContactMessage` (custom type: contact) to render
+  /// each contact's picture. Return `null` to fall back to the SDK default
+  /// avatar (`IsmChatImage.profile` / placeholder asset).
+  ///
+  /// Note: This does not affect the main message sender profile; for that use
+  /// [messageSenderProfileBuilder].
+  final ContactMessageAvatarBuilder? contactMessageAvatarBuilder;
 }

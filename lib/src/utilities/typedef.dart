@@ -24,6 +24,15 @@ typedef UserDetailsWidgetCallback = Widget? Function(
   UserDetails,
 );
 
+/// Builder for rendering contact-avatar UI inside a **contact message bubble**
+/// (custom message type: [IsmChatCustomMessageType.contact]).
+///
+/// Return null to fall back to SDK default avatar rendering.
+typedef ContactMessageAvatarBuilder = Widget? Function(
+  BuildContext,
+  IsmChatContactMetaDatModel,
+);
+
 typedef WidgetCallback = Widget? Function(
   BuildContext,
   IsmChatConversationModel?,
