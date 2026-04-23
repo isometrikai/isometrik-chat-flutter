@@ -36,31 +36,37 @@ mixin IsmChatMqttEventBlockUnblockMixin {
                   IsmChatActionEvents.userUnblock ||
               actionModel.action == IsmChatActionEvents.userUnblockConversation;
 
-          if (isBlockAction || isUnblockAction) {
+          if (isBlockAction) {
             controller.conversation = controller.conversation?.copyWith(
               metaData: controller.conversation?.metaData?.copyWith(
                 blockedMessage: IsmChatMessageModel(
-                  action: isBlockAction
-                      ? 'userBlockConversation'
-                      : 'userUnblockConversation',
+                  action: 'userBlockConversation',
                   initiatorId: actionModel.initiatorDetails?.userId ?? '',
                   initiatorName: actionModel.initiatorDetails?.userName ?? '',
                   userId: actionModel.initiatorDetails?.userId ?? '',
                   userName: actionModel.initiatorDetails?.userName ?? '',
                   body: '',
                   conversationId: actionModel.conversationId ?? '',
-                  customType: isBlockAction
-                      ? IsmChatCustomMessageType.block
-                      : IsmChatCustomMessageType.unblock,
+                  customType: IsmChatCustomMessageType.block,
                   sentAt: actionModel.sentAt,
                   sentByMe: false,
                 ),
               ),
             );
+          } else if (isUnblockAction) {
+            // On unblock, clear the local blocked banner immediately.
+            controller.conversation = controller.conversation?.copyWith(
+              metaData: controller.conversation?.metaData?.copyWith(
+                blockedMessage: null,
+              ),
+            );
+          }
+
+          if (isBlockAction || isUnblockAction) {
             await IsmChatUtility.conversationController.updateConversation(
-                conversationId: actionModel.conversationId ?? '',
-                metaData:
-                    controller.conversation?.metaData ?? IsmChatMetaData());
+              conversationId: actionModel.conversationId ?? '',
+              metaData: controller.conversation?.metaData ?? IsmChatMetaData(),
+            );
           }
 
           await controller.getConverstaionDetails();
