@@ -27,23 +27,87 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     _controller.blockUsers = updatedBlockUsers;
 
     // 2) Update cached conversation so "messagingDisabled" and banner state reset.
-    final conversationId = _controller.getConversationId(opponentId);
+    // ConversationId resolution:
+    // - Primary: in-memory conversations list (fast).
+    // - Fallback: local DB scan (settings/unblock can happen before conversations load).
+    var conversationId = _controller.getConversationId(opponentId);
+    if (conversationId.isEmpty) {
+      final local = await IsmChatConfig.dbWrapper?.getAllConversations();
+      final match = (local ?? const <IsmChatConversationModel>[])
+          .cast<IsmChatConversationModel?>()
+          .firstWhere(
+            (c) => c?.opponentDetails?.userId == opponentId,
+            orElse: () => null,
+          );
+      conversationId = match?.conversationId ?? '';
+    }
     if (conversationId.isEmpty) return;
 
-    final cached = await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+    final cached =
+        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
     if (cached == null) return;
+
+    // If a historical "block" system message exists in the stored messages map,
+    // the chat UI will still render it as a centered block banner row.
+    // For unblock-from-settings we want the chat to open in an unblocked state
+    // without showing a stale "blocked" banner.
+    Map<String, IsmChatMessageModel>? cleanedMessages;
+    if (cached.messages != null) {
+      cleanedMessages = Map<String, IsmChatMessageModel>.from(cached.messages!);
+      cleanedMessages.removeWhere(
+        (_, msg) => msg.customType == IsmChatCustomMessageType.block,
+      );
+    }
 
     final updated = cached.copyWith(
       messagingDisabled: false,
       metaData: cached.metaData?.copyWith(blockedMessage: null),
+      messages: cleanedMessages,
     );
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: updated);
+
+    // Keep in-memory conversation(s) in sync so conversation detail screens
+    // immediately reflect the unblocked state.
+    final listIndex = _controller.conversations
+        .indexWhere((c) => c.conversationId == conversationId);
+    if (listIndex != -1) {
+      final current = _controller.conversations[listIndex];
+      _controller.conversations[listIndex] = current.copyWith(
+        messagingDisabled: false,
+        metaData: current.metaData?.copyWith(blockedMessage: null),
+      );
+    }
+
+    final sugIndex = _controller.suggestions
+        .indexWhere((c) => c.conversationId == conversationId);
+    if (sugIndex != -1) {
+      final current = _controller.suggestions[sugIndex];
+      _controller.suggestions[sugIndex] = current.copyWith(
+        messagingDisabled: false,
+        metaData: current.metaData?.copyWith(blockedMessage: null),
+      );
+    }
+
+    if (_controller.currentConversationId == conversationId &&
+        _controller.currentConversation != null) {
+      await _controller.updateLocalConversation(
+        _controller.currentConversation!.copyWith(
+          messagingDisabled: false,
+          metaData: _controller.currentConversation!.metaData
+              ?.copyWith(blockedMessage: null),
+        ),
+      );
+    } else {
+      // Still notify listeners for list/detail views driven by this controller.
+      _controller.update();
+    }
 
     // 3) If chat page is currently open for this conversation, refresh it too.
     if (IsmChatUtility.chatPageControllerRegistered) {
       final chatPageController = IsmChatUtility.chatPageController;
       if (chatPageController.conversation?.conversationId == conversationId) {
-        chatPageController.conversation = chatPageController.conversation?.copyWith(
+        chatPageController.conversation =
+            chatPageController.conversation?.copyWith(
           messagingDisabled: false,
           metaData: chatPageController.conversation?.metaData?.copyWith(
             blockedMessage: null,
@@ -64,7 +128,8 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
       _controller.userDetails = user;
       if (!kIsWeb) {
         if (_controller.userDetails?.metaData?.assetList?.isNotEmpty == true) {
-          final assetList = _controller.userDetails?.metaData?.assetList?.toList() ?? [];
+          final assetList =
+              _controller.userDetails?.metaData?.assetList?.toList() ?? [];
           final indexOfAsset = assetList
               .indexWhere((e) => e.values.first.srNoBackgroundAssset == 100);
           if (indexOfAsset != -1) {
@@ -89,12 +154,13 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
             };
           }
           _controller.userDetails = _controller.userDetails?.copyWith(
-              metaData: _controller.userDetails?.metaData?.copyWith(assetList: assetList));
+              metaData: _controller.userDetails?.metaData
+                  ?.copyWith(assetList: assetList));
         }
       }
 
-      await IsmChatConfig.dbWrapper?.userDetailsBox
-          .put(IsmChatStrings.userData, _controller.userDetails?.toJson() ?? '');
+      await IsmChatConfig.dbWrapper?.userDetailsBox.put(
+          IsmChatStrings.userData, _controller.userDetails?.toJson() ?? '');
     }
   }
 
@@ -174,7 +240,8 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
 
     final bytes = await file.first?.readAsBytes();
     final fileExtension = file.first?.path.split('.').last;
-    await _controller.getPresignedUrl(fileExtension ?? '', bytes ?? Uint8List(0));
+    await _controller.getPresignedUrl(
+        fileExtension ?? '', bytes ?? Uint8List(0));
   }
 
   /// Retrieves a presigned URL for uploading media.
@@ -267,4 +334,3 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     return _controller.blockUsers;
   }
 }
-
