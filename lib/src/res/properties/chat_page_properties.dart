@@ -53,6 +53,7 @@ class IsmChatPageProperties {
     this.voiceMessageWaveColorOpponent,
     this.voiceMessageProgressOverlayColorMe,
     this.voiceMessageProgressOverlayColorOpponent,
+    this.onUserConversationInfoTap,
   });
 
   final Widget? placeholder;
@@ -290,4 +291,11 @@ class IsmChatPageProperties {
   ///
   /// If null, SDK derives it from `opponentBgColor` with opacity.
   final Color? voiceMessageProgressOverlayColorOpponent;
+
+  /// Called when user taps the **1-1 chat** (non-group) profile image or name
+  /// inside `IsmChatConverstaionInfoView`.
+  ///
+  /// Use this when you want to open your app-side user profile screen.
+  /// If null, SDK keeps its existing behavior (e.g. opens profile image preview).
+  final ConversationVoidCallback? onUserConversationInfoTap;
 }

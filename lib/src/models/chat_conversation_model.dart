@@ -263,7 +263,10 @@ class IsmChatConversationModel {
       if (isOpponentDetailsEmpty) {
         return IsmChatStrings.deletedUser;
       }
-      return opponentDetails?.userName ?? '';
+      final firstName = opponentDetails?.metaData?.firstName ?? '';
+      final lastName = opponentDetails?.metaData?.lastName ?? '';
+      final fullName = '$firstName $lastName'.trim();
+      return fullName.isNotEmpty ? fullName : (opponentDetails?.userName ?? '');
     }
     return conversationTitle ?? '';
   }
