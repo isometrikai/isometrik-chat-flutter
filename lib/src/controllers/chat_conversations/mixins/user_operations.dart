@@ -68,6 +68,17 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     );
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: updated);
 
+    // Important: when the user opens chat after unblocking from settings, chat page
+    // often calls `getConverstaionDetails()` which can overwrite local metadata
+    // with the server conversation metadata. Clear `blockedMessage` on server too
+    // so it can't re-appear.
+    unawaited(
+      _controller.updateConversation(
+        conversationId: conversationId,
+        metaData: updated.metaData ?? IsmChatMetaData(),
+      ),
+    );
+
     // Keep in-memory conversation(s) in sync so conversation detail screens
     // immediately reflect the unblocked state.
     final listIndex = _controller.conversations
