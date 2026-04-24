@@ -7,6 +7,30 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
   /// Gets the controller instance.
   IsmChatPageController get _controller => this as IsmChatPageController;
 
+  /// Removes persisted block/unblock banner messages from local DB.
+  ///
+  /// The centered "You blocked/unblocked" banner is rendered from messages whose
+  /// `customType` is `block` or `unblock` (see `IsmChatBlockedMessage`).
+  /// Even if we clear `metaData.blockedMessage`, an old stored message can keep
+  /// showing the banner. This helper ensures local DB can't re-hydrate it.
+  Future<void> _removeBlockUnblockBannerMessages(String conversationId) async {
+    if (conversationId.isEmpty) return;
+    final existing =
+        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+    if (existing?.messages == null || existing!.messages!.isEmpty) return;
+
+    final cleaned = Map<String, IsmChatMessageModel>.from(existing.messages!);
+    cleaned.removeWhere(
+      (_, msg) =>
+          msg.customType == IsmChatCustomMessageType.block ||
+          msg.customType == IsmChatCustomMessageType.unblock,
+    );
+
+    await IsmChatConfig.dbWrapper?.saveConversation(
+      conversation: existing.copyWith(messages: cleaned),
+    );
+  }
+
   /// Returns opponent metadata in raw API-like JSON form.
   ///
   /// We pass `customMetaData` directly because this preserves the incoming API
@@ -125,7 +149,11 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
         _controller.conversationController.getChatConversations(),
       ]);
     }
-    // Clear block message so "You are blocked" goes away from UI (local + server)
+    final convId = _controller.conversation?.conversationId ?? '';
+
+    // Always clear the block banner sources:
+    // - `metaData.blockedMessage` (injected into message list)
+    // - stored block/unblock system messages in local DB
     if (_controller.conversation?.metaData?.blockedMessage != null) {
       _controller.conversation = _controller.conversation!.copyWith(
         metaData: _controller.conversation!.metaData?.copyWith(
@@ -134,15 +162,16 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
       );
       unawaited(
         IsmChatUtility.conversationController.updateConversation(
-          conversationId: _controller.conversation?.conversationId ?? '',
+          conversationId: convId,
           metaData: _controller.conversation?.metaData ?? IsmChatMetaData(),
         ),
       );
       await _saveBlockUnblockMetaDataLocally();
-      final convId = _controller.conversation?.conversationId ?? '';
-      if (convId.isNotEmpty) {
-        await _controller.getMessagesFromDB(convId);
-      }
+    }
+
+    await _removeBlockUnblockBannerMessages(convId);
+    if (convId.isNotEmpty) {
+      await _controller.getMessagesFromDB(convId);
     }
   }
 

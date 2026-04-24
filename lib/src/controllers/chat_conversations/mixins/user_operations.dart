@@ -55,7 +55,9 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     if (cached.messages != null) {
       cleanedMessages = Map<String, IsmChatMessageModel>.from(cached.messages!);
       cleanedMessages.removeWhere(
-        (_, msg) => msg.customType == IsmChatCustomMessageType.block,
+        (_, msg) =>
+            msg.customType == IsmChatCustomMessageType.block ||
+            msg.customType == IsmChatCustomMessageType.unblock,
       );
     }
 
