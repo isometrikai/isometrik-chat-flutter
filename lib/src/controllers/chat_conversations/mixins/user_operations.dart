@@ -76,6 +76,7 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
       _controller.updateConversation(
         conversationId: conversationId,
         metaData: updated.metaData ?? IsmChatMetaData(),
+        includeNullBlockedMessage: true,
       ),
     );
 

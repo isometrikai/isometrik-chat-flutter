@@ -285,11 +285,13 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   Future<void> updateConversation({
     required String conversationId,
     required IsmChatMetaData metaData,
+    bool includeNullBlockedMessage = false,
     bool isLoading = false,
   }) async {
     final response = await _controller.viewModel.updateConversation(
       conversationId: conversationId,
       metaData: metaData,
+      includeNullBlockedMessage: includeNullBlockedMessage,
       isLoading: isLoading,
     );
     if (response?.hasError == false) {
