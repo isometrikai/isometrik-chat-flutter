@@ -9,6 +9,21 @@ class IsmChatContactMessage extends StatelessWidget {
 
   final IsmChatMessageModel message;
 
+  Widget _defaultAvatar(IsmChatContactMetaDatModel data) {
+    final hasImage = (data.contactImageUrl?.isNotEmpty ?? false);
+    if (hasImage) {
+      return IsmChatImage.profile(
+        backgroundColor: IsmChatColors.blueColor,
+        data.contactImageUrl ?? '',
+        name: data.contactName ?? '',
+        isNetworkImage: false,
+        isBytes: true,
+        dimensions: IsmChatDimens.fortyFive,
+      );
+    }
+    return const _NoImageWidget();
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
@@ -46,31 +61,17 @@ class IsmChatContactMessage extends StatelessWidget {
                             : 3,
                         (index) {
                           var data = message.contacts[index];
+                          final customAvatar = IsmChatProperties
+                              .chatPageProperties.contactMessageAvatarBuilder
+                              ?.call(context, data);
+                          final avatar = customAvatar ?? _defaultAvatar(data);
                           if (index == 0) {
-                            return data.contactImageUrl != null
-                                ? IsmChatImage.profile(
-                                    backgroundColor: IsmChatColors.blueColor,
-                                    data.contactImageUrl ?? '',
-                                    name: data.contactName ?? '',
-                                    isNetworkImage: false,
-                                    isBytes: true,
-                                    dimensions: IsmChatDimens.fortyFive,
-                                  )
-                                : const _NoImageWidget();
+                            return avatar;
                           }
 
                           return Positioned(
                             left: index * IsmChatDimens.ten,
-                            child: data.contactImageUrl != null
-                                ? IsmChatImage.profile(
-                                    backgroundColor: IsmChatColors.blueColor,
-                                    data.contactImageUrl ?? '',
-                                    name: data.contactName ?? '',
-                                    isNetworkImage: false,
-                                    isBytes: true,
-                                    dimensions: IsmChatDimens.fortyFive,
-                                  )
-                                : const _NoImageWidget(),
+                            child: avatar,
                           );
                         },
                       ).toList().reversed.toList(),

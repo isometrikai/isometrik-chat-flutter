@@ -69,6 +69,14 @@ class _IsmChatConverstaionInfoViewState
     );
   }
 
+  /// Prefer "First Last" for display name; fallback to username.
+  String _memberDisplayName(UserDetails member) {
+    final fullName =
+        '${member.metaData?.firstName ?? ''} ${member.metaData?.lastName ?? ''}'
+            .trim();
+    return fullName.isNotEmpty ? fullName : member.userName;
+  }
+
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
@@ -131,7 +139,7 @@ class _IsmChatConverstaionInfoViewState
               title: Text(
                 controller.conversation?.isGroup ?? false
                     ? IsmChatStrings.groupInfo
-                    : IsmChatStrings.contactInfo,
+                    : IsmChatStrings.profileInfo,
                 style:
                     IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
                         IsmChatStyles.w600White18,
@@ -211,20 +219,42 @@ class _IsmChatConverstaionInfoViewState
                           children: [
                             IsmChatTapHandler(
                               onTap: () {
+                                // Let host app handle 1-1 user profile taps if provided.
+                                if (controller.conversation?.isGroup != true) {
+                                  final cb = IsmChatProperties
+                                      .chatPageProperties
+                                      .onUserConversationInfoTap;
+                                  if (cb != null) {
+                                    cb.call(context, controller.conversation);
+                                    return;
+                                  }
+                                }
                                 IsmChatRoute.goToRoute(IsmChatProfilePicView(
-                                  userName:
-                                      controller.conversation?.isGroup == true
-                                          ? controller
-                                                  .conversation
-                                                  ?.conversationTitle
-                                                  ?.capitalizeFirst ??
-                                              ''
-                                          : controller
-                                                  .conversation
-                                                  ?.opponentDetails
-                                                  ?.userName
+                                  userName: controller.conversation?.isGroup ==
+                                          true
+                                      ? controller
+                                              .conversation
+                                              ?.conversationTitle
+                                              ?.capitalizeFirst ??
+                                          ''
+                                      : (() {
+                                          final opponent = controller
+                                              .conversation?.opponentDetails;
+                                          final first =
+                                              opponent?.metaData?.firstName ??
+                                                  '';
+                                          final last =
+                                              opponent?.metaData?.lastName ??
+                                                  '';
+                                          final fullName =
+                                              '$first $last'.trim();
+                                          return (fullName.isNotEmpty
+                                                      ? fullName
+                                                      : (opponent?.userName ??
+                                                          ''))
                                                   .capitalizeFirst ??
-                                              '',
+                                              '';
+                                        })(),
                                   imageUrl:
                                       controller.conversation?.isGroup == true
                                           ? controller.conversation
@@ -264,18 +294,34 @@ class _IsmChatConverstaionInfoViewState
                                       controller.conversation?.chatName ?? '';
                                   controller.showDialogForChangeGroupTitle();
                                 }
-                              : null,
+                              : () {
+                                  final cb = IsmChatProperties
+                                      .chatPageProperties
+                                      .onUserConversationInfoTap;
+                                  if (cb != null) {
+                                    cb.call(context, controller.conversation);
+                                  }
+                                },
                           child: Text(
                             controller.conversation?.chatName ?? '',
                             textAlign: TextAlign.center,
                             style: IsmChatStyles.w600Black27,
                           )),
                       if (!(controller.conversation?.isGroup ?? false)) ...[
-                        Text(
-                          controller.conversation?.opponentDetails
-                                  ?.userIdentifier ??
-                              '',
-                          style: IsmChatStyles.w500GreyLight17,
+                        Builder(
+                          builder: (context) {
+                            final identifier = (controller.conversation
+                                        ?.opponentDetails?.userIdentifier ??
+                                    '')
+                                .trim();
+                            if (!GetUtils.isEmail(identifier))
+                              return IsmChatDimens.box0;
+
+                            return Text(
+                              identifier,
+                              style: IsmChatStyles.w500GreyLight17,
+                            );
+                          },
                         ),
                       ],
                       if (controller.conversation?.isGroup ?? false) ...[
@@ -564,15 +610,13 @@ class _IsmChatConverstaionInfoViewState
                                             .userConfig.userId ==
                                         member.userId
                                     ? IsmChatStrings.you
-                                    : member.userName),
-                                subtitle: Text(IsmChatProperties
-                                        .conversationProperties.opponentSubTitle
-                                        ?.call(context, member) ??
-                                    member.metaData?.aboutText?.title ??
-                                    ''),
+                                    : _memberDisplayName(member)),
+                                subtitle: Text(member.userName),
                                 leading: IsmChatImage.profile(
                                   member.profileUrl,
-                                  name: member.userName.capitalizeFirst ?? '',
+                                  name: _memberDisplayName(member)
+                                          .capitalizeFirst ??
+                                      '',
                                 ),
                               );
                             },

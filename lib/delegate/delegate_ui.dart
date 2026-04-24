@@ -73,14 +73,20 @@ mixin IsmChatDelegateUiMixin {
     if (IsmChatUtility.conversationControllerRegistered) {
       final controller = IsmChatUtility.conversationController;
       controller.debounce.run(() async {
-        switch (searchValue.trim().isNotEmpty) {
-          case true:
+        final trimmed = searchValue.trim();
+        if (trimmed.isNotEmpty) {
+          // First search current local cache so already-visible conversations
+          // (especially group titles) return instantly without waiting for API.
+          await controller.getConversationsFromDB(searchTag: trimmed);
+
+          // If local search has no match, then fallback to API-backed search.
+          if (controller.conversations.isEmpty) {
             await controller.getChatConversations(
-              searchTag: searchValue,
+              searchTag: trimmed,
             );
-            break;
-          default:
-            await controller.getConversationsFromDB();
+          }
+        } else {
+          await controller.getConversationsFromDB();
         }
       });
       controller.update();

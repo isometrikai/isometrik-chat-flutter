@@ -48,24 +48,26 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     if (searchTag?.isNotEmpty == true) {
       final lowerSearchText = (searchTag ?? '').toLowerCase();
       _controller.conversations = _controller.conversations.where((e) {
+        // Use "contains" instead of "startsWith" so existing conversations
+        // still match when the query appears mid-string (e.g., group titles).
         if (e.isGroup == true) {
-          return (e.conversationTitle ?? '')
-                  .toLowerCase()
-                  .startsWith(lowerSearchText) ||
+          return (e.conversationTitle ?? '').toLowerCase().contains(
+                    lowerSearchText,
+                  ) ||
               (e.searchableTags?.cast<String>().any(
-                        (x) => x.toLowerCase().startsWith(lowerSearchText),
+                        (x) => x.toLowerCase().contains(lowerSearchText),
                       ) ??
                   false);
         } else {
           return (e.opponentDetails?.userName ?? '')
                   .toLowerCase()
-                  .startsWith(lowerSearchText) ||
+                  .contains(lowerSearchText) ||
               (e.opponentDetails?.metaData?.firstName ?? '')
                   .toLowerCase()
-                  .startsWith(lowerSearchText) ||
+                  .contains(lowerSearchText) ||
               (e.opponentDetails?.metaData?.lastName ?? '')
                   .toLowerCase()
-                  .startsWith(lowerSearchText);
+                  .contains(lowerSearchText);
         }
       }).toList();
     }

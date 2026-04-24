@@ -11,7 +11,10 @@ mixin IsmChatPageUtilityMethodsMixin on GetxController {
   /// Gets or creates a noise widget for the specified timestamp.
   Widget getNoise(int sentAt, [bool sentByMe = true]) {
     if (!_controller.noises.keys.contains(sentAt)) {
-      var color = sentByMe ? Colors.white : Colors.grey;
+      final props = IsmChatProperties.chatPageProperties;
+      var color = sentByMe
+          ? (props.voiceMessageWaveColorMe ?? Colors.white)
+          : (props.voiceMessageWaveColorOpponent ?? Colors.grey);
       var noiseList = List.generate(27, (index) => $SingleNoise(color: color));
       var noise = Noises(noises: noiseList);
       _controller.noises[sentAt] = noise;

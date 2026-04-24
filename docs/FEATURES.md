@@ -386,6 +386,10 @@ Real-time messaging using MQTT protocol for instant message delivery.
 **Limitations:**
 - Some customization options may be limited on certain platforms
 
+**Contact message avatar customization:**
+- You can override the avatar/profile UI shown inside **contact message bubbles**
+  by providing `IsmChatPageProperties(contactMessageAvatarBuilder: ...)`.
+
 ---
 
 ### 21. Web Support ✅

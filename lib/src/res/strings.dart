@@ -133,6 +133,7 @@ class IsmChatStrings {
   static const String addParticioants = 'Add participants';
   static const String addDescription = 'Add group description';
   static const String groupInfo = 'Group Info';
+  static const String profileInfo = 'Profile Info';
   static const String edit = 'Edit';
 
   static const String areYouSure = 'Are you sure?';

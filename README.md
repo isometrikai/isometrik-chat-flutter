@@ -85,6 +85,21 @@ IsmChatApp(
 );
 ```
 
+### Contact message profile UI (avatar)
+
+If you want to reuse your app’s avatar/profile widget inside **contact messages**
+(`IsmChatCustomMessageType.contact`), set `contactMessageAvatarBuilder`:
+
+```dart
+IsmChatPageProperties(
+  contactMessageAvatarBuilder: (context, contact) {
+    // Return your app avatar widget.
+    // Return null to use SDK default avatar.
+    return null;
+  },
+)
+```
+
 ##### Required Parameters
 
 - `context`: The BuildContext of the application.

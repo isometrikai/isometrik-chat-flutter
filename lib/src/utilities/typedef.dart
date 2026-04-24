@@ -24,6 +24,15 @@ typedef UserDetailsWidgetCallback = Widget? Function(
   UserDetails,
 );
 
+/// Builder for rendering contact-avatar UI inside a **contact message bubble**
+/// (custom message type: [IsmChatCustomMessageType.contact]).
+///
+/// Return null to fall back to SDK default avatar rendering.
+typedef ContactMessageAvatarBuilder = Widget? Function(
+  BuildContext,
+  IsmChatContactMetaDatModel,
+);
+
 typedef WidgetCallback = Widget? Function(
   BuildContext,
   IsmChatConversationModel?,
@@ -43,6 +52,17 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
   BuildContext,
   IsmChatConversationModel,
   bool,
+  Map<String, dynamic>,
+);
+
+/// Post-success callback for block/unblock.
+///
+/// Called **after** SDK successfully blocks or unblocks a user.
+typedef BlockUnblockSuccessCallback = Future<void> Function(
+  BuildContext context,
+  IsmChatConversationModel conversation,
+  bool didBlock,
+  Map<String, dynamic> opponentMetaData,
 );
 
 typedef ConversationStringCallback = String? Function(
@@ -61,6 +81,12 @@ typedef MessageWidgetBuilder = Widget? Function(
   IsmChatMessageModel,
   IsmChatCustomMessageType,
   bool,
+);
+
+typedef ForwardMessageInfoBuilder = Widget? Function(
+  BuildContext,
+  List<IsmChatMessageModel>,
+  IsmChatConversationModel?,
 );
 
 typedef MessageSenderInfoBuilder = Widget? Function(
@@ -164,6 +190,7 @@ typedef ConditionConversationCustomeTypeCallback = Future<bool?>? Function(
   BuildContext,
   IsmChatConversationModel?,
   IsmChatCustomMessageType,
+  String?,
 );
 
 typedef ConditionCallback = void Function(bool);
