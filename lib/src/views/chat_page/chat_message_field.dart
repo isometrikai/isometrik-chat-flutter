@@ -197,11 +197,26 @@ class IsmChatMessageField extends StatelessWidget {
                                       inputFormatters: IsmChatProperties
                                           .chatPageProperties.inputFormatters,
                                       enableInteractiveSelection:
-                                          IsmChatProperties.chatPageProperties
-                                              .enableInteractiveSelection,
-                                      contextMenuBuilder: IsmChatProperties
-                                          .chatPageProperties
-                                          .contextMenuBuilder,
+                                          // Pasting text relies on interactive selection & a context menu.
+                                          // The message composer should support paste by default across platforms,
+                                          // so we keep this enabled here.
+                                          true,
+                                      contextMenuBuilder:
+                                          (context, editableTextState) {
+                                        final builder = IsmChatProperties
+                                            .chatPageProperties
+                                            .contextMenuBuilder;
+                                        if (builder != null) {
+                                          return builder(
+                                              context, editableTextState);
+                                        }
+
+                                        // Default adaptive menu (includes paste/copy/select-all as applicable).
+                                        return AdaptiveTextSelectionToolbar
+                                            .editableText(
+                                          editableTextState: editableTextState,
+                                        );
+                                      },
                                       style: IsmChatConfig
                                           .chatTheme
                                           .chatPageTheme
