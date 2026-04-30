@@ -4,6 +4,11 @@ class IsmChatStrings {
   static const String name = 'Isometrik Flutter Chat';
   static const String dbname = 'isometrik_chat_flutter';
   static const String userData = 'userData';
+  /// Key used to store last active user id in local DB.
+  ///
+  /// This prevents chat history leaking across accounts on the same device when
+  /// apps switch users without clearing the SDK cache.
+  static const String activeUserIdKey = 'activeUserId';
   static const String user = 'user';
 
   static const String controllerTag = 'ism-chat-page';
