@@ -2,16 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmChatVideoMessage extends StatelessWidget {
-  IsmChatVideoMessage(this.message, {super.key});
+class IsmChatVideoMessage extends StatefulWidget {
+  const IsmChatVideoMessage(this.message, {super.key});
 
   final IsmChatMessageModel message;
 
+  @override
+  State<IsmChatVideoMessage> createState() => _IsmChatVideoMessageState();
+}
+
+class _IsmChatVideoMessageState extends State<IsmChatVideoMessage> {
   /// Tracks expand/collapse state for long captions (show more / show less).
-  final isExpandedNotifier = ValueNotifier(false);
+  late final ValueNotifier<bool> _isExpandedNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpandedNotifier = ValueNotifier(false);
+  }
+
+  @override
+  void dispose() {
+    _isExpandedNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final message = widget.message;
     final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
         ?.call(context, message);
     final thumbnailUrl = message.attachments?.first.thumbnailUrl ?? '';
@@ -71,7 +89,7 @@ class IsmChatVideoMessage extends StatelessWidget {
               Padding(
                 padding: IsmChatDimens.edgeInsetsTop5,
                 child: ValueListenableBuilder<bool>(
-                  valueListenable: isExpandedNotifier,
+                  valueListenable: _isExpandedNotifier,
                   builder: (context, isExpanded, _) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -85,18 +103,21 @@ class IsmChatVideoMessage extends StatelessWidget {
                         maxLines: isExpanded ? null : 3,
                       ),
                       if (_isCaptionOverflowing(context))
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            padding: IsmChatDimens.edgeInsets0,
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          onPressed: () {
-                            isExpandedNotifier.value = !isExpanded;
-                          },
-                          child: Text(
-                            isExpanded ? 'Show less' : 'Show more',
-                            style: message.readTextStyle,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              padding: IsmChatDimens.edgeInsets0,
+                              minimumSize: const Size(0, 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () {
+                              _isExpandedNotifier.value = !isExpanded;
+                            },
+                            child: Text(
+                              isExpanded ? 'Show less' : 'Show more',
+                              style: message.readTextStyle,
+                            ),
                           ),
                         ),
                     ],
@@ -112,11 +133,11 @@ class IsmChatVideoMessage extends StatelessWidget {
 
   /// Returns true if caption exceeds 3 lines so we can show "Show more" button.
   bool _isCaptionOverflowing(BuildContext context) {
-    final caption = message.metaData?.caption ?? '';
+    final caption = widget.message.metaData?.caption ?? '';
     if (caption.isEmpty) return false;
 
     final textPainter = TextPainter(
-      text: TextSpan(text: caption, style: message.style),
+      text: TextSpan(text: caption, style: widget.message.style),
       maxLines: 3,
       textDirection: TextDirection.ltr,
     )..layout(maxWidth: context.width * 0.7);

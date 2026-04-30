@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Widget to display multiple images/videos in a grid layout similar to WhatsApp
-class IsmChatMediaGridMessage extends StatelessWidget {
-  IsmChatMediaGridMessage({
+class IsmChatMediaGridMessage extends StatefulWidget {
+  const IsmChatMediaGridMessage({
     super.key,
     required this.messages,
     required this.sentByMe,
@@ -16,11 +16,30 @@ class IsmChatMediaGridMessage extends StatelessWidget {
   final List<IsmChatMessageModel> messages;
   final bool sentByMe;
 
+  @override
+  State<IsmChatMediaGridMessage> createState() =>
+      _IsmChatMediaGridMessageState();
+}
+
+class _IsmChatMediaGridMessageState extends State<IsmChatMediaGridMessage> {
   /// Tracks expand/collapse state for long captions (show more / show less).
-  final isExpandedNotifier = ValueNotifier(false);
+  late final ValueNotifier<bool> _isExpandedNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpandedNotifier = ValueNotifier(false);
+  }
+
+  @override
+  void dispose() {
+    _isExpandedNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final messages = widget.messages;
     if (messages.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -221,6 +240,7 @@ class IsmChatMediaGridMessage extends StatelessWidget {
       messages.any((msg) => msg.metaData?.caption?.isNotEmpty == true);
 
   Widget _buildCaption(BuildContext context) {
+    final messages = widget.messages;
     // Get the first message with a caption, or use the last message
     final messageWithCaption = messages.firstWhere(
       (msg) => msg.metaData?.caption?.isNotEmpty == true,
@@ -233,7 +253,7 @@ class IsmChatMediaGridMessage extends StatelessWidget {
     }
 
     return ValueListenableBuilder<bool>(
-      valueListenable: isExpandedNotifier,
+      valueListenable: _isExpandedNotifier,
       builder: (context, isExpanded, _) => Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,18 +266,21 @@ class IsmChatMediaGridMessage extends StatelessWidget {
             maxLines: isExpanded ? null : 3,
           ),
           if (_isCaptionOverflowing(context, caption, messageWithCaption.style))
-            TextButton(
-              style: TextButton.styleFrom(
-                padding: IsmChatDimens.edgeInsets0,
-                minimumSize: const Size(0, 0),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: () {
-                isExpandedNotifier.value = !isExpanded;
-              },
-              child: Text(
-                isExpanded ? 'Show less' : 'Show more',
-                style: messageWithCaption.readTextStyle,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: IsmChatDimens.edgeInsets0,
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () {
+                  _isExpandedNotifier.value = !isExpanded;
+                },
+                child: Text(
+                  isExpanded ? 'Show less' : 'Show more',
+                  style: messageWithCaption.readTextStyle,
+                ),
               ),
             ),
         ],
