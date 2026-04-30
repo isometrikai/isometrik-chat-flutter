@@ -332,7 +332,19 @@ mixin IsmChatShowDialogMixin on GetxController {
       return;
     }
 
-    // This means chatting is allowed i.e. no one is blocked
+    // If chatting is not allowed but I didn't block them, it means they blocked me.
+    // In that state the user can't block back.
+    if (!(_controller.conversation?.isChattingAllowed ?? true)) {
+      await IsmChatContextWidget.showDialogContext(
+        content: const IsmChatAlertDialogBox(
+          title: IsmChatStrings.cannotBlockWhenAlreadyBlocked,
+          cancelLabel: IsmChatStrings.okay,
+        ),
+      );
+      return;
+    }
+
+    // This means chatting is allowed i.e. no one is blocked.
     showDialogForBlockUnBlockUser(false, includeMembers);
 
     // if (_controller.conversation?.isChattingAllowed ?? false) {

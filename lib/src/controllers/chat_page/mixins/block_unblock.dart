@@ -7,29 +7,11 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
   /// Gets the controller instance.
   IsmChatPageController get _controller => this as IsmChatPageController;
 
-  /// Removes persisted block/unblock banner messages from local DB.
-  ///
-  /// The centered "You blocked/unblocked" banner is rendered from messages whose
-  /// `customType` is `block` or `unblock` (see `IsmChatBlockedMessage`).
-  /// Even if we clear `metaData.blockedMessage`, an old stored message can keep
-  /// showing the banner. This helper ensures local DB can't re-hydrate it.
-  Future<void> _removeBlockUnblockBannerMessages(String conversationId) async {
-    if (conversationId.isEmpty) return;
-    final existing =
-        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
-    if (existing?.messages == null || existing!.messages!.isEmpty) return;
-
-    final cleaned = Map<String, IsmChatMessageModel>.from(existing.messages!);
-    cleaned.removeWhere(
-      (_, msg) =>
-          msg.customType == IsmChatCustomMessageType.block ||
-          msg.customType == IsmChatCustomMessageType.unblock,
-    );
-
-    await IsmChatConfig.dbWrapper?.saveConversation(
-      conversation: existing.copyWith(messages: cleaned),
-    );
-  }
+  Future<void> _purgeBlockUnblockAndRefreshLastMessage(String conversationId) =>
+      IsmChatConfig.dbWrapper?.purgeBlockUnblockAndRefreshLastMessage(
+        conversationId,
+      ) ??
+      Future.value();
 
   /// Returns opponent metadata in raw API-like JSON form.
   ///
@@ -47,6 +29,14 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
     bool fromUser = false,
     required bool userBlockOrNot,
   }) async {
+    // If opponent already blocked me, I can't block them back (per product rules).
+    if ((_controller.conversation?.isChattingAllowed == false) &&
+        (_controller.conversation?.isBlockedByMe == false)) {
+      await IsmChatUtility.showErrorDialog(
+        IsmChatStrings.cannotBlockWhenAlreadyBlocked,
+      );
+      return;
+    }
     bool blokedUser;
     // Build block message once for UI and re-apply after getConverstaionDetails
     final blockMessage = IsmChatMessageModel(
@@ -169,7 +159,20 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
       await _saveBlockUnblockMetaDataLocally();
     }
 
-    await _removeBlockUnblockBannerMessages(convId);
+    await _purgeBlockUnblockAndRefreshLastMessage(convId);
+
+    // Critical: also clear server-side `metaData.blockedMessage`.
+    // Otherwise periodic `getConverstaionDetails()` can re-hydrate the banner
+    // from the server a few seconds later.
+    if (convId.isNotEmpty) {
+      unawaited(
+        _controller.conversationController.updateConversation(
+          conversationId: convId,
+          metaData: _controller.conversation?.metaData ?? IsmChatMetaData(),
+          includeNullBlockedMessage: true,
+        ),
+      );
+    }
     if (convId.isNotEmpty) {
       await _controller.getMessagesFromDB(convId);
     }

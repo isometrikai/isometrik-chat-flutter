@@ -67,6 +67,11 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
       messages: cleanedMessages,
     );
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: updated);
+    // Also refresh conversation list "last message" preview so it doesn't stay
+    // stuck on the old block banner after unblock.
+    await IsmChatConfig.dbWrapper?.purgeBlockUnblockAndRefreshLastMessage(
+      conversationId,
+    );
 
     // Important: when the user opens chat after unblocking from settings, chat page
     // often calls `getConverstaionDetails()` which can overwrite local metadata

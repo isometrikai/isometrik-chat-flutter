@@ -187,21 +187,19 @@ extension LastMessageBody on LastMessageDetails {
       case IsmChatCustomMessageType.location:
         return 'Location';
       case IsmChatCustomMessageType.block:
-        var status = 'blocked';
-        var text =
-            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId
-                ? 'You $status this user'
-                : 'You are $status';
-        return text;
+        final isInitiatedByMe =
+            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId;
+        return isInitiatedByMe
+            ? IsmChatStrings.youBlockUser
+            : IsmChatStrings.youareBlocked;
       case IsmChatCustomMessageType.contact:
         return 'Contact';
       case IsmChatCustomMessageType.unblock:
-        var status = 'unblocked';
-        var text =
-            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId
-                ? 'You $status this user'
-                : 'You are $status';
-        return text;
+        final isInitiatedByMe =
+            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId;
+        return isInitiatedByMe
+            ? 'You unblocked this user'
+            : 'You are unblocked';
 
       case IsmChatCustomMessageType.conversationCreated:
         return 'Conversation created';

@@ -24,7 +24,125 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
           ?.call(dbConversations.isEmpty);
       return;
     }
-    _controller.conversations = dbConversations;
+
+    // Recompute lastMessageDetails from stored messages when needed.
+    // This fixes cases after app restart where conversation.lastMessageDetails
+    // falls back to "Conversation created" even though real messages exist in DB.
+    final updatedConversations = <IsmChatConversationModel>[];
+    for (final conv in dbConversations) {
+      final messagesMap = conv.messages;
+      final needsRecompute = (conv.lastMessageDetails == null) ||
+          (conv.lastMessageDetails?.customType ==
+              IsmChatCustomMessageType.conversationCreated) ||
+          (conv.lastMessageDetails?.customType == IsmChatCustomMessageType.block) ||
+          (conv.lastMessageDetails?.customType ==
+              IsmChatCustomMessageType.unblock);
+
+      if (!needsRecompute ||
+          messagesMap == null ||
+          messagesMap.isEmpty ||
+          (conv.conversationId ?? '').isEmpty) {
+        updatedConversations.add(conv);
+        continue;
+      }
+
+      final messages = messagesMap.values.toList()
+        ..sort((a, b) => a.sentAt.compareTo(b.sentAt));
+
+      IsmChatMessageModel? lastReal;
+      for (var i = messages.length - 1; i >= 0; i--) {
+        final m = messages[i];
+        if (m.customType == IsmChatCustomMessageType.date ||
+            m.customType == IsmChatCustomMessageType.conversationCreated ||
+            m.customType == IsmChatCustomMessageType.block ||
+            m.customType == IsmChatCustomMessageType.unblock) {
+          continue;
+        }
+        lastReal = m;
+        break;
+      }
+
+      if (lastReal == null) {
+        updatedConversations.add(conv);
+        continue;
+      }
+
+      final base = conv.lastMessageDetails;
+      final rebuilt = base != null
+          ? base.copyWith(
+              sentByMe: lastReal.sentByMe,
+              senderId: lastReal.senderInfo?.userId ?? lastReal.initiatorId ?? '',
+              senderName: lastReal.senderInfo?.userName ??
+                  lastReal.userName ??
+                  lastReal.initiatorName ??
+                  '',
+              showInConversation: true,
+              sentAt: lastReal.sentAt,
+              messageType: lastReal.messageType?.value ?? 0,
+              messageId: lastReal.messageId ?? '',
+              conversationId: lastReal.conversationId ?? conv.conversationId ?? '',
+              body: lastReal.body,
+              customType: lastReal.customType,
+              action: lastReal.action,
+              deliverCount: lastReal.deliveredTo?.length ?? 0,
+              deliveredTo: lastReal.deliveredTo ?? const <MessageStatus>[],
+              readCount: lastReal.readBy?.length ?? 0,
+              readBy: lastReal.readBy ?? const <MessageStatus>[],
+              initiatorId: lastReal.initiatorId,
+              members: lastReal.members
+                      ?.map((e) => e.memberName ?? '')
+                      .toList() ??
+                  const <String>[],
+              metaData: lastReal.metaData,
+              audioOnly: lastReal.audioOnly,
+              callDurations: lastReal.callDurations,
+              meetingId: lastReal.meetingId,
+              meetingType: lastReal.meetingType,
+              isInvalidMessage: lastReal.isInvalidMessage,
+            )
+          : LastMessageDetails(
+              showInConversation: true,
+              sentAt: lastReal.sentAt,
+              senderName: lastReal.senderInfo?.userName ??
+                  lastReal.userName ??
+                  lastReal.initiatorName ??
+                  '',
+              senderId: lastReal.senderInfo?.userId ?? lastReal.initiatorId ?? '',
+              messageType: lastReal.messageType?.value ?? 0,
+              messageId: lastReal.messageId ?? '',
+              conversationId: lastReal.conversationId ?? conv.conversationId ?? '',
+              body: lastReal.body,
+              deliverCount: lastReal.deliveredTo?.length ?? 0,
+              readCount: lastReal.readBy?.length ?? 0,
+              sentByMe: lastReal.sentByMe,
+              customType: lastReal.customType,
+              members: lastReal.members
+                      ?.map((e) => e.memberName ?? '')
+                      .toList() ??
+                  const <String>[],
+              action: lastReal.action,
+              userId: lastReal.userId,
+              initiatorId: lastReal.initiatorId,
+              deliveredTo: lastReal.deliveredTo ?? const <MessageStatus>[],
+              readBy: lastReal.readBy ?? const <MessageStatus>[],
+              metaData: lastReal.metaData,
+              audioOnly: lastReal.audioOnly,
+              callDurations: lastReal.callDurations,
+              meetingId: lastReal.meetingId,
+              meetingType: lastReal.meetingType,
+              isInvalidMessage: lastReal.isInvalidMessage,
+            );
+
+      final patched = conv.copyWith(
+        lastMessageDetails: rebuilt,
+        lastMessageSentAt: lastReal.sentAt,
+      );
+      updatedConversations.add(patched);
+      // Persist so next restart also shows correct preview.
+      await IsmChatConfig.dbWrapper?.saveConversation(conversation: patched);
+    }
+
+    _controller.conversations = updatedConversations;
     _controller.isConversationsLoading = false;
     if (_controller.conversations.length <= 1) {
       IsmChatProperties.conversationProperties.conversationListEmptyOrNot

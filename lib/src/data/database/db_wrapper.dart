@@ -308,6 +308,132 @@ class IsmChatDBWrapper {
     }
   }
 
+  /// Removes persisted block/unblock banner messages and refreshes last message.
+  ///
+  /// Why this exists:
+  /// - The centered "You blocked this user" banner is rendered from message rows
+  ///   whose `customType` is `block` / `unblock`.
+  /// - On unblock we must remove these rows from local DB, otherwise they can
+  ///   re-hydrate when `getMessagesFromDB()` reads from Hive.
+  /// - Additionally, conversation list's last message preview can remain stuck
+  ///   on the banner unless we recompute `lastMessageDetails`.
+  ///
+  /// This helper is intentionally in the DB layer so it can be reused from:
+  /// - chat page unblock flow
+  /// - MQTT unblock events
+  /// - unblock-from-settings flows
+  Future<void> purgeBlockUnblockAndRefreshLastMessage(
+    String conversationId,
+  ) async {
+    if (conversationId.trim().isEmpty) return;
+    final existing = await getConversation(conversationId);
+    if (existing == null) return;
+
+    final existingMessages = existing.messages;
+    if (existingMessages == null || existingMessages.isEmpty) return;
+
+    // 1) Remove block/unblock banner rows.
+    final cleaned = Map<String, IsmChatMessageModel>.from(existingMessages);
+    cleaned.removeWhere(
+      (_, msg) =>
+          msg.customType == IsmChatCustomMessageType.block ||
+          msg.customType == IsmChatCustomMessageType.unblock,
+    );
+
+    // 2) Recompute last message (exclude conversationCreated/date, and banners).
+    final remaining = cleaned.values.toList()
+      ..sort((a, b) => a.sentAt.compareTo(b.sentAt));
+    IsmChatMessageModel? last;
+    for (var i = remaining.length - 1; i >= 0; i--) {
+      final m = remaining[i];
+      if (m.customType == IsmChatCustomMessageType.conversationCreated ||
+          m.customType == IsmChatCustomMessageType.date ||
+          m.customType == IsmChatCustomMessageType.block ||
+          m.customType == IsmChatCustomMessageType.unblock) {
+        continue;
+      }
+      last = m;
+      break;
+    }
+
+    LastMessageDetails? lastDetails;
+    int? lastSentAt;
+    if (last != null) {
+      lastSentAt = last.sentAt;
+      final base = existing.lastMessageDetails;
+      if (base != null) {
+        lastDetails = base.copyWith(
+          sentByMe: last.sentByMe,
+          senderId: last.senderInfo?.userId ?? last.initiatorId ?? '',
+          senderName: last.senderInfo?.userName ??
+              last.userName ??
+              last.initiatorName ??
+              '',
+          showInConversation: true,
+          sentAt: last.sentAt,
+          messageType: last.messageType?.value ?? 0,
+          messageId: last.messageId ?? '',
+          conversationId: last.conversationId ?? conversationId,
+          body: last.body,
+          customType: last.customType,
+          action: last.action,
+          deliverCount: last.deliveredTo?.length ?? 0,
+          deliveredTo: last.deliveredTo ?? const <MessageStatus>[],
+          readCount: last.readBy?.length ?? 0,
+          readBy: last.readBy ?? const <MessageStatus>[],
+          initiatorId: last.initiatorId,
+          members: last.members?.map((e) => e.memberName ?? '').toList() ??
+              const <String>[],
+          metaData: last.metaData,
+          audioOnly: last.audioOnly,
+          callDurations: last.callDurations,
+          meetingId: last.meetingId,
+          meetingType: last.meetingType,
+          isInvalidMessage: last.isInvalidMessage,
+        );
+      } else {
+        lastDetails = LastMessageDetails(
+          showInConversation: true,
+          sentAt: last.sentAt,
+          senderName: last.senderInfo?.userName ??
+              last.userName ??
+              last.initiatorName ??
+              '',
+          senderId: last.senderInfo?.userId ?? last.initiatorId ?? '',
+          messageType: last.messageType?.value ?? 0,
+          messageId: last.messageId ?? '',
+          conversationId: last.conversationId ?? conversationId,
+          body: last.body,
+          deliverCount: last.deliveredTo?.length ?? 0,
+          readCount: last.readBy?.length ?? 0,
+          sentByMe: last.sentByMe,
+          customType: last.customType,
+          members: last.members?.map((e) => e.memberName ?? '').toList() ??
+              const <String>[],
+          action: last.action,
+          userId: last.userId,
+          initiatorId: last.initiatorId,
+          deliveredTo: last.deliveredTo ?? const <MessageStatus>[],
+          readBy: last.readBy ?? const <MessageStatus>[],
+          metaData: last.metaData,
+          audioOnly: last.audioOnly,
+          callDurations: last.callDurations,
+          meetingId: last.meetingId,
+          meetingType: last.meetingType,
+          isInvalidMessage: last.isInvalidMessage,
+        );
+      }
+    }
+
+    await saveConversation(
+      conversation: existing.copyWith(
+        messages: cleaned,
+        lastMessageDetails: lastDetails ?? existing.lastMessageDetails,
+        lastMessageSentAt: lastSentAt ?? existing.lastMessageSentAt,
+      ),
+    );
+  }
+
   Future<IsmChatMessages?> getMessage(String conversationId,
       [IsmChatDbBox dbBox = IsmChatDbBox.main]) async {
     if (conversationId.isEmpty) {
