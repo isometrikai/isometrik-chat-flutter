@@ -351,6 +351,43 @@ class IsmChatUtility {
     return false;
   }
 
+  /// When a permission is **permanently denied / restricted** the OS will not
+  /// show the permission prompt again. In that case we should guide the user
+  /// to Settings (otherwise repeatedly tapping the action feels "broken").
+  ///
+  /// Returns `true` if a Settings dialog was shown, `false` otherwise.
+  static Future<bool> showSettingsDialogIfPermanentlyDenied(
+    Permission permission, {
+    required String title,
+    required String message,
+  }) async {
+    final status = await permission.status;
+    // Note: `isLimited` (iOS) still grants partial access and is usable,
+    // so we do NOT treat it as "blocked".
+    final isBlocked = status.isPermanentlyDenied || status.isRestricted;
+
+    if (!isBlocked) return false;
+
+    // Avoid stacking dialogs.
+    if (Get.isDialogOpen ?? false) return true;
+
+    await IsmChatContextWidget.showDialogContext(
+      content: IsmChatAlertDialogBox(
+        title: title,
+        content: Text(message),
+        contentTextStyle: IsmChatStyles.w400Grey14,
+        cancelLabel: IsmChatStrings.cancel,
+        actionLabels: const [IsmChatStrings.openSettings],
+        callbackActions: [
+          () async {
+            await openAppSettings();
+          },
+        ],
+      ),
+    );
+    return true;
+  }
+
   static Widget circularProgressBar(
           [Color? backgroundColor, Color? animatedColor, double? value]) =>
       DecoratedBox(

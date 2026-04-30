@@ -91,6 +91,10 @@ class IsmChatStrings {
       'The browser has disabled microphone access; please allow it to send audio.';
   static const String cameraPermissionBlock =
       'The browser has disabled camera access; please allow it to send photo and video.';
+  static const String contactsPermissionBlockedTitle = 'Contacts permission';
+  static const String contactsPermissionBlockedMessage =
+      'Contacts access is disabled. Please allow Contacts permission from Settings to share a contact.';
+  static const String openSettings = 'Open Settings';
   static const String block = 'Block';
 
   static const String unblock = 'Unblock';

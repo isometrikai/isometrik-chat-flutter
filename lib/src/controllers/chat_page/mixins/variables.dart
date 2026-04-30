@@ -142,6 +142,15 @@ mixin IsmChatPageVariablesMixin on GetxController {
   set searchContactList(List<SelectedContact> value) =>
       _searchContactList.value = value;
 
+  /// Prevents re-entrant contact fetches.
+  ///
+  /// If the user taps the "Contact" attachment multiple times while the SDK is
+  /// still loading device contacts, subsequent taps can appear "unresponsive"
+  /// because the permission + contact-query flow is already running.
+  final RxBool _isFetchingContacts = false.obs;
+  bool get isFetchingContacts => _isFetchingContacts.value;
+  set isFetchingContacts(bool value) => _isFetchingContacts.value = value;
+
   CameraController get cameraController =>
       isFrontCameraSelected ? _frontCameraController : _backCameraController;
 

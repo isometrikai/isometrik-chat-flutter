@@ -584,7 +584,8 @@ mixin IsmChatPageSendMessageMediaMixin {
             mediaExtension: thumbnailNameWithExtension?.split('.').last ?? '',
             userIdentifier:
                 IsmChatConfig.communicationConfig.userConfig.userEmail ?? '',
-            bytes: bytes,
+            // Thumbnail upload must use the thumbnail bytes, not the original file bytes.
+            bytes: thumbnailBytes ?? Uint8List(0),
           );
         } else {
           presignedUrlModel = await _controller.commonController.postMediaUrl(
@@ -602,7 +603,7 @@ mixin IsmChatPageSendMessageMediaMixin {
             : presignedUrlModel?.thumbnailUrl ?? '';
       }
       if (mediaUrlPath.isNotEmpty) {
-        final attachment = [
+        final attachment = <Map<String, dynamic>>[
           AttachmentModel(
             thumbnailUrl:
                 !(imageAndFile ?? false) ? thumbnailUrlPath : mediaUrlPath,
@@ -614,8 +615,13 @@ mixin IsmChatPageSendMessageMediaMixin {
             extension: ismChatChatMessageModel.attachments?.first.extension,
             attachmentType:
                 ismChatChatMessageModel.attachments?.first.attachmentType,
-          ).toMap()
-        ]..map((e) => e.removeWhere((key, value) => key == 'bytes'));
+          ).toMap(),
+        ];
+        // Never send `bytes` in the message payload; it can be huge and will
+        // cause API failures (which leaves the UI stuck in uploading state).
+        for (final m in attachment) {
+          m.remove('bytes');
+        }
 
         // Note: sendMessage is provided by send_message_core mixin
         _controller.sendMessage(
