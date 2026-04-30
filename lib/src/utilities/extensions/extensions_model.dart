@@ -95,9 +95,17 @@ extension ModelConversion on IsmChatConversationModel {
         return IsmChatDimens.box0;
       }
 
+      // Some backends omit `isGroup` for 1:1 conversations; treat null as false
+      // so read receipts don't silently disappear due to a null-assert.
+      final isGrp = isGroup ?? false;
+
+      // Chat list can override message status colors separately from chat page.
+      final statusTheme =
+          IsmChatConfig.chatTheme.chatListCardThemData?.messageStatusTheme ??
+              IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme;
       var deliveredToAll = false;
       var readByAll = false;
-      if (!isGroup!) {
+      if (!isGrp) {
         // this means not recieved by the user
         if (lastMessageDetails?.deliverCount != 0) {
           deliveredToAll = true;
@@ -107,9 +115,11 @@ extension ModelConversion on IsmChatConversationModel {
           }
         }
       } else {
-        if (membersCount == lastMessageDetails?.deliverCount) {
+        final totalMembers = membersCount ?? 0;
+        if (totalMembers != 0 &&
+            totalMembers == lastMessageDetails?.deliverCount) {
           deliveredToAll = true;
-          if (membersCount == lastMessageDetails?.readCount) {
+          if (totalMembers == lastMessageDetails?.readCount) {
             readByAll = true;
           }
         }
@@ -119,21 +129,19 @@ extension ModelConversion on IsmChatConversationModel {
           ? lastMessageDetails?.isInvalidMessage == true
               ? Icon(
                   Icons.error_outlined,
-                  color: IsmChatConfig.chatTheme.chatPageTheme
-                          ?.messageStatusTheme?.inValidIconColor ??
-                      IsmChatColors.greyColor,
-                  size:
+                  color:
+                      statusTheme?.inValidIconColor ?? IsmChatColors.greyColor,
+                  size: statusTheme?.checkSize ??
                       IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
-                          IsmChatDimens.sixteen,
+                      IsmChatDimens.sixteen,
                 )
               : Icon(
                   Icons.watch_later_outlined,
-                  color: IsmChatConfig.chatTheme.chatPageTheme
-                          ?.messageStatusTheme?.unreadCheckColor ??
-                      IsmChatColors.greyColor,
-                  size:
+                  color:
+                      statusTheme?.unreadCheckColor ?? IsmChatColors.greyColor,
+                  size: statusTheme?.checkSize ??
                       IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
-                          IsmChatDimens.sixteen,
+                      IsmChatDimens.sixteen,
                 )
           : IsmChatProperties.chatPageProperties.features.contains(
               IsmChatFeature.showMessageStatus,
@@ -145,15 +153,12 @@ extension ModelConversion on IsmChatConversationModel {
                       ? Icons.done_all_rounded
                       : Icons.done_rounded,
                   color: readByAll
-                      ? IsmChatConfig.chatTheme.chatPageTheme
-                              ?.messageStatusTheme?.readCheckColor ??
-                          IsmChatColors.blueColor
-                      : IsmChatConfig.chatTheme.chatPageTheme
-                              ?.messageStatusTheme?.unreadCheckColor ??
+                      ? statusTheme?.readCheckColor ?? IsmChatColors.blueColor
+                      : statusTheme?.unreadCheckColor ??
                           IsmChatColors.greyColor,
-                  size:
+                  size: statusTheme?.checkSize ??
                       IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
-                          IsmChatDimens.sixteen,
+                      IsmChatDimens.sixteen,
                 )
               : IsmChatDimens.box0;
     } catch (e, st) {

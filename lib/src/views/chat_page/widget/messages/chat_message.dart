@@ -94,6 +94,7 @@ class IsmChatMessageWrapper extends StatelessWidget {
       case IsmChatCustomMessageType.rejectExchangeOffer:
       case IsmChatCustomMessageType.counterExchangeOffer:
       case IsmChatCustomMessageType.profileLink:
+      case IsmChatCustomMessageType.livestream:
         return IsmChatSocialMessage(message);
     }
   }
@@ -192,6 +193,7 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
       case IsmChatCustomMessageType.rejectExchangeOffer:
       case IsmChatCustomMessageType.counterExchangeOffer:
       case IsmChatCustomMessageType.profileLink:
+      case IsmChatCustomMessageType.livestream:
         return IsmChatSocialMessage(message);
     }
   }
