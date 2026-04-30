@@ -34,7 +34,8 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       final needsRecompute = (conv.lastMessageDetails == null) ||
           (conv.lastMessageDetails?.customType ==
               IsmChatCustomMessageType.conversationCreated) ||
-          (conv.lastMessageDetails?.customType == IsmChatCustomMessageType.block) ||
+          (conv.lastMessageDetails?.customType ==
+              IsmChatCustomMessageType.block) ||
           (conv.lastMessageDetails?.customType ==
               IsmChatCustomMessageType.unblock);
 
@@ -71,7 +72,8 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       final rebuilt = base != null
           ? base.copyWith(
               sentByMe: lastReal.sentByMe,
-              senderId: lastReal.senderInfo?.userId ?? lastReal.initiatorId ?? '',
+              senderId:
+                  lastReal.senderInfo?.userId ?? lastReal.initiatorId ?? '',
               senderName: lastReal.senderInfo?.userName ??
                   lastReal.userName ??
                   lastReal.initiatorName ??
@@ -80,7 +82,8 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
               sentAt: lastReal.sentAt,
               messageType: lastReal.messageType?.value ?? 0,
               messageId: lastReal.messageId ?? '',
-              conversationId: lastReal.conversationId ?? conv.conversationId ?? '',
+              conversationId:
+                  lastReal.conversationId ?? conv.conversationId ?? '',
               body: lastReal.body,
               customType: lastReal.customType,
               action: lastReal.action,
@@ -89,10 +92,9 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
               readCount: lastReal.readBy?.length ?? 0,
               readBy: lastReal.readBy ?? const <MessageStatus>[],
               initiatorId: lastReal.initiatorId,
-              members: lastReal.members
-                      ?.map((e) => e.memberName ?? '')
-                      .toList() ??
-                  const <String>[],
+              members:
+                  lastReal.members?.map((e) => e.memberName ?? '').toList() ??
+                      const <String>[],
               metaData: lastReal.metaData,
               audioOnly: lastReal.audioOnly,
               callDurations: lastReal.callDurations,
@@ -107,19 +109,20 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
                   lastReal.userName ??
                   lastReal.initiatorName ??
                   '',
-              senderId: lastReal.senderInfo?.userId ?? lastReal.initiatorId ?? '',
+              senderId:
+                  lastReal.senderInfo?.userId ?? lastReal.initiatorId ?? '',
               messageType: lastReal.messageType?.value ?? 0,
               messageId: lastReal.messageId ?? '',
-              conversationId: lastReal.conversationId ?? conv.conversationId ?? '',
+              conversationId:
+                  lastReal.conversationId ?? conv.conversationId ?? '',
               body: lastReal.body,
               deliverCount: lastReal.deliveredTo?.length ?? 0,
               readCount: lastReal.readBy?.length ?? 0,
               sentByMe: lastReal.sentByMe,
               customType: lastReal.customType,
-              members: lastReal.members
-                      ?.map((e) => e.memberName ?? '')
-                      .toList() ??
-                  const <String>[],
+              members:
+                  lastReal.members?.map((e) => e.memberName ?? '').toList() ??
+                      const <String>[],
               action: lastReal.action,
               userId: lastReal.userId,
               initiatorId: lastReal.initiatorId,
@@ -164,28 +167,45 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     _controller.conversations = opponentData;
 
     if (searchTag?.isNotEmpty == true) {
-      final lowerSearchText = (searchTag ?? '').toLowerCase();
+      final rawSearchText = (searchTag ?? '').trim().toLowerCase();
+      // Normalize multiple spaces so queries like "liam   theo" still match.
+      final normalizedSearchText =
+          rawSearchText.replaceAll(RegExp(r'\s+'), ' ');
       _controller.conversations = _controller.conversations.where((e) {
         // Use "contains" instead of "startsWith" so existing conversations
         // still match when the query appears mid-string (e.g., group titles).
         if (e.isGroup == true) {
           return (e.conversationTitle ?? '').toLowerCase().contains(
-                    lowerSearchText,
+                    normalizedSearchText,
                   ) ||
               (e.searchableTags?.cast<String>().any(
-                        (x) => x.toLowerCase().contains(lowerSearchText),
+                        (x) => x.toLowerCase().contains(normalizedSearchText),
                       ) ??
                   false);
         } else {
-          return (e.opponentDetails?.userName ?? '')
-                  .toLowerCase()
-                  .contains(lowerSearchText) ||
-              (e.opponentDetails?.metaData?.firstName ?? '')
-                  .toLowerCase()
-                  .contains(lowerSearchText) ||
-              (e.opponentDetails?.metaData?.lastName ?? '')
-                  .toLowerCase()
-                  .contains(lowerSearchText);
+          final userName = (e.opponentDetails?.userName ?? '').toLowerCase();
+          final firstName =
+              (e.opponentDetails?.metaData?.firstName ?? '').toLowerCase();
+          final lastName =
+              (e.opponentDetails?.metaData?.lastName ?? '').toLowerCase();
+          final identifier =
+              (e.opponentDetails?.userIdentifier ?? '').toLowerCase();
+
+          // Chat list usually displays "First Last". Support searching the same
+          // string (and reverse order) in addition to username.
+          final fullName = '$firstName $lastName'.trim();
+          final fullNameRev = '$lastName $firstName'.trim();
+          final normalizedFullName =
+              fullName.replaceAll(RegExp(r'\s+'), ' ').trim();
+          final normalizedFullNameRev =
+              fullNameRev.replaceAll(RegExp(r'\s+'), ' ').trim();
+
+          return userName.contains(normalizedSearchText) ||
+              identifier.contains(normalizedSearchText) ||
+              firstName.contains(normalizedSearchText) ||
+              lastName.contains(normalizedSearchText) ||
+              normalizedFullName.contains(normalizedSearchText) ||
+              normalizedFullNameRev.contains(normalizedSearchText);
         }
       }).toList();
     }
@@ -256,13 +276,16 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       }
     }
 
-    if (chats.isEmpty && searchTag != null) {
-      _controller.conversations.clear();
-    } else {
-      await _controller.getConversationsFromDB(
-        searchTag: searchTag,
-      );
-    }
+    // Always fallback to local filtering.
+    //
+    // Reason:
+    // - Server-side search may not support searching by full name (first + last)
+    //   even though UI displays it.
+    // - If API returns empty for queries like "liam theo", we should still be able
+    //   to match cached conversations locally.
+    await _controller.getConversationsFromDB(
+      searchTag: searchTag,
+    );
 
     if (_controller.conversations.isEmpty) {
       _controller.isConversationsLoading = false;
