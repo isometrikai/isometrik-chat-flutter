@@ -16,6 +16,9 @@ class IsmChatConversationSearchView extends StatelessWidget {
           });
         },
         builder: (controller) => Scaffold(
+          backgroundColor:
+              IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
+                  IsmChatColors.whiteColor,
           body: controller.isConversationsLoading
               ? const IsmChatLoadingDialog()
               : SmartRefresher(
@@ -24,6 +27,10 @@ class IsmChatConversationSearchView extends StatelessWidget {
                   enablePullDown: true,
                   enablePullUp: true,
                   onRefresh: () {
+                    // Refresh should reset the search state so the UI doesn't show
+                    // a stale query while the list updates.
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    controller.globalSearchController.clear();
                     controller.getChatSearchConversations(
                       skip: 0,
                       origin: ApiCallOrigin.referesh,

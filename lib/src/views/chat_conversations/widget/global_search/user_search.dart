@@ -9,8 +9,11 @@ class IsmChatUserSearchView extends StatelessWidget {
   Widget build(BuildContext context) =>
       GetBuilder<IsmChatConversationsController>(
         tag: IsmChat.i.chatListPageTag,
-        builder: (controller) => const Scaffold(
-          body: Center(
+        builder: (controller) => Scaffold(
+          backgroundColor:
+              IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
+                  IsmChatColors.whiteColor,
+          body: const Center(
             child: Text('User'),
           ),
         ),
