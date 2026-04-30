@@ -81,6 +81,14 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
       } else {
         await _controller.callFunctions();
       }
+      // Attempt to flush any pending (clock) messages whenever a chat opens.
+      // Previously this only happened on connectivity change; with stable network
+      // a stuck pending message would never retry.
+      unawaited(
+        _controller.conversationController.sendPendingMessgae(
+          conversationId: _controller.conversation?.conversationId ?? '',
+        ),
+      );
       await _controller.sendWithOutSideMessage();
       unawaited(_controller.updateUnreadMessgaeCount());
     }

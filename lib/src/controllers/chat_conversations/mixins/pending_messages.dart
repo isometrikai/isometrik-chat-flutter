@@ -12,7 +12,7 @@ mixin IsmChatConversationsPendingMessagesMixin on GetxController {
   /// Sends any pending messages stored in the local database.
   ///
   /// `conversationId`: The ID of the conversation to send pending messages for.
-  void sendPendingMessgae({String conversationId = ''}) async {
+  Future<void> sendPendingMessgae({String conversationId = ''}) async {
     var messages = IsmChatMessages.from({});
 
     if (conversationId.isEmpty) {
