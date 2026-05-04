@@ -211,10 +211,16 @@ class _IsmChatTextMessageState extends State<IsmChatTextMessage> {
                               alignment: Alignment.centerLeft,
                               child: TextButton(
                                 style: TextButton.styleFrom(
-                                    padding: IsmChatDimens.edgeInsets0,
-                                    minimumSize: const Size(0, 0),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap),
+                                  padding: IsmChatDimens.edgeInsets0,
+                                  minimumSize: const Size(0, 0),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  backgroundColor: Colors.transparent,
+                                ).copyWith(
+                                  overlayColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                  splashFactory: NoSplash.splashFactory,
+                                ),
                                 onPressed: () {
                                   _isExpandedNotifier.value = !isExpanded;
                                 },
