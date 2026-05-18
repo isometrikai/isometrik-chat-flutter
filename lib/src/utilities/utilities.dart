@@ -1,3 +1,4 @@
+export 'chat_confirmation_helper.dart';
 export 'chat_log.dart';
 export 'config/config.dart';
 export 'debouncer.dart';

@@ -683,15 +683,27 @@ class _IsmChatConverstaionInfoViewState
                             children: [
                               TextButton.icon(
                                 onPressed: () async {
-                                  await IsmChatContextWidget.showDialogContext(
-                                    content: IsmChatAlertDialogBox(
+                                  final conv = controller.conversation;
+                                  await IsmChatConfirmationHelper.present(
+                                    IsmChatConfirmationRequest(
+                                      type: IsmChatConfirmationType
+                                          .clearChatMessages,
                                       title: IsmChatStrings.clearAllMessages,
-                                      actionLabels: const [
-                                        IsmChatStrings.clearChat
-                                      ],
-                                      callbackActions: [
-                                        () => controller.clearAllMessages(
-                                            '${controller.conversation?.conversationId}'),
+                                      conversation: conv,
+                                      actions: [
+                                        IsmChatConfirmationAction(
+                                          id: IsmChatConfirmationActionId
+                                              .clearChat,
+                                          label: IsmChatStrings.clearChat,
+                                          onPressed: () =>
+                                              controller.clearAllMessages(
+                                            conv?.conversationId ?? '',
+                                            fromServer: IsmChatConfirmationHelper
+                                                .shouldClearMessagesFromServer(
+                                              conv,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   );
@@ -714,17 +726,23 @@ class _IsmChatConverstaionInfoViewState
                               ),
                               TextButton.icon(
                                 onPressed: () async {
-                                  await IsmChatContextWidget.showDialogContext(
-                                    content: IsmChatAlertDialogBox(
+                                  final conv = controller.conversation;
+                                  await IsmChatConfirmationHelper.present(
+                                    IsmChatConfirmationRequest(
+                                      type: IsmChatConfirmationType.deleteChat,
                                       title: '${IsmChatStrings.deleteChat}?',
-                                      actionLabels: const [
-                                        IsmChatStrings.deleteChat
-                                      ],
-                                      callbackActions: [
-                                        () => IsmChatUtility
-                                            .conversationController
-                                            .deleteChat(
-                                                '${controller.conversation?.conversationId}'),
+                                      conversation: conv,
+                                      actions: [
+                                        IsmChatConfirmationAction(
+                                          id: IsmChatConfirmationActionId
+                                              .deleteChat,
+                                          label: IsmChatStrings.deleteChat,
+                                          onPressed: () => IsmChatUtility
+                                              .conversationController
+                                              .deleteChat(
+                                            conv?.conversationId ?? '',
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   );

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:isometrik_chat_flutter/src/models/chat_conversation_model.dart';
 import 'package:isometrik_chat_flutter/src/models/chat_message_model.dart';
 
-/// Identifies which block/delete confirmation UI the SDK is showing.
+/// Identifies which confirmation UI the SDK is showing (block, delete, clear, etc.).
 enum IsmChatConfirmationType {
   /// Confirm blocking the opponent.
   confirmBlock,
@@ -30,6 +30,15 @@ enum IsmChatConfirmationType {
 
   /// Multi-select delete (other / already deleted for everyone).
   deleteMultipleOther,
+
+  /// Clear all messages in a conversation (chat header / list / info).
+  clearChatMessages,
+
+  /// Delete a group conversation.
+  deleteGroup,
+
+  /// Delete a 1-1 (or non-group) chat from list or conversation info.
+  deleteChat,
 }
 
 /// Action ids map to the same SDK handlers as default alert dialog buttons.
@@ -38,6 +47,9 @@ enum IsmChatConfirmationActionId {
   unblock,
   deleteForEveryone,
   deleteForMe,
+  clearChat,
+  deleteGroup,
+  deleteChat,
   dismiss,
 }
 
@@ -54,7 +66,7 @@ class IsmChatConfirmationAction {
   final VoidCallback onPressed;
 }
 
-/// Payload passed to [ChatConfirmationPresenter] for block/delete confirmations.
+/// Payload passed to [ChatConfirmationPresenter] for confirmations.
 class IsmChatConfirmationRequest {
   const IsmChatConfirmationRequest({
     required this.type,

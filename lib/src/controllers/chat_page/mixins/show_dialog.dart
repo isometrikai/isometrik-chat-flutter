@@ -16,29 +16,8 @@ mixin IsmChatShowDialogMixin on GetxController {
     return IsmChatUtility.chatPageController;
   }
 
-  /// Shows block/delete confirmation via [chatConfirmationPresenter] or default dialog.
-  Future<void> _presentChatConfirmation(IsmChatConfirmationRequest request) async {
-    final presenter =
-        IsmChatProperties.chatPageProperties.chatConfirmationPresenter;
-    final context =
-        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
-    if (presenter != null) {
-      await presenter(context, request);
-      return;
-    }
-
-    final labels = request.actions.map((a) => a.label).toList();
-    final callbacks = request.actions.map((a) => a.onPressed).toList();
-    await IsmChatContextWidget.showDialogContext(
-      content: IsmChatAlertDialogBox(
-        title: request.title,
-        actionLabels: labels.isEmpty ? null : labels,
-        callbackActions: callbacks.isEmpty ? null : callbacks,
-        cancelLabel: request.cancelLabel ?? IsmChatStrings.cancel,
-        onCancel: request.onCancel,
-      ),
-    );
-  }
+  Future<void> _presentChatConfirmation(IsmChatConfirmationRequest request) =>
+      IsmChatConfirmationHelper.present(request);
 
   void _runBlockAction({required bool unblock}) {
     final opponentId =
@@ -60,37 +39,42 @@ mixin IsmChatShowDialogMixin on GetxController {
 
   void showDialogForClearChatAndDeleteGroup(
       {bool isGroupDelete = false}) async {
+    final conversation = _controller.conversation;
     if (!isGroupDelete) {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.clearChatMessages,
           title: IsmChatStrings.clearAllMessages,
-          actionLabels: const [IsmChatStrings.clearChat],
-          callbackActions: [
-            () => _controller.clearAllMessages(
-                  _controller.conversation?.conversationId ?? '',
-                  fromServer: _controller.conversation?.lastMessageDetails
-                                  ?.customType ==
-                              IsmChatCustomMessageType.removeMember &&
-                          _controller
-                                  .conversation?.lastMessageDetails?.userId ==
-                              IsmChatConfig
-                                  .communicationConfig.userConfig.userId
-                      ? false
-                      : true,
+          conversation: conversation,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.clearChat,
+              label: IsmChatStrings.clearChat,
+              onPressed: () => _controller.clearAllMessages(
+                conversation?.conversationId ?? '',
+                fromServer: IsmChatConfirmationHelper.shouldClearMessagesFromServer(
+                  conversation,
                 ),
+              ),
+            ),
           ],
         ),
       );
     } else {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.deleteGroup,
           title: IsmChatStrings.deleteThiGroup,
-          actionLabels: const [IsmChatStrings.deleteGroup],
-          callbackActions: [
-            () => _controller.conversationController.deleteChat(
-                  _controller.conversation?.conversationId ?? '',
-                  deleteFromServer: false,
-                ),
+          conversation: conversation,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteGroup,
+              label: IsmChatStrings.deleteGroup,
+              onPressed: () => _controller.conversationController.deleteChat(
+                conversation?.conversationId ?? '',
+                deleteFromServer: false,
+              ),
+            ),
           ],
         ),
       );

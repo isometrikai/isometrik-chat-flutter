@@ -167,12 +167,12 @@ class IsmChatPageProperties {
   /// - `didBlock`: true when block succeeded, false when unblock succeeded.
   final BlockUnblockSuccessCallback? onBlockUnblockSuccess;
 
-  /// Custom UI for block/delete **confirmation** (before the action runs).
+  /// Custom UI for confirmations before destructive actions (block, delete message,
+  /// clear chat, delete chat/group from list or chat header menu).
   ///
   /// Show a bottom sheet or dialog; on confirm, pop your route then call
-  /// [IsmChatConfirmationAction.onPressed] from [IsmChatConfirmationRequest.actions]
-  /// (same handlers as the default SDK popup). Use [IsmChatConfirmationActionId]
-  /// to find the right callback.
+  /// [IsmChatConfirmationAction.onPressed]. Use [IsmChatConfirmationType] and
+  /// [IsmChatConfirmationActionId] to branch UI.
   ///
   /// When null, the SDK uses [IsmChatAlertDialogBox].
   final ChatConfirmationPresenter? chatConfirmationPresenter;
