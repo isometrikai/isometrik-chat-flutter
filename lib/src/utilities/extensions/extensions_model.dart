@@ -374,6 +374,33 @@ extension MentionMessage on IsmChatMessageModel {
     }
   }
 
+  /// Whether [body] includes a parseable http/https/www URL (not phone/email/@mention).
+  ///
+  /// Used with [IsmChatPageProperties.textMessageWithLinkBuilder]: the SDK only
+  /// asks the host app for custom UI when this is true; otherwise default text UI is shown.
+  bool get hasValidWebLink {
+    for (final segment in mentionList) {
+      if (!segment.isLink) continue;
+      final text = segment.text.trim();
+      if (!text.startsWith('http') && !text.startsWith('www')) continue;
+      final uri = Uri.tryParse(text.convertToValidUrl);
+      if (uri != null && uri.host.isNotEmpty) return true;
+    }
+    return false;
+  }
+
+  /// First http/https/www URL in [body], or `null` if [hasValidWebLink] is false.
+  String? get firstValidWebLink {
+    for (final segment in mentionList) {
+      if (!segment.isLink) continue;
+      final text = segment.text.trim();
+      if (!text.startsWith('http') && !text.startsWith('www')) continue;
+      final uri = Uri.tryParse(text.convertToValidUrl);
+      if (uri != null && uri.host.isNotEmpty) return text;
+    }
+    return null;
+  }
+
   /// Returns a list of focus menu types available for this message.
   List<IsmChatFocusMenuType> get focusMenuList {
     var menu = [...IsmChatFocusMenuType.values];

@@ -9,6 +9,7 @@ class IsmChatPageProperties {
     this.header,
     this.placeholder,
     this.messageBuilder,
+    this.textMessageWithLinkBuilder,
     this.attachments = IsmChatAttachmentType.values,
     this.features = IsmChatFeature.values,
     this.isAllowedDeleteChatFromLocal = false,
@@ -68,6 +69,24 @@ class IsmChatPageProperties {
   final ConversationWidgetBuilder? messageFieldSuffix;
 
   final MessageWidgetBuilder? messageBuilder;
+
+  /// Custom text bubble when `customType` is [IsmChatCustomMessageType.text] and
+  /// [IsmChatMessageModel.hasValidWebLink] is true (http/https/www in the body).
+  ///
+  /// Return a widget for link-style messages (e.g. rich link preview). Return `null`
+  /// to use the default SDK text UI ([IsmChatTextMessage] RichText / show more).
+  ///
+  /// Not invoked for plain text, emoji-only messages, phone numbers, emails, or @mentions.
+  ///
+  /// Example:
+  /// ```dart
+  /// textMessageWithLinkBuilder: (context, message) {
+  ///   final url = message.firstValidWebLink;
+  ///   if (url == null) return null;
+  ///   return MyLinkPreviewCard(url: url, body: message.body);
+  /// },
+  /// ```
+  final TextMessageWithLinkBuilder? textMessageWithLinkBuilder;
 
   final MessageSenderInfoBuilder? messageSenderProfileBuilder;
 

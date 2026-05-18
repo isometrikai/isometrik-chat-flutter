@@ -83,6 +83,16 @@ typedef MessageWidgetBuilder = Widget? Function(
   bool,
 );
 
+/// Builds custom text bubble content when [IsmChatMessageModel.hasValidWebLink]
+/// is true (`customType` text with http/https/www in [IsmChatMessageModel.body]).
+///
+/// Return `null` to fall back to the SDK [IsmChatTextMessage] UI (RichText, mentions,
+/// show more/less). Not called for plain text, phone numbers, emails, or @mentions.
+typedef TextMessageWithLinkBuilder = Widget? Function(
+  BuildContext context,
+  IsmChatMessageModel message,
+);
+
 typedef ForwardMessageInfoBuilder = Widget? Function(
   BuildContext,
   List<IsmChatMessageModel>,

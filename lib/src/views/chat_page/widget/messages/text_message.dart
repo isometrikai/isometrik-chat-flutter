@@ -29,30 +29,12 @@ class _IsmChatTextMessageState extends State<IsmChatTextMessage> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final message = widget.message;
-    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
-        ?.call(context, message);
-    return Material(
-      color: Colors.transparent,
-      child: IntrinsicWidth(
-        child: BlurFilter.widget(
-          isBlured: data?.shouldBlured ?? false,
-          sigmaX: data?.sigmaX ?? 3,
-          sigmaY: data?.sigmaY ?? 3,
-          child: Container(
-            alignment:
-                message.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
-            constraints: BoxConstraints(
-              minHeight: (IsmChatResponsive.isWeb(context))
-                  ? context.height * .04
-                  : context.height * .05,
-            ),
-            padding: IsmChatDimens.edgeInsets4,
-            child: message.metaData?.isOnelyEmoji == true
-                ? BouncingEmoji(message: message)
-                : ValueListenableBuilder<bool>(
+  /// Default SDK text UI (RichText, mentions, show more/less).
+  ///
+  /// Used when `textMessageWithLinkBuilder` is null, the message has no valid
+  /// web link, or the builder returns null.
+  Widget _buildDefaultTextContent(IsmChatMessageModel message) =>
+      ValueListenableBuilder<bool>(
                     valueListenable: _isExpandedNotifier,
                     builder: (context, isExpanded, _) {
                       // Measure overflow using the same max-width rule the
@@ -233,7 +215,47 @@ class _IsmChatTextMessageState extends State<IsmChatTextMessage> {
                         ],
                       );
                     },
-                  ),
+                  );
+
+  Widget _buildMessageBody(BuildContext context, IsmChatMessageModel message) {
+    if (message.metaData?.isOnelyEmoji == true) {
+      return BouncingEmoji(message: message);
+    }
+
+    final linkBuilder =
+        IsmChatProperties.chatPageProperties.textMessageWithLinkBuilder;
+    if (message.hasValidWebLink && linkBuilder != null) {
+      final customContent = linkBuilder(context, message);
+      if (customContent != null) {
+        return customContent;
+      }
+    }
+
+    return _buildDefaultTextContent(message);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final message = widget.message;
+    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
+        ?.call(context, message);
+    return Material(
+      color: Colors.transparent,
+      child: IntrinsicWidth(
+        child: BlurFilter.widget(
+          isBlured: data?.shouldBlured ?? false,
+          sigmaX: data?.sigmaX ?? 3,
+          sigmaY: data?.sigmaY ?? 3,
+          child: Container(
+            alignment:
+                message.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
+            constraints: BoxConstraints(
+              minHeight: (IsmChatResponsive.isWeb(context))
+                  ? context.height * .04
+                  : context.height * .05,
+            ),
+            padding: IsmChatDimens.edgeInsets4,
+            child: _buildMessageBody(context, message),
           ),
         ),
       ),
