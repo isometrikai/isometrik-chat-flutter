@@ -26,6 +26,9 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (IsmChatUtility.conversationControllerRegistered) {
+      IsmChatUtility.conversationController.stopMqttHealthCheckForChatList();
+    }
     closeOverlay();
     updateTagName();
     super.dispose();
@@ -48,6 +51,15 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
     }
   }
 
+  Future<void> _onChatListResumed() async {
+    if (IsmChatUtility.conversationControllerRegistered) {
+      await IsmChatUtility.conversationController
+          .ensureMqttConnectionForChatList();
+    } else if (Get.isRegistered<IsmChatMqttController>()) {
+      await Get.find<IsmChatMqttController>().ensureMqttConnected();
+    }
+  }
+
   void startInit() {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatLog.info(
@@ -65,15 +77,16 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
           IsmChatProperties.conversationProperties.allowedConversations.length,
       vsync: this,
     );
+    if (IsmChatUtility.conversationControllerRegistered) {
+      IsmChatUtility.conversationController.startMqttHealthCheckForChatList();
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (AppLifecycleState.resumed == state) {
-      if (IsmChatUtility.conversationControllerRegistered) {
-        IsmChatUtility.conversationController.getChatConversations();
-      }
+      unawaited(_onChatListResumed());
       IsmChatLog.info('app in resumed');
     }
     if (AppLifecycleState.paused == state) {

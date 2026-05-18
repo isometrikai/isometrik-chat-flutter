@@ -17,6 +17,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 part 'mixins/variables.dart';
 part 'mixins/lifecycle_initialization.dart';
 part 'mixins/connectivity.dart';
+part 'mixins/mqtt_health_check.dart';
 part 'mixins/scroll_listeners.dart';
 part 'mixins/widget_rendering.dart';
 part 'mixins/background_assets.dart';
@@ -95,6 +96,7 @@ class IsmChatConversationsController extends GetxController
         IsmChatConversationsVariablesMixin,
         IsmChatConversationsLifecycleInitializationMixin,
         IsmChatConversationsConnectivityMixin,
+        IsmChatConversationsMqttHealthCheckMixin,
         IsmChatConversationsScrollListenersMixin,
         IsmChatConversationsWidgetRenderingMixin,
         IsmChatConversationsBackgroundAssetsMixin,

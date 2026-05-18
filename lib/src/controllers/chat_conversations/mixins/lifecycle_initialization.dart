@@ -44,6 +44,7 @@ mixin IsmChatConversationsLifecycleInitializationMixin on GetxController {
       ..intilizedContrller = true
       ..scrollListener()
       ..sendPendingMessgae();
+    _controller.startMqttHealthCheckForChatList();
   }
 
   /// Cleans up resources when the controller is closed.
@@ -62,6 +63,7 @@ mixin IsmChatConversationsLifecycleInitializationMixin on GetxController {
 
   /// Custom dispose method to clean up specific resources.
   void onDispose() {
+    _controller.stopMqttHealthCheckForChatList();
     _controller.conversationScrollController.dispose();
     _controller.searchConversationScrollController.dispose();
     _controller.connectivitySubscription?.cancel();

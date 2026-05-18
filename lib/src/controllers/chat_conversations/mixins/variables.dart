@@ -299,6 +299,9 @@ mixin IsmChatConversationsVariablesMixin on GetxController {
   // ignore: cancel_subscriptions
   StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
 
+  /// Periodic MQTT health check while the chat list screen is active.
+  Timer? mqttHealthCheckTimer;
+
   /// This variable use for check type user name type or not
   ///
   /// This variable listen when change own name

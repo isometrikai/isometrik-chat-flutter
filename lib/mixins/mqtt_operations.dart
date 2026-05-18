@@ -6,7 +6,8 @@ part of '../isometrik_chat_flutter.dart';
 mixin IsmChatMqttOperationsMixin {
   /// Gets the delegate instance.
   /// Access _delegate directly since we're in the same library (part of).
-  IsmChatDelegate get _delegate => (this as dynamic)._delegate as IsmChatDelegate;
+  IsmChatDelegate get _delegate =>
+      (this as dynamic)._delegate as IsmChatDelegate;
 
   /// Listens for MQTT events.
   ///
@@ -112,5 +113,8 @@ mixin IsmChatMqttOperationsMixin {
 
   /// Disconnects from the MQTT broker.
   Future<void> disconnectMQTT() async => await _delegate.disconnectMQTT();
-}
 
+  /// Reconnects MQTT if disconnected and optionally refreshes the chat list.
+  Future<void> ensureMqttConnected({bool refreshChatList = true}) async =>
+      await _delegate.ensureMqttConnected(refreshChatList: refreshChatList);
+}
