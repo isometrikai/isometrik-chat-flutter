@@ -198,18 +198,10 @@ class IsmChatDBWrapper {
   Future<void> clearAllMessage({required String conversationId}) async {
     var conversation = await getConversation(conversationId);
     if (conversation != null) {
-      final messages = conversation.messages?.values.toList() ?? [];
-      if (messages.isNotEmpty) {
-        final blockedMessage = messages.last;
-        final isBlockedMessage =
-            blockedMessage.customType == IsmChatCustomMessageType.block;
-        conversation = conversation.copyWith(
-          metaData: conversation.metaData?.copyWith(
-            blockedMessage: isBlockedMessage ? blockedMessage : null,
-          ),
-        );
-      }
-      conversation = conversation.copyWith(messages: {});
+      conversation = conversation.copyWith(
+        messages: {},
+        metaData: conversation.metaData?.copyWith(blockedMessage: null),
+      );
       await saveConversation(conversation: conversation);
     }
     if (IsmChatUtility.chatPageControllerRegistered) {

@@ -21,6 +21,25 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     _controller.closeOverlay();
     final requestedConversationId = conversationId;
 
+    await IsmChatBlockUnblockCoordinator.pruneBlockBannersIfChatAllowed(
+      conversationId,
+    );
+
+    // Option A: ensure banner row exists only while chat is actually blocked.
+    final conv = _controller.conversation;
+    if (conv != null &&
+        IsmChatBlockUnblockCoordinator.isConversationBlocked(conv)) {
+      await IsmChatBlockUnblockCoordinator.ensureBlockBannerForDisabledChat(conv);
+      final refreshed =
+          await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+      if (refreshed != null) {
+        _controller.conversation = _controller.conversation?.copyWith(
+              messagingDisabled: refreshed.messagingDisabled,
+            ) ??
+            refreshed;
+      }
+    }
+
     final messages =
         await IsmChatConfig.dbWrapper?.getMessage(conversationId, dbBox);
     // Guard against race conditions: if user switched chat while this async DB
@@ -33,54 +52,6 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     // render the base conversation-created row and let API sync fill messages.
     final safeMessages = messages ?? <String, IsmChatMessageModel>{};
 
-    // If the conversation is blocked but `blockedMessage` is missing (common after
-    // app restart / fresh API hydration), synthesize it locally so banner survives.
-    // Chat UI injects the banner row from `conversation.metaData.blockedMessage`.
-    if ((_controller.conversation?.messagingDisabled ?? false) &&
-        _controller.conversation?.metaData?.blockedMessage == null) {
-      final currentUserId = IsmChatConfig.communicationConfig.userConfig.userId;
-      final opponentId = _controller.conversation?.opponentDetails?.userId ?? '';
-      // If I am in my blockUsers list, I blocked them. Otherwise, they blocked me.
-      final isBlockedByMe = _controller.conversation?.isBlockedByMe ?? false;
-      final initiatorId = isBlockedByMe ? currentUserId : opponentId;
-      final initiatorName = isBlockedByMe
-          ? (IsmChatConfig.communicationConfig.userConfig.userName ?? '')
-          : (_controller.conversation?.opponentDetails?.userName ?? '');
-
-      if (initiatorId.isNotEmpty) {
-        final blockMessage = IsmChatMessageModel(
-          action: IsmChatActionEvents.userBlockConversation.name,
-          initiatorId: initiatorId,
-          initiatorName: initiatorName,
-          userId: initiatorId,
-          userName: initiatorName,
-          body: '',
-          conversationId: _controller.conversation?.conversationId ?? '',
-          customType: IsmChatCustomMessageType.block,
-          sentAt: DateTime.now().millisecondsSinceEpoch,
-          sentByMe: false,
-        );
-        _controller.conversation = _controller.conversation?.copyWith(
-          metaData: (_controller.conversation?.metaData ?? IsmChatMetaData())
-              .copyWith(blockedMessage: blockMessage),
-        );
-        // Persist so future loads (and other views) keep consistent state.
-        final convId = _controller.conversation?.conversationId ?? '';
-        if (convId.isNotEmpty) {
-          final existing = await IsmChatConfig.dbWrapper?.getConversation(convId);
-          if (existing != null) {
-            await IsmChatConfig.dbWrapper?.saveConversation(
-              conversation: existing.copyWith(
-                messagingDisabled: true,
-                metaData: (existing.metaData ?? IsmChatMetaData())
-                    .copyWith(blockedMessage: blockMessage),
-              ),
-            );
-          }
-        }
-      }
-    }
-
     if (IsmChatConfig.shouldPendingMessageSend) {
       var pendingmessages = await IsmChatConfig.dbWrapper
           ?.getMessage(conversationId, IsmChatDbBox.pending);
@@ -92,15 +63,10 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
     }
     var localMessages = safeMessages.values.toList();
-    // Always add block/unblock message when set (for real-time MQTT and empty-chat case)
-    if (_controller.conversation?.metaData?.blockedMessage != null) {
-      final blockMsg = IsmChatMessageModel.fromJson(
-        _controller.conversation!.metaData!.blockedMessage!.toJson(),
-      );
-      if (!localMessages.any((m) =>
-          m.customType == blockMsg.customType && m.sentAt == blockMsg.sentAt)) {
-        localMessages.add(blockMsg);
-      }
+    if (!IsmChatBlockUnblockCoordinator.isConversationBlocked(
+      _controller.conversation,
+    )) {
+      IsmChatBlockUnblockCoordinator.removeBannerRowsFromList(localMessages);
     }
     if (localMessages.isNotEmpty) {
       localMessages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
@@ -360,9 +326,18 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         final messageMap = {
           for (var message in _controller.messages) message.key: message,
         };
+        final cached =
+            await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+        // Prefer local DB for block flag so a just-completed unblock is not
+        // overwritten by stale conversation-details API data.
+        final messagingDisabled = cached?.messagingDisabled ??
+            responeData.messagingDisabled ??
+            false;
+
         _controller.conversation = responeData.copyWith(
           conversationId: conversationId,
-          metaData: responeData.metaData,
+          messagingDisabled: messagingDisabled,
+          metaData: responeData.metaData?.copyWith(blockedMessage: null),
           outSideMessage: _controller.conversation?.outSideMessage,
           messages: messageMap,
         );
@@ -412,51 +387,20 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         }
 
         IsmChatLog.success('Updated conversation');
-        if (_controller.conversation?.messagingDisabled ?? false) {
+        if (IsmChatBlockUnblockCoordinator.isConversationBlocked(
+          _controller.conversation,
+        )) {
           unawaited(_controller.conversationController.getBlockUser());
-          // Ensure blocked banner metadata exists locally so it survives restarts.
-          if (_controller.conversation?.metaData?.blockedMessage == null) {
-            final currentUserId =
-                IsmChatConfig.communicationConfig.userConfig.userId;
-            final opponentId =
-                _controller.conversation?.opponentDetails?.userId ?? '';
-            final isBlockedByMe = _controller.conversation?.isBlockedByMe ?? false;
-            final initiatorId = isBlockedByMe ? currentUserId : opponentId;
-            final initiatorName = isBlockedByMe
-                ? (IsmChatConfig.communicationConfig.userConfig.userName ?? '')
-                : (_controller.conversation?.opponentDetails?.userName ?? '');
-            if (initiatorId.isNotEmpty) {
-              final blockMessage = IsmChatMessageModel(
-                action: IsmChatActionEvents.userBlockConversation.name,
-                initiatorId: initiatorId,
-                initiatorName: initiatorName,
-                userId: initiatorId,
-                userName: initiatorName,
-                body: '',
-                conversationId: _controller.conversation?.conversationId ?? '',
-                customType: IsmChatCustomMessageType.block,
-                sentAt: DateTime.now().millisecondsSinceEpoch,
-                sentByMe: false,
-              );
-              _controller.conversation = _controller.conversation?.copyWith(
-                metaData:
-                    (_controller.conversation?.metaData ?? IsmChatMetaData())
-                        .copyWith(blockedMessage: blockMessage),
-              );
-              final convId = _controller.conversation?.conversationId ?? '';
-              final existing =
-                  await IsmChatConfig.dbWrapper?.getConversation(convId);
-              if (existing != null) {
-                await IsmChatConfig.dbWrapper?.saveConversation(
-                  conversation: existing.copyWith(
-                    messagingDisabled: true,
-                    metaData: (existing.metaData ?? IsmChatMetaData())
-                        .copyWith(blockedMessage: blockMessage),
-                  ),
-                );
-              }
-            }
+          final conv = _controller.conversation;
+          if (conv != null) {
+            await IsmChatBlockUnblockCoordinator.ensureBlockBannerForDisabledChat(
+              conv,
+            );
           }
+        } else {
+          await IsmChatBlockUnblockCoordinator.pruneBlockBannersIfChatAllowed(
+            conversationId,
+          );
         }
       }
       if (data.statusCode == 400 && conversationId.isNotEmpty) {

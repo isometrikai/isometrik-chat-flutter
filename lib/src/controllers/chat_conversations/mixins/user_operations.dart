@@ -13,8 +13,8 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
   ///
   /// Why this exists:
   /// - Some app flows trigger unblock from outside the chat page (e.g. settings).
-  /// - `ChatPage` derives "blocked" state from both `blockUsers` and the local
-  ///   conversation cache (`messagingDisabled` + `metaData.blockedMessage`).
+  /// - `ChatPage` derives "blocked" state from `blockUsers`, `messagingDisabled`,
+  ///   and block/unblock banner rows in local messages (Option A).
   /// - If we only call the API and refresh the block list later, the user can
   ///   navigate to chat before the async refresh finishes and still see the
   ///   blocked banner / disabled input.
@@ -43,69 +43,10 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     }
     if (conversationId.isEmpty) return;
 
-    final cached =
-        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
-    if (cached == null) return;
-
-    // If a historical "block" system message exists in the stored messages map,
-    // the chat UI will still render it as a centered block banner row.
-    // For unblock-from-settings we want the chat to open in an unblocked state
-    // without showing a stale "blocked" banner.
-    Map<String, IsmChatMessageModel>? cleanedMessages;
-    if (cached.messages != null) {
-      cleanedMessages = Map<String, IsmChatMessageModel>.from(cached.messages!);
-      cleanedMessages.removeWhere(
-        (_, msg) =>
-            msg.customType == IsmChatCustomMessageType.block ||
-            msg.customType == IsmChatCustomMessageType.unblock,
-      );
-    }
-
-    final updated = cached.copyWith(
-      messagingDisabled: false,
-      metaData: cached.metaData?.copyWith(blockedMessage: null),
-      messages: cleanedMessages,
+    await IsmChatBlockUnblockCoordinator.applyUnblock(
+      conversationId: conversationId,
+      syncServerMetadataClear: true,
     );
-    await IsmChatConfig.dbWrapper?.saveConversation(conversation: updated);
-    // Also refresh conversation list "last message" preview so it doesn't stay
-    // stuck on the old block banner after unblock.
-    await IsmChatConfig.dbWrapper?.purgeBlockUnblockAndRefreshLastMessage(
-      conversationId,
-    );
-
-    // Important: when the user opens chat after unblocking from settings, chat page
-    // often calls `getConverstaionDetails()` which can overwrite local metadata
-    // with the server conversation metadata. Clear `blockedMessage` on server too
-    // so it can't re-appear.
-    unawaited(
-      _controller.updateConversation(
-        conversationId: conversationId,
-        metaData: updated.metaData ?? IsmChatMetaData(),
-        includeNullBlockedMessage: true,
-      ),
-    );
-
-    // Keep in-memory conversation(s) in sync so conversation detail screens
-    // immediately reflect the unblocked state.
-    final listIndex = _controller.conversations
-        .indexWhere((c) => c.conversationId == conversationId);
-    if (listIndex != -1) {
-      final current = _controller.conversations[listIndex];
-      _controller.conversations[listIndex] = current.copyWith(
-        messagingDisabled: false,
-        metaData: current.metaData?.copyWith(blockedMessage: null),
-      );
-    }
-
-    final sugIndex = _controller.suggestions
-        .indexWhere((c) => c.conversationId == conversationId);
-    if (sugIndex != -1) {
-      final current = _controller.suggestions[sugIndex];
-      _controller.suggestions[sugIndex] = current.copyWith(
-        messagingDisabled: false,
-        metaData: current.metaData?.copyWith(blockedMessage: null),
-      );
-    }
 
     if (_controller.currentConversationId == conversationId &&
         _controller.currentConversation != null) {
@@ -117,25 +58,10 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
         ),
       );
     } else {
-      // Still notify listeners for list/detail views driven by this controller.
       _controller.update();
     }
 
-    // 3) If chat page is currently open for this conversation, refresh it too.
-    if (IsmChatUtility.chatPageControllerRegistered) {
-      final chatPageController = IsmChatUtility.chatPageController;
-      if (chatPageController.conversation?.conversationId == conversationId) {
-        chatPageController.conversation =
-            chatPageController.conversation?.copyWith(
-          messagingDisabled: false,
-          metaData: chatPageController.conversation?.metaData?.copyWith(
-            blockedMessage: null,
-          ),
-        );
-        // Rebuild message list so the injected blockedMessage row disappears.
-        unawaited(chatPageController.getMessagesFromDB(conversationId));
-      }
-    }
+    await IsmChatBlockUnblockCoordinator.refreshChatPageIfOpen(conversationId);
   }
 
   /// Fetches user data from the server and updates the local database.
@@ -311,7 +237,7 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
       return false;
     }
     // Apply local state changes immediately so UI doesn't show stale "blocked" state.
-    unawaited(_applyUnblockLocally(opponentId));
+    await _applyUnblockLocally(opponentId);
 
     // Still refresh from server in background to keep everything consistent.
     unawaited(_controller.getBlockUser());
