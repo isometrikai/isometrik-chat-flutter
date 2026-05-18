@@ -389,6 +389,21 @@ extension MentionMessage on IsmChatMessageModel {
     return false;
   }
 
+  /// Host-app bubble when `customType` is text and [hasValidWebLink] is true.
+  ///
+  /// Replaces the entire SDK [MessageBubble] (no default background, RichText, or
+  /// inner time row). Return `null` to use the normal text bubble.
+  Widget? buildCustomLinkBubble(BuildContext context) {
+    final type = customType;
+    if (type != IsmChatCustomMessageType.text &&
+        type != IsmChatCustomMessageType.bulkAction) {
+      return null;
+    }
+    if (!hasValidWebLink) return null;
+    return IsmChatProperties.chatPageProperties.textMessageWithLinkBuilder
+        ?.call(context, this);
+  }
+
   /// First http/https/www URL in [body], or `null` if [hasValidWebLink] is false.
   String? get firstValidWebLink {
     for (final segment in mentionList) {

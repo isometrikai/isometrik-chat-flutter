@@ -221,16 +221,7 @@ class _IsmChatTextMessageState extends State<IsmChatTextMessage> {
     if (message.metaData?.isOnelyEmoji == true) {
       return BouncingEmoji(message: message);
     }
-
-    final linkBuilder =
-        IsmChatProperties.chatPageProperties.textMessageWithLinkBuilder;
-    if (message.hasValidWebLink && linkBuilder != null) {
-      final customContent = linkBuilder(context, message);
-      if (customContent != null) {
-        return customContent;
-      }
-    }
-
+    // Link-with-custom UI is rendered by [MessageBubble] (full bubble replace).
     return _buildDefaultTextContent(message);
   }
 
