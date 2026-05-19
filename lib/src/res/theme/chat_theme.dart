@@ -18,7 +18,9 @@ class IsmChatThemeData with Diagnosticable {
     this.chatPageTheme,
     this.chatListCardThemData,
     this.cardTheme,
+    IsmChatProfileTheme? profileTheme,
   })  : primaryColor = primaryColor ?? IsmChatThemeData.light().primaryColor,
+        profileTheme = profileTheme ?? IsmChatProfileTheme.light(),
         backgroundColor =
             backgroundColor ?? IsmChatThemeData.light().backgroundColor,
         notificationColor =
@@ -36,7 +38,8 @@ class IsmChatThemeData with Diagnosticable {
 
   factory IsmChatThemeData.light() => IsmChatThemeData(
         chatPageTheme: IsmChatPageTheme(),
-        chatPageHeaderTheme: IsmChatHeaderTheme(),
+        chatPageHeaderTheme: IsmChatHeaderTheme.light(),
+        profileTheme: IsmChatProfileTheme.light(),
         chatListTheme: const IsmChatListTheme.light(),
         primaryColor: IsmChatColors.primaryColorLight,
         backgroundColor: IsmChatColors.backgroundColorLight,
@@ -54,7 +57,8 @@ class IsmChatThemeData with Diagnosticable {
 
   factory IsmChatThemeData.dark() => IsmChatThemeData(
         chatPageTheme: IsmChatPageTheme(),
-        chatPageHeaderTheme: IsmChatHeaderTheme(),
+        chatPageHeaderTheme: IsmChatHeaderTheme.dark(),
+        profileTheme: IsmChatProfileTheme.dark(),
         chatListTheme: const IsmChatListTheme.dark(),
         primaryColor: IsmChatColors.primaryColorDark,
         mentionColor: IsmChatColors.primaryColorDark,
@@ -97,6 +101,9 @@ class IsmChatThemeData with Diagnosticable {
   final IsmChatHeaderTheme? chatPageHeaderTheme;
 
   final IsmChatListCardTheme? chatListCardThemData;
+
+  /// Profile / user-info screens ([IsmChatUserView], [IsmChatUserInfo]).
+  final IsmChatProfileTheme? profileTheme;
 
   // ignore: strict_top_level_inference
   lerp(IsmChatThemeData? theme, double t) {}
