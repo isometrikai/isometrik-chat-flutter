@@ -49,6 +49,7 @@ class IsmChatMqttActionModel {
                 userName: map['userName'] as String? ?? '',
                 userIdentifier: map['userIdentifier'] as String? ?? '',
                 profileImageUrl: map['userProfileImageUrl'] as String? ?? '',
+                metaData: IsmChatMqttUserModel.metaDataFromMap(map),
               )
             : null,
         opponentDetails: map['opponentId'] != null
@@ -58,6 +59,12 @@ class IsmChatMqttActionModel {
                 userIdentifier: map['opponentIdentifier'] as String? ?? '',
                 profileImageUrl:
                     map['opponentProfileImageUrl'] as String? ?? '',
+                metaData: IsmChatMqttUserModel.metaDataFromMap({
+                  if (map['opponentMetaData'] is Map<String, dynamic>)
+                    'metaData': map['opponentMetaData'],
+                  'firstName': map['opponentFirstName'],
+                  'lastName': map['opponentLastName'],
+                }),
               )
             : null,
         initiatorDetails: map['initiatorId'] != null
@@ -67,6 +74,12 @@ class IsmChatMqttActionModel {
                 userIdentifier: map['initiatorIdentifier'] as String? ?? '',
                 profileImageUrl:
                     map['initiatorProfileImageUrl'] as String? ?? '',
+                metaData: IsmChatMqttUserModel.metaDataFromMap({
+                  if (map['initiatorMetaData'] is Map<String, dynamic>)
+                    'metaData': map['initiatorMetaData'],
+                  'firstName': map['initiatorFirstName'],
+                  'lastName': map['initiatorLastName'],
+                }),
               )
             : null,
         conversationDetails: map['conversationDetails'] != null
