@@ -1,3 +1,4 @@
+export 'attachment_card_theme.dart';
 export 'chat_card_theme.dart';
 export 'chat_center_messgae_theme.dart';
 export 'chat_dialog_theme.dart';

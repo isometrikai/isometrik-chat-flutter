@@ -18,6 +18,7 @@ class IsmChatPageTheme {
     this.messageConstraints,
     this.searchTextFiledTheme,
     this.messgaeFocusedTheme,
+    this.attachmentCardTheme,
   });
 
   final double? profileImageSize;
@@ -37,4 +38,7 @@ class IsmChatPageTheme {
   final IsmChatMessageHoverTheme? messageHoverTheme;
   final IsmChatMessageConstraints? messageConstraints;
   final IsmChatFocusedMessageTheme? messgaeFocusedTheme;
+
+  /// Attachment sheet ([IsmChatAttachmentCard]) background and labels.
+  final IsmChatAttachmentCardTheme? attachmentCardTheme;
 }
