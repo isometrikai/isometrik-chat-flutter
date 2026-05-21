@@ -37,16 +37,23 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
     );
     if (!blokedUser) return;
 
+    IsmChatMessageModel? blockBanner;
     if (convId.isNotEmpty) {
+      blockBanner = IsmChatBlockUnblockCoordinator.buildBannerMessage(
+        isBlock: true,
+        conversationId: convId,
+        initiatorId: currentUserId,
+        initiatorName: currentUserName,
+        sentAt: DateTime.now().millisecondsSinceEpoch,
+      );
       await IsmChatBlockUnblockCoordinator.applyBlock(
         conversationId: convId,
-        bannerMessage: IsmChatBlockUnblockCoordinator.buildBannerMessage(
-          isBlock: true,
-          conversationId: convId,
-          initiatorId: currentUserId,
-          initiatorName: currentUserName,
-          sentAt: DateTime.now().millisecondsSinceEpoch,
-        ),
+        bannerMessage: blockBanner,
+      );
+      IsmChatBlockUnblockCoordinator.patchOpenChatMessagesInMemory(
+        conversationId: convId,
+        messagingDisabled: true,
+        bannerMessage: blockBanner,
       );
     }
 
@@ -105,6 +112,10 @@ mixin IsmChatPageBlockUnblockMixin on GetxController {
         metaData: _controller.conversation?.metaData?.copyWith(
           blockedMessage: null,
         ),
+      );
+      IsmChatBlockUnblockCoordinator.patchOpenChatMessagesInMemory(
+        conversationId: convId,
+        messagingDisabled: false,
       );
     }
 

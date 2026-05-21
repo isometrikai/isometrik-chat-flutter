@@ -29,7 +29,17 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     final conv = _controller.conversation;
     if (conv != null &&
         IsmChatBlockUnblockCoordinator.isConversationBlocked(conv)) {
-      await IsmChatBlockUnblockCoordinator.ensureBlockBannerForDisabledChat(conv);
+      final cachedBeforeEnsure =
+          await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+      final hasBlockBanner = cachedBeforeEnsure?.messages?.values.any(
+            (m) => m.customType == IsmChatCustomMessageType.block,
+          ) ??
+          false;
+      if (!hasBlockBanner) {
+        await IsmChatBlockUnblockCoordinator.ensureBlockBannerForDisabledChat(
+          conv,
+        );
+      }
       final refreshed =
           await IsmChatConfig.dbWrapper?.getConversation(conversationId);
       if (refreshed != null) {

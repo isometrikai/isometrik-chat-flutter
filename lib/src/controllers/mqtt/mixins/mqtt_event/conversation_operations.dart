@@ -31,9 +31,11 @@ mixin IsmChatMqttEventConversationOperationsMixin {
     }
   }
 
-  /// Handles updates to conversation details (e.g. conversationDetailsUpdated
-  /// with blockedMessage in metaData). Calls conversation details API and
-  /// forces UI refresh when user is on the same chat screen.
+  /// Handles updates to conversation details (e.g. conversationDetailsUpdated).
+  ///
+  /// When the recipient is already on the chat screen, refresh from local DB
+  /// first (block banner is Option A message rows) and fetch conversation
+  /// details in the background so the banner is not blocked on the API round trip.
   ///
   /// * `actionModel`: The action model containing updated conversation details.
   void handleConversationUpdate(IsmChatMqttActionModel actionModel) async {
@@ -47,12 +49,8 @@ mixin IsmChatMqttEventConversationOperationsMixin {
           IsmChatUtility.chatPageController.conversation?.conversationId ==
               convId) {
         final controller = IsmChatUtility.chatPageController;
-        // Ensure conversation-details API runs (guard can block otherwise)
         controller.isCoverationApiDetails = true;
-        await controller.getConverstaionDetails();
-        // Rebuild message list so block/unblock from metaData shows in UI
-        await controller.getMessagesFromDB(convId);
-        // Force UI update on UI thread so changes are visible immediately
+        await IsmChatBlockUnblockCoordinator.refreshChatPageIfOpen(convId);
         SchedulerBinding.instance.addPostFrameCallback((_) {
           if (!IsmChatUtility.chatPageControllerRegistered) return;
           final c = IsmChatUtility.chatPageController;
@@ -64,6 +62,12 @@ mixin IsmChatMqttEventConversationOperationsMixin {
             IsmChatUtility.conversationController.update();
           }
         });
+        unawaited(controller.getConverstaionDetails().then((_) {
+          if (!IsmChatUtility.chatPageControllerRegistered) return;
+          final c = IsmChatUtility.chatPageController;
+          if (c.conversation?.conversationId != convId) return;
+          c.update();
+        }));
         if (controller.messages.isNotEmpty) {
           unawaited(controller.getMessagesFromAPI(
             lastMessageTimestamp: controller.messages.last.sentAt,

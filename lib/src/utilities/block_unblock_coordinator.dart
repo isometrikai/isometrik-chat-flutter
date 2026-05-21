@@ -256,13 +256,19 @@ class IsmChatBlockUnblockCoordinator {
     final initiatedByMe = initiatorId == currentUserId;
 
     if (isBlock) {
+      final banner = bannerFromMqtt(
+        actionModel,
+        conversationId: conversationId,
+        isBlock: true,
+      );
       await applyBlock(
         conversationId: conversationId,
-        bannerMessage: bannerFromMqtt(
-          actionModel,
-          conversationId: conversationId,
-          isBlock: true,
-        ),
+        bannerMessage: banner,
+      );
+      patchOpenChatMessagesInMemory(
+        conversationId: conversationId,
+        messagingDisabled: true,
+        bannerMessage: banner,
       );
       if (initiatedByMe && IsmChatUtility.conversationControllerRegistered) {
         final opponentId = actionModel.opponentDetails?.userId ?? '';
@@ -274,6 +280,10 @@ class IsmChatBlockUnblockCoordinator {
       await applyUnblock(
         conversationId: conversationId,
         syncServerMetadataClear: true,
+      );
+      patchOpenChatMessagesInMemory(
+        conversationId: conversationId,
+        messagingDisabled: false,
       );
       if (initiatedByMe && IsmChatUtility.conversationControllerRegistered) {
         final opponentId = actionModel.opponentDetails?.userId ?? '';
@@ -295,6 +305,62 @@ class IsmChatBlockUnblockCoordinator {
     }
   }
 
+  /// Updates the open chat message list in memory (no DB/API). Use right after
+  /// [applyBlock] / [applyUnblock] so user B sees the banner while both are on chat.
+  static void patchOpenChatMessagesInMemory({
+    required String conversationId,
+    required bool messagingDisabled,
+    IsmChatMessageModel? bannerMessage,
+  }) {
+    if (conversationId.isEmpty || !IsmChatUtility.chatPageControllerRegistered) {
+      return;
+    }
+
+    final chatController = IsmChatUtility.chatPageController;
+    if (chatController.conversation?.conversationId != conversationId) {
+      return;
+    }
+
+    chatController.conversation = chatController.conversation?.copyWith(
+          messagingDisabled: messagingDisabled,
+          metaData:
+              chatController.conversation?.metaData?.copyWith(blockedMessage: null),
+        ) ??
+        chatController.conversation;
+
+    var list = List<IsmChatMessageModel>.from(chatController.messages);
+    removeBannerRowsFromList(list);
+    if (messagingDisabled && bannerMessage != null) {
+      list.add(bannerMessage);
+      list.sort((a, b) => a.sentAt.compareTo(b.sentAt));
+    }
+    chatController.messages = chatController.commonController.sortMessages(
+      chatController.filterMessages(list),
+    );
+    chatController.update();
+
+    if (IsmChatUtility.conversationControllerRegistered) {
+      final cc = IsmChatUtility.conversationController;
+      if (cc.currentConversationId == conversationId) {
+        cc.currentConversation = chatController.conversation;
+        cc.update();
+      }
+    }
+  }
+
+  static IsmChatMessageModel? _blockBannerFromConversation(
+    IsmChatConversationModel? conversation,
+  ) {
+    final messages = conversation?.messages;
+    if (messages == null) return null;
+    for (final message in messages.values) {
+      if (message.customType == IsmChatCustomMessageType.block) {
+        return message;
+      }
+    }
+    return null;
+  }
+
   /// Reloads open chat page from local DB so user B sees banner + disabled input.
   static Future<void> refreshChatPageIfOpen(String conversationId) async {
     if (conversationId.isEmpty || !IsmChatUtility.chatPageControllerRegistered) {
@@ -313,6 +379,15 @@ class IsmChatBlockUnblockCoordinator {
             metaData: cached.metaData?.copyWith(blockedMessage: null),
           ) ??
           cached;
+
+      // Second paint from Hive (covers MQTT arriving before in-memory patch).
+      patchOpenChatMessagesInMemory(
+        conversationId: conversationId,
+        messagingDisabled: isConversationBlocked(cached),
+        bannerMessage: isConversationBlocked(cached)
+            ? _blockBannerFromConversation(cached)
+            : null,
+      );
     }
 
     await pruneBlockBannersIfChatAllowed(conversationId);
