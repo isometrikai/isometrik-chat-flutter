@@ -9,11 +9,6 @@ import 'package:isometrik_chat_flutter/src/controllers/mqtt/mixins/mqtt_event/ut
 ///
 /// This mixin contains methods for handling conversation-related events.
 mixin IsmChatMqttEventConversationOperationsMixin {
-  /// Prefer [IsmChatMqttUserModel.displayName] (first + last from user metaData, else userName).
-  String _conversationCreatedNotificationTitle(
-      IsmChatMqttActionModel actionModel) =>
-      actionModel.userDetails?.displayName ?? '';
-
   /// Handles the creation of a new conversation event.
   ///
   /// * `actionModel`: the creation of a new conversation event model to handle
@@ -26,7 +21,7 @@ mixin IsmChatMqttEventConversationOperationsMixin {
       final utils = self as IsmChatMqttEventUtilitiesMixin;
       if (utils.isSenderMe(actionModel.userDetails?.userId)) return;
       utils.showPushNotification(
-        title: _conversationCreatedNotificationTitle(actionModel),
+        title: actionModel.userDetails?.userName ?? '',
         body: 'Conversation Created',
         data: actionModel.toMap(),
       );

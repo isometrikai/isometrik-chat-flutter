@@ -61,8 +61,10 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
 /// logic stays unchanged. Pop your sheet/route before calling `onPressed` (same
 /// as default [IsmChatAlertDialogBox], which calls [IsmChatRoute.goBack] first).
 ///
-/// Return without calling any action when the user dismisses.
-typedef ChatConfirmationPresenter = Future<void> Function(
+/// **Return value**
+/// - `true`: you showed UI and handled this request (SDK will not show its dialog).
+/// - `null` or `false`: fall back to the default [IsmChatAlertDialogBox].
+typedef ChatConfirmationPresenter = Future<bool?> Function(
   BuildContext context,
   IsmChatConfirmationRequest request,
 );

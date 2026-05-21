@@ -11,8 +11,11 @@ class IsmChatConfirmationHelper {
     final context =
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
     if (presenter != null) {
-      await presenter(context, request);
-      return;
+      final handled = await presenter(context, request);
+      if (handled == true) {
+        return;
+      }
+      // null / false → use default SDK dialog below
     }
 
     final labels = request.actions.map((a) => a.label).toList();
