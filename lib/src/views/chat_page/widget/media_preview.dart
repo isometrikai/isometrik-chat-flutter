@@ -209,35 +209,51 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
       );
 }
 
+/// Audio preview dialog (from [IsmMedia] or chat). Uses [IsmChatThemeResolver.mediaFromConfig].
 class AudioPreview extends StatelessWidget {
   const AudioPreview({super.key, required this.message});
 
   final IsmChatMessageModel message;
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-      tag: IsmChat.i.chatPageTag,
-      builder: (controller) => Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+  Widget build(BuildContext context) {
+    final mediaTheme = IsmChatThemeResolver.mediaFromConfig(context);
+    final actionStyle = mediaTheme.docTitleTextStyle.copyWith(
+      fontWeight: FontWeight.w700,
+    );
+    final actionIconColor = mediaTheme.appBarIconColor;
+
+    return Dialog(
+      backgroundColor: mediaTheme.scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(IsmChatDimens.sixteen),
+      ),
+      insetPadding: IsmChatDimens.edgeInsets16,
+      child: GetBuilder<IsmChatPageController>(
+        tag: IsmChat.i.chatPageTag,
+        builder: (controller) => Padding(
+          padding: IsmChatDimens.edgeInsets16,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: IsmChatDimens.four,
+                runSpacing: IsmChatDimens.four,
                 children: [
                   TextButton.icon(
                     onPressed: () async {
                       IsmChatRoute.goBack();
                       await controller.shareMedia(message);
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.share_rounded,
-                      color: IsmChatColors.whiteColor,
+                      color: actionIconColor,
                     ),
                     label: Text(
                       IsmChatStrings.share,
-                      style: IsmChatStyles.w700White16,
+                      style: actionStyle,
                     ),
                   ),
                   TextButton.icon(
@@ -245,35 +261,40 @@ class AudioPreview extends StatelessWidget {
                       IsmChatRoute.goBack();
                       await controller.saveMedia(message);
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.save_rounded,
-                      color: IsmChatColors.whiteColor,
+                      color: actionIconColor,
                     ),
                     label: Text(
                       IsmChatStrings.save,
-                      style: IsmChatStyles.w700White16,
+                      style: actionStyle,
                     ),
                   ),
                   TextButton.icon(
                     onPressed: () async {
                       IsmChatRoute.goBack();
-                      await controller.showDialogForMessageDelete(message,
-                          fromMediaPrivew: true);
+                      await controller.showDialogForMessageDelete(
+                        message,
+                        fromMediaPrivew: true,
+                      );
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.delete_rounded,
-                      color: IsmChatColors.whiteColor,
+                      color: actionIconColor,
                     ),
                     label: Text(
                       IsmChatStrings.delete,
-                      style: IsmChatStyles.w700White16,
+                      style: actionStyle,
                     ),
-                  )
+                  ),
                 ],
               ),
-              IsmChatAudioPlayer(
-                message: message,
-              ),
+              IsmChatDimens.boxHeight10,
+              IsmChatAudioPlayer(message: message),
             ],
-          ));
+          ),
+        ),
+      ),
+    );
+  }
 }

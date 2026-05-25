@@ -7,7 +7,7 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Current user's profile screen (name, email, blocked users list).
 ///
-/// Colors come from [IsmChatConfig.chatTheme.profileTheme] for light/dark support.
+/// Colors from [IsmChatThemeResolver.profileFromConfig]; omit [profileTheme] for SDK defaults.
 class IsmChatUserView extends StatelessWidget {
   IsmChatUserView({super.key, this.signOutTap});
 
@@ -21,8 +21,7 @@ class IsmChatUserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileTheme = IsmChatConfig.chatTheme.profileTheme ??
-        IsmChatProfileTheme.light();
+    final profileTheme = IsmChatThemeResolver.profileFromConfig(context);
 
     return GetX<IsmChatConversationsController>(
       tag: IsmChat.i.chatListPageTag,

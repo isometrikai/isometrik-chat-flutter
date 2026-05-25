@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Group / 1:1 conversation info. Colors from [IsmChatThemeResolver.groupInfoFromConfig].
 class IsmChatConverstaionInfoView extends StatefulWidget {
   /// Creates a conversation info view widget.
   ///
@@ -117,6 +118,7 @@ class _IsmChatConverstaionInfoViewState
           }
         },
         builder: (controller) {
+          final groupTheme = IsmChatThemeResolver.groupInfoFromConfig(context);
           final isDocumentAllowed = IsmChatProperties
               .chatPageProperties.attachments
               .contains(IsmChatAttachmentType.document);
@@ -126,7 +128,7 @@ class _IsmChatConverstaionInfoViewState
                   ? conversationController.mediaListDocs.length
                   : 0);
           return Scaffold(
-            backgroundColor: IsmChatColors.blueGreyColor,
+            backgroundColor: groupTheme.scaffoldBackgroundColor,
             appBar: IsmChatAppBar(
               height: IsmChatDimens.fiftyFive,
               onBack: !IsmChatResponsive.isWeb(context)
@@ -161,9 +163,9 @@ class _IsmChatConverstaionInfoViewState
                           value: 1,
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.edit,
-                                color: IsmChatColors.blackColor,
+                                color: groupTheme.menuIconColor,
                               ),
                               IsmChatDimens.boxWidth8,
                               const Text(IsmChatStrings.changeGroupTitle)
@@ -174,9 +176,9 @@ class _IsmChatConverstaionInfoViewState
                           value: 2,
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.photo,
-                                color: IsmChatColors.blackColor,
+                                color: groupTheme.menuIconColor,
                               ),
                               IsmChatDimens.boxWidth8,
                               const Text(IsmChatStrings.changeGroupPhoto)
@@ -305,7 +307,7 @@ class _IsmChatConverstaionInfoViewState
                           child: Text(
                             controller.conversation?.chatName ?? '',
                             textAlign: TextAlign.center,
-                            style: IsmChatStyles.w600Black27,
+                            style: groupTheme.primaryTitleTextStyle,
                           )),
                       if (!(controller.conversation?.isGroup ?? false)) ...[
                         Builder(
@@ -319,7 +321,7 @@ class _IsmChatConverstaionInfoViewState
 
                             return Text(
                               identifier,
-                              style: IsmChatStyles.w500GreyLight17,
+                              style: groupTheme.secondaryTextStyle,
                             );
                           },
                         ),
@@ -327,7 +329,7 @@ class _IsmChatConverstaionInfoViewState
                       if (controller.conversation?.isGroup ?? false) ...[
                         Text(
                           '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
-                          style: IsmChatStyles.w400Grey14,
+                          style: groupTheme.captionTextStyle,
                         ),
                       ],
                       IsmChatDimens.boxHeight10,
@@ -352,7 +354,7 @@ class _IsmChatConverstaionInfoViewState
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
                                     IsmChatDimens.sixteen),
-                                color: IsmChatColors.whiteColor,
+                                color: groupTheme.surfaceBackgroundColor,
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -360,7 +362,7 @@ class _IsmChatConverstaionInfoViewState
                                 children: [
                                   Text(
                                     IsmChatStrings.aboutMe,
-                                    style: IsmChatStyles.w400Black16,
+                                    style: groupTheme.bodyTextStyle,
                                   ),
                                   IsmChatDimens.boxHeight5,
                                   Text(
@@ -382,7 +384,7 @@ class _IsmChatConverstaionInfoViewState
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(IsmChatDimens.sixteen),
-                              color: IsmChatColors.whiteColor,
+                              color: groupTheme.surfaceBackgroundColor,
                             ),
                             child: IsmChatTapHandler(
                               onTap: () {
@@ -416,19 +418,19 @@ class _IsmChatConverstaionInfoViewState
                                     isDocumentAllowed
                                         ? IsmChatStrings.mediaLinksAndDocs
                                         : IsmChatStrings.mediaLinks,
-                                    style: IsmChatStyles.w500Black16,
+                                    style: groupTheme.sectionTitleTextStyle,
                                   ),
                                   const Spacer(),
                                   Row(
                                     children: [
                                       Text(
                                         '$mediaLinksDocsCount',
-                                        style: IsmChatStyles.w500GreyLight17,
+                                        style: groupTheme.secondaryTextStyle,
                                       ),
                                       IsmChatDimens.boxWidth4,
                                       Icon(
                                         Icons.arrow_forward_ios,
-                                        color: IsmChatColors.greyColorLight,
+                                        color: groupTheme.actionIconColor,
                                         size: IsmChatDimens.fifteen,
                                       ),
                                     ],
@@ -448,7 +450,7 @@ class _IsmChatConverstaionInfoViewState
                               padding: IsmChatDimens.edgeInsets10,
                               child: Text(
                                 '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
-                                style: IsmChatStyles.w500Black16,
+                                style: groupTheme.sectionTitleTextStyle,
                               ),
                             ),
                             if (controller
@@ -492,8 +494,12 @@ class _IsmChatConverstaionInfoViewState
                             autofocus: false,
                             focusNode: _participantsSearchFocusNode,
                             hint: 'Search using name or email',
+                            fillColor: groupTheme.searchFillColor,
+                            hintStyle: groupTheme.searchHintTextStyle,
                             cursorColor: IsmChatConfig.chatTheme.primaryColor,
-                            style: IsmChatStyles.w400Black16,
+                            style: groupTheme.inputTextStyle,
+                            isShowBorderColor: true,
+                            borderColor: groupTheme.dividerColor,
                             controller:
                                 controller.participnatsEditingController,
                             suffixIcon: controller.participnatsEditingController
@@ -507,13 +513,12 @@ class _IsmChatConverstaionInfoViewState
                                     },
                                     child: Icon(
                                       Icons.close_rounded,
-                                      color:
-                                          IsmChatConfig.chatTheme.primaryColor,
+                                      color: groupTheme.searchIconColor,
                                     ),
                                   )
                                 : Icon(
                                     Icons.search_rounded,
-                                    color: IsmChatConfig.chatTheme.primaryColor,
+                                    color: groupTheme.searchIconColor,
                                   ),
                             onChanged: (_) {
                               controller
@@ -593,7 +598,7 @@ class _IsmChatConverstaionInfoViewState
                                 trailing: member.isAdmin
                                     ? Text(
                                         IsmChatStrings.admin,
-                                        style: IsmChatStyles.w600Black12
+                                        style: groupTheme.adminBadgeTextStyle
                                             .copyWith(
                                                 color: IsmChatConfig
                                                     .chatTheme.primaryColor),
@@ -601,17 +606,21 @@ class _IsmChatConverstaionInfoViewState
                                     : controller.conversation?.usersOwnDetails
                                                 ?.isAdmin ??
                                             false
-                                        ? const Icon(
+                                        ? Icon(
                                             Icons.more_vert,
-                                            color: IsmChatColors.blackColor,
+                                            color: groupTheme.menuIconColor,
                                           )
                                         : null,
                                 title: Text(IsmChatConfig.communicationConfig
                                             .userConfig.userId ==
                                         member.userId
                                     ? IsmChatStrings.you
-                                    : _memberDisplayName(member)),
-                                subtitle: Text(member.userName),
+                                    : _memberDisplayName(member),
+                                    style: groupTheme.listTileTitleTextStyle),
+                                subtitle: Text(
+                                  member.userName,
+                                  style: groupTheme.listTileSubtitleTextStyle,
+                                ),
                                 leading: IsmChatImage.profile(
                                   member.profileUrl,
                                   name: _memberDisplayName(member)
@@ -628,7 +637,7 @@ class _IsmChatConverstaionInfoViewState
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(IsmChatDimens.sixteen),
-                            color: IsmChatColors.whiteColor,
+                            color: groupTheme.surfaceBackgroundColor,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -638,19 +647,21 @@ class _IsmChatConverstaionInfoViewState
                                   controller
                                       .showDialogForClearChatAndDeleteGroup();
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.clear_all_rounded,
-                                  color: IsmChatColors.blackColor,
+                                  color: groupTheme.menuIconColor,
                                 ),
                                 label: Text(
                                   IsmChatStrings.clearChat,
-                                  style: IsmChatStyles.w600Black16,
+                                  style: groupTheme.bodyTextStyle.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                               IsmChatDimens.boxHeight10,
                               Divider(
                                 thickness: 1,
-                                color: IsmChatColors.greyColorLight
+                                color: groupTheme.dividerColor
                                     .applyIsmOpacity(.3),
                               ),
                               IsmChatDimens.boxHeight5,
@@ -676,7 +687,7 @@ class _IsmChatConverstaionInfoViewState
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(IsmChatDimens.sixteen),
-                            color: IsmChatColors.whiteColor,
+                            color: groupTheme.surfaceBackgroundColor,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -721,7 +732,7 @@ class _IsmChatConverstaionInfoViewState
                               Divider(
                                 height: 0,
                                 thickness: 1,
-                                color: IsmChatColors.greyColorLight
+                                color: groupTheme.dividerColor
                                     .applyIsmOpacity(.3),
                               ),
                               TextButton.icon(
@@ -764,7 +775,7 @@ class _IsmChatConverstaionInfoViewState
                                 Divider(
                                   height: 0,
                                   thickness: 1,
-                                  color: IsmChatColors.greyColorLight
+                                  color: groupTheme.dividerColor
                                       .applyIsmOpacity(.3),
                                 ),
                                 TextButton.icon(

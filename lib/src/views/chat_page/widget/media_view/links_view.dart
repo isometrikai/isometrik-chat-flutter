@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-/// IsmMedia class is for showing the conversation media
+/// Conversation links tab ([IsmMedia]).
+///
+/// Section headers use [IsmChatConfig.chatTheme.chatPageTheme.mediaTheme].
 class IsmLinksView extends StatefulWidget {
   const IsmLinksView({super.key, required this.mediaListLinks});
 
@@ -31,13 +33,15 @@ class _IsmLinksViewState extends State<IsmLinksView>
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final mediaTheme = IsmChatThemeResolver.mediaFromConfig(context);
+        return Padding(
         padding: IsmChatDimens.edgeInsets10,
         child: widget.mediaListLinks.isEmpty
             ? Center(
                 child: Text(
                   IsmChatStrings.noLinks,
-                  style: IsmChatStyles.w600Black20,
+                  style: mediaTheme.emptyStateTextStyle,
                 ),
               )
             : ListView.separated(
@@ -55,7 +59,7 @@ class _IsmLinksViewState extends State<IsmLinksView>
                     children: [
                       Text(
                         key,
-                        style: IsmChatStyles.w400Black14,
+                        style: mediaTheme.sectionTitleTextStyle,
                       ),
                       IsmChatDimens.boxHeight10,
                       ListView.separated(
@@ -85,4 +89,5 @@ class _IsmLinksViewState extends State<IsmLinksView>
                 },
               ),
       );
+  }
 }

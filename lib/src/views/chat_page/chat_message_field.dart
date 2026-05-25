@@ -913,11 +913,8 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                         ?.call(context, controller.conversation) ??
                     true) {
                   if (context.mounted) {
-                    final attachmentCardTheme = IsmChatConfig
-                            .chatTheme.chatPageTheme?.attachmentCardTheme ??
-                        (Get.isDarkMode
-                            ? IsmChatAttachmentCardTheme.dark()
-                            : IsmChatAttachmentCardTheme.light());
+                    final attachmentCardTheme =
+                        IsmChatThemeResolver.attachmentCardFromConfig(context);
                     await showModalBottomSheet(
                       context: context,
                       builder: (context) => const IsmChatAttachmentCard(),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-/// IsmMedia class is for showing the conversation media
+/// Conversation media grid tab ([IsmMedia]).
+///
+/// Section headers use [IsmChatConfig.chatTheme.chatPageTheme.mediaTheme].
 class IsmMediaView extends StatefulWidget {
   const IsmMediaView({super.key, required this.mediaList});
 
@@ -32,13 +34,15 @@ class _IsmMediaViewState extends State<IsmMediaView>
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final mediaTheme = IsmChatThemeResolver.mediaFromConfig(context);
+        return Padding(
         padding: IsmChatDimens.edgeInsets10,
         child: widget.mediaList.isEmpty
             ? Center(
                 child: Text(
                   IsmChatStrings.noMedia,
-                  style: IsmChatStyles.w600Black20,
+                  style: mediaTheme.emptyStateTextStyle,
                 ),
               )
             : ListView.separated(
@@ -56,7 +60,7 @@ class _IsmMediaViewState extends State<IsmMediaView>
                     children: [
                       Text(
                         key,
-                        style: IsmChatStyles.w400Black14,
+                        style: mediaTheme.sectionTitleTextStyle,
                       ),
                       IsmChatDimens.boxHeight10,
                       GridView.builder(
@@ -113,4 +117,5 @@ class _IsmMediaViewState extends State<IsmMediaView>
                 },
               ),
       );
+  }
 }

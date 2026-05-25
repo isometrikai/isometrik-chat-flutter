@@ -16,8 +16,7 @@ class IsmChatBlockedUsersView extends StatelessWidget {
         });
       },
       builder: (controller) {
-        final profileTheme = IsmChatConfig.chatTheme.profileTheme ??
-            IsmChatProfileTheme.light();
+        final profileTheme = IsmChatThemeResolver.profileFromConfig(context);
         return Scaffold(
             backgroundColor: profileTheme.scaffoldBackgroundColor,
             appBar: IsmChatAppBar(

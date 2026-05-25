@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-/// IsmMedia class is for showing the conversation media
+/// Conversation media (tabs: media, links, docs).
+///
+/// Uses [IsmChatThemeResolver.mediaFromConfig]; omit [IsmChatPageTheme.mediaTheme]
+/// in app config for SDK light/dark defaults. Uses [Theme.of] via [IsmChatThemeResolver].
 class IsmMedia extends StatefulWidget {
   const IsmMedia({
     super.key,
@@ -48,63 +51,72 @@ class _IsmMediaState extends State<IsmMedia> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => DefaultTabController(
-        length: _tabCount,
-        child: Scaffold(
-          appBar: AppBar(
-            surfaceTintColor: IsmChatColors.whiteColor,
-            elevation: IsmChatDimens.three,
-            shadowColor: Colors.grey,
-            title: Container(
-              width: _tabContainerWidth,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(IsmChatDimens.eight),
-                color: IsmChatColors.darkBlueGreyColor,
+  Widget build(BuildContext context) {
+    final mediaTheme = IsmChatThemeResolver.mediaFromConfig(context);
+        return DefaultTabController(
+          length: _tabCount,
+          child: Scaffold(
+            backgroundColor: mediaTheme.scaffoldBackgroundColor,
+            appBar: AppBar(
+              backgroundColor: mediaTheme.appBarBackgroundColor,
+              surfaceTintColor: mediaTheme.appBarBackgroundColor,
+              elevation: IsmChatDimens.three,
+              shadowColor: Colors.grey,
+              title: Container(
+                width: _tabContainerWidth,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(IsmChatDimens.eight),
+                  color: mediaTheme.tabBarContainerColor,
+                ),
+                child: _TabBarView(
+                  tabController: _tabController,
+                  isDocumentAllowed: _isDocumentAllowed,
+                  mediaTheme: mediaTheme,
+                ),
               ),
-              child: _TabBarView(
-                tabController: _tabController,
-                isDocumentAllowed: _isDocumentAllowed,
+              centerTitle: true,
+              leading: IconButton(
+                onPressed: IsmChatResponsive.isWeb(context)
+                    ? () {
+                        IsmChatUtility.conversationController
+                            .isRenderChatPageaScreen =
+                            IsRenderChatPageScreen.none;
+                      }
+                    : IsmChatRoute.goBack,
+                icon: Icon(
+                  IsmChatResponsive.isWeb(context)
+                      ? Icons.close_rounded
+                      : Icons.arrow_back_rounded,
+                  color: mediaTheme.appBarIconColor,
+                ),
               ),
             ),
-            centerTitle: true,
-            leading: IconButton(
-              onPressed: IsmChatResponsive.isWeb(context)
-                  ? () {
-                      IsmChatUtility
-                              .conversationController.isRenderChatPageaScreen =
-                          IsRenderChatPageScreen.none;
-                    }
-                  : IsmChatRoute.goBack,
-              icon: Icon(
-                IsmChatResponsive.isWeb(context)
-                    ? Icons.close_rounded
-                    : Icons.arrow_back_rounded,
+            body: SafeArea(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  IsmMediaView(mediaList: widget.mediaList),
+                  IsmLinksView(mediaListLinks: widget.mediaListLinks),
+                  if (_isDocumentAllowed)
+                    IsmDocsView(mediaListDocs: widget.mediaListDocs),
+                ],
               ),
             ),
           ),
-          body: SafeArea(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                IsmMediaView(mediaList: widget.mediaList),
-                IsmLinksView(mediaListLinks: widget.mediaListLinks),
-                if (_isDocumentAllowed)
-                  IsmDocsView(mediaListDocs: widget.mediaListDocs),
-              ],
-            ),
-          ),
-        ),
-      );
+        );
+  }
 }
 
 class _TabBarView extends StatelessWidget {
   const _TabBarView({
     required TabController? tabController,
     required this.isDocumentAllowed,
+    required this.mediaTheme,
   }) : _tabController = tabController;
 
   final TabController? _tabController;
   final bool isDocumentAllowed;
+  final IsmChatMediaTheme mediaTheme;
 
   Widget _tabItem({
     required int index,
@@ -119,12 +131,14 @@ class _TabBarView extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(IsmChatDimens.six),
         color: isSelected
-            ? IsmChatColors.whiteColor
-            : IsmChatColors.darkBlueGreyColor,
+            ? mediaTheme.tabSelectedBackgroundColor
+            : mediaTheme.tabUnselectedBackgroundColor,
       ),
       child: Text(
         label,
-        style: IsmChatStyles.w600Black16,
+        style: isSelected
+            ? mediaTheme.tabSelectedTextStyle
+            : mediaTheme.tabUnselectedTextStyle,
       ),
     );
   }
@@ -137,13 +151,13 @@ class _TabBarView extends StatelessWidget {
                 : Colors.transparent),
         dividerColor: Colors.transparent,
         controller: _tabController,
-        labelColor: IsmChatColors.blackColor,
+        labelColor: mediaTheme.tabSelectedTextStyle.color,
         indicatorColor: Colors.transparent,
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: IsmChatDimens.edgeInsets0,
         indicatorWeight: double.minPositive,
         labelPadding: IsmChatDimens.edgeInsets2_0,
-        labelStyle: IsmChatStyles.w600Black16,
+        labelStyle: mediaTheme.tabSelectedTextStyle,
         splashBorderRadius: BorderRadius.zero,
         isScrollable: false,
         tabs: [

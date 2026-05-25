@@ -3,8 +3,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Theme for profile / user-info screens ([IsmChatUserView], [IsmChatUserInfo]).
 ///
-/// Reuse via [IsmChatConfig.chatTheme.profileTheme] so light and dark modes stay
-/// consistent across the SDK.
+/// Omit [IsmChatThemeData.profileTheme] for SDK light/dark defaults ([IsmChatThemeResolver]).
+/// Pass a full instance only when customizing.
 class IsmChatProfileTheme {
   const IsmChatProfileTheme({
     required this.scaffoldBackgroundColor,

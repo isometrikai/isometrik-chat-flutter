@@ -4,8 +4,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Attachment picker bottom sheet content.
 ///
-/// Uses [IsmChatConfig.chatTheme.chatPageTheme.attachmentCardTheme]; rebuilds on
-/// theme change via [Obx] + [Get.isDarkMode].
+/// Uses [IsmChatThemeResolver.attachmentCardFromConfig]; omit theme in app config
+/// for SDK light/dark defaults. Uses [Theme.of] via [IsmChatThemeResolver].
 class IsmChatAttachmentCard extends StatelessWidget {
   const IsmChatAttachmentCard({super.key});
 
@@ -24,17 +24,10 @@ class IsmChatAttachmentCard extends StatelessWidget {
     return x;
   }
 
-  IsmChatAttachmentCardTheme _attachmentCardTheme() =>
-      IsmChatConfig.chatTheme.chatPageTheme?.attachmentCardTheme ??
-      (Get.isDarkMode
-          ? IsmChatAttachmentCardTheme.dark()
-          : IsmChatAttachmentCardTheme.light());
-
   @override
-  Widget build(BuildContext context) => Obx(() {
-        final _ = Get.isDarkMode;
-        final cardTheme = _attachmentCardTheme();
-        return ColoredBox(
+  Widget build(BuildContext context) {
+    final cardTheme = IsmChatThemeResolver.attachmentCardFromConfig(context);
+    return ColoredBox(
           color: cardTheme.backgroundColor,
           child: SafeArea(
             child: Padding(
@@ -97,6 +90,6 @@ class IsmChatAttachmentCard extends StatelessWidget {
               ),
             ),
           ),
-        );
-      });
+    );
+  }
 }

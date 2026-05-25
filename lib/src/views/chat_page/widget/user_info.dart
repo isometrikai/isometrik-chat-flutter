@@ -7,7 +7,8 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Contact / opponent profile from a chat ([IsmChatUserInfo]).
 ///
-/// Uses [IsmChatConfig.chatTheme.profileTheme] for scaffold and text colors.
+/// Uses [IsmChatThemeResolver.profileFromConfig]; omit [IsmChatThemeData.profileTheme]
+/// in app config for SDK light/dark defaults.
 class IsmChatUserInfo extends StatefulWidget {
   const IsmChatUserInfo({
     super.key,
@@ -194,8 +195,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
         final mediaLinksDocsCount = mediaList.length +
             mediaListLinks.length +
             (isDocumentAllowed ? mediaListDocs.length : 0);
-        final profileTheme =
-            IsmChatConfig.chatTheme.profileTheme ?? IsmChatProfileTheme.light();
+        final profileTheme = IsmChatThemeResolver.profileFromConfig(context);
         return Scaffold(
           backgroundColor: profileTheme.scaffoldBackgroundColor,
           appBar: IsmChatAppBar(
