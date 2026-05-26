@@ -20,7 +20,7 @@ class ChatListController extends GetxController {
 
   final deviceConfig = Get.find<DeviceConfig>();
 
-  /// Timer to update lastActiveTimestamp every 30 seconds
+  /// Timer to update lastSeen every 30 seconds
   Timer? _lastActiveTimer;
 
   @override
@@ -39,31 +39,6 @@ class ChatListController extends GetxController {
     super.onClose();
   }
 
-  /// Starts a timer to update lastActiveTimestamp every 30 seconds
-  /// Only starts if user is logged in and SDK is initialized
-  void _startLastActiveTimer() {
-    // Check if user is logged in and SDK is initialized
-    if (!_isUserLoggedIn()) {
-      return;
-    }
-
-    // Update immediately on start
-    IsmChat.i.updateLastActiveTimestamp();
-
-    // Then update every 30 seconds
-    _lastActiveTimer = Timer.periodic(
-      const Duration(seconds: 30),
-      (timer) {
-        // Check again before each update
-        if (!_isUserLoggedIn()) {
-          timer.cancel();
-          _lastActiveTimer = null;
-          return;
-        }
-        IsmChat.i.updateLastActiveTimestamp(isLoading: false);
-      },
-    );
-  }
 
   /// Stops the last active timer
   void _stopLastActiveTimer() {
@@ -153,7 +128,7 @@ class ChatListController extends GetxController {
     );
 
     // Start timer after successful initialization
-    _startLastActiveTimer();
+    // _startLastActiveTimer();
   }
 
   subscribeToTopic() async {

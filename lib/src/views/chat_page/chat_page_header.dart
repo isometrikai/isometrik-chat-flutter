@@ -341,11 +341,10 @@ class _TitleSubTitleWidget extends StatelessWidget {
 
                             // For one-on-one chats, check online status before last seen
                             // This ensures that when typing stops, if user is online, it shows "Online" not "Last seen"
-                            // Use only isOnlineBasedOnLastActive which checks lastActiveTimestamp from metadata
                             final isOnline = controller
                                     .conversation
                                     ?.opponentDetails
-                                    ?.isOnlineBasedOnLastActive ??
+                                    ?.online ??
                                 false;
 
                             if (isOnline) {
@@ -360,25 +359,13 @@ class _TitleSubTitleWidget extends StatelessWidget {
                             }
 
                             // If not online, show last seen timestamp
-                            // Get lastActiveTimestamp directly from metadata (new logic)
                             final opponentDetails =
                                 controller.conversation?.opponentDetails;
-                            final lastActive = opponentDetails?.metaData
-                                ?.customMetaData?['lastActiveTimestamp'];
-
-                            int? lastActiveTimestamp;
-                            if (lastActive != null) {
-                              if (lastActive is int) {
-                                lastActiveTimestamp = lastActive;
-                              } else if (lastActive is String) {
-                                lastActiveTimestamp = int.tryParse(lastActive);
-                              }
-                            }
+                            final lastActive = opponentDetails?.lastSeen;
 
                             return Text(
-                              (lastActiveTimestamp != null &&
-                                      lastActiveTimestamp > 0)
-                                  ? lastActiveTimestamp.toCurrentTimeStirng()
+                              (lastActive != null && lastActive > 0)
+                                  ? lastActive.toCurrentTimeStirng()
                                   : IsmChatStrings.tapInfo,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,

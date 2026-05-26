@@ -77,17 +77,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (!_isUserLoggedIn()) {
       return;
     }
-
-    // Update lastActiveTimestamp when app goes to background or is killed
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      IsmChat.i.updateLastActiveTimestamp(isLoading: false);
-    }
-
-    // Update when app comes back to foreground
-    if (state == AppLifecycleState.resumed) {
-      IsmChat.i.updateLastActiveTimestamp(isLoading: false);
-    }
   }
 
   /// Checks if user is logged in and SDK is initialized
