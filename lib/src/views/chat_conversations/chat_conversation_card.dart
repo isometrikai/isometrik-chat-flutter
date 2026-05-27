@@ -289,14 +289,28 @@ class _IsmChatConversationCardState extends State<IsmChatConversationCard>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  widget.conversation.lastMessageDetails?.sentAt
-                          .toLastMessageTimeString ??
-                      '',
-                  style: IsmChatConfig
-                          .chatTheme.chatListCardThemData?.trailingTextStyle ??
-                      IsmChatStyles.w400Black10,
-                ),
+                widget.trailingBuilder?.call(
+                      context,
+                      widget.conversation,
+                      widget.conversation.lastMessageDetails?.sentAt
+                              .toLastMessageTimeString ??
+                          '',
+                    ) ??
+                    Text(
+                      widget.trailing?.call(
+                            context,
+                            widget.conversation,
+                            widget.conversation.lastMessageDetails?.sentAt
+                                    .toLastMessageTimeString ??
+                                '',
+                          ) ??
+                          widget.conversation.lastMessageDetails?.sentAt
+                              .toLastMessageTimeString ??
+                          '',
+                      style: IsmChatConfig.chatTheme.chatListCardThemData
+                              ?.trailingTextStyle ??
+                          IsmChatStyles.w400Black10,
+                    ),
                 IsmChatDimens.boxHeight4,
                 if (widget.conversation.unreadMessagesCount != 0) ...[
                   FittedBox(
