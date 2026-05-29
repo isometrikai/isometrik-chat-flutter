@@ -123,8 +123,8 @@ class IsmChatConversationsViewModel {
       return null;
     }
     final data = ([...response.users])
-      ..removeWhere(
-          (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
+      ..removeWhere((e) =>
+          e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
 
     if (opponentId != null) {
       data.removeWhere((e) => e.userId == opponentId);
@@ -151,8 +151,8 @@ class IsmChatConversationsViewModel {
       return null;
     }
     final data = ([...response.users])
-      ..removeWhere(
-          (e) => e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
+      ..removeWhere((e) =>
+          e.userId == IsmChatConfig.communicationConfig.userConfig.userId);
     return IsmChatUserListModel(users: data, pageToken: response.pageToken);
   }
 
@@ -196,11 +196,13 @@ class IsmChatConversationsViewModel {
   Future<IsmChatResponseModel?> updateConversation({
     required String conversationId,
     required IsmChatMetaData metaData,
+    bool includeNullBlockedMessage = false,
     bool isLoading = false,
   }) async =>
       await _repository.updateConversation(
         conversationId: conversationId,
         metaData: metaData,
+        includeNullBlockedMessage: includeNullBlockedMessage,
         isLoading: isLoading,
       );
 

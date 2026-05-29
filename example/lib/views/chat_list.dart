@@ -198,11 +198,11 @@ class ChatList extends StatelessWidget {
                 //     e.chatName.toLowerCase().startsWith('t'),
 
                 opponentSubTitle: (_, opponent) {
-                  // Show online/last seen status based on lastActiveTimestamp
-                  if (opponent?.isOnlineBasedOnLastActive ?? false) {
+                  // Show online/last seen status based on lastSeen
+                  if (opponent?.online ?? false) {
                     return IsmChatStrings.online;
                   } else {
-                    final lastSeenTimestamp = opponent?.lastSeenTimestamp;
+                    final lastSeenTimestamp = opponent?.lastSeen;
                     if (lastSeenTimestamp != null) {
                       return lastSeenTimestamp.toCurrentTimeStirng();
                     }

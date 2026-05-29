@@ -51,6 +51,14 @@ class IsmChatMqttController extends GetxController
   /// MQTT-specific configuration settings.
   IsmChatMqttConfig? mqttConfig;
 
+  bool _mqttEventListenersAttached = false;
+  bool _mqttSetupInProgress = false;
+  List<String>? _savedExtraTopics;
+  List<String>? _savedTopicChannels;
+  bool _savedAutoReconnect = true;
+  bool _savedEnableLogging = true;
+  Timer? _mqttReconnectDebounce;
+
   /// Configuration instance that holds all communication-related settings for the chat system.
   ///
   /// This private variable stores the core configuration settings including:
@@ -118,6 +126,11 @@ class IsmChatMqttController extends GetxController
     bool autoReconnect = true,
     bool enableLogging = true,
   }) async {
+    _savedExtraTopics = topics;
+    _savedTopicChannels = topicChannels;
+    _savedAutoReconnect = autoReconnect;
+    _savedEnableLogging = enableLogging;
+
     final topicPrefix =
         '/${projectConfig?.accountId ?? ''}/${projectConfig?.projectId ?? ''}';
     final userTopic = '$topicPrefix/User/${userConfig?.userId ?? ''}';
@@ -128,13 +141,16 @@ class IsmChatMqttController extends GetxController
         ?.map((e) => '$topicPrefix/$e/${userConfig?.userId ?? ''}')
         .toList();
 
-    subscribedTopics.addAll([
+    final topicsToSubscribe = <String>{
       ...?topics,
       ...?channelTopics,
       userTopic,
       messageTopic,
       statusTopic,
-    ]);
+    };
+    subscribedTopics.addAll(
+      topicsToSubscribe.where((t) => !subscribedTopics.contains(t)),
+    );
 
     await mqttHelper.initialize(
       MqttConfig(
@@ -151,6 +167,7 @@ class IsmChatMqttController extends GetxController
         enableLogging: enableLogging,
         secure: false,
         autoReconnect: autoReconnect,
+        maxAutoReconnectRetry: 15,
         webSocketConfig: WebSocketConfig(
           useWebsocket: mqttConfig?.useWebSocket ?? false,
           websocketProtocols: mqttConfig?.websocketProtocols ?? [],
@@ -175,22 +192,79 @@ class IsmChatMqttController extends GetxController
       //   subscribedTopics = topics;
       // },
     );
+    _attachMqttListeners();
+  }
+
+  void _attachMqttListeners() {
+    if (_mqttEventListenersAttached) return;
+    _mqttEventListenersAttached = true;
     mqttHelper
-      ..onConnectionChange((value) {
-        if (value) {
-          IsmChatConfig.mqttConnectionStatus
-              ?.call(IsmChatConnectionState.connected);
-        } else {
-          IsmChatConfig.mqttConnectionStatus
-              ?.call(IsmChatConnectionState.disconnected);
-        }
-      })
+      ..onConnectionChange(_handleMqttConnectionChange)
       ..onEvent(
         (event) {
           IsmChatLog.info('Mqtt event ${event.toMap()}');
           onMqttEvent(event: event);
         },
       );
+  }
+
+  void _handleMqttConnectionChange(bool connected) {
+    if (connected) {
+      _mqttReconnectDebounce?.cancel();
+      connectionState = IsmChatConnectionState.connected;
+      IsmChatConfig.mqttConnectionStatus?.call(connectionState);
+      return;
+    }
+    connectionState = IsmChatConnectionState.disconnected;
+    IsmChatConfig.mqttConnectionStatus?.call(connectionState);
+    _scheduleMqttReconnect();
+  }
+
+  void _scheduleMqttReconnect() {
+    if (!IsmChatConfig.shouldSetupMqtt) return;
+    _mqttReconnectDebounce?.cancel();
+    _mqttReconnectDebounce = Timer(const Duration(seconds: 3), () {
+      if (connectionState != IsmChatConnectionState.connected) {
+        unawaited(ensureMqttConnected());
+      }
+    });
+  }
+
+  /// Reconnects MQTT when disconnected; no-op when already connected.
+  Future<void> ensureMqttConnected({bool refreshChatList = true}) async {
+    if (!IsmChatConfig.shouldSetupMqtt || _mqttSetupInProgress) return;
+
+    // Already connected — do nothing (avoids redundant subscribe / API calls).
+    if (connectionState == IsmChatConnectionState.connected) {
+      return;
+    }
+
+    _mqttSetupInProgress = true;
+    try {
+      IsmChatLog.info('MQTT disconnected — reconnecting via ensureMqttConnected');
+      _mqttEventListenersAttached = false;
+      subscribedTopics.clear();
+      await setupIsmMqttConnection(
+        topics: _savedExtraTopics,
+        topicChannels: _savedTopicChannels,
+        autoReconnect: _savedAutoReconnect,
+        enableLogging: _savedEnableLogging,
+      );
+      if (refreshChatList &&
+          IsmChatUtility.conversationControllerRegistered) {
+        await IsmChatUtility.conversationController.getChatConversations();
+      }
+    } catch (e, st) {
+      IsmChatLog.error('ensureMqttConnected failed: $e', st);
+    } finally {
+      _mqttSetupInProgress = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    _mqttReconnectDebounce?.cancel();
+    super.onClose();
   }
 
   /// onConnected callback, it will be called when connection is established

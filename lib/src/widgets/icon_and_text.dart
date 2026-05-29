@@ -7,9 +7,13 @@ class IsmIconAndText extends StatelessWidget {
     super.key,
     required this.icon,
     required this.text,
+    this.iconColor,
+    this.textStyle,
   });
   final IconData icon;
   final String text;
+  final Color? iconColor;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -19,14 +23,15 @@ class IsmIconAndText extends StatelessWidget {
           Icon(
             icon,
             size: 64,
-            color: IsmChatConfig.chatTheme.primaryColor,
+            color: iconColor ?? IsmChatConfig.chatTheme.primaryColor,
           ),
           IsmChatDimens.boxHeight16,
           Text(
             text,
-            style: IsmChatStyles.w600Black20.copyWith(
-              color: IsmChatConfig.chatTheme.primaryColor,
-            ),
+            style: textStyle ??
+                IsmChatStyles.w600Black20.copyWith(
+                  color: IsmChatConfig.chatTheme.primaryColor,
+                ),
             textAlign: TextAlign.center,
           ),
         ],

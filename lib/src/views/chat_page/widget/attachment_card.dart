@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Attachment picker bottom sheet content.
+///
+/// Uses [IsmChatThemeResolver.attachmentCardFromConfig]; omit theme in app config
+/// for SDK light/dark defaults. Uses [Theme.of] via [IsmChatThemeResolver].
 class IsmChatAttachmentCard extends StatelessWidget {
   const IsmChatAttachmentCard({super.key});
 
@@ -21,71 +25,71 @@ class IsmChatAttachmentCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => StatusBarTransparent(
-        child: SafeArea(
-          child: Container(
-            margin: IsmChatDimens.edgeInsets10,
-            decoration: BoxDecoration(
-              color: IsmChatColors.whiteColor,
-              borderRadius: BorderRadius.circular(IsmChatDimens.twentyFour),
-            ),
-            padding: IsmChatDimens.edgeInsets10,
-            height: getWidgetHight(),
-            alignment: Alignment.center,
-            child: GetBuilder<IsmChatPageController>(
-              tag: IsmChat.i.chatPageTag,
-              builder: (controller) {
-                var allowedAttachments = controller.attachments
-                    .where((e) => IsmChatProperties
-                        .chatPageProperties.attachments
-                        .contains(e.attachmentType))
-                    .toList();
+  Widget build(BuildContext context) {
+    final cardTheme = IsmChatThemeResolver.attachmentCardFromConfig(context);
+    return ColoredBox(
+          color: cardTheme.backgroundColor,
+          child: SafeArea(
+            child: Padding(
+              padding: IsmChatDimens.edgeInsets10,
+              child: SizedBox(
+                height: getWidgetHight(),
+                child: GetBuilder<IsmChatPageController>(
+                  tag: IsmChat.i.chatPageTag,
+                  builder: (controller) {
+                    var allowedAttachments = controller.attachments
+                        .where((e) => IsmChatProperties
+                            .chatPageProperties.attachments
+                            .contains(e.attachmentType))
+                        .toList();
 
-                return GridView.builder(
-                  itemCount: allowedAttachments.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: IsmChatDimens.eight,
-                    mainAxisSpacing: IsmChatDimens.four,
-                  ),
-                  itemBuilder: (_, index) {
-                    var attachment = allowedAttachments[index];
-                    return IsmChatTapHandler(
-                      onTap: () {
-                        IsmChatRoute.goBack();
-                        controller.onBottomAttachmentTapped(
-                            attachment.attachmentType);
-                      },
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: IsmChatDimens.fifty,
-                            width: IsmChatDimens.fifty,
-                            decoration: BoxDecoration(
-                              color: attachment.backgroundColor,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Icon(
-                              attachment.icon,
-                              color: IsmChatColors.whiteColor,
-                            ),
-                          ),
-                          IsmChatDimens.boxHeight4,
-                          Text(
-                            attachment.label,
-                            style: IsmChatStyles.w400Black14,
-                          ),
-                        ],
+                    return GridView.builder(
+                      itemCount: allowedAttachments.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: IsmChatDimens.eight,
+                        mainAxisSpacing: IsmChatDimens.four,
                       ),
+                      itemBuilder: (_, index) {
+                        var attachment = allowedAttachments[index];
+                        return IsmChatTapHandler(
+                          onTap: () {
+                            IsmChatRoute.goBack();
+                            controller.onBottomAttachmentTapped(
+                                attachment.attachmentType);
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: IsmChatDimens.fifty,
+                                width: IsmChatDimens.fifty,
+                                decoration: BoxDecoration(
+                                  color: attachment.backgroundColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  attachment.icon,
+                                  color: IsmChatColors.whiteColor,
+                                ),
+                              ),
+                              IsmChatDimens.boxHeight4,
+                              Text(
+                                attachment.label,
+                                style: cardTheme.labelTextStyle,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
+                ),
+              ),
             ),
           ),
-        ),
-      );
+    );
+  }
 }

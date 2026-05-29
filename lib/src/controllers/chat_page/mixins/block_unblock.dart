@@ -2,152 +2,131 @@ part of '../chat_page_controller.dart';
 
 /// Block and unblock operations mixin for IsmChatPageController.
 ///
-/// This mixin handles blocking and unblocking users in conversations.
+/// Option A: banner = message row in local DB; see [IsmChatBlockUnblockCoordinator].
 mixin IsmChatPageBlockUnblockMixin on GetxController {
-  /// Gets the controller instance.
   IsmChatPageController get _controller => this as IsmChatPageController;
 
-  /// Blocks a user.
+  Map<String, dynamic> _opponentMetaDataJson() => Map<String, dynamic>.from(
+        _controller.conversation?.opponentDetails?.metaData?.customMetaData ??
+            const <String, dynamic>{},
+      );
+
   Future<void> blockUser({
     required String opponentId,
     bool isLoading = false,
     bool fromUser = false,
     required bool userBlockOrNot,
   }) async {
-    bool? blokedUser;
-    // Build block message once for UI and re-apply after getConverstaionDetails
-    final blockMessage = IsmChatMessageModel(
-      action: 'userBlockConversation',
-      initiatorId: IsmChatConfig.communicationConfig.userConfig.userId,
-      initiatorName: IsmChatConfig.communicationConfig.userConfig.userName,
-      userId: IsmChatConfig.communicationConfig.userConfig.userId,
-      userName: IsmChatConfig.communicationConfig.userConfig.userName,
-      body: '',
-      conversationId: _controller.conversation?.conversationId ?? '',
-      customType: IsmChatCustomMessageType.block,
-      sentAt: DateTime.now().millisecondsSinceEpoch,
-      sentByMe: false,
-    );
-    _controller.conversation = _controller.conversation?.copyWith(
-      metaData: _controller.conversation?.metaData?.copyWith(
-        blockedMessage: blockMessage,
-      ),
-    );
-    await IsmChatUtility.conversationController.updateConversation(
-        conversationId: _controller.conversation?.conversationId ?? '',
-        metaData: _controller.conversation?.metaData ?? IsmChatMetaData());
-    await _saveBlockUnblockMetaDataLocally();
-    if (IsmChatProperties.chatPageProperties.onCallBlockUnblock != null) {
-      blokedUser = await IsmChatProperties.chatPageProperties.onCallBlockUnblock
-              ?.call(
-                  IsmChatConfig.kNavigatorKey.currentContext ??
-                      IsmChatConfig.context,
-                  _controller.conversation!,
-                  userBlockOrNot) ??
-          false;
-    } else {
-      blokedUser = await _controller.viewModel.blockUser(
-          opponentId: opponentId,
-          conversationId: _controller.conversation?.conversationId ?? '',
-          isLoading: isLoading);
-    }
-    if (!blokedUser) {
-      _controller.conversation = _controller.conversation?.copyWith(
-        metaData: _controller.conversation?.metaData?.copyWith(
-          blockedMessage: null,
-        ),
+    if ((_controller.conversation?.isChattingAllowed == false) &&
+        (_controller.conversation?.isBlockedByMe == false)) {
+      await IsmChatUtility.showErrorDialog(
+        IsmChatStrings.cannotBlockWhenAlreadyBlocked,
       );
-      await IsmChatUtility.conversationController.updateConversation(
-          conversationId: _controller.conversation?.conversationId ?? '',
-          metaData: _controller.conversation?.metaData ?? IsmChatMetaData());
       return;
     }
-    // IsmChatUtility.showToast(IsmChatStrings.blockedSuccessfully);
+
+    final convId = _controller.conversation?.conversationId ?? '';
+    final currentUserId = IsmChatConfig.communicationConfig.userConfig.userId;
+    final currentUserName =
+        IsmChatConfig.communicationConfig.userConfig.userName ?? '';
+
+    final blokedUser = await _controller.viewModel.blockUser(
+      opponentId: opponentId,
+      conversationId: convId,
+      isLoading: isLoading,
+    );
+    if (!blokedUser) return;
+
+    IsmChatMessageModel? blockBanner;
+    if (convId.isNotEmpty) {
+      blockBanner = IsmChatBlockUnblockCoordinator.buildBannerMessage(
+        isBlock: true,
+        conversationId: convId,
+        initiatorId: currentUserId,
+        initiatorName: currentUserName,
+        sentAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      await IsmChatBlockUnblockCoordinator.applyBlock(
+        conversationId: convId,
+        bannerMessage: blockBanner,
+      );
+      IsmChatBlockUnblockCoordinator.patchOpenChatMessagesInMemory(
+        conversationId: convId,
+        messagingDisabled: true,
+        bannerMessage: blockBanner,
+      );
+    }
+
     await _controller.conversationController.getBlockUser();
-    if (fromUser == false) {
-      await _controller.getConverstaionDetails();
-      // Re-apply block message so "You blocked this user" shows (getConverstaionDetails overwrites metaData)
-      if (_controller.conversation != null) {
-        _controller.conversation = _controller.conversation!.copyWith(
-          metaData: _controller.conversation!.metaData?.copyWith(
-            blockedMessage: blockMessage,
-          ),
-        );
-      }
+    unawaited(
+      IsmChatProperties.chatPageProperties.onBlockUnblockSuccess?.call(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+        _controller.conversation!,
+        true,
+        _opponentMetaDataJson(),
+      ),
+    );
+
+    if (fromUser == false && convId.isNotEmpty) {
+      _controller.conversation = _controller.conversation?.copyWith(
+        messagingDisabled: true,
+      );
+      await IsmChatBlockUnblockCoordinator.refreshChatPageIfOpen(convId);
       await Future.wait([
-        _controller.getMessagesFromAPI(),
+        _controller.getConverstaionDetails(),
+        _controller.getMessagesFromAPI(lastMessageTimestamp: 0),
         _controller.conversationController.getChatConversations(),
       ]);
-      await _controller
-          .getMessagesFromDB(_controller.conversation?.conversationId ?? '');
+      await _controller.getMessagesFromDB(convId);
     }
   }
 
-  /// Unblocks a user.
   Future<void> unblockUser({
     required String opponentId,
     bool isLoading = false,
     bool fromUser = false,
     required bool userBlockOrNot,
   }) async {
-    bool isUnblockUser;
-    if (IsmChatProperties.chatPageProperties.onCallBlockUnblock != null) {
-      isUnblockUser =
-          await IsmChatProperties.chatPageProperties.onCallBlockUnblock?.call(
-                IsmChatConfig.kNavigatorKey.currentContext ??
-                    IsmChatConfig.context,
-                _controller.conversation!,
-                userBlockOrNot,
-              ) ??
-              false;
-    } else {
-      isUnblockUser = await _controller.conversationController.unblockUser(
-        opponentId: opponentId,
-        isLoading: isLoading,
-        fromUser: fromUser,
-      );
-    }
-    if (!isUnblockUser) {
-      return;
-    }
+    final isUnblockUser = await _controller.conversationController.unblockUser(
+      opponentId: opponentId,
+      isLoading: isLoading,
+      fromUser: fromUser,
+    );
+    if (!isUnblockUser) return;
+
+    unawaited(_controller.conversationController.getBlockUser());
+    unawaited(
+      IsmChatProperties.chatPageProperties.onBlockUnblockSuccess?.call(
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+        _controller.conversation!,
+        false,
+        _opponentMetaDataJson(),
+      ),
+    );
     _controller.chatInputController.clear();
-    if (fromUser == false) {
-      await Future.wait([
-        _controller.getConverstaionDetails(),
-        _controller.getMessagesFromAPI(),
-        _controller.conversationController.getChatConversations(),
-      ]);
-    }
-    // Clear block message so "You are blocked" goes away from UI (local + server)
-    if (_controller.conversation?.metaData?.blockedMessage != null) {
-      _controller.conversation = _controller.conversation!.copyWith(
-        metaData: _controller.conversation!.metaData?.copyWith(
+
+    final convId = _controller.conversation?.conversationId ?? '';
+    if (convId.isNotEmpty) {
+      _controller.conversation = _controller.conversation?.copyWith(
+        messagingDisabled: false,
+        metaData: _controller.conversation?.metaData?.copyWith(
           blockedMessage: null,
         ),
       );
-      unawaited(
-        IsmChatUtility.conversationController.updateConversation(
-          conversationId: _controller.conversation?.conversationId ?? '',
-          metaData: _controller.conversation?.metaData ?? IsmChatMetaData(),
-        ),
+      IsmChatBlockUnblockCoordinator.patchOpenChatMessagesInMemory(
+        conversationId: convId,
+        messagingDisabled: false,
       );
-      await _saveBlockUnblockMetaDataLocally();
-      final convId = _controller.conversation?.conversationId ?? '';
-      if (convId.isNotEmpty) {
-        await _controller.getMessagesFromDB(convId);
-      }
     }
-  }
 
-  /// Saves the current conversation's metaData (including blockedMessage) to local DB.
-  Future<void> _saveBlockUnblockMetaDataLocally() async {
-    final convId = _controller.conversation?.conversationId ?? '';
-    if (convId.isEmpty) return;
-    final existing = await IsmChatConfig.dbWrapper?.getConversation(convId);
-    if (existing == null) return;
-    final updated = existing.copyWith(
-      metaData: _controller.conversation?.metaData ?? existing.metaData,
-    );
-    await IsmChatConfig.dbWrapper?.saveConversation(conversation: updated);
+    if (fromUser == false && convId.isNotEmpty) {
+      // Refresh UI from local DB first so the banner disappears immediately.
+      await IsmChatBlockUnblockCoordinator.refreshChatPageIfOpen(convId);
+      await _controller.getConverstaionDetails();
+      await _controller.getMessagesFromAPI(lastMessageTimestamp: 0);
+      unawaited(_controller.conversationController.getChatConversations());
+      await IsmChatBlockUnblockCoordinator.pruneBlockBannersIfChatAllowed(convId);
+      await IsmChatBlockUnblockCoordinator.refreshChatPageIfOpen(convId);
+    }
   }
 }

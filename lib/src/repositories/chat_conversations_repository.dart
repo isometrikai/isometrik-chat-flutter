@@ -274,14 +274,22 @@ class IsmChatConversationsRepository {
   Future<IsmChatResponseModel?> updateConversation({
     required String conversationId,
     required IsmChatMetaData metaData,
+    bool includeNullBlockedMessage = false,
     bool isLoading = false,
   }) async {
     try {
+      final metaDataMap = metaData.toMap();
+      // `IsmChatMetaData.toMap()` removes null values, which means sending
+      // `blockedMessage: null` (to *clear* it) gets dropped from the payload.
+      // Some flows (unblock-from-settings) need an explicit null so server clears it.
+      if (includeNullBlockedMessage) {
+        metaDataMap['blockedMessage'] = null;
+      }
       var response = await _apiWrapper.patch(
         IsmChatAPI.conversationDetails,
         payload: {
           'conversationId': conversationId,
-          'metaData': metaData.toMap()
+          'metaData': metaDataMap,
         },
         headers: IsmChatUtility.tokenCommonHeader(),
         showLoader: isLoading,

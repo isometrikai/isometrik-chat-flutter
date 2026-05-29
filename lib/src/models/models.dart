@@ -3,6 +3,7 @@ export 'background_model.dart';
 export 'bottom_sheet_attachment_model.dart';
 export 'broadcast_member_model.dart';
 export 'broadcast_model.dart';
+export 'chat_confirmation_model.dart';
 export 'chat_conversation_model.dart';
 export 'chat_message_model.dart';
 export 'contact_metadata_model.dart';

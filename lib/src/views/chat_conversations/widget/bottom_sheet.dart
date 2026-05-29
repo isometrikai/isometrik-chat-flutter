@@ -16,22 +16,22 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
             CupertinoActionSheetAction(
               onPressed: () async {
                 IsmChatRoute.goBack();
-                await IsmChatContextWidget.showDialogContext(
-                  content: IsmChatAlertDialogBox(
+                await IsmChatConfirmationHelper.present(
+                  IsmChatConfirmationRequest(
+                    type: IsmChatConfirmationType.clearChatMessages,
                     title: IsmChatStrings.clearAllMessages,
-                    actionLabels: const [IsmChatStrings.clearChat],
-                    callbackActions: [
-                      () => controller.clearAllMessages(
-                            conversation.conversationId,
-                            fromServer: conversation
-                                            .lastMessageDetails?.customType ==
-                                        IsmChatCustomMessageType.removeMember &&
-                                    conversation.lastMessageDetails?.userId ==
-                                        IsmChatConfig.communicationConfig
-                                            .userConfig.userId
-                                ? false
-                                : true,
-                          ),
+                    conversation: conversation,
+                    actions: [
+                      IsmChatConfirmationAction(
+                        id: IsmChatConfirmationActionId.clearChat,
+                        label: IsmChatStrings.clearChat,
+                        onPressed: () => controller.clearAllMessages(
+                          conversation.conversationId,
+                          fromServer:
+                              IsmChatConfirmationHelper
+                                  .shouldClearMessagesFromServer(conversation),
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -50,15 +50,20 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
               CupertinoActionSheetAction(
                 onPressed: () async {
                   IsmChatRoute.goBack();
-                  await IsmChatContextWidget.showDialogContext(
-                    content: IsmChatAlertDialogBox(
+                  await IsmChatConfirmationHelper.present(
+                    IsmChatConfirmationRequest(
+                      type: IsmChatConfirmationType.deleteGroup,
                       title: IsmChatStrings.deleteThiGroup,
-                      actionLabels: const [IsmChatStrings.deleteGroup],
-                      callbackActions: [
-                        () => controller.deleteChat(
-                              conversation.conversationId,
-                              deleteFromServer: false,
-                            ),
+                      conversation: conversation,
+                      actions: [
+                        IsmChatConfirmationAction(
+                          id: IsmChatConfirmationActionId.deleteGroup,
+                          label: IsmChatStrings.deleteGroup,
+                          onPressed: () => controller.deleteChat(
+                            conversation.conversationId,
+                            deleteFromServer: false,
+                          ),
+                        ),
                       ],
                     ),
                   );
@@ -95,13 +100,19 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
                     //   ),
                     // );
                   } else {
-                    await IsmChatContextWidget.showDialogContext(
-                      content: IsmChatAlertDialogBox(
+                    await IsmChatConfirmationHelper.present(
+                      IsmChatConfirmationRequest(
+                        type: IsmChatConfirmationType.deleteChat,
                         title: '${IsmChatStrings.deleteChat}?',
-                        actionLabels: const [IsmChatStrings.deleteChat],
-                        callbackActions: [
-                          () => controller
-                              .deleteChat(conversation.conversationId),
+                        conversation: conversation,
+                        actions: [
+                          IsmChatConfirmationAction(
+                            id: IsmChatConfirmationActionId.deleteChat,
+                            label: IsmChatStrings.deleteChat,
+                            onPressed: () => controller.deleteChat(
+                              conversation.conversationId,
+                            ),
+                          ),
                         ],
                       ),
                     );

@@ -9,6 +9,61 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
   IsmChatConversationsController get _controller =>
       this as IsmChatConversationsController;
 
+  /// Applies unblock changes locally so UI reflects immediately.
+  ///
+  /// Why this exists:
+  /// - Some app flows trigger unblock from outside the chat page (e.g. settings).
+  /// - `ChatPage` derives "blocked" state from `blockUsers`, `messagingDisabled`,
+  ///   and block/unblock banner rows in local messages (Option A).
+  /// - If we only call the API and refresh the block list later, the user can
+  ///   navigate to chat before the async refresh finishes and still see the
+  ///   blocked banner / disabled input.
+  Future<void> _applyUnblockLocally(String opponentId) async {
+    if (opponentId.isEmpty) return;
+
+    // 1) Update in-memory block list immediately.
+    final updatedBlockUsers = List<UserDetails>.from(_controller.blockUsers)
+      ..removeWhere((u) => u.userId == opponentId);
+    _controller.blockUsers = updatedBlockUsers;
+
+    // 2) Update cached conversation so "messagingDisabled" and banner state reset.
+    // ConversationId resolution:
+    // - Primary: in-memory conversations list (fast).
+    // - Fallback: local DB scan (settings/unblock can happen before conversations load).
+    var conversationId = _controller.getConversationId(opponentId);
+    if (conversationId.isEmpty) {
+      final local = await IsmChatConfig.dbWrapper?.getAllConversations();
+      final match = (local ?? const <IsmChatConversationModel>[])
+          .cast<IsmChatConversationModel?>()
+          .firstWhere(
+            (c) => c?.opponentDetails?.userId == opponentId,
+            orElse: () => null,
+          );
+      conversationId = match?.conversationId ?? '';
+    }
+    if (conversationId.isEmpty) return;
+
+    await IsmChatBlockUnblockCoordinator.applyUnblock(
+      conversationId: conversationId,
+      syncServerMetadataClear: true,
+    );
+
+    if (_controller.currentConversationId == conversationId &&
+        _controller.currentConversation != null) {
+      await _controller.updateLocalConversation(
+        _controller.currentConversation!.copyWith(
+          messagingDisabled: false,
+          metaData: _controller.currentConversation!.metaData
+              ?.copyWith(blockedMessage: null),
+        ),
+      );
+    } else {
+      _controller.update();
+    }
+
+    await IsmChatBlockUnblockCoordinator.refreshChatPageIfOpen(conversationId);
+  }
+
   /// Fetches user data from the server and updates the local database.
   ///
   /// `isLoading`: Indicates if loading should be shown.
@@ -18,7 +73,8 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
       _controller.userDetails = user;
       if (!kIsWeb) {
         if (_controller.userDetails?.metaData?.assetList?.isNotEmpty == true) {
-          final assetList = _controller.userDetails?.metaData?.assetList?.toList() ?? [];
+          final assetList =
+              _controller.userDetails?.metaData?.assetList?.toList() ?? [];
           final indexOfAsset = assetList
               .indexWhere((e) => e.values.first.srNoBackgroundAssset == 100);
           if (indexOfAsset != -1) {
@@ -43,12 +99,13 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
             };
           }
           _controller.userDetails = _controller.userDetails?.copyWith(
-              metaData: _controller.userDetails?.metaData?.copyWith(assetList: assetList));
+              metaData: _controller.userDetails?.metaData
+                  ?.copyWith(assetList: assetList));
         }
       }
 
-      await IsmChatConfig.dbWrapper?.userDetailsBox
-          .put(IsmChatStrings.userData, _controller.userDetails?.toJson() ?? '');
+      await IsmChatConfig.dbWrapper?.userDetailsBox.put(
+          IsmChatStrings.userData, _controller.userDetails?.toJson() ?? '');
     }
   }
 
@@ -128,7 +185,8 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
 
     final bytes = await file.first?.readAsBytes();
     final fileExtension = file.first?.path.split('.').last;
-    await _controller.getPresignedUrl(fileExtension ?? '', bytes ?? Uint8List(0));
+    await _controller.getPresignedUrl(
+        fileExtension ?? '', bytes ?? Uint8List(0));
   }
 
   /// Retrieves a presigned URL for uploading media.
@@ -178,11 +236,12 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     if (data?.hasError ?? true) {
       return false;
     }
+    // Apply local state changes immediately so UI doesn't show stale "blocked" state.
+    await _applyUnblockLocally(opponentId);
+
+    // Still refresh from server in background to keep everything consistent.
     unawaited(_controller.getBlockUser());
     // IsmChatUtility.showToast(IsmChatStrings.unBlockedSuccessfully);
-    if (fromUser) {
-      return false;
-    }
     return true;
   }
 
@@ -220,4 +279,3 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     return _controller.blockUsers;
   }
 }
-

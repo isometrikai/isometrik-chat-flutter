@@ -15,14 +15,47 @@ class IsmChatAudioMessage extends StatelessWidget {
   final Duration? duration;
   final Widget noise;
 
+  /// Same as [IsmChatConfig.isChatDarkMode] — set [IsmChatConfig.chatBrightness] from the app.
+  static bool get _isSdkDarkMode => IsmChatConfig.isChatDarkMode;
+
+  /// Voice bar fill: black in dark mode so it does not show a grey card patch
+  /// behind the waveform (app [audioMessageBGColor] is often a light surface).
+  static Color voiceBarBackgroundColor({
+    required bool sentByMe,
+  }) {
+    if (_isSdkDarkMode) {
+      return IsmChatColors.blackColor;
+    }
+    final messageTheme = sentByMe
+        ? IsmChatConfig.chatTheme.chatPageTheme?.selfMessageTheme
+        : IsmChatConfig.chatTheme.chatPageTheme?.opponentMessageTheme;
+    return messageTheme?.audioMessageBGColor ??
+        IsmChatConfig.chatTheme.primaryColor ??
+        IsmChatColors.primaryColorLight;
+  }
+
+  /// In dark mode, skip app overlay colors (often semi-transparent cards/grey).
+  static Color? voiceProgressOverlayColor({
+    required bool sentByMe,
+  }) {
+    if (_isSdkDarkMode) {
+      return null;
+    }
+    return sentByMe
+        ? IsmChatProperties
+            .chatPageProperties.voiceMessageProgressOverlayColorMe
+        : IsmChatProperties
+            .chatPageProperties.voiceMessageProgressOverlayColorOpponent;
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
         ?.call(context, message);
+    final voiceBg =
+        voiceBarBackgroundColor(sentByMe: message.sentByMe);
     return Material(
-      color: message.sentByMe
-          ? IsmChatConfig.chatTheme.primaryColor
-          : IsmChatConfig.chatTheme.backgroundColor,
+      color: Colors.transparent,
       child: BlurFilter(
         isBlured: data?.shouldBlured ?? false,
         sigmaX: data?.sigmaX ?? 10,
@@ -34,16 +67,20 @@ class IsmChatAudioMessage extends StatelessWidget {
               audioSrc: url,
               noise: noise,
               me: message.sentByMe,
-              meBgColor: IsmChatConfig.chatTheme.chatPageTheme?.selfMessageTheme
-                      ?.audioMessageBGColor ??
-                  IsmChatConfig.chatTheme.primaryColor ??
-                  IsmChatColors.primaryColorLight,
-              opponentBgColor: IsmChatConfig.chatTheme.chatPageTheme
-                      ?.opponentMessageTheme?.audioMessageBGColor ??
-                  IsmChatConfig.chatTheme.primaryColor ??
-                  IsmChatColors.primaryColorLight,
+              playIcon:
+                  IsmChatProperties.chatPageProperties.voiceMessagePlayIcon,
+              pauseIcon:
+                  IsmChatProperties.chatPageProperties.voiceMessagePauseIcon,
+              loadingIcon:
+                  IsmChatProperties.chatPageProperties.voiceMessageLoadingIcon,
+              meBgColor: voiceBg,
+              opponentBgColor: voiceBg,
               mePlayIconColor: IsmChatConfig.chatTheme.primaryColor ??
                   IsmChatColors.primaryColorLight,
+              meProgressOverlayColor:
+                  voiceProgressOverlayColor(sentByMe: true),
+              opponentProgressOverlayColor:
+                  voiceProgressOverlayColor(sentByMe: false),
               duration: duration,
             ),
             if (message.isUploading == true)

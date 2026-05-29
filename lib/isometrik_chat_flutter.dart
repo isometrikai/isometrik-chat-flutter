@@ -11,6 +11,11 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter_platform_interface
 
 export 'package:mqtt_helper/mqtt_helper.dart';
 
+// Public API exported early so host apps (e.g. Dubly) resolve config/theme types reliably.
+export 'src/utilities/config/chat_config.dart';
+export 'src/res/theme/contact_info_theme.dart';
+export 'src/res/theme/media_theme.dart';
+
 export 'src/app/app.dart';
 export 'src/controllers/controllers.dart';
 export 'src/data/data.dart';

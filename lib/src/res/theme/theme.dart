@@ -1,3 +1,8 @@
+export 'attachment_card_theme.dart';
+export 'chat_theme_resolver.dart';
+export 'contact_info_theme.dart';
+export 'group_info_theme.dart';
+export 'media_theme.dart';
 export 'chat_card_theme.dart';
 export 'chat_center_messgae_theme.dart';
 export 'chat_dialog_theme.dart';
@@ -11,6 +16,7 @@ export 'chat_message_status_them.dart';
 export 'chat_message_theme.dart';
 export 'chat_page_header.dart';
 export 'chat_page_theme.dart';
+export 'profile_theme.dart';
 export 'chat_replay_messae_theme.dart';
 export 'chat_send_button_them.dart';
 export 'chat_textfiled_theme.dart';

@@ -64,4 +64,12 @@ mixin IsmChatDelegateMqttMixin {
       Get.find<IsmChatMqttController>().unSubscribeTopics(topic);
     }
   }
+
+  /// Reconnects MQTT when disconnected (e.g. while on chat list).
+  Future<void> ensureMqttConnected({bool refreshChatList = true}) async {
+    if (Get.isRegistered<IsmChatMqttController>()) {
+      await Get.find<IsmChatMqttController>()
+          .ensureMqttConnected(refreshChatList: refreshChatList);
+    }
+  }
 }

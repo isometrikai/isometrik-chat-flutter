@@ -25,6 +25,9 @@ class _IsmChatGlobalSearchViewState extends State<IsmChatGlobalSearchView>
       GetBuilder<IsmChatConversationsController>(
           tag: IsmChat.i.chatListPageTag,
           builder: (controller) => Scaffold(
+                backgroundColor:
+                    IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
+                        IsmChatColors.whiteColor,
                 appBar: IsmChatAppBar(
                   title: Text(
                     IsmChatStrings.search,
@@ -42,7 +45,13 @@ class _IsmChatGlobalSearchViewState extends State<IsmChatGlobalSearchView>
                       style: IsmChatStyles.w400White16,
                       hint: IsmChatStrings.globalSearch,
                       hintStyle: IsmChatStyles.w400White16,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        // Intentionally keep behavior lightweight here:
+                        // - Each tab (Conversations / Messages / People) can decide how to
+                        //   react to `globalSearchController.text`.
+                        // - But we still dismiss any transient UI glitches by rebuilding.
+                        controller.update();
+                      },
                     ),
                     SizedBox(
                       height: IsmChatDimens.fifty,

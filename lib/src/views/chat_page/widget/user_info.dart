@@ -5,6 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Contact / opponent profile from a chat ([IsmChatUserInfo]).
+///
+/// Uses [IsmChatThemeResolver.profileFromConfig]; omit [IsmChatThemeData.profileTheme]
+/// in app config for SDK light/dark defaults.
 class IsmChatUserInfo extends StatefulWidget {
   const IsmChatUserInfo({
     super.key,
@@ -22,6 +26,21 @@ class IsmChatUserInfo extends StatefulWidget {
 }
 
 class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
+  /// Prefer "First Last" for display name; fallback to username.
+  /// Same logic as [IsmChatConverstaionInfoView._memberDisplayName].
+  String _memberDisplayName(UserDetails? member) {
+    if (member == null) return '';
+    final fullName = _metaDataFullName(member);
+    return fullName.isNotEmpty ? fullName : member.userName;
+  }
+
+  String _metaDataFullName(UserDetails member) =>
+      '${member.metaData?.firstName ?? ''} ${member.metaData?.lastName ?? ''}'
+          .trim();
+
+  bool _showsMetaDataFullName(UserDetails? member) =>
+      member != null && _metaDataFullName(member).isNotEmpty;
+
   List<IsmChatMessageModel> mediaList = [];
   List<IsmChatMessageModel> mediaListLinks = [];
   List<IsmChatMessageModel> mediaListDocs = [];
@@ -176,9 +195,12 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
         final mediaLinksDocsCount = mediaList.length +
             mediaListLinks.length +
             (isDocumentAllowed ? mediaListDocs.length : 0);
+        final profileTheme = IsmChatThemeResolver.profileFromConfig(context);
         return Scaffold(
-          backgroundColor: IsmChatColors.whiteColor,
+          backgroundColor: profileTheme.scaffoldBackgroundColor,
           appBar: IsmChatAppBar(
+            backgroundColor:
+                IsmChatConfig.chatTheme.chatPageHeaderTheme?.backgroundColor,
             onBack: IsmChatResponsive.isWeb(context)
                 ? () {
                     conversationController.isRenderChatPageaScreen =
@@ -207,12 +229,36 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                     ),
                     IsmChatDimens.boxHeight5,
                     Text(
-                      widget.user?.userName ?? '',
-                      style: IsmChatStyles.w600Black27,
+                      _memberDisplayName(widget.user).capitalizeFirst ?? '',
+                      style: profileTheme.primaryTextStyle.copyWith(
+                        fontSize: 27,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    Text(
-                      widget.user?.userIdentifier ?? '',
-                      style: IsmChatStyles.w500GreyLight17,
+                    Builder(
+                      builder: (context) {
+                        final subtitleStyle =
+                            profileTheme.listTileSubtitleStyle.copyWith(
+                          fontSize: 17,
+                        );
+
+                        // Title is first + last → subtitle is username (group info pattern).
+                        if (_showsMetaDataFullName(widget.user)) {
+                          final userName = widget.user?.userName ?? '';
+                          if (userName.isEmpty) {
+                            return IsmChatDimens.box0;
+                          }
+                          return Text(userName, style: subtitleStyle);
+                        }
+
+                        final identifier =
+                            (widget.user?.userIdentifier ?? '').trim();
+                        if (!GetUtils.isEmail(identifier) &&
+                            !GetUtils.isPhoneNumber(identifier)) {
+                          return IsmChatDimens.box0;
+                        }
+                        return Text(identifier, style: subtitleStyle);
+                      },
                     ),
                     IsmChatDimens.boxHeight16,
                     ListTile(
@@ -242,19 +288,19 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                         isDocumentAllowed
                             ? IsmChatStrings.mediaLinksAndDocs
                             : IsmChatStrings.mediaLinks,
-                        style: IsmChatStyles.w500Black16,
+                        style: profileTheme.listTileTitleStyle,
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             '$mediaLinksDocsCount',
-                            style: IsmChatStyles.w500GreyLight17,
+                            style: profileTheme.listTileSubtitleStyle,
                           ),
                           IsmChatDimens.boxWidth4,
                           Icon(
                             Icons.arrow_forward_ios,
-                            color: IsmChatColors.greyColorLight,
+                            color: profileTheme.iconColor,
                             size: IsmChatDimens.fifteen,
                           ),
                         ],
@@ -302,7 +348,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                       },
                       title: Text(
                         IsmChatStrings.message,
-                        style: IsmChatStyles.w500Black16,
+                        style: profileTheme.listTileTitleStyle,
                       ),
                       leading: Container(
                         height: IsmChatDimens.thirty,
@@ -320,7 +366,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                       ),
                       trailing: Icon(
                         Icons.arrow_forward_ios,
-                        color: IsmChatColors.greyColorLight,
+                        color: profileTheme.iconColor,
                         size: IsmChatDimens.fifteen,
                       ),
                     ),
@@ -378,7 +424,7 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                         ),
                         trailing: Icon(
                           Icons.arrow_forward_ios,
-                          color: IsmChatColors.greyColorLight,
+                          color: profileTheme.iconColor,
                           size: IsmChatDimens.fifteen,
                         ),
                       ),

@@ -7,6 +7,27 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/src/res/res.dart';
 import 'package:isometrik_chat_flutter/src/utilities/utilities.dart';
 
+String _buildInitials(String name, {int maxLetters = 2}) {
+  final trimmed = name.trim();
+  if (trimmed.isEmpty) return 'U';
+
+  final parts = trimmed.split(RegExp(r'\s+')).where((e) => e.isNotEmpty).toList();
+  if (parts.isEmpty) return 'U';
+
+  final letters = <String>[];
+  for (final part in parts) {
+    if (part.isEmpty) continue;
+    final firstRune = part.runes.isEmpty ? null : part.runes.first;
+    if (firstRune == null) continue;
+    letters.add(String.fromCharCode(firstRune).toUpperCase());
+    if (letters.length >= maxLetters) break;
+  }
+
+  if (letters.isEmpty) return 'U';
+  if (letters.length == 1) return letters.first;
+  return letters.take(maxLetters).join();
+}
+
 class IsmChatImage extends StatelessWidget {
   const IsmChatImage(
     this.imageUrl, {
@@ -95,7 +116,7 @@ class _FileImage extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Text(
-          name[0].toUpperCase(),
+          _buildInitials(name),
           style: IsmChatStyles.w600Black20.copyWith(
             color: IsmChatConfig.chatTheme.primaryColor,
           ),
@@ -128,7 +149,7 @@ class _MemeroyImage extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Text(
-              name[0].toUpperCase(),
+              _buildInitials(name),
               style: IsmChatStyles.w600Black20.copyWith(
                 color: IsmChatConfig.chatTheme.primaryColor,
               ),
@@ -197,7 +218,7 @@ class _NetworkImage extends StatelessWidget {
           ),
           child: _isProfileImage
               ? Text(
-                  _name.isNotEmpty ? _name[0] : 'U',
+                  _buildInitials(_name),
                   style: IsmChatStyles.w600Black20.copyWith(
                     color: IsmChatConfig.chatTheme.primaryColor,
                   ),
@@ -241,7 +262,7 @@ class _ErrorImage extends StatelessWidget {
         ),
         child: _isProfileImage
             ? Text(
-                _name.isNotEmpty ? _name[0].toUpperCase() : 'U',
+                _buildInitials(_name),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,

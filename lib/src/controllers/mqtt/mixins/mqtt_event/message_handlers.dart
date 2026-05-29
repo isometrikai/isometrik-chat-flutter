@@ -38,6 +38,12 @@ mixin IsmChatMqttEventMessageHandlersMixin {
         } else {
           controller.messages.add(message);
         }
+        // Same rules as [getMessagesFromDB]: hide meetingCreated rows, merge call events.
+        controller.messages = controller.commonController.sortMessages(
+          controller.filterMessages(
+            List<IsmChatMessageModel>.from(controller.messages),
+          ),
+        );
       }
     }
     if (conversation == null) return;

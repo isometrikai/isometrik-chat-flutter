@@ -95,9 +95,17 @@ extension ModelConversion on IsmChatConversationModel {
         return IsmChatDimens.box0;
       }
 
+      // Some backends omit `isGroup` for 1:1 conversations; treat null as false
+      // so read receipts don't silently disappear due to a null-assert.
+      final isGrp = isGroup ?? false;
+
+      // Chat list can override message status colors separately from chat page.
+      final statusTheme =
+          IsmChatConfig.chatTheme.chatListCardThemData?.messageStatusTheme ??
+              IsmChatConfig.chatTheme.chatPageTheme?.messageStatusTheme;
       var deliveredToAll = false;
       var readByAll = false;
-      if (!isGroup!) {
+      if (!isGrp) {
         // this means not recieved by the user
         if (lastMessageDetails?.deliverCount != 0) {
           deliveredToAll = true;
@@ -107,9 +115,11 @@ extension ModelConversion on IsmChatConversationModel {
           }
         }
       } else {
-        if (membersCount == lastMessageDetails?.deliverCount) {
+        final totalMembers = membersCount ?? 0;
+        if (totalMembers != 0 &&
+            totalMembers == lastMessageDetails?.deliverCount) {
           deliveredToAll = true;
-          if (membersCount == lastMessageDetails?.readCount) {
+          if (totalMembers == lastMessageDetails?.readCount) {
             readByAll = true;
           }
         }
@@ -119,21 +129,19 @@ extension ModelConversion on IsmChatConversationModel {
           ? lastMessageDetails?.isInvalidMessage == true
               ? Icon(
                   Icons.error_outlined,
-                  color: IsmChatConfig.chatTheme.chatPageTheme
-                          ?.messageStatusTheme?.inValidIconColor ??
-                      IsmChatColors.greyColor,
-                  size:
+                  color:
+                      statusTheme?.inValidIconColor ?? IsmChatColors.greyColor,
+                  size: statusTheme?.checkSize ??
                       IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
-                          IsmChatDimens.sixteen,
+                      IsmChatDimens.sixteen,
                 )
               : Icon(
                   Icons.watch_later_outlined,
-                  color: IsmChatConfig.chatTheme.chatPageTheme
-                          ?.messageStatusTheme?.unreadCheckColor ??
-                      IsmChatColors.greyColor,
-                  size:
+                  color:
+                      statusTheme?.unreadCheckColor ?? IsmChatColors.greyColor,
+                  size: statusTheme?.checkSize ??
                       IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
-                          IsmChatDimens.sixteen,
+                      IsmChatDimens.sixteen,
                 )
           : IsmChatProperties.chatPageProperties.features.contains(
               IsmChatFeature.showMessageStatus,
@@ -145,15 +153,12 @@ extension ModelConversion on IsmChatConversationModel {
                       ? Icons.done_all_rounded
                       : Icons.done_rounded,
                   color: readByAll
-                      ? IsmChatConfig.chatTheme.chatPageTheme
-                              ?.messageStatusTheme?.readCheckColor ??
-                          IsmChatColors.blueColor
-                      : IsmChatConfig.chatTheme.chatPageTheme
-                              ?.messageStatusTheme?.unreadCheckColor ??
+                      ? statusTheme?.readCheckColor ?? IsmChatColors.blueColor
+                      : statusTheme?.unreadCheckColor ??
                           IsmChatColors.greyColor,
-                  size:
+                  size: statusTheme?.checkSize ??
                       IsmChatConfig.chatTheme.chatListCardThemData?.iconSize ??
-                          IsmChatDimens.sixteen,
+                      IsmChatDimens.sixteen,
                 )
               : IsmChatDimens.box0;
     } catch (e, st) {
@@ -182,21 +187,19 @@ extension LastMessageBody on LastMessageDetails {
       case IsmChatCustomMessageType.location:
         return 'Location';
       case IsmChatCustomMessageType.block:
-        var status = 'blocked';
-        var text =
-            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId
-                ? 'You $status this user'
-                : 'You are $status';
-        return text;
+        final isInitiatedByMe =
+            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId;
+        return isInitiatedByMe
+            ? IsmChatStrings.youBlockUser
+            : IsmChatStrings.youareBlocked;
       case IsmChatCustomMessageType.contact:
         return 'Contact';
       case IsmChatCustomMessageType.unblock:
-        var status = 'unblocked';
-        var text =
-            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId
-                ? 'You $status this user'
-                : 'You are $status';
-        return text;
+        final isInitiatedByMe =
+            IsmChatConfig.communicationConfig.userConfig.userId == initiatorId;
+        return isInitiatedByMe
+            ? 'You unblocked this user'
+            : 'You are unblocked';
 
       case IsmChatCustomMessageType.conversationCreated:
         return 'Conversation created';
@@ -369,6 +372,48 @@ extension MentionMessage on IsmChatMessageModel {
       IsmChatLog.error(e, st);
       return [];
     }
+  }
+
+  /// Whether [body] includes a parseable http/https/www URL (not phone/email/@mention).
+  ///
+  /// Used with [IsmChatPageProperties.textMessageWithLinkBuilder]: the SDK only
+  /// asks the host app for custom UI when this is true; otherwise default text UI is shown.
+  bool get hasValidWebLink {
+    for (final segment in mentionList) {
+      if (!segment.isLink) continue;
+      final text = segment.text.trim();
+      if (!text.startsWith('http') && !text.startsWith('www')) continue;
+      final uri = Uri.tryParse(text.convertToValidUrl);
+      if (uri != null && uri.host.isNotEmpty) return true;
+    }
+    return false;
+  }
+
+  /// Host-app bubble when `customType` is text and [hasValidWebLink] is true.
+  ///
+  /// Replaces the entire SDK [MessageBubble] (no default background, RichText, or
+  /// inner time row). Return `null` to use the normal text bubble.
+  Widget? buildCustomLinkBubble(BuildContext context) {
+    final type = customType;
+    if (type != IsmChatCustomMessageType.text &&
+        type != IsmChatCustomMessageType.bulkAction) {
+      return null;
+    }
+    if (!hasValidWebLink) return null;
+    return IsmChatProperties.chatPageProperties.textMessageWithLinkBuilder
+        ?.call(context, this);
+  }
+
+  /// First http/https/www URL in [body], or `null` if [hasValidWebLink] is false.
+  String? get firstValidWebLink {
+    for (final segment in mentionList) {
+      if (!segment.isLink) continue;
+      final text = segment.text.trim();
+      if (!text.startsWith('http') && !text.startsWith('www')) continue;
+      final uri = Uri.tryParse(text.convertToValidUrl);
+      if (uri != null && uri.host.isNotEmpty) return text;
+    }
+    return null;
   }
 
   /// Returns a list of focus menu types available for this message.

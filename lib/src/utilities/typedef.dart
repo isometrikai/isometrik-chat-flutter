@@ -24,6 +24,15 @@ typedef UserDetailsWidgetCallback = Widget? Function(
   UserDetails,
 );
 
+/// Builder for rendering contact-avatar UI inside a **contact message bubble**
+/// (custom message type: [IsmChatCustomMessageType.contact]).
+///
+/// Return null to fall back to SDK default avatar rendering.
+typedef ContactMessageAvatarBuilder = Widget? Function(
+  BuildContext,
+  IsmChatContactMetaDatModel,
+);
+
 typedef WidgetCallback = Widget? Function(
   BuildContext,
   IsmChatConversationModel?,
@@ -43,6 +52,31 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
   BuildContext,
   IsmChatConversationModel,
   bool,
+  Map<String, dynamic>,
+);
+
+/// Presents block/delete confirmation UI (sheet, dialog, etc.).
+///
+/// Call [IsmChatConfirmationAction.onPressed] for the matching button so SDK
+/// logic stays unchanged. Pop your sheet/route before calling `onPressed` (same
+/// as default [IsmChatAlertDialogBox], which calls [IsmChatRoute.goBack] first).
+///
+/// **Return value**
+/// - `true`: you showed UI and handled this request (SDK will not show its dialog).
+/// - `null` or `false`: fall back to the default [IsmChatAlertDialogBox].
+typedef ChatConfirmationPresenter = Future<bool?> Function(
+  BuildContext context,
+  IsmChatConfirmationRequest request,
+);
+
+/// Post-success callback for block/unblock.
+///
+/// Called **after** SDK successfully blocks or unblocks a user.
+typedef BlockUnblockSuccessCallback = Future<void> Function(
+  BuildContext context,
+  IsmChatConversationModel conversation,
+  bool didBlock,
+  Map<String, dynamic> opponentMetaData,
 );
 
 typedef ConversationStringCallback = String? Function(
@@ -61,6 +95,22 @@ typedef MessageWidgetBuilder = Widget? Function(
   IsmChatMessageModel,
   IsmChatCustomMessageType,
   bool,
+);
+
+/// Builds the **entire message bubble** when `customType` is text and the body has
+/// a valid http/https/www URL ([IsmChatMessageModel.hasValidWebLink]).
+///
+/// The SDK does not wrap this in [MessageBubble] decoration or [IsmChatTextMessage].
+/// Return `null` to use the default text bubble. Not called for plain text.
+typedef TextMessageWithLinkBuilder = Widget? Function(
+  BuildContext context,
+  IsmChatMessageModel message,
+);
+
+typedef ForwardMessageInfoBuilder = Widget? Function(
+  BuildContext,
+  List<IsmChatMessageModel>,
+  IsmChatConversationModel?,
 );
 
 typedef MessageSenderInfoBuilder = Widget? Function(
@@ -164,6 +214,7 @@ typedef ConditionConversationCustomeTypeCallback = Future<bool?>? Function(
   BuildContext,
   IsmChatConversationModel?,
   IsmChatCustomMessageType,
+  String?,
 );
 
 typedef ConditionCallback = void Function(bool);

@@ -16,39 +16,65 @@ mixin IsmChatShowDialogMixin on GetxController {
     return IsmChatUtility.chatPageController;
   }
 
+  Future<void> _presentChatConfirmation(IsmChatConfirmationRequest request) =>
+      IsmChatConfirmationHelper.present(request);
+
+  void _runBlockAction({required bool unblock}) {
+    final opponentId =
+        _controller.conversation?.opponentDetails?.userId ?? '';
+    if (unblock) {
+      _controller.unblockUser(
+        opponentId: opponentId,
+        isLoading: true,
+        userBlockOrNot: true,
+      );
+    } else {
+      _controller.blockUser(
+        opponentId: opponentId,
+        isLoading: true,
+        userBlockOrNot: false,
+      );
+    }
+  }
+
   void showDialogForClearChatAndDeleteGroup(
       {bool isGroupDelete = false}) async {
+    final conversation = _controller.conversation;
     if (!isGroupDelete) {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.clearChatMessages,
           title: IsmChatStrings.clearAllMessages,
-          actionLabels: const [IsmChatStrings.clearChat],
-          callbackActions: [
-            () => _controller.clearAllMessages(
-                  _controller.conversation?.conversationId ?? '',
-                  fromServer: _controller.conversation?.lastMessageDetails
-                                  ?.customType ==
-                              IsmChatCustomMessageType.removeMember &&
-                          _controller
-                                  .conversation?.lastMessageDetails?.userId ==
-                              IsmChatConfig
-                                  .communicationConfig.userConfig.userId
-                      ? false
-                      : true,
+          conversation: conversation,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.clearChat,
+              label: IsmChatStrings.clearChat,
+              onPressed: () => _controller.clearAllMessages(
+                conversation?.conversationId ?? '',
+                fromServer: IsmChatConfirmationHelper.shouldClearMessagesFromServer(
+                  conversation,
                 ),
+              ),
+            ),
           ],
         ),
       );
     } else {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.deleteGroup,
           title: IsmChatStrings.deleteThiGroup,
-          actionLabels: const [IsmChatStrings.deleteGroup],
-          callbackActions: [
-            () => _controller.conversationController.deleteChat(
-                  _controller.conversation?.conversationId ?? '',
-                  deleteFromServer: false,
-                ),
+          conversation: conversation,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteGroup,
+              label: IsmChatStrings.deleteGroup,
+              onPressed: () => _controller.conversationController.deleteChat(
+                conversation?.conversationId ?? '',
+                deleteFromServer: false,
+              ),
+            ),
           ],
         ),
       );
@@ -99,30 +125,25 @@ mixin IsmChatShowDialogMixin on GetxController {
     bool userBlockOrNot, [
     bool includeMembers = false,
   ]) async {
-    await IsmChatContextWidget.showDialogContext(
-      content: IsmChatAlertDialogBox(
+    await _presentChatConfirmation(
+      IsmChatConfirmationRequest(
+        type: userBlockOrNot
+            ? IsmChatConfirmationType.confirmUnblock
+            : IsmChatConfirmationType.confirmBlock,
         title: userBlockOrNot
             ? IsmChatStrings.doWantUnBlckUser
             : IsmChatStrings.doWantBlckUser,
-        actionLabels: [
-          userBlockOrNot ? IsmChatStrings.unblock : IsmChatStrings.block,
-        ],
-        callbackActions: [
-          () {
-            userBlockOrNot
-                ? _controller.unblockUser(
-                    opponentId:
-                        _controller.conversation?.opponentDetails?.userId ?? '',
-                    isLoading: true,
-                    userBlockOrNot: userBlockOrNot,
-                  )
-                : _controller.blockUser(
-                    opponentId:
-                        _controller.conversation?.opponentDetails?.userId ?? '',
-                    isLoading: true,
-                    userBlockOrNot: userBlockOrNot,
-                  );
-          },
+        conversation: _controller.conversation,
+        actions: [
+          IsmChatConfirmationAction(
+            id: userBlockOrNot
+                ? IsmChatConfirmationActionId.unblock
+                : IsmChatConfirmationActionId.block,
+            label: userBlockOrNot
+                ? IsmChatStrings.unblock
+                : IsmChatStrings.block,
+            onPressed: () => _runBlockAction(unblock: userBlockOrNot),
+          ),
         ],
       ),
     );
@@ -130,24 +151,27 @@ mixin IsmChatShowDialogMixin on GetxController {
 
   void showDialogCheckBlockUnBlock() async {
     if (_controller.conversation?.isBlockedByMe ?? false) {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.blockedByYouPromptUnblock,
           title: IsmChatStrings.youBlockUser,
-          actionLabels: const [IsmChatStrings.unblock],
-          callbackActions: [
-            () => _controller.unblockUser(
-                opponentId:
-                    _controller.conversation?.opponentDetails?.userId ?? '',
-                isLoading: true,
-                userBlockOrNot: true),
+          conversation: _controller.conversation,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.unblock,
+              label: IsmChatStrings.unblock,
+              onPressed: () => _runBlockAction(unblock: true),
+            ),
           ],
         ),
       );
     } else {
-      await IsmChatContextWidget.showDialogContext(
-        content: const IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        const IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.cannotBlockOpponent,
           title: IsmChatStrings.cannotBlock,
           cancelLabel: IsmChatStrings.okay,
+          actions: [],
         ),
       );
     }
@@ -159,35 +183,47 @@ mixin IsmChatShowDialogMixin on GetxController {
     // delete must affect the whole grouped media grid, not only the first tile.
     final groupedMediaMessages = _getGroupedMediaMessagesForDeletion(message);
 
+    final messageMap = _toUniqueMessageMap(groupedMediaMessages);
+
     if (message.sentByMe) {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.deleteMessageOwn,
           title: IsmChatStrings.deleteMessage,
-          actionLabels: const [
-            IsmChatStrings.deleteForEvery,
-            IsmChatStrings.deleteForMe,
-          ],
-          callbackActions: [
-            () => _controller.deleteMessageForEveryone(
-                  _toUniqueMessageMap(groupedMediaMessages),
-                ),
-            () => _controller.deleteMessageForMe(
-                  _toUniqueMessageMap(groupedMediaMessages),
-                ),
+          conversation: _controller.conversation,
+          message: message,
+          messages: groupedMediaMessages,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteForEveryone,
+              label: IsmChatStrings.deleteForEvery,
+              onPressed: () =>
+                  _controller.deleteMessageForEveryone(messageMap),
+            ),
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteForMe,
+              label: IsmChatStrings.deleteForMe,
+              onPressed: () => _controller.deleteMessageForMe(messageMap),
+            ),
           ],
         ),
       );
       if (fromMediaPrivew) IsmChatRoute.goBack();
     } else {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.deleteMessageOther,
           title:
               '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
-          actionLabels: const [IsmChatStrings.deleteForMe],
-          callbackActions: [
-            () => _controller.deleteMessageForMe(
-                  _toUniqueMessageMap(groupedMediaMessages),
-                ),
+          conversation: _controller.conversation,
+          message: message,
+          messages: groupedMediaMessages,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteForMe,
+              label: IsmChatStrings.deleteForMe,
+              onPressed: () => _controller.deleteMessageForMe(messageMap),
+            ),
           ],
         ),
       );
@@ -286,40 +322,51 @@ mixin IsmChatShowDialogMixin on GetxController {
         ? '${IsmChatStrings.delete} $messageCount ${IsmChatStrings.messages.toLowerCase()} ?'
         : IsmChatStrings.deleteMessage;
 
+    void onDeleteSelectionCancel() {
+      IsmChatRoute.goBack<void>();
+      _controller.selectedMessage.clear();
+      _controller.isMessageSeleted = false;
+    }
+
     if (sentByMe && !messageDeletedForEveryone) {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.deleteMultipleOwn,
           title: titleText,
-          actionLabels: const [
-            IsmChatStrings.deleteForEvery,
-            IsmChatStrings.deleteForMe,
+          conversation: _controller.conversation,
+          messageCount: messageCount,
+          onCancel: onDeleteSelectionCancel,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteForEveryone,
+              label: IsmChatStrings.deleteForEvery,
+              onPressed: () => _controller.deleteMessageForEveryone(messages),
+            ),
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteForMe,
+              label: IsmChatStrings.deleteForMe,
+              onPressed: () => _controller.deleteMessageForMe(messages),
+            ),
           ],
-          callbackActions: [
-            () => _controller.deleteMessageForEveryone(messages),
-            () => _controller.deleteMessageForMe(messages),
-          ],
-          onCancel: () {
-            IsmChatRoute.goBack<void>();
-            _controller.selectedMessage.clear();
-            _controller.isMessageSeleted = false;
-          },
         ),
       );
     } else {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.deleteMultipleOther,
           title: messageDeletedForEveryone
               ? titleText
               : '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
-          actionLabels: const [IsmChatStrings.deleteForMe],
-          callbackActions: [
-            () => _controller.deleteMessageForMe(messages),
+          conversation: _controller.conversation,
+          messageCount: messageCount,
+          onCancel: onDeleteSelectionCancel,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.deleteForMe,
+              label: IsmChatStrings.deleteForMe,
+              onPressed: () => _controller.deleteMessageForMe(messages),
+            ),
           ],
-          onCancel: () {
-            IsmChatRoute.goBack<void>();
-            _controller.selectedMessage.clear();
-            _controller.isMessageSeleted = false;
-          },
         ),
       );
     }
@@ -332,7 +379,21 @@ mixin IsmChatShowDialogMixin on GetxController {
       return;
     }
 
-    // This means chatting is allowed i.e. no one is blocked
+    // If chatting is not allowed but I didn't block them, it means they blocked me.
+    // In that state the user can't block back.
+    if (!(_controller.conversation?.isChattingAllowed ?? true)) {
+      await _presentChatConfirmation(
+        const IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.cannotBlockWhenTheyBlockedMe,
+          title: IsmChatStrings.cannotBlockWhenAlreadyBlocked,
+          cancelLabel: IsmChatStrings.okay,
+          actions: [],
+        ),
+      );
+      return;
+    }
+
+    // This means chatting is allowed i.e. no one is blocked.
     showDialogForBlockUnBlockUser(false, includeMembers);
 
     // if (_controller.conversation?.isChattingAllowed ?? false) {

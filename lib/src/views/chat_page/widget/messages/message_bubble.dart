@@ -204,28 +204,43 @@ class MessageBubble extends StatelessWidget {
     return IsmChatMessageWrapper(_message);
   }
 
-  @override
-  Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
-        tag: IsmChat.i.chatPageTag,
-        builder: (controller) => Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (_message.sentByMe &&
-                IsmChatResponsive.isWeb(context) &&
-                !showMessageInCenter &&
-                (IsmChatProperties.chatPageProperties.shouldShowHoverHold
-                        ?.call(context, controller.conversation, _message) ??
-                    true)) ...[
-              _OnMessageHoverWeb(
-                controller: controller,
-                globalKey: _globalKey,
-                index: index ?? 0,
-                message: _message,
+  /// App-provided widget only — no SDK bubble chrome ([textMessageWithLinkBuilder]).
+  Widget _buildCustomLinkBubbleSlot(BuildContext context, Widget custom) {
+    final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
+        ?.call(context, _message);
+    return Container(
+      key: IsmChatResponsive.isWeb(context) ? _globalKey : null,
+      margin: _message.reactions?.isNotEmpty == true && !showMessageInCenter
+          ? IsmChatDimens.edgeInsetsB25
+          : null,
+      alignment:
+          _message.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
+      constraints: showMessageInCenter
+          ? BoxConstraints(
+              maxWidth: context.width * .8,
+              minWidth: context.width * .1,
+            )
+          : IsmChatConfig.chatTheme.chatPageTheme?.messageConstraints
+                  ?.messageConstraints ??
+              BoxConstraints(
+                maxWidth: IsmChatResponsive.isWeb(context)
+                    ? context.width * .25
+                    : context.width * .6,
               ),
-              IsmChatDimens.boxWidth8,
-            ],
-            Container(
+      child: BlurFilter.widget(
+        isBlured: data?.shouldBlured ?? false,
+        sigmaX: data?.sigmaX ?? 3,
+        sigmaY: data?.sigmaY ?? 3,
+        child: custom,
+      ),
+    );
+  }
+
+  Widget _buildStandardDecoratedBubble(
+    BuildContext context,
+    IsmChatPageController controller,
+  ) =>
+      Container(
               key: IsmChatResponsive.isWeb(context) ? _globalKey : null,
               margin:
                   _message.reactions?.isNotEmpty == true && !showMessageInCenter
@@ -485,23 +500,52 @@ class MessageBubble extends StatelessWidget {
                   ],
                 ],
               ),
-            ),
-            if (!_message.sentByMe &&
-                IsmChatResponsive.isWeb(context) &&
-                !showMessageInCenter &&
-                (IsmChatProperties.chatPageProperties.shouldShowHoverHold
-                        ?.call(context, controller.conversation, _message) ??
-                    true)) ...[
-              IsmChatDimens.boxWidth8,
-              _OnMessageHoverWeb(
-                controller: controller,
-                globalKey: _globalKey,
-                index: index ?? 0,
-                message: _message,
-              )
+            );
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(
+        tag: IsmChat.i.chatPageTag,
+        builder: (controller) {
+          final customLinkBubble = _message.buildCustomLinkBubble(context);
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (_message.sentByMe &&
+                  IsmChatResponsive.isWeb(context) &&
+                  !showMessageInCenter &&
+                  (IsmChatProperties.chatPageProperties.shouldShowHoverHold
+                          ?.call(context, controller.conversation, _message) ??
+                      true)) ...[
+                _OnMessageHoverWeb(
+                  controller: controller,
+                  globalKey: _globalKey,
+                  index: index ?? 0,
+                  message: _message,
+                ),
+                IsmChatDimens.boxWidth8,
+              ],
+              if (customLinkBubble != null)
+                _buildCustomLinkBubbleSlot(context, customLinkBubble)
+              else
+                _buildStandardDecoratedBubble(context, controller),
+              if (!_message.sentByMe &&
+                  IsmChatResponsive.isWeb(context) &&
+                  !showMessageInCenter &&
+                  (IsmChatProperties.chatPageProperties.shouldShowHoverHold
+                          ?.call(context, controller.conversation, _message) ??
+                      true)) ...[
+                IsmChatDimens.boxWidth8,
+                _OnMessageHoverWeb(
+                  controller: controller,
+                  globalKey: _globalKey,
+                  index: index ?? 0,
+                  message: _message,
+                )
+              ],
             ],
-          ],
-        ),
+          );
+        },
       );
 }
 

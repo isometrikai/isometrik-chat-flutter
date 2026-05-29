@@ -2,15 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
-class IsmChatImageMessage extends StatelessWidget {
-  IsmChatImageMessage(this.message, {super.key});
+class IsmChatImageMessage extends StatefulWidget {
+  const IsmChatImageMessage(this.message, {super.key});
 
   final IsmChatMessageModel message;
 
-  final isExpandedNotifier = ValueNotifier(false);
+  @override
+  State<IsmChatImageMessage> createState() => _IsmChatImageMessageState();
+}
+
+class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
+  late final ValueNotifier<bool> _isExpandedNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpandedNotifier = ValueNotifier(false);
+  }
+
+  @override
+  void dispose() {
+    _isExpandedNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final message = widget.message;
     final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
         ?.call(context, message);
     return Material(
@@ -26,18 +44,27 @@ class IsmChatImageMessage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  constraints: BoxConstraints(
-                    maxHeight: (IsmChatResponsive.isWeb(context))
-                        ? context.height * .35
-                        : context.height * .6,
-                  ),
-                  child: IsmChatImage(
-                    message.attachments?.first.mediaUrl ?? '',
-                    isNetworkImage:
-                        message.attachments?.first.mediaUrl?.isValidUrl ??
-                            false,
-                    isBytes: (IsmChatResponsive.isWeb(context)) ? true : false,
+                IsmChatTapHandler(
+                  onTap: () {
+                    if (IsmChatUtility.chatPageControllerRegistered) {
+                      IsmChatUtility.chatPageController
+                          .tapForMediaPreview(message);
+                    }
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: (IsmChatResponsive.isWeb(context))
+                          ? context.height * .35
+                          : context.height * .6,
+                    ),
+                    child: IsmChatImage(
+                      message.attachments?.first.mediaUrl ?? '',
+                      isNetworkImage:
+                          message.attachments?.first.mediaUrl?.isValidUrl ??
+                              false,
+                      isBytes:
+                          (IsmChatResponsive.isWeb(context)) ? true : false,
+                    ),
                   ),
                 ),
                 if (message.metaData?.caption?.isNotEmpty == true) ...[
@@ -53,7 +80,7 @@ class IsmChatImageMessage extends StatelessWidget {
                         );
                         final textPainter = TextPainter(
                           text: textSpan,
-                          maxLines: isExpandedNotifier.value ? null : 3,
+                          maxLines: _isExpandedNotifier.value ? null : 3,
                           textDirection: TextDirection.ltr,
                         )..layout(
                             maxWidth: constraints.maxWidth > 0
@@ -63,7 +90,7 @@ class IsmChatImageMessage extends StatelessWidget {
                         final didOverflow = textPainter.didExceedMaxLines;
 
                         return ValueListenableBuilder<bool>(
-                          valueListenable: isExpandedNotifier,
+                          valueListenable: _isExpandedNotifier,
                           builder: (context, isExpanded, _) => Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -77,35 +104,41 @@ class IsmChatImageMessage extends StatelessWidget {
                                 maxLines: isExpanded ? null : 3,
                               ),
                               if (!isExpanded && didOverflow)
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    padding: IsmChatDimens.edgeInsets0,
-                                    minimumSize: const Size(0, 0),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  onPressed: () {
-                                    isExpandedNotifier.value = true;
-                                  },
-                                  child: Text(
-                                    'Show more',
-                                    style: message.readTextStyle,
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      padding: IsmChatDimens.edgeInsets0,
+                                      minimumSize: const Size(0, 0),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    onPressed: () {
+                                      _isExpandedNotifier.value = true;
+                                    },
+                                    child: Text(
+                                      'Show more',
+                                      style: message.readTextStyle,
+                                    ),
                                   ),
                                 ),
                               if (isExpanded)
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    padding: IsmChatDimens.edgeInsets0,
-                                    minimumSize: const Size(0, 0),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  onPressed: () {
-                                    isExpandedNotifier.value = false;
-                                  },
-                                  child: Text(
-                                    'Show less',
-                                    style: message.readTextStyle,
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      padding: IsmChatDimens.edgeInsets0,
+                                      minimumSize: const Size(0, 0),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    onPressed: () {
+                                      _isExpandedNotifier.value = false;
+                                    },
+                                    child: Text(
+                                      'Show less',
+                                      style: message.readTextStyle,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -134,21 +167,4 @@ class IsmChatImageMessage extends StatelessWidget {
     );
   }
 
-  bool _isCaptionOverflowing(BuildContext context) {
-    final caption = message.metaData?.caption ?? '';
-    if (caption.isEmpty) return false;
-
-    final textSpan = TextSpan(
-      text: caption,
-      style: message.style,
-    );
-
-    final textPainter = TextPainter(
-      text: textSpan,
-      maxLines: 3,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: context.width * 0.7);
-
-    return textPainter.didExceedMaxLines;
-  }
 }

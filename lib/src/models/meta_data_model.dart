@@ -165,8 +165,7 @@ class IsmChatMetaData {
         groupCastId: groupCastId ?? this.groupCastId,
       );
 
-  Map<String, dynamic> toMap() =>
-      <String, dynamic>{
+  Map<String, dynamic> toMap() => <String, dynamic>{
         'locationAddress': locationAddress,
         'locationSubAddress': locationSubAddress,
         'profilePic': profilePic,

@@ -356,9 +356,17 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
 
   /// Requests permission to access contacts.
   Future<void> askPermissions() async {
-    if (await IsmChatUtility.requestPermission(Permission.contacts)) {
+    final granted = await IsmChatUtility.requestPermission(Permission.contacts);
+    if (granted) {
       _controller.fillContact();
+      return;
     }
+
+    await IsmChatUtility.showSettingsDialogIfPermanentlyDenied(
+      Permission.contacts,
+      title: IsmChatStrings.contactsPermissionBlockedTitle,
+      message: IsmChatStrings.contactsPermissionBlockedMessage,
+    );
   }
 
   /// Searches local contacts based on the provided search term.

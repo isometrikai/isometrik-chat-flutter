@@ -74,7 +74,34 @@ class IsmChatConfig {
   /// This callback is to be used if you want to make certain changes while conversation data is being parsed from the API
   static ConversationParser? conversationParser;
 
-  static IsmChatThemeData get chatTheme => Get.isDarkMode
+  /// Host app brightness for chat UI. Set on every chat open / theme change when
+  /// the app uses [MaterialApp] (not [GetMaterialApp]) — [Get.isDarkMode] stays false.
+  ///
+  /// ```dart
+  /// IsmChatConfig.chatBrightness = Theme.of(context).brightness;
+  /// // or: IsmChatConfig.syncChatBrightness(Theme.of(context).brightness);
+  /// ```
+  static Brightness? get chatBrightness => _chatBrightness;
+
+  static set chatBrightness(Brightness? value) => _chatBrightness = value;
+
+  static Brightness? _chatBrightness;
+
+  /// Host brightness sync when using MaterialApp (see [chatBrightness]).
+  static void syncChatBrightness(Brightness brightness) {
+    _chatBrightness = brightness;
+  }
+
+  /// True when chat should use [chatDarkTheme]. Prefers [chatBrightness], then [Get.isDarkMode].
+  static bool get isChatDarkMode {
+    final brightness = _chatBrightness;
+    if (brightness != null) {
+      return brightness == Brightness.dark;
+    }
+    return Get.isDarkMode;
+  }
+
+  static IsmChatThemeData get chatTheme => isChatDarkMode
       ? _chatDarkTheme ?? IsmChatThemeData.light()
       : _chatLightTheme ?? IsmChatThemeData.dark();
 

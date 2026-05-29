@@ -4,6 +4,11 @@ class IsmChatStrings {
   static const String name = 'Isometrik Flutter Chat';
   static const String dbname = 'isometrik_chat_flutter';
   static const String userData = 'userData';
+  /// Key used to store last active user id in local DB.
+  ///
+  /// This prevents chat history leaking across accounts on the same device when
+  /// apps switch users without clearing the SDK cache.
+  static const String activeUserIdKey = 'activeUserId';
   static const String user = 'user';
 
   static const String controllerTag = 'ism-chat-page';
@@ -84,6 +89,8 @@ class IsmChatStrings {
   static const String youareBlocked = 'You are blocked.';
   static const String cannotBlock =
       'Action not allowed, the user has already blocked you';
+  static const String cannotBlockWhenAlreadyBlocked =
+      "You're already blocked, you cannot block this user.";
   static const String broadcastAlert = 'Select atleast two people';
   static const String micePermission =
       'Please provide microphone access in order to send audio.';
@@ -91,6 +98,10 @@ class IsmChatStrings {
       'The browser has disabled microphone access; please allow it to send audio.';
   static const String cameraPermissionBlock =
       'The browser has disabled camera access; please allow it to send photo and video.';
+  static const String contactsPermissionBlockedTitle = 'Contacts permission';
+  static const String contactsPermissionBlockedMessage =
+      'Contacts access is disabled. Please allow Contacts permission from Settings to share a contact.';
+  static const String openSettings = 'Open Settings';
   static const String block = 'Block';
 
   static const String unblock = 'Unblock';
@@ -133,6 +144,7 @@ class IsmChatStrings {
   static const String addParticioants = 'Add participants';
   static const String addDescription = 'Add group description';
   static const String groupInfo = 'Group Info';
+  static const String profileInfo = 'Profile Info';
   static const String edit = 'Edit';
 
   static const String areYouSure = 'Are you sure?';

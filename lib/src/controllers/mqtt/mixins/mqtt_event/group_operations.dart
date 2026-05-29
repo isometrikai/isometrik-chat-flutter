@@ -7,6 +7,40 @@ import 'package:isometrik_chat_flutter/src/controllers/mqtt/mixins/mqtt_event/va
 /// This mixin contains methods for handling group-related events like member add/remove,
 /// admin changes, and member join/leave.
 mixin IsmChatMqttEventGroupOperationsMixin {
+  /// Applies member add/remove delta from MQTT event to conversation members.
+  IsmChatConversationModel _applyMemberDelta(
+    IsmChatConversationModel conversation,
+    IsmChatMqttActionModel actionModel,
+  ) {
+    final existingMembers = List<UserDetails>.from(conversation.members ?? []);
+    final eventMembers = actionModel.members ?? const <UserDetails>[];
+
+    if (actionModel.action == IsmChatActionEvents.addMember) {
+      for (final member in eventMembers) {
+        final id = member.userId.trim();
+        if (id.isEmpty) continue;
+        if (!existingMembers.any((e) => e.userId.trim() == id)) {
+          existingMembers.add(member);
+        }
+      }
+    } else if (actionModel.action == IsmChatActionEvents.membersRemove) {
+      final removedIds = eventMembers
+          .map((e) => e.userId.trim())
+          .where((id) => id.isNotEmpty)
+          .toSet();
+      if (removedIds.isNotEmpty) {
+        existingMembers.removeWhere(
+          (e) => removedIds.contains(e.userId.trim()),
+        );
+      }
+    }
+
+    return conversation.copyWith(
+      members: existingMembers,
+      membersCount: existingMembers.length,
+    );
+  }
+
   /// Handles a group remove and add user event.
   ///
   /// * `actionModel`: The group remove and add user event model to handle
@@ -30,6 +64,9 @@ mixin IsmChatMqttEventGroupOperationsMixin {
 
       var conversation = await IsmChatConfig.dbWrapper
           ?.getConversation(actionModel.conversationId ?? '');
+      if (conversation != null) {
+        conversation = _applyMemberDelta(conversation, actionModel);
+      }
       final allMessages = conversation?.messages;
       allMessages?.addEntries(
         {
@@ -83,35 +120,47 @@ mixin IsmChatMqttEventGroupOperationsMixin {
               reactionType: '',
             ),
           );
+          if (chatPageController.conversation != null) {
+            chatPageController.conversation = _applyMemberDelta(
+              chatPageController.conversation!,
+              actionModel,
+            );
+          }
           await chatPageController
               .getMessagesFromDB(actionModel.conversationId ?? '');
+          await chatPageController.getConverstaionDetails();
         }
       }
       if (actionModel.action == IsmChatActionEvents.membersRemove) {
         if (conversation != null) {
-          conversation.lastMessageDetails?.copyWith(
-            sentByMe: false,
-            showInConversation: true,
-            sentAt: actionModel.sentAt,
-            senderName: actionModel.userDetails?.userName ?? '',
-            messageType: 0,
-            messageId: '',
-            conversationId: actionModel.conversationId ?? '',
-            body: '',
-            customType:
-                IsmChatCustomMessageType.fromString(actionModel.action.name),
-            senderId: actionModel.userDetails?.userId ?? '',
-            userId: actionModel.members?.first.memberId,
-            members: actionModel.members
-                ?.map((e) => e.memberName.toString())
-                .toList(),
-            reactionType: '',
+          conversation = conversation.copyWith(
+            lastMessageDetails: conversation.lastMessageDetails?.copyWith(
+              sentByMe: false,
+              showInConversation: true,
+              sentAt: actionModel.sentAt,
+              senderName: actionModel.userDetails?.userName ?? '',
+              messageType: 0,
+              messageId: '',
+              conversationId: actionModel.conversationId ?? '',
+              body: '',
+              customType:
+                  IsmChatCustomMessageType.fromString(actionModel.action.name),
+              senderId: actionModel.userDetails?.userId ?? '',
+              userId: actionModel.members?.first.memberId,
+              members:
+                  actionModel.members?.map((e) => e.memberName.toString()).toList(),
+              reactionType: '',
+            ),
           );
           conversation = conversation.copyWith(unreadMessagesCount: 0);
           await IsmChatConfig.dbWrapper
               ?.saveConversation(conversation: conversation);
           await conversationController.getConversationsFromDB();
         }
+      } else if (actionModel.action == IsmChatActionEvents.addMember &&
+          conversation != null) {
+        await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
+        await conversationController.getConversationsFromDB();
       }
     }
   }

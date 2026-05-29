@@ -25,6 +25,10 @@ class IsmChatConversationList extends StatelessWidget {
               enablePullDown: true,
               enablePullUp: true,
               onRefresh: () {
+                // If user pulled-to-refresh while a search query is present,
+                // clear it first so the refreshed list & query stay consistent.
+                FocusManager.instance.primaryFocus?.unfocus();
+                controller.searchConversationTEC.clear();
                 controller.getChatConversations(
                   origin: ApiCallOrigin.referesh,
                 );
@@ -52,6 +56,9 @@ class IsmChatConversationList extends StatelessWidget {
                     enablePullDown: true,
                     enablePullUp: true,
                     onRefresh: () {
+                      // Keep search field + refreshed list consistent.
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      controller.searchConversationTEC.clear();
                       controller.getChatConversations(
                         origin: ApiCallOrigin.referesh,
                       );

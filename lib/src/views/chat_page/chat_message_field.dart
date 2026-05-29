@@ -135,8 +135,9 @@ class IsmChatMessageField extends StatelessWidget {
                                           controller.conversation,
                                           controller.isreplying
                                               ? IsmChatCustomMessageType.reply
-                                              : IsmChatCustomMessageType
-                                                  .text) ??
+                                              : IsmChatCustomMessageType.text,
+                                          controller.chatInputController.text
+                                              .trim()) ??
                                   true) {
                                 await controller.getMentionedUserList(
                                     controller.chatInputController.text.trim());
@@ -193,6 +194,29 @@ class IsmChatMessageField extends StatelessWidget {
                                     child: TextFormField(
                                       autovalidateMode:
                                           AutovalidateMode.onUserInteraction,
+                                      inputFormatters: IsmChatProperties
+                                          .chatPageProperties.inputFormatters,
+                                      enableInteractiveSelection:
+                                          // Pasting text relies on interactive selection & a context menu.
+                                          // The message composer should support paste by default across platforms,
+                                          // so we keep this enabled here.
+                                          true,
+                                      contextMenuBuilder:
+                                          (context, editableTextState) {
+                                        final builder = IsmChatProperties
+                                            .chatPageProperties
+                                            .contextMenuBuilder;
+                                        if (builder != null) {
+                                          return builder(
+                                              context, editableTextState);
+                                        }
+
+                                        // Default adaptive menu (includes paste/copy/select-all as applicable).
+                                        return AdaptiveTextSelectionToolbar
+                                            .editableText(
+                                          editableTextState: editableTextState,
+                                        );
+                                      },
                                       style: IsmChatConfig
                                           .chatTheme
                                           .chatPageTheme
@@ -212,7 +236,10 @@ class IsmChatMessageField extends StatelessWidget {
                                       textCapitalization:
                                           TextCapitalization.sentences,
                                       decoration: InputDecoration(
-                                        hintText: IsmChatStrings.hintText,
+                                        hintText: IsmChatProperties
+                                                .chatPageProperties
+                                                .messageInputHintText ??
+                                            IsmChatStrings.hintText,
                                         hintStyle: IsmChatConfig
                                                 .chatTheme
                                                 .chatPageTheme
@@ -472,7 +499,8 @@ class _MicOrSendButton extends StatelessWidget {
                               IsmChatConfig.kNavigatorKey.currentContext ??
                                   IsmChatConfig.context,
                               controller.conversation,
-                              IsmChatCustomMessageType.audio) ??
+                              IsmChatCustomMessageType.audio,
+                              controller.chatInputController.text.trim()) ??
                       true) {
                     if (kIsWeb) {
                       var bytes =
@@ -529,7 +557,8 @@ class _MicOrSendButton extends StatelessWidget {
                               controller.conversation,
                               controller.isreplying
                                   ? IsmChatCustomMessageType.reply
-                                  : IsmChatCustomMessageType.text) ??
+                                  : IsmChatCustomMessageType.text,
+                              controller.chatInputController.text.trim()) ??
                       true) {
                     await controller.getMentionedUserList(
                         controller.chatInputController.text.trim());
@@ -884,10 +913,19 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                         ?.call(context, controller.conversation) ??
                     true) {
                   if (context.mounted) {
+                    final attachmentCardTheme =
+                        IsmChatThemeResolver.attachmentCardFromConfig(context);
                     await showModalBottomSheet(
                       context: context,
                       builder: (context) => const IsmChatAttachmentCard(),
                       elevation: 0,
+                      clipBehavior: Clip.antiAlias,
+                      backgroundColor: attachmentCardTheme.backgroundColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(IsmChatDimens.twentyFour),
+                        ),
+                      ),
                     );
                   }
                 }

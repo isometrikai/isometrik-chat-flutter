@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
@@ -120,6 +123,22 @@ class IsmChatCommonViewModel {
       if (!isUpdateMesage) return false;
       if (isBroadcast) {
         final chatPageController = IsmChatUtility.chatPageController;
+        // If server rejected the message, mark it invalid so UI shows error icon.
+        if (response.respone.hasError == true) {
+          for (var x = 0; x < chatPageController.messages.length; x++) {
+            final msg = chatPageController.messages[x];
+            if (msg.sentAt != createdAt || msg.messageId?.isNotEmpty == true) {
+              continue;
+            }
+            msg
+              ..messageId = ''
+              ..isInvalidMessage = true
+              ..isUploading = false;
+            chatPageController.messages[x] = msg;
+            break;
+          }
+          return false;
+        }
         for (var x = 0; x < chatPageController.messages.length; x++) {
           var messages = chatPageController.messages[x];
           if (messages.messageId?.isNotEmpty == true ||
@@ -186,6 +205,64 @@ class IsmChatCommonViewModel {
           }
           await dbBox?.saveConversation(conversation: conversationModel!);
           return true;
+        }
+        // Server rejected message -> mark it failed so UI shows error icon
+        // instead of clock forever, and stop retrying automatically.
+        if (pendingMessage != null && response.respone.hasError == true) {
+          pendingMessage
+            ..messageId = ''
+            ..isInvalidMessage = true
+            ..isUploading = false;
+
+          chatPendingMessages?.messages
+              ?.removeWhere((key, value) => key == '$createdAt');
+          await dbBox?.saveConversation(
+            conversation: chatPendingMessages!,
+            dbBox: IsmChatDbBox.pending,
+          );
+          if (chatPendingMessages?.messages?.isEmpty == true) {
+            await dbBox?.pendingMessageBox
+                .delete(chatPendingMessages?.conversationId ?? '');
+          }
+
+          // Persist the failed message into main conversation so the user sees it.
+          var conversationModel = await dbBox?.getConversation(conversationId);
+          if (conversationModel != null) {
+            final messages = (conversationModel.messages ?? {})
+              ..addEntries({'$createdAt': pendingMessage}.entries);
+            conversationModel = conversationModel.copyWith(
+              messages: messages,
+              lastMessageDetails: conversationModel.lastMessageDetails?.copyWith(
+                reactionType: '',
+                messageId: '',
+                action: '',
+                customType: pendingMessage.customType,
+                body: pendingMessage.body,
+                sentAt: pendingMessage.sentAt,
+              ),
+              lastMessageSentAt: pendingMessage.sentAt,
+            );
+            await dbBox?.saveConversation(conversation: conversationModel);
+          }
+
+          // Best-effort: show a human readable error.
+          try {
+            final raw = response.respone.data;
+            var message = 'Message not sent';
+            final decoded = jsonDecode(raw);
+            if (decoded is Map && decoded['message'] is String) {
+              message = decoded['message'] as String;
+            }
+            // Provide a clearer hint for common "long text" failures.
+            if ([413, 422].contains(response.respone.errorCode)) {
+              message = message.isNotEmpty
+                  ? message
+                  : 'Message is too long to send.';
+            }
+            unawaited(IsmChatUtility.showErrorDialog(message));
+          } catch (_) {}
+
+          return false;
         }
       }
       return false;

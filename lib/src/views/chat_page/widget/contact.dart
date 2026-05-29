@@ -83,7 +83,8 @@ class IsmChatContactView extends StatelessWidget {
                                 IsmChatConfig.kNavigatorKey.currentContext ??
                                     IsmChatConfig.context,
                                 controller.conversation,
-                                IsmChatCustomMessageType.contact) ??
+                                IsmChatCustomMessageType.contact,
+                                controller.chatInputController.text.trim()) ??
                         true) {
                       controller.sendContact(
                         conversationId:

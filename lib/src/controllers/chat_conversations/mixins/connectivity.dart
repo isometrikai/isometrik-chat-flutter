@@ -13,7 +13,8 @@ mixin IsmChatConversationsConnectivityMixin on GetxController {
   void _isInterNetConnect() {
     _controller.connectivity = Connectivity();
     _controller.connectivitySubscription =
-        _controller.connectivity?.onConnectivityChanged.listen((event) {
+        _controller.connectivity?.onConnectivityChanged.listen((event) async {
+      await _controller.ensureMqttConnectionForChatList();
       _sendPendingMessage();
     });
   }
@@ -24,10 +25,10 @@ mixin IsmChatConversationsConnectivityMixin on GetxController {
       if (_controller.currentConversation?.conversationId?.isNotEmpty == true) {
         {
           _controller.sendPendingMessgae(
-              conversationId: _controller.currentConversation?.conversationId ?? '');
+              conversationId:
+                  _controller.currentConversation?.conversationId ?? '');
         }
       }
     }
   }
 }
-

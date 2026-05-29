@@ -15,7 +15,10 @@ class IsmChatBlockedUsersView extends StatelessWidget {
               .getBlockUser(isLoading: true);
         });
       },
-      builder: (controller) => Scaffold(
+      builder: (controller) {
+        final profileTheme = IsmChatThemeResolver.profileFromConfig(context);
+        return Scaffold(
+            backgroundColor: profileTheme.scaffoldBackgroundColor,
             appBar: IsmChatAppBar(
               title: Text(
                 IsmChatStrings.blockedUsers,
@@ -39,9 +42,11 @@ class IsmChatBlockedUsersView extends StatelessWidget {
                         leading: IsmChatImage.profile(user.profileUrl),
                         title: Text(
                           user.userName,
+                          style: profileTheme.listTileTitleStyle,
                         ),
                         subtitle: Text(
                           user.userIdentifier,
+                          style: profileTheme.listTileSubtitleStyle,
                         ),
                         trailing: ElevatedButton(
                           onPressed: () {
@@ -60,5 +65,6 @@ class IsmChatBlockedUsersView extends StatelessWidget {
                       );
                     },
                   ),
-          ));
+          );
+      });
 }

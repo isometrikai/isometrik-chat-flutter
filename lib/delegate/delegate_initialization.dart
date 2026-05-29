@@ -45,6 +45,34 @@ mixin IsmChatDelegateInitializationMixin {
     IsmChatConfig.isMonthFirst = isMonthFirst;
     IsmChatConfig.configInitilized = true;
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
+
+    // Safety: prevent local history leaking across accounts.
+    //
+    // The SDK stores conversations/messages locally under a shared DB name.
+    // If an app logs out and logs in as another user without clearing the DB,
+    // the next user can see the previous user's cached history.
+    //
+    // We store the last active userId in the user box. If it differs from the
+    // current user, we clear the local chat DB before continuing.
+    final currentUserId = communicationConfig.userConfig.userId.trim();
+    if (currentUserId.isNotEmpty) {
+      final lastUserId = (await IsmChatConfig.dbWrapper?.userDetailsBox.get(
+        IsmChatStrings.activeUserIdKey,
+      ))
+          ?.toString()
+          .trim();
+
+      if (lastUserId != null &&
+          lastUserId.isNotEmpty &&
+          lastUserId != currentUserId) {
+        await IsmChatConfig.dbWrapper?.deleteChatLocalDb();
+      }
+      await IsmChatConfig.dbWrapper?.userDetailsBox.put(
+        IsmChatStrings.activeUserIdKey,
+        currentUserId,
+      );
+    }
+
     await _initializeMqtt(
       config: communicationConfig,
       mqttProperties: mqttProperties ?? IsmMqttProperties(),

@@ -28,7 +28,8 @@ mixin IsmChatPageSendMessageDocumentMixin {
                 IsmChatConfig.kNavigatorKey.currentContext ??
                     IsmChatConfig.context,
                 IsmChatUtility.chatPageController.conversation!,
-                IsmChatCustomMessageType.file) ??
+                IsmChatCustomMessageType.file,
+                _controller.chatInputController.text.trim()) ??
         true) {
       IsmChatMessageModel? documentMessage;
       String? nameWithExtension;

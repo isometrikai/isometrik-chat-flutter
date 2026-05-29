@@ -12,13 +12,15 @@ class IsmChatBlockedMessage extends StatelessWidget {
       GetBuilder<IsmChatConversationsController>(
         tag: IsmChat.i.chatListPageTag,
         builder: (controller) {
-          var status = message.customType == IsmChatCustomMessageType.block
-              ? 'blocked'
-              : 'unblocked';
-          var text = IsmChatConfig.communicationConfig.userConfig.userId ==
-                  message.initiatorId
-              ? 'You $status this user'
-              : 'You are $status';
+          final isBlock = message.customType == IsmChatCustomMessageType.block;
+          final isInitiatedByMe =
+              IsmChatConfig.communicationConfig.userConfig.userId ==
+                  message.initiatorId;
+          final text = isBlock
+              ? (isInitiatedByMe
+                  ? IsmChatStrings.youBlockUser
+                  : IsmChatStrings.youareBlocked)
+              : (isInitiatedByMe ? 'You unblocked this user' : 'You are unblocked');
           return Center(
             child: Container(
               decoration: BoxDecoration(

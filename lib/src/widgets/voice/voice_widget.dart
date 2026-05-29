@@ -22,6 +22,11 @@ class VoiceMessage extends StatefulWidget {
     this.contactPlayIconColor = Colors.black26,
     this.contactPlayIconBgColor = Colors.grey,
     this.meFgColor = Colors.white,
+    this.meProgressOverlayColor,
+    this.opponentProgressOverlayColor,
+    this.playIcon,
+    this.pauseIcon,
+    this.loadingIcon,
   });
 
   final String? audioSrc;
@@ -39,6 +44,19 @@ class VoiceMessage extends StatefulWidget {
       contactPlayIconBgColor;
   final bool me;
   final Widget noise;
+
+  /// Optional override for the moving progress overlay color.
+  ///
+  /// If null, overlay color is derived from bg colors with opacity.
+  final Color? meProgressOverlayColor;
+  final Color? opponentProgressOverlayColor;
+
+  /// Optional icon widgets for the default circular play/pause button.
+  ///
+  /// If null, SDK uses default Material icons/spinner.
+  final Widget? playIcon;
+  final Widget? pauseIcon;
+  final Widget? loadingIcon;
 
   @override
   VoiceMessageState createState() => VoiceMessageState();
@@ -125,39 +143,83 @@ class VoiceMessageState extends State<VoiceMessage>
                   _changePlayingStatus();
                 }
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: widget.me
-                      ? widget.meFgColor
-                      : widget.contactPlayIconBgColor,
-                ),
-                width: IsmChatResponsive.isMobile(context)
+              child: Obx(() {
+                final buttonSize = IsmChatResponsive.isMobile(context)
                     ? IsmChatDimens.forty
-                    : IsmChatDimens.fifty,
-                height: IsmChatResponsive.isMobile(context)
-                    ? IsmChatDimens.forty
-                    : IsmChatDimens.fifty,
-                child: Obx(
-                  () => !audioConfigurationDone
-                      ? Container(
-                          padding: IsmChatDimens.edgeInsets8,
-                          width: IsmChatDimens.ten,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1,
-                            color: widget.me
-                                ? widget.meFgColor
-                                : widget.contactFgColor,
-                          ),
-                        )
-                      : Icon(
-                          isPlaying ? Icons.pause : Icons.play_arrow,
+                    : IsmChatDimens.fifty;
+                final hasCustomIcons = widget.playIcon != null ||
+                    widget.pauseIcon != null ||
+                    widget.loadingIcon != null;
+
+                if (!audioConfigurationDone) {
+                  final loading = widget.loadingIcon ??
+                      Container(
+                        padding: IsmChatDimens.edgeInsets8,
+                        width: IsmChatDimens.ten,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1,
                           color: widget.me
-                              ? widget.mePlayIconColor
-                              : widget.contactPlayIconColor,
+                              ? widget.meFgColor
+                              : widget.contactFgColor,
                         ),
-                ),
-              ),
+                      );
+
+                  if (hasCustomIcons) {
+                    return SizedBox(
+                      width: buttonSize,
+                      height: buttonSize,
+                      child: Center(child: loading),
+                    );
+                  }
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.me
+                          ? widget.meFgColor
+                          : widget.contactPlayIconBgColor,
+                    ),
+                    width: buttonSize,
+                    height: buttonSize,
+                    child: Center(child: loading),
+                  );
+                }
+
+                final iconColor = widget.me
+                    ? widget.mePlayIconColor
+                    : widget.contactPlayIconColor;
+                final iconWidget = isPlaying
+                    ? (widget.pauseIcon ??
+                        Icon(
+                          Icons.pause,
+                          color: iconColor,
+                        ))
+                    : (widget.playIcon ??
+                        Icon(
+                          Icons.play_arrow,
+                          color: iconColor,
+                        ));
+
+                if (hasCustomIcons) {
+                  return SizedBox(
+                    width: buttonSize,
+                    height: buttonSize,
+                    child: Center(child: iconWidget),
+                  );
+                }
+
+                return Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: widget.me
+                        ? widget.meFgColor
+                        : widget.contactPlayIconBgColor,
+                  ),
+                  width: buttonSize,
+                  height: buttonSize,
+                  child: Center(child: iconWidget),
+                );
+              }),
             ),
             IsmChatDimens.boxWidth14,
             Obx(

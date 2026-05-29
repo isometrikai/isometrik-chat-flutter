@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Group / 1:1 conversation info. Colors from [IsmChatThemeResolver.groupInfoFromConfig].
 class IsmChatConverstaionInfoView extends StatefulWidget {
   /// Creates a conversation info view widget.
   ///
@@ -69,6 +70,14 @@ class _IsmChatConverstaionInfoViewState
     );
   }
 
+  /// Prefer "First Last" for display name; fallback to username.
+  String _memberDisplayName(UserDetails member) {
+    final fullName =
+        '${member.metaData?.firstName ?? ''} ${member.metaData?.lastName ?? ''}'
+            .trim();
+    return fullName.isNotEmpty ? fullName : member.userName;
+  }
+
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
@@ -109,6 +118,7 @@ class _IsmChatConverstaionInfoViewState
           }
         },
         builder: (controller) {
+          final groupTheme = IsmChatThemeResolver.groupInfoFromConfig(context);
           final isDocumentAllowed = IsmChatProperties
               .chatPageProperties.attachments
               .contains(IsmChatAttachmentType.document);
@@ -118,7 +128,7 @@ class _IsmChatConverstaionInfoViewState
                   ? conversationController.mediaListDocs.length
                   : 0);
           return Scaffold(
-            backgroundColor: IsmChatColors.blueGreyColor,
+            backgroundColor: groupTheme.scaffoldBackgroundColor,
             appBar: IsmChatAppBar(
               height: IsmChatDimens.fiftyFive,
               onBack: !IsmChatResponsive.isWeb(context)
@@ -131,7 +141,7 @@ class _IsmChatConverstaionInfoViewState
               title: Text(
                 controller.conversation?.isGroup ?? false
                     ? IsmChatStrings.groupInfo
-                    : IsmChatStrings.contactInfo,
+                    : IsmChatStrings.profileInfo,
                 style:
                     IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
                         IsmChatStyles.w600White18,
@@ -153,9 +163,9 @@ class _IsmChatConverstaionInfoViewState
                           value: 1,
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.edit,
-                                color: IsmChatColors.blackColor,
+                                color: groupTheme.menuIconColor,
                               ),
                               IsmChatDimens.boxWidth8,
                               const Text(IsmChatStrings.changeGroupTitle)
@@ -166,9 +176,9 @@ class _IsmChatConverstaionInfoViewState
                           value: 2,
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.photo,
-                                color: IsmChatColors.blackColor,
+                                color: groupTheme.menuIconColor,
                               ),
                               IsmChatDimens.boxWidth8,
                               const Text(IsmChatStrings.changeGroupPhoto)
@@ -211,20 +221,42 @@ class _IsmChatConverstaionInfoViewState
                           children: [
                             IsmChatTapHandler(
                               onTap: () {
+                                // Let host app handle 1-1 user profile taps if provided.
+                                if (controller.conversation?.isGroup != true) {
+                                  final cb = IsmChatProperties
+                                      .chatPageProperties
+                                      .onUserConversationInfoTap;
+                                  if (cb != null) {
+                                    cb.call(context, controller.conversation);
+                                    return;
+                                  }
+                                }
                                 IsmChatRoute.goToRoute(IsmChatProfilePicView(
-                                  userName:
-                                      controller.conversation?.isGroup == true
-                                          ? controller
-                                                  .conversation
-                                                  ?.conversationTitle
-                                                  ?.capitalizeFirst ??
-                                              ''
-                                          : controller
-                                                  .conversation
-                                                  ?.opponentDetails
-                                                  ?.userName
+                                  userName: controller.conversation?.isGroup ==
+                                          true
+                                      ? controller
+                                              .conversation
+                                              ?.conversationTitle
+                                              ?.capitalizeFirst ??
+                                          ''
+                                      : (() {
+                                          final opponent = controller
+                                              .conversation?.opponentDetails;
+                                          final first =
+                                              opponent?.metaData?.firstName ??
+                                                  '';
+                                          final last =
+                                              opponent?.metaData?.lastName ??
+                                                  '';
+                                          final fullName =
+                                              '$first $last'.trim();
+                                          return (fullName.isNotEmpty
+                                                      ? fullName
+                                                      : (opponent?.userName ??
+                                                          ''))
                                                   .capitalizeFirst ??
-                                              '',
+                                              '';
+                                        })(),
                                   imageUrl:
                                       controller.conversation?.isGroup == true
                                           ? controller.conversation
@@ -264,24 +296,40 @@ class _IsmChatConverstaionInfoViewState
                                       controller.conversation?.chatName ?? '';
                                   controller.showDialogForChangeGroupTitle();
                                 }
-                              : null,
+                              : () {
+                                  final cb = IsmChatProperties
+                                      .chatPageProperties
+                                      .onUserConversationInfoTap;
+                                  if (cb != null) {
+                                    cb.call(context, controller.conversation);
+                                  }
+                                },
                           child: Text(
                             controller.conversation?.chatName ?? '',
                             textAlign: TextAlign.center,
-                            style: IsmChatStyles.w600Black27,
+                            style: groupTheme.primaryTitleTextStyle,
                           )),
                       if (!(controller.conversation?.isGroup ?? false)) ...[
-                        Text(
-                          controller.conversation?.opponentDetails
-                                  ?.userIdentifier ??
-                              '',
-                          style: IsmChatStyles.w500GreyLight17,
+                        Builder(
+                          builder: (context) {
+                            final identifier = (controller.conversation
+                                        ?.opponentDetails?.userIdentifier ??
+                                    '')
+                                .trim();
+                            if (!GetUtils.isEmail(identifier))
+                              return IsmChatDimens.box0;
+
+                            return Text(
+                              identifier,
+                              style: groupTheme.secondaryTextStyle,
+                            );
+                          },
                         ),
                       ],
                       if (controller.conversation?.isGroup ?? false) ...[
                         Text(
                           '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
-                          style: IsmChatStyles.w400Grey14,
+                          style: groupTheme.captionTextStyle,
                         ),
                       ],
                       IsmChatDimens.boxHeight10,
@@ -306,7 +354,7 @@ class _IsmChatConverstaionInfoViewState
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
                                     IsmChatDimens.sixteen),
-                                color: IsmChatColors.whiteColor,
+                                color: groupTheme.surfaceBackgroundColor,
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -314,7 +362,7 @@ class _IsmChatConverstaionInfoViewState
                                 children: [
                                   Text(
                                     IsmChatStrings.aboutMe,
-                                    style: IsmChatStyles.w400Black16,
+                                    style: groupTheme.bodyTextStyle,
                                   ),
                                   IsmChatDimens.boxHeight5,
                                   Text(
@@ -336,7 +384,7 @@ class _IsmChatConverstaionInfoViewState
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(IsmChatDimens.sixteen),
-                              color: IsmChatColors.whiteColor,
+                              color: groupTheme.surfaceBackgroundColor,
                             ),
                             child: IsmChatTapHandler(
                               onTap: () {
@@ -370,19 +418,19 @@ class _IsmChatConverstaionInfoViewState
                                     isDocumentAllowed
                                         ? IsmChatStrings.mediaLinksAndDocs
                                         : IsmChatStrings.mediaLinks,
-                                    style: IsmChatStyles.w500Black16,
+                                    style: groupTheme.sectionTitleTextStyle,
                                   ),
                                   const Spacer(),
                                   Row(
                                     children: [
                                       Text(
                                         '$mediaLinksDocsCount',
-                                        style: IsmChatStyles.w500GreyLight17,
+                                        style: groupTheme.secondaryTextStyle,
                                       ),
                                       IsmChatDimens.boxWidth4,
                                       Icon(
                                         Icons.arrow_forward_ios,
-                                        color: IsmChatColors.greyColorLight,
+                                        color: groupTheme.actionIconColor,
                                         size: IsmChatDimens.fifteen,
                                       ),
                                     ],
@@ -402,7 +450,7 @@ class _IsmChatConverstaionInfoViewState
                               padding: IsmChatDimens.edgeInsets10,
                               child: Text(
                                 '${controller.conversation?.membersCount} ${IsmChatStrings.participants}',
-                                style: IsmChatStyles.w500Black16,
+                                style: groupTheme.sectionTitleTextStyle,
                               ),
                             ),
                             if (controller
@@ -446,8 +494,12 @@ class _IsmChatConverstaionInfoViewState
                             autofocus: false,
                             focusNode: _participantsSearchFocusNode,
                             hint: 'Search using name or email',
+                            fillColor: groupTheme.searchFillColor,
+                            hintStyle: groupTheme.searchHintTextStyle,
                             cursorColor: IsmChatConfig.chatTheme.primaryColor,
-                            style: IsmChatStyles.w400Black16,
+                            style: groupTheme.inputTextStyle,
+                            isShowBorderColor: true,
+                            borderColor: groupTheme.dividerColor,
                             controller:
                                 controller.participnatsEditingController,
                             suffixIcon: controller.participnatsEditingController
@@ -461,13 +513,12 @@ class _IsmChatConverstaionInfoViewState
                                     },
                                     child: Icon(
                                       Icons.close_rounded,
-                                      color:
-                                          IsmChatConfig.chatTheme.primaryColor,
+                                      color: groupTheme.searchIconColor,
                                     ),
                                   )
                                 : Icon(
                                     Icons.search_rounded,
-                                    color: IsmChatConfig.chatTheme.primaryColor,
+                                    color: groupTheme.searchIconColor,
                                   ),
                             onChanged: (_) {
                               controller
@@ -547,7 +598,7 @@ class _IsmChatConverstaionInfoViewState
                                 trailing: member.isAdmin
                                     ? Text(
                                         IsmChatStrings.admin,
-                                        style: IsmChatStyles.w600Black12
+                                        style: groupTheme.adminBadgeTextStyle
                                             .copyWith(
                                                 color: IsmChatConfig
                                                     .chatTheme.primaryColor),
@@ -555,24 +606,26 @@ class _IsmChatConverstaionInfoViewState
                                     : controller.conversation?.usersOwnDetails
                                                 ?.isAdmin ??
                                             false
-                                        ? const Icon(
+                                        ? Icon(
                                             Icons.more_vert,
-                                            color: IsmChatColors.blackColor,
+                                            color: groupTheme.menuIconColor,
                                           )
                                         : null,
                                 title: Text(IsmChatConfig.communicationConfig
                                             .userConfig.userId ==
                                         member.userId
                                     ? IsmChatStrings.you
-                                    : member.userName),
-                                subtitle: Text(IsmChatProperties
-                                        .conversationProperties.opponentSubTitle
-                                        ?.call(context, member) ??
-                                    member.metaData?.aboutText?.title ??
-                                    ''),
+                                    : _memberDisplayName(member),
+                                    style: groupTheme.listTileTitleTextStyle),
+                                subtitle: Text(
+                                  member.userName,
+                                  style: groupTheme.listTileSubtitleTextStyle,
+                                ),
                                 leading: IsmChatImage.profile(
                                   member.profileUrl,
-                                  name: member.userName.capitalizeFirst ?? '',
+                                  name: _memberDisplayName(member)
+                                          .capitalizeFirst ??
+                                      '',
                                 ),
                               );
                             },
@@ -584,7 +637,7 @@ class _IsmChatConverstaionInfoViewState
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(IsmChatDimens.sixteen),
-                            color: IsmChatColors.whiteColor,
+                            color: groupTheme.surfaceBackgroundColor,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,19 +647,21 @@ class _IsmChatConverstaionInfoViewState
                                   controller
                                       .showDialogForClearChatAndDeleteGroup();
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.clear_all_rounded,
-                                  color: IsmChatColors.blackColor,
+                                  color: groupTheme.menuIconColor,
                                 ),
                                 label: Text(
                                   IsmChatStrings.clearChat,
-                                  style: IsmChatStyles.w600Black16,
+                                  style: groupTheme.bodyTextStyle.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                               IsmChatDimens.boxHeight10,
                               Divider(
                                 thickness: 1,
-                                color: IsmChatColors.greyColorLight
+                                color: groupTheme.dividerColor
                                     .applyIsmOpacity(.3),
                               ),
                               IsmChatDimens.boxHeight5,
@@ -632,22 +687,34 @@ class _IsmChatConverstaionInfoViewState
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(IsmChatDimens.sixteen),
-                            color: IsmChatColors.whiteColor,
+                            color: groupTheme.surfaceBackgroundColor,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextButton.icon(
                                 onPressed: () async {
-                                  await IsmChatContextWidget.showDialogContext(
-                                    content: IsmChatAlertDialogBox(
+                                  final conv = controller.conversation;
+                                  await IsmChatConfirmationHelper.present(
+                                    IsmChatConfirmationRequest(
+                                      type: IsmChatConfirmationType
+                                          .clearChatMessages,
                                       title: IsmChatStrings.clearAllMessages,
-                                      actionLabels: const [
-                                        IsmChatStrings.clearChat
-                                      ],
-                                      callbackActions: [
-                                        () => controller.clearAllMessages(
-                                            '${controller.conversation?.conversationId}'),
+                                      conversation: conv,
+                                      actions: [
+                                        IsmChatConfirmationAction(
+                                          id: IsmChatConfirmationActionId
+                                              .clearChat,
+                                          label: IsmChatStrings.clearChat,
+                                          onPressed: () =>
+                                              controller.clearAllMessages(
+                                            conv?.conversationId ?? '',
+                                            fromServer: IsmChatConfirmationHelper
+                                                .shouldClearMessagesFromServer(
+                                              conv,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   );
@@ -665,22 +732,28 @@ class _IsmChatConverstaionInfoViewState
                               Divider(
                                 height: 0,
                                 thickness: 1,
-                                color: IsmChatColors.greyColorLight
+                                color: groupTheme.dividerColor
                                     .applyIsmOpacity(.3),
                               ),
                               TextButton.icon(
                                 onPressed: () async {
-                                  await IsmChatContextWidget.showDialogContext(
-                                    content: IsmChatAlertDialogBox(
+                                  final conv = controller.conversation;
+                                  await IsmChatConfirmationHelper.present(
+                                    IsmChatConfirmationRequest(
+                                      type: IsmChatConfirmationType.deleteChat,
                                       title: '${IsmChatStrings.deleteChat}?',
-                                      actionLabels: const [
-                                        IsmChatStrings.deleteChat
-                                      ],
-                                      callbackActions: [
-                                        () => IsmChatUtility
-                                            .conversationController
-                                            .deleteChat(
-                                                '${controller.conversation?.conversationId}'),
+                                      conversation: conv,
+                                      actions: [
+                                        IsmChatConfirmationAction(
+                                          id: IsmChatConfirmationActionId
+                                              .deleteChat,
+                                          label: IsmChatStrings.deleteChat,
+                                          onPressed: () => IsmChatUtility
+                                              .conversationController
+                                              .deleteChat(
+                                            conv?.conversationId ?? '',
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   );
@@ -702,7 +775,7 @@ class _IsmChatConverstaionInfoViewState
                                 Divider(
                                   height: 0,
                                   thickness: 1,
-                                  color: IsmChatColors.greyColorLight
+                                  color: groupTheme.dividerColor
                                       .applyIsmOpacity(.3),
                                 ),
                                 TextButton.icon(
