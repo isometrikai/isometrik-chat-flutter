@@ -333,6 +333,11 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (data.data != null &&
           (_controller.conversation?.conversationId == conversationId)) {
         final responeData = data.data as IsmChatConversationModel;
+        // If we can successfully fetch conversation details, it generally means
+        // the current user still has access to this conversation. We explicitly
+        // clear the "removed" state so the UI banner/input restriction does not
+        // remain stuck after the user is added back.
+        _controller.isActionAllowed = false;
         final messageMap = {
           for (var message in _controller.messages) message.key: message,
         };

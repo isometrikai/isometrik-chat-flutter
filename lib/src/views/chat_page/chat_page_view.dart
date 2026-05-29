@@ -61,7 +61,6 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    final mqttController = Get.find<IsmChatMqttController>();
     if (IsmChatUtility.chatPageControllerRegistered) {
       final controller = IsmChatUtility.chatPageController;
       if (AppLifecycleState.resumed == state &&
@@ -300,7 +299,7 @@ class _IsmChatPageView extends StatelessWidget {
                                                   .coversationInfoView;
                                         } else {
                                           IsmChatRoute.goToRoute(
-                                              IsmChatConverstaionInfoView());
+                                              const IsmChatConverstaionInfoView());
                                         }
                                       }
                                     }
@@ -410,23 +409,36 @@ class _IsmChatPageView extends StatelessWidget {
                                 ),
                                 // Message input restrictions and input field
                                 // Show message restrictions based on various conditions
-                                if (controller.isActionAllowed == true &&
-                                    controller.conversation?.isGroup ==
-                                        true) ...[
-                                  // User was removed from group
-                                  const _MessageNotAllowedWidget(
-                                    showMessage:
-                                        IsmChatStrings.removeGroupMessage,
-                                  )
-                                ] else if (controller.isActionAllowed == false &&
-                                    controller.conversation?.isGroup == true &&
-                                    controller.conversation?.lastMessageDetails
-                                            ?.customType ==
-                                        IsmChatCustomMessageType.removeMember &&
-                                    controller.conversation?.lastMessageDetails?.userId ==
-                                        IsmChatConfig.communicationConfig
-                                            .userConfig.userId) ...[
-                                  // Current user was removed from group
+                                if (controller.conversation?.isGroup == true &&
+                                    (
+                                        // Explicit "removed" state from API/logic
+                                        controller.isActionAllowed == true ||
+                                        // Last message says removed AND the user is not a current member
+                                        (controller
+                                                    .conversation
+                                                    ?.lastMessageDetails
+                                                    ?.customType ==
+                                                IsmChatCustomMessageType
+                                                    .removeMember &&
+                                            controller
+                                                    .conversation
+                                                    ?.lastMessageDetails
+                                                    ?.userId ==
+                                                IsmChatConfig
+                                                    .communicationConfig
+                                                    .userConfig
+                                                    .userId &&
+                                            !(controller.conversation?.members
+                                                    ?.any((m) =>
+                                                        m.userId.trim() ==
+                                                        IsmChatConfig
+                                                            .communicationConfig
+                                                            .userConfig
+                                                            .userId
+                                                            .trim()) ??
+                                                false))
+                                        )) ...[
+                                  // User is removed from group
                                   const _MessageNotAllowedWidget(
                                     showMessage:
                                         IsmChatStrings.removeGroupMessage,
