@@ -300,6 +300,8 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
       _controller.mediaDownloadProgress = 0;
       _controller.snackBarController = Get.showSnackbar(
         GetSnackBar(
+          backgroundColor: IsmChatConfig.chatTheme.primaryColor ??
+              IsmChatColors.primaryColorLight,
           messageText: Obx(() => CustomeSnackBar(
                 downloadProgress: _controller.mediaDownloadProgress,
                 downloadedFileCount: 1,

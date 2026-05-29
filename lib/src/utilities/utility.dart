@@ -174,14 +174,17 @@ class IsmChatUtility {
     }
   }
 
+  /// Shared toast styling for the SDK: primary background, white label text.
+  /// All call sites should use this helper rather than [Fluttertoast] directly.
   static void showToast(String message, {int timeOutInSec = 1}) {
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: timeOutInSec,
-      backgroundColor: IsmChatConfig.chatTheme.backgroundColor,
-      textColor: IsmChatConfig.chatTheme.primaryColor,
+      backgroundColor: IsmChatConfig.chatTheme.primaryColor ??
+          IsmChatColors.primaryColorLight,
+      textColor: IsmChatColors.whiteColor,
       fontSize: IsmChatDimens.sixteen,
     );
   }
