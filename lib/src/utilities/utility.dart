@@ -175,12 +175,13 @@ class IsmChatUtility {
   }
 
   /// Shared toast styling for the SDK: primary background, white label text.
+  /// Shown at the bottom of the screen (e.g. Group Info admin actions).
   /// All call sites should use this helper rather than [Fluttertoast] directly.
   static void showToast(String message, {int timeOutInSec = 1}) {
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: timeOutInSec,
       backgroundColor: IsmChatConfig.chatTheme.primaryColor ??
           IsmChatColors.primaryColorLight,
