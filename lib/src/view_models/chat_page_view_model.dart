@@ -418,18 +418,22 @@ class IsmChatPageViewModel {
     await IsmChatUtility.chatPageController.getMessagesFromDB(conversationId);
   }
 
-  Future<void> clearAllMessages({
+  Future<bool> clearAllMessages({
     required String conversationId,
     bool fromServer = true,
   }) async {
-    final response = await _repository.clearAllMessages(
-      conversationId: conversationId,
-    );
-    if (response?.hasError == false) {
-      await IsmChatConfig.dbWrapper
-          ?.clearAllMessage(conversationId: conversationId);
-      await IsmChatUtility.conversationController.getChatConversations();
+    if (fromServer) {
+      final response = await _repository.clearAllMessages(
+        conversationId: conversationId,
+      );
+      if (response?.hasError != false) {
+        return false;
+      }
     }
+    await IsmChatConfig.dbWrapper
+        ?.clearAllMessage(conversationId: conversationId);
+    await IsmChatUtility.conversationController.getChatConversations();
+    return true;
   }
 
   Future<void> readAllMessages({

@@ -18,16 +18,15 @@ class IsmChatConfirmationHelper {
       // null / false → use default SDK dialog below
     }
 
-    final labels = request.actions.map((a) => a.label).toList();
-    final callbacks = request.actions.map((a) => a.onPressed).toList();
-    await IsmChatContextWidget.showDialogContext(
-      content: IsmChatAlertDialogBox(
-        title: request.title,
-        actionLabels: labels.isEmpty ? null : labels,
-        callbackActions: callbacks.isEmpty ? null : callbacks,
-        cancelLabel: request.cancelLabel ?? IsmChatStrings.cancel,
-        onCancel: request.onCancel,
-      ),
+    await IsmChatContextWidget.showThemedAlertDialog(
+      title: request.title,
+      actionLabels:
+          request.actions.isEmpty ? null : request.actions.map((a) => a.label).toList(),
+      callbackActions: request.actions.isEmpty
+          ? null
+          : request.actions.map((a) => a.onPressed).toList(),
+      cancelLabel: request.cancelLabel ?? IsmChatStrings.cancel,
+      onCancel: request.onCancel,
     );
   }
 

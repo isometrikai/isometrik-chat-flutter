@@ -59,6 +59,7 @@ class IsmChatStrings {
 
   static const String clearChat = 'Clear chat';
   static const String clearAllMessages = 'Clear all messages?';
+  static const String chatClearedSuccessfully = 'Chat cleared successfully!';
   static const String wallpaper = 'Wallpaper';
   static const String hintText = 'Type your message...';
 

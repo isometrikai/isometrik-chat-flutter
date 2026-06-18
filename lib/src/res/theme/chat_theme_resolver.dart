@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/attachment_card_theme.dart';
+import 'package:isometrik_chat_flutter/src/res/theme/chat_dialog_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/contact_info_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/group_info_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/media_theme.dart';
@@ -106,4 +107,21 @@ class IsmChatThemeResolver {
 
   static IsmChatProfileTheme profileFromConfig(BuildContext context) =>
       profile(context, custom: IsmChatConfig.chatTheme.profileTheme);
+
+  static IsmChatDialogTheme dialog(
+    BuildContext context, {
+    IsmChatDialogTheme? custom,
+    Brightness? mode,
+  }) {
+    if (custom != null) return custom;
+    return brightness(context, mode) == Brightness.dark
+        ? IsmChatDialogTheme.dark()
+        : IsmChatDialogTheme.light();
+  }
+
+  /// Popups / alerts. Uses [Theme.of] brightness when [IsmChatConfig.chatBrightness] is unset.
+  static IsmChatDialogTheme dialogFromConfig(BuildContext context) => dialog(
+        context,
+        custom: IsmChatConfig.chatTheme.dialogTheme,
+      );
 }

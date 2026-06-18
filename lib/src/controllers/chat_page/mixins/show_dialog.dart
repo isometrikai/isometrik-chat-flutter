@@ -16,12 +16,79 @@ mixin IsmChatShowDialogMixin on GetxController {
     return IsmChatUtility.chatPageController;
   }
 
-  Future<void> _presentChatConfirmation(IsmChatConfirmationRequest request) =>
-      IsmChatConfirmationHelper.present(request);
+  BuildContext get _dialogHostContext =>
+      IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
+
+  /// Single entry for chat-page alert dialogs — uses [IsmChatThemeResolver.dialogFromConfig].
+  Future<void> _showThemedAlertDialog({
+    required String title,
+    List<String>? actionLabels,
+    List<VoidCallback>? callbackActions,
+    String cancelLabel = IsmChatStrings.cancel,
+    VoidCallback? onCancel,
+    Widget? content,
+    bool barrierDismissible = true,
+  }) =>
+      IsmChatContextWidget.showThemedAlertDialog(
+        context: _dialogHostContext,
+        title: title,
+        actionLabels: actionLabels,
+        callbackActions: callbackActions,
+        cancelLabel: cancelLabel,
+        onCancel: onCancel,
+        content: content,
+        barrierDismissible: barrierDismissible,
+      );
+
+  /// Text field styled from [IsmChatDialogTheme] (group title, etc.).
+  Widget _themedDialogInput(TextEditingController controller) => Builder(
+        builder: (context) {
+          final theme = IsmChatThemeResolver.dialogFromConfig(context);
+          return TextFormField(
+            controller: controller,
+            style: theme.inputTextStyle,
+            cursorColor: theme.inputFocusedBorderColor,
+            decoration: InputDecoration(
+              isDense: true,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(IsmChatDimens.eight),
+                borderSide: BorderSide(color: theme.inputBorderColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(IsmChatDimens.eight),
+                borderSide: BorderSide(color: theme.inputFocusedBorderColor),
+              ),
+              hintStyle: theme.contentTextStyle,
+            ),
+          );
+        },
+      );
+
+  Future<void> _presentChatConfirmation(
+      IsmChatConfirmationRequest request) async {
+    final presenter =
+        IsmChatProperties.chatPageProperties.chatConfirmationPresenter;
+    if (presenter != null) {
+      final handled = await presenter(_dialogHostContext, request);
+      if (handled == true) {
+        return;
+      }
+    }
+    await _showThemedAlertDialog(
+      title: request.title,
+      actionLabels: request.actions.isEmpty
+          ? null
+          : request.actions.map((a) => a.label).toList(),
+      callbackActions: request.actions.isEmpty
+          ? null
+          : request.actions.map((a) => a.onPressed).toList(),
+      cancelLabel: request.cancelLabel ?? IsmChatStrings.cancel,
+      onCancel: request.onCancel,
+    );
+  }
 
   void _runBlockAction({required bool unblock}) {
-    final opponentId =
-        _controller.conversation?.opponentDetails?.userId ?? '';
+    final opponentId = _controller.conversation?.opponentDetails?.userId ?? '';
     if (unblock) {
       _controller.unblockUser(
         opponentId: opponentId,
@@ -52,7 +119,8 @@ mixin IsmChatShowDialogMixin on GetxController {
               label: IsmChatStrings.clearChat,
               onPressed: () => _controller.clearAllMessages(
                 conversation?.conversationId ?? '',
-                fromServer: IsmChatConfirmationHelper.shouldClearMessagesFromServer(
+                fromServer:
+                    IsmChatConfirmationHelper.shouldClearMessagesFromServer(
                   conversation,
                 ),
               ),
@@ -86,12 +154,9 @@ mixin IsmChatShowDialogMixin on GetxController {
   void showDialogForChangeGroupTitle() async {
     _controller.groupTitleController.text =
         _controller.conversation?.chatName ?? '';
-    await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
+    await _showThemedAlertDialog(
       title: IsmChatStrings.enterNewGroupTitle,
-      content: TextFormField(
-        controller: _controller.groupTitleController,
-      ),
+      content: _themedDialogInput(_controller.groupTitleController),
       actionLabels: const [IsmChatStrings.okay],
       callbackActions: [
         () => _controller.changeGroupTitle(
@@ -99,7 +164,7 @@ mixin IsmChatShowDialogMixin on GetxController {
             conversationId: _controller.conversation?.conversationId ?? '',
             isLoading: true),
       ],
-    ));
+    );
   }
 
   /// function to show dialog for changing the group profile
@@ -139,9 +204,8 @@ mixin IsmChatShowDialogMixin on GetxController {
             id: userBlockOrNot
                 ? IsmChatConfirmationActionId.unblock
                 : IsmChatConfirmationActionId.block,
-            label: userBlockOrNot
-                ? IsmChatStrings.unblock
-                : IsmChatStrings.block,
+            label:
+                userBlockOrNot ? IsmChatStrings.unblock : IsmChatStrings.block,
             onPressed: () => _runBlockAction(unblock: userBlockOrNot),
           ),
         ],
@@ -197,8 +261,7 @@ mixin IsmChatShowDialogMixin on GetxController {
             IsmChatConfirmationAction(
               id: IsmChatConfirmationActionId.deleteForEveryone,
               label: IsmChatStrings.deleteForEvery,
-              onPressed: () =>
-                  _controller.deleteMessageForEveryone(messageMap),
+              onPressed: () => _controller.deleteMessageForEveryone(messageMap),
             ),
             IsmChatConfirmationAction(
               id: IsmChatConfirmationActionId.deleteForMe,
@@ -417,34 +480,28 @@ mixin IsmChatShowDialogMixin on GetxController {
         e.userId == IsmChatConfig.communicationConfig.userConfig.userId &&
         e.isAdmin);
     if (adminCount == 1 && !askToLeave && isUserAdmin) {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
-          title: IsmChatStrings.areYouSure,
-          content: const Text(IsmChatStrings.youAreOnlyAdmin),
-          contentTextStyle: IsmChatStyles.w400Grey14,
-          actionLabels: const [IsmChatStrings.exit],
-          callbackActions: [
-            () => showDialogExitButton(true),
-          ],
-          cancelLabel: IsmChatStrings.assignAdmin,
-        ),
+      await _showThemedAlertDialog(
+        title: IsmChatStrings.areYouSure,
+        content: const Text(IsmChatStrings.youAreOnlyAdmin),
+        actionLabels: const [IsmChatStrings.exit],
+        callbackActions: [
+          () => showDialogExitButton(true),
+        ],
+        cancelLabel: IsmChatStrings.assignAdmin,
       );
     } else {
-      await IsmChatContextWidget.showDialogContext(
-        content: IsmChatAlertDialogBox(
-          title: 'Exit ${_controller.conversation?.chatName ?? ''}?',
-          content: const Text(
-            'Only group admins will be notified that you left the group',
-          ),
-          contentTextStyle: IsmChatStyles.w400Grey14,
-          actionLabels: const ['Exit'],
-          callbackActions: [
-            () async => await _controller.leaveGroup(
-                  adminCount: adminCount,
-                  isUserAdmin: isUserAdmin,
-                )
-          ],
+      await _showThemedAlertDialog(
+        title: 'Exit ${_controller.conversation?.chatName ?? ''}?',
+        content: const Text(
+          'Only group admins will be notified that you left the group',
         ),
+        actionLabels: const ['Exit'],
+        callbackActions: [
+          () async => await _controller.leaveGroup(
+                adminCount: adminCount,
+                isUserAdmin: isUserAdmin,
+              )
+        ],
       );
     }
   }

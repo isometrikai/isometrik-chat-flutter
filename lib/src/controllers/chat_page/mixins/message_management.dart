@@ -200,9 +200,12 @@ mixin IsmChatPageMessageManagementMixin on GetxController {
   /// Clears all messages in the conversation.
   Future<void> clearAllMessages(String conversationId,
       {bool fromServer = true}) async {
-    await _controller.viewModel.clearAllMessages(
+    final success = await _controller.viewModel.clearAllMessages(
         conversationId: conversationId, fromServer: fromServer);
     _controller.showDownSideButton = false;
+    if (success) {
+      IsmChatUtility.showToast(IsmChatStrings.chatClearedSuccessfully);
+    }
   }
 
   /// Checks if all selected messages are from the current user.
