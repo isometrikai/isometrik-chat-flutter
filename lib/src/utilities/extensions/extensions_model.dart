@@ -486,6 +486,21 @@ extension MentionMessage on IsmChatMessageModel {
     );
   }
 
+  /// Sender name shown above opponent bubbles in group chats.
+  /// Uses [IsmChatMessageTheme.userNameTextStyle] when set; otherwise SDK default.
+  TextStyle get senderNameTextStyle {
+    final opponentTheme =
+        IsmChatConfig.chatTheme.chatPageTheme?.opponentMessageTheme;
+    if (opponentTheme?.userNameTextStyle != null) {
+      return opponentTheme!.userNameTextStyle!;
+    }
+    return IsmChatStyles.w400Black10.copyWith(
+      color: IsmChatConfig.isChatDarkMode
+          ? IsmChatColors.whiteColor
+          : IsmChatColors.blackColor,
+    );
+  }
+
   /// Returns the read more text style for the message.
   TextStyle get readTextStyle {
     var theme = IsmChatConfig.chatTheme.chatPageTheme;

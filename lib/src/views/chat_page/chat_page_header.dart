@@ -342,9 +342,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                             // For one-on-one chats, check online status before last seen
                             // This ensures that when typing stops, if user is online, it shows "Online" not "Last seen"
                             final isOnline = controller
-                                    .conversation
-                                    ?.opponentDetails
-                                    ?.online ??
+                                    .conversation?.opponentDetails?.online ??
                                 false;
 
                             if (isOnline) {

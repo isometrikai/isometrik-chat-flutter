@@ -147,6 +147,13 @@ class IsmChatThemeResolver {
       borderColor: custom.borderColor ?? defaults.borderColor,
       recordingTimerTextStyle:
           custom.recordingTimerTextStyle ?? defaults.recordingTimerTextStyle,
+      emojiBoardBackgroundColor: custom.emojiBoardBackgroundColor ??
+          defaults.emojiBoardBackgroundColor ??
+          defaults.backgroundColor,
+      emojiBoardCategoryIconColor: custom.emojiBoardCategoryIconColor ??
+          defaults.emojiBoardCategoryIconColor,
+      emojiBoardActionIconColor: custom.emojiBoardActionIconColor ??
+          defaults.emojiBoardActionIconColor,
     );
   }
 

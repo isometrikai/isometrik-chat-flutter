@@ -17,6 +17,9 @@ class IsmChatTextFiledTheme {
     this.borderColor,
     this.hintTextStyle,
     this.recordingTimerTextStyle,
+    this.emojiBoardBackgroundColor,
+    this.emojiBoardCategoryIconColor,
+    this.emojiBoardActionIconColor,
   });
 
   factory IsmChatTextFiledTheme.light() => IsmChatTextFiledTheme(
@@ -30,6 +33,9 @@ class IsmChatTextFiledTheme {
         emojiColor: IsmChatColors.primaryColorLight,
         borderColor: IsmChatColors.primaryColorLight,
         recordingTimerTextStyle: IsmChatStyles.w600Black20,
+        emojiBoardBackgroundColor: IsmChatColors.whiteColor,
+        emojiBoardCategoryIconColor: IsmChatColors.greyColor,
+        emojiBoardActionIconColor: IsmChatColors.blackColor,
       );
 
   factory IsmChatTextFiledTheme.dark() => IsmChatTextFiledTheme(
@@ -45,6 +51,9 @@ class IsmChatTextFiledTheme {
         recordingTimerTextStyle: IsmChatStyles.w600White16.copyWith(
           fontSize: IsmChatDimens.twenty,
         ),
+        emojiBoardBackgroundColor: const Color(0xFF353535),
+        emojiBoardCategoryIconColor: IsmChatColors.greyColorLight,
+        emojiBoardActionIconColor: IsmChatColors.whiteColor,
       );
 
   final TextStyle? inputTextStyle;
@@ -59,4 +68,13 @@ class IsmChatTextFiledTheme {
 
   /// Voice-note recording timer in [IsmChatMessageField].
   final TextStyle? recordingTimerTextStyle;
+
+  /// [EmojiBoard] panel, category bar, and search backgrounds.
+  final Color? emojiBoardBackgroundColor;
+
+  /// Unselected category icons on [EmojiBoard].
+  final Color? emojiBoardCategoryIconColor;
+
+  /// Bottom action bar icons on [EmojiBoard].
+  final Color? emojiBoardActionIconColor;
 }

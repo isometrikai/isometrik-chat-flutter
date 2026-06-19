@@ -52,7 +52,14 @@ class IsmChatThemeData with Diagnosticable {
       );
 
   factory IsmChatThemeData.dark() => IsmChatThemeData(
-        chatPageTheme: IsmChatPageTheme(),
+        chatPageTheme: IsmChatPageTheme(
+          opponentMessageTheme: IsmChatMessageTheme(
+            textColor: IsmChatColors.whiteColor,
+            userNameTextStyle: IsmChatStyles.w400Black10.copyWith(
+              color: IsmChatColors.whiteColor,
+            ),
+          ),
+        ),
         chatPageHeaderTheme: IsmChatHeaderTheme.dark(),
         chatListTheme: const IsmChatListTheme.dark(),
         primaryColor: IsmChatColors.primaryColorDark,

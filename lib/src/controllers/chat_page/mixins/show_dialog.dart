@@ -273,11 +273,17 @@ mixin IsmChatShowDialogMixin on GetxController {
       );
       if (fromMediaPrivew) IsmChatRoute.goBack();
     } else {
+      final senderFullName =
+          '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}'
+              .trim();
+      final senderDisplayName = senderFullName.isNotEmpty
+          ? senderFullName
+          : message.senderInfo?.userName ?? '';
+
       await _presentChatConfirmation(
         IsmChatConfirmationRequest(
           type: IsmChatConfirmationType.deleteMessageOther,
-          title:
-              '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
+          title: '${IsmChatStrings.deleteFromUser} $senderDisplayName',
           conversation: _controller.conversation,
           message: message,
           messages: groupedMediaMessages,
@@ -419,7 +425,7 @@ mixin IsmChatShowDialogMixin on GetxController {
           type: IsmChatConfirmationType.deleteMultipleOther,
           title: messageDeletedForEveryone
               ? titleText
-              : '${IsmChatStrings.deleteFromUser} ${_controller.conversation?.opponentDetails?.userName}',
+              : '${IsmChatStrings.deleteMessages}',
           conversation: _controller.conversation,
           messageCount: messageCount,
           onCancel: onDeleteSelectionCancel,
