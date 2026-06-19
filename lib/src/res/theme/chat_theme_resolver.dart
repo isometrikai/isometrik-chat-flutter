@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/attachment_card_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_dialog_theme.dart';
+import 'package:isometrik_chat_flutter/src/res/theme/chat_reaction_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_textfiled_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/contact_info_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/group_info_theme.dart';
@@ -162,5 +163,23 @@ class IsmChatThemeResolver {
       textField(
         context,
         custom: IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme,
+      );
+
+  static IsmChatReactionTheme reaction(
+    BuildContext context, {
+    IsmChatReactionTheme? custom,
+    Brightness? mode,
+  }) {
+    if (custom != null) return custom;
+    return brightness(context, mode) == Brightness.dark
+        ? IsmChatReactionTheme.dark()
+        : IsmChatReactionTheme.light();
+  }
+
+  /// Message reaction chips ([ImsChatReaction]) and user list ([ImsChatShowUserReaction]).
+  static IsmChatReactionTheme reactionFromConfig(BuildContext context) =>
+      reaction(
+        context,
+        custom: IsmChatConfig.chatTheme.chatPageTheme?.reactionTheme,
       );
 }

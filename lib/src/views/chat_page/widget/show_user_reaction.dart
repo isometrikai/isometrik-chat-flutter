@@ -59,11 +59,14 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
 
   @override
   Widget build(BuildContext context) {
+    final reactionTheme = IsmChatThemeResolver.reactionFromConfig(context);
     var reactionLength = widget.message.reactions?.length ?? 0;
     var allReactions = getAllReaction(widget.message.reactions!);
+    final emojiBackgroundColor = reactionTheme.emojiBackgroundColor ??
+        IsmChatConfig.chatTheme.backgroundColor!;
 
     return Container(
-      color: IsmChatColors.whiteColor,
+      color: reactionTheme.backgroundColor,
       height: IsmChatDimens.percentHeight(.38),
       child: ListView(
         shrinkWrap: true,
@@ -76,10 +79,13 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                 tabAlignment: reactionLength > 3 ? TabAlignment.start : null,
                 controller: _tabController,
                 isScrollable: reactionLength > 3 ? true : false,
+                indicatorColor: IsmChatConfig.chatTheme.primaryColor,
+                labelColor: reactionTheme.tabLabelTextStyle.color,
+                unselectedLabelColor: reactionTheme.tabLabelTextStyle.color,
                 tabs: [
                   Text(
                     '${IsmChatStrings.all} ${allReactions.length} ',
-                    style: IsmChatStyles.w400Black18,
+                    style: reactionTheme.tabLabelTextStyle,
                   ),
                   ...List.generate(reactionLength, (index) {
                     var reactionValue = getIsmChatEmoji(
@@ -104,8 +110,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                       IsmChatConfig.chatTheme.primaryColor!),
                               emojiViewConfig: EmojiViewConfig(
                                 emojiSizeMax: IsmChatDimens.twentyFour,
-                                backgroundColor:
-                                    IsmChatConfig.chatTheme.backgroundColor!,
+                                backgroundColor: emojiBackgroundColor,
                               ),
                             ),
                           ),
@@ -113,7 +118,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                         IsmChatDimens.boxWidth8,
                         Text(
                           '${widget.message.reactions?[index].userIds.length}',
-                          style: IsmChatStyles.w400Black16,
+                          style: reactionTheme.tabCountTextStyle,
                         )
                       ],
                     );
@@ -180,6 +185,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                           ._controller.conversation?.chatName ??
                                       '';
                                 }(),
+                          style: reactionTheme.listTileTitleTextStyle,
                         ),
                         trailing: SizedBox(
                           height: IsmChatDimens.thirtyTwo,
@@ -195,8 +201,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                       IsmChatConfig.chatTheme.primaryColor!),
                               emojiViewConfig: EmojiViewConfig(
                                 emojiSizeMax: IsmChatDimens.twentyFour,
-                                backgroundColor:
-                                    IsmChatConfig.chatTheme.backgroundColor!,
+                                backgroundColor: emojiBackgroundColor,
                               ),
                             ),
                           ),
@@ -210,6 +215,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                   : (widget._controller.conversation
                                           ?.opponentDetails?.userName ??
                                       ''),
+                          style: reactionTheme.listTileSubtitleTextStyle,
                         ),
                         leading: IsmChatImage.profile(showOwnUser
                             ? IsmChatConfig.communicationConfig.userConfig
@@ -283,6 +289,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                               ?.chatName ??
                                           '';
                                     }(),
+                              style: reactionTheme.listTileTitleTextStyle,
                             ),
                             subtitle: Text(
                               showOwnUser
@@ -293,6 +300,7 @@ class _ImsChatShowUserReactionState extends State<ImsChatShowUserReaction>
                                       : (widget._controller.conversation
                                               ?.opponentDetails?.userName ??
                                           ''),
+                              style: reactionTheme.listTileSubtitleTextStyle,
                             ),
                             leading: IsmChatImage.profile(showOwnUser
                                 ? IsmChatConfig.communicationConfig.userConfig
