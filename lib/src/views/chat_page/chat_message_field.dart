@@ -26,6 +26,8 @@ class IsmChatMessageField extends StatelessWidget {
         tag: IsmChat.i.chatPageTag,
         builder: (controller) {
           var messageBody = controller.getMessageBody(controller.replayMessage);
+          final textFieldTheme =
+              IsmChatThemeResolver.textFieldFromConfig(context);
           return Row(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -70,8 +72,10 @@ class IsmChatMessageField extends StatelessWidget {
                           color: Colors.red,
                         ),
                         IsmChatDimens.boxWidth32,
-                        Text(controller.seconds.getTimerRecord,
-                            style: IsmChatStyles.w600Black20),
+                        Text(
+                          controller.seconds.getTimerRecord,
+                          style: textFieldTheme.recordingTimerTextStyle,
+                        ),
                       ],
                     ),
                   ),

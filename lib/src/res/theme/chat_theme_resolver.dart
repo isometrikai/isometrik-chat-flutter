@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/attachment_card_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_dialog_theme.dart';
+import 'package:isometrik_chat_flutter/src/res/theme/chat_textfiled_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/contact_info_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/group_info_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/media_theme.dart';
@@ -123,5 +124,36 @@ class IsmChatThemeResolver {
   static IsmChatDialogTheme dialogFromConfig(BuildContext context) => dialog(
         context,
         custom: IsmChatConfig.chatTheme.dialogTheme,
+      );
+
+  static IsmChatTextFiledTheme textField(
+    BuildContext context, {
+    IsmChatTextFiledTheme? custom,
+    Brightness? mode,
+  }) {
+    final defaults = brightness(context, mode) == Brightness.dark
+        ? IsmChatTextFiledTheme.dark()
+        : IsmChatTextFiledTheme.light();
+    if (custom == null) return defaults;
+    return IsmChatTextFiledTheme(
+      inputTextStyle: custom.inputTextStyle ?? defaults.inputTextStyle,
+      hintTextStyle: custom.hintTextStyle ?? defaults.hintTextStyle,
+      decoration: custom.decoration ?? defaults.decoration,
+      backgroundColor: custom.backgroundColor ?? defaults.backgroundColor,
+      cursorColor: custom.cursorColor ?? defaults.cursorColor,
+      textfieldInsets: custom.textfieldInsets ?? defaults.textfieldInsets,
+      attchmentColor: custom.attchmentColor ?? defaults.attchmentColor,
+      emojiColor: custom.emojiColor ?? defaults.emojiColor,
+      borderColor: custom.borderColor ?? defaults.borderColor,
+      recordingTimerTextStyle:
+          custom.recordingTimerTextStyle ?? defaults.recordingTimerTextStyle,
+    );
+  }
+
+  /// Message composer ([IsmChatMessageField]).
+  static IsmChatTextFiledTheme textFieldFromConfig(BuildContext context) =>
+      textField(
+        context,
+        custom: IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme,
       );
 }

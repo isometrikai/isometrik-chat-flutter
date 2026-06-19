@@ -60,6 +60,8 @@ class IsmChatPageTheme {
   final Color? backgroundColor;
 
   final IsmChatSendButtonTheme? sendButtonTheme;
+
+  /// Composer ([IsmChatMessageField]). Null → SDK light/dark via [IsmChatThemeResolver.textFieldFromConfig].
   final IsmChatTextFiledTheme? textFiledTheme;
   final IsmChatTextFiledTheme? searchTextFiledTheme;
   final IsmChatCenterMessageTheme? centerMessageTheme;
