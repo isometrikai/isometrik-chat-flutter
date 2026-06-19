@@ -361,28 +361,12 @@ class MessageBubble extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.shortcut_outlined,
-                              color: IsmChatColors.whiteColor,
+                              color: _message.forwardedIconColor,
                               size: IsmChatDimens.fifteen,
                             ),
                             Text(
                               IsmChatStrings.forwarded,
-                              style: _message.sentByMe
-                                  ? IsmChatStyles.w400White12.copyWith(
-                                      color: IsmChatConfig
-                                              .chatTheme
-                                              .chatPageTheme
-                                              ?.selfMessageTheme
-                                              ?.textColor ??
-                                          IsmChatColors.whiteColor,
-                                    )
-                                  : IsmChatStyles.w400Black12.copyWith(
-                                      color: IsmChatConfig
-                                              .chatTheme
-                                              .chatPageTheme
-                                              ?.selfMessageTheme
-                                              ?.textColor ??
-                                          IsmChatColors.blackColor,
-                                    ),
+                              style: _message.forwardedTextStyle,
                             ),
                           ],
                         )

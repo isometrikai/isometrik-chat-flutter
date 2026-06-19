@@ -232,23 +232,34 @@ class IsmChatConversationsViewModel {
     String? customType,
     List<Map<String, dynamic>>? attachments,
     bool isLoading = false,
-  }) async =>
-      await _repository.sendForwardMessage(
-        userIds: userIds,
-        showInConversation: showInConversation,
-        messageType: messageType,
-        encrypted: encrypted,
-        deviceId: deviceId,
-        body: body,
-        notificationBody: notificationBody,
-        notificationTitle: notificationTitle,
-        attachments: attachments,
-        customType: customType,
-        events: events,
-        metaData: metaData,
-        searchableTags: searchableTags,
-        isLoading: isLoading,
-      );
+  }) async {
+    final response = await _repository.sendForwardMessage(
+      userIds: userIds,
+      showInConversation: showInConversation,
+      messageType: messageType,
+      encrypted: encrypted,
+      deviceId: deviceId,
+      body: body,
+      notificationBody: notificationBody,
+      notificationTitle: notificationTitle,
+      attachments: attachments,
+      customType: customType,
+      events: events,
+      metaData: metaData,
+      searchableTags: searchableTags,
+      isLoading: isLoading,
+    );
+    if (response != null && !response.hasError) {
+      await _refreshConversationsAfterForward();
+    }
+    return response;
+  }
+
+  /// Keeps chat list in sync when forward is sent outside SDK forward UI.
+  Future<void> _refreshConversationsAfterForward() async {
+    if (!IsmChatUtility.conversationControllerRegistered) return;
+    await IsmChatUtility.conversationController.getChatConversations();
+  }
 
   Future<List<IsmChatConversationModel>?> getPublicAndOpenConversation({
     required int conversationType,
