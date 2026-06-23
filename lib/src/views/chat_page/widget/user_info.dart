@@ -374,30 +374,40 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                         widget.user?.userId) ...[
                       ListTile(
                         onTap: () async {
-                          await IsmChatContextWidget.showDialogContext(
-                            content: IsmChatAlertDialogBox(
+                          final chatController =
+                              IsmChatUtility.chatPageController;
+                          await IsmChatConfirmationHelper.present(
+                            IsmChatConfirmationRequest(
+                              type: isUserBlock
+                                  ? IsmChatConfirmationType.confirmUnblock
+                                  : IsmChatConfirmationType.confirmBlock,
                               title: isUserBlock
                                   ? IsmChatStrings.doWantUnBlckUser
                                   : IsmChatStrings.doWantBlckUser,
-                              actionLabels: [
-                                isUserBlock
-                                    ? IsmChatStrings.unblock
-                                    : IsmChatStrings.block,
-                              ],
-                              callbackActions: [
-                                () {
-                                  IsmChatRoute.goBack();
-                                  isUserBlock
-                                      ? controller.unblockUser(
-                                          opponentId: widget.user?.userId ?? '',
-                                          fromUser: true,
-                                          userBlockOrNot: isUserBlock,
-                                        )
-                                      : controller.blockUser(
-                                          opponentId: widget.user?.userId ?? '',
-                                          userBlockOrNot: isUserBlock,
-                                        );
-                                },
+                              conversation: chatController.conversation,
+                              actions: [
+                                IsmChatConfirmationAction(
+                                  id: isUserBlock
+                                      ? IsmChatConfirmationActionId.unblock
+                                      : IsmChatConfirmationActionId.block,
+                                  label: isUserBlock
+                                      ? IsmChatStrings.unblock
+                                      : IsmChatStrings.block,
+                                  onPressed: () {
+                                    if (isUserBlock) {
+                                      chatController.unblockUser(
+                                        opponentId: widget.user?.userId ?? '',
+                                        fromUser: true,
+                                        userBlockOrNot: isUserBlock,
+                                      );
+                                    } else {
+                                      chatController.blockUser(
+                                        opponentId: widget.user?.userId ?? '',
+                                        userBlockOrNot: isUserBlock,
+                                      );
+                                    }
+                                  },
+                                ),
                               ],
                             ),
                           );

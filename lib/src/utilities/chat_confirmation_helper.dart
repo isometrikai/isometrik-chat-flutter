@@ -2,6 +2,10 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Presents block/delete/clear/delete-chat confirmations via
 /// [IsmChatPageProperties.chatConfirmationPresenter] or default dialog.
+///
+/// When [IsmChatPageProperties.chatConfirmationPresenter] is set, the SDK never
+/// shows its default dialog after the presenter completes. Call [presentDefault]
+/// from the presenter if a specific request should use the SDK UI.
 class IsmChatConfirmationHelper {
   IsmChatConfirmationHelper._();
 
@@ -11,13 +15,15 @@ class IsmChatConfirmationHelper {
     final context =
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
     if (presenter != null) {
-      final handled = await presenter(context, request);
-      if (handled == true) {
-        return;
-      }
-      // null / false → use default SDK dialog below
+      await presenter(context, request);
+      return;
     }
 
+    await presentDefault(request);
+  }
+
+  /// SDK default [IsmChatAlertDialogBox]. Use from a custom presenter when needed.
+  static Future<void> presentDefault(IsmChatConfirmationRequest request) async {
     final labels = request.actions.map((a) => a.label).toList();
     final callbacks = request.actions.map((a) => a.onPressed).toList();
     await IsmChatContextWidget.showDialogContext(
