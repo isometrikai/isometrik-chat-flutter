@@ -31,13 +31,6 @@ mixin IsmChatPageSendMessageDocumentMixin {
                 IsmChatCustomMessageType.file,
                 _controller.chatInputController.text.trim()) ??
         true) {
-      IsmChatMessageModel? documentMessage;
-      String? nameWithExtension;
-      Uint8List? bytes;
-      Uint8List? thumbnailBytes;
-      String? thumbnailNameWithExtension;
-      String? thumbnailMediaId;
-      final sentAt = DateTime.now().millisecondsSinceEpoch;
       final result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
         type: FileType.custom,
@@ -49,134 +42,143 @@ mixin IsmChatPageSendMessageDocumentMixin {
         // Note: createConversation is provided by send_message_core mixin
         conversationId = await _controller.createConversation(
             conversationId: conversationId, userId: userId);
-        final resultFiles = result?.files ?? [];
-        for (var x in resultFiles) {
-          bytes = x.bytes;
-          final sizeMedia = kIsWeb
-              ? IsmChatUtility.formatBytes(
-                  int.parse((bytes?.length ?? 0).toString()),
-                )
-              : await IsmChatUtility.fileToSize(File(x.path ?? ''));
-          if (sizeMedia.size()) {
-            final bytesForPdf = Uint8List.fromList(bytes ?? []);
-            final document = kIsWeb
-                ? await PdfDocument.openData(bytesForPdf)
-                : await PdfDocument.openFile(x.path ?? '');
-            final page = await document.getPage(1);
-            final pdfImage = await page.render(
-              width: page.width,
-              height: page.height,
-              backgroundColor: '#ffffff',
-            );
-            await page.close();
-            await document.close();
-            thumbnailBytes = pdfImage?.bytes;
-            thumbnailNameWithExtension = pdfImage?.format.toString();
-            thumbnailMediaId = sentAt.toString();
-            nameWithExtension = x.name;
-            documentMessage = IsmChatMessageModel(
-              body: IsmChatStrings.document,
-              conversationId: conversationId,
-              senderInfo: _controller.currentUser,
-              customType: _controller.isreplying
-                  ? IsmChatCustomMessageType.reply
-                  : IsmChatCustomMessageType.file,
-              attachments: [
-                AttachmentModel(
-                  attachmentType: IsmChatMediaType.file,
-                  thumbnailUrl: pdfImage?.bytes.toString(),
-                  size: bytes?.length,
-                  name: nameWithExtension,
-                  mimeType: x.extension,
-                  mediaUrl: kIsWeb ? (bytes).toString() : x.path,
-                  mediaId: sentAt.toString(),
-                  extension: x.extension,
-                )
-              ],
-              deliveredToAll: false,
-              messageId: '',
-              deviceId:
-                  IsmChatConfig.communicationConfig.projectConfig.deviceId,
-              messageType: _controller.isreplying
-                  ? IsmChatMessageType.reply
-                  : IsmChatMessageType.normal,
-              messagingDisabled: false,
-              parentMessageId: _controller.isreplying
-                  ? _controller.replayMessage?.messageId
-                  : '',
-              readByAll: false,
-              sentAt: sentAt,
-              sentByMe: true,
-              isUploading: true,
-              metaData: IsmChatMetaData(
-                messageSentAt: sentAt,
-                isDownloaded: true,
-                replyMessage: _controller.isreplying
-                    ? IsmChatReplyMessageModel(
-                        forMessageType: IsmChatCustomMessageType.file,
-                        parentMessageMessageType:
-                            _controller.replayMessage?.customType,
-                        parentMessageInitiator:
-                            _controller.replayMessage?.sentByMe,
-                        parentMessageBody: _controller
-                            .getMessageBody(_controller.replayMessage),
-                        parentMessageUserId:
-                            _controller.replayMessage?.senderInfo?.userId,
-                        parentMessageUserName:
-                            _controller.replayMessage?.senderInfo?.userName ??
-                                '',
-                      )
-                    : null,
-              ),
-            );
-          } else {
-            await IsmChatContextWidget.showDialogContext(
-              content: const IsmChatAlertDialogBox(
-                title: IsmChatStrings.youCanNotSend,
-                cancelLabel: IsmChatStrings.okay,
-              ),
-            );
-          }
+        for (final file in result!.files) {
+          await _sendPickedDocumentFile(
+            conversationId: conversationId,
+            file: file,
+          );
         }
-      }
-
-      if (documentMessage != null) {
-        _controller.messages.add(documentMessage);
-        unawaited(_controller.scrollDown());
-        _controller.isreplying = false;
-
-        if (!_controller.isBroadcast) {
-          await IsmChatConfig.dbWrapper!
-              .saveMessage(documentMessage, IsmChatDbBox.pending);
-          if (kIsWeb &&
-              IsmChatResponsive.isWeb(
-                  IsmChatConfig.kNavigatorKey.currentContext ??
-                      IsmChatConfig.context)) {
-            _controller.updateLastMessagOnCurrentTime(documentMessage);
-          }
-        }
-
-        final notificationTitle =
-            IsmChatConfig.communicationConfig.userConfig.userName ??
-                _controller.conversationController.userDetails?.userName ??
-                '';
-        // Note: ismPostMediaUrl is provided by send_message_media mixin
-        await _controller.ismPostMediaUrl(
-          imageAndFile: false,
-          bytes: bytes ?? Uint8List(0),
-          createdAt: sentAt,
-          ismChatChatMessageModel: documentMessage,
-          mediaId: sentAt.toString(),
-          mediaType: IsmChatMediaType.file.value,
-          nameWithExtension: nameWithExtension ?? '',
-          notificationBody: IsmChatStrings.sentDoc,
-          notificationTitle: notificationTitle,
-          thumbnailNameWithExtension: thumbnailNameWithExtension,
-          thumbnailMediaId: thumbnailMediaId,
-          thumbnailBytes: thumbnailBytes,
-          thumbanilMediaType: IsmChatMediaType.image.value,
-        );
       }
     }
+  }
+
+  /// Builds and uploads one picked PDF as a chat message.
+  Future<void> _sendPickedDocumentFile({
+    required String conversationId,
+    required PlatformFile file,
+  }) async {
+    final bytes = file.bytes;
+    final sizeMedia = kIsWeb
+        ? IsmChatUtility.formatBytes(
+            int.parse((bytes?.length ?? 0).toString()),
+          )
+        : await IsmChatUtility.fileToSize(File(file.path ?? ''));
+    if (!sizeMedia.size()) {
+      await IsmChatContextWidget.showDialogContext(
+        content: const IsmChatAlertDialogBox(
+          title: IsmChatStrings.youCanNotSend,
+          cancelLabel: IsmChatStrings.okay,
+        ),
+      );
+      return;
+    }
+
+    final sentAt = DateTime.now().millisecondsSinceEpoch;
+    final mediaId = sentAt.toString();
+    final bytesForPdf = Uint8List.fromList(bytes ?? []);
+    final document = kIsWeb
+        ? await PdfDocument.openData(bytesForPdf)
+        : await PdfDocument.openFile(file.path ?? '');
+    final page = await document.getPage(1);
+    final pdfImage = await page.render(
+      width: page.width,
+      height: page.height,
+      backgroundColor: '#ffffff',
+    );
+    await page.close();
+    await document.close();
+
+    final thumbnailBytes = pdfImage?.bytes;
+    final thumbnailNameWithExtension = pdfImage?.format.toString();
+    final thumbnailMediaId = mediaId;
+    final nameWithExtension = file.name;
+
+    final documentMessage = IsmChatMessageModel(
+      body: IsmChatStrings.document,
+      conversationId: conversationId,
+      senderInfo: _controller.currentUser,
+      customType: _controller.isreplying
+          ? IsmChatCustomMessageType.reply
+          : IsmChatCustomMessageType.file,
+      attachments: [
+        AttachmentModel(
+          attachmentType: IsmChatMediaType.file,
+          thumbnailUrl: pdfImage?.bytes.toString(),
+          size: bytes?.length,
+          name: nameWithExtension,
+          mimeType: file.extension,
+          mediaUrl: kIsWeb ? (bytes).toString() : file.path,
+          mediaId: mediaId,
+          extension: file.extension,
+        )
+      ],
+      deliveredToAll: false,
+      messageId: '',
+      deviceId: IsmChatConfig.communicationConfig.projectConfig.deviceId,
+      messageType: _controller.isreplying
+          ? IsmChatMessageType.reply
+          : IsmChatMessageType.normal,
+      messagingDisabled: false,
+      parentMessageId:
+          _controller.isreplying ? _controller.replayMessage?.messageId : '',
+      readByAll: false,
+      sentAt: sentAt,
+      sentByMe: true,
+      isUploading: true,
+      metaData: IsmChatMetaData(
+        messageSentAt: sentAt,
+        isDownloaded: true,
+        replyMessage: _controller.isreplying
+            ? IsmChatReplyMessageModel(
+                forMessageType: IsmChatCustomMessageType.file,
+                parentMessageMessageType:
+                    _controller.replayMessage?.customType,
+                parentMessageInitiator: _controller.replayMessage?.sentByMe,
+                parentMessageBody:
+                    _controller.getMessageBody(_controller.replayMessage),
+                parentMessageUserId:
+                    _controller.replayMessage?.senderInfo?.userId,
+                parentMessageUserName:
+                    _controller.replayMessage?.senderInfo?.userName ?? '',
+              )
+            : null,
+      ),
+    );
+
+    _controller.messages.add(documentMessage);
+    unawaited(_controller.scrollDown());
+    _controller.isreplying = false;
+
+    if (!_controller.isBroadcast) {
+      await IsmChatConfig.dbWrapper!
+          .saveMessage(documentMessage, IsmChatDbBox.pending);
+      if (kIsWeb &&
+          IsmChatResponsive.isWeb(
+              IsmChatConfig.kNavigatorKey.currentContext ??
+                  IsmChatConfig.context)) {
+        _controller.updateLastMessagOnCurrentTime(documentMessage);
+      }
+    }
+
+    final notificationTitle =
+        IsmChatConfig.communicationConfig.userConfig.userName ??
+            _controller.conversationController.userDetails?.userName ??
+            '';
+    // Note: ismPostMediaUrl is provided by send_message_media mixin
+    await _controller.ismPostMediaUrl(
+      imageAndFile: false,
+      bytes: bytes ?? Uint8List(0),
+      createdAt: sentAt,
+      ismChatChatMessageModel: documentMessage,
+      mediaId: mediaId,
+      mediaType: IsmChatMediaType.file.value,
+      nameWithExtension: nameWithExtension,
+      notificationBody: IsmChatStrings.sentDoc,
+      notificationTitle: notificationTitle,
+      thumbnailNameWithExtension: thumbnailNameWithExtension,
+      thumbnailMediaId: thumbnailMediaId,
+      thumbnailBytes: thumbnailBytes,
+      thumbanilMediaType: IsmChatMediaType.image.value,
+    );
   }
 }
