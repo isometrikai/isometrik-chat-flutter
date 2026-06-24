@@ -462,6 +462,18 @@ extension MentionMessage on IsmChatMessageModel {
         .contains(IsmChatFeature.deleteMessage)) {
       menu.remove(IsmChatFocusMenuType.delete);
     }
+    if (![
+      IsmChatCustomMessageType.audio,
+      IsmChatCustomMessageType.image,
+      IsmChatCustomMessageType.video,
+      IsmChatCustomMessageType.file,
+    ].contains(customType)) {
+      menu.remove(IsmChatFocusMenuType.save);
+    }
+    if (!IsmChatProperties.chatPageProperties.features
+        .contains(IsmChatFeature.mediaDownload)) {
+      menu.remove(IsmChatFocusMenuType.save);
+    }
 
     if (!(IsmChatProperties.chatPageProperties.canReplayMessage?.call(this) ??
         true)) {

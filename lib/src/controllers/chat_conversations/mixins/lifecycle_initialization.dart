@@ -16,6 +16,8 @@ mixin IsmChatConversationsLifecycleInitializationMixin on GetxController {
     _controller.intilizedContrller = false;
     _controller._isInterNetConnect();
     _generateReactionList();
+    // Cached conversations first so the list renders before user/API work.
+    await _controller.getConversationsFromDB();
     var users = await IsmChatConfig.dbWrapper?.userDetailsBox
         .get(IsmChatStrings.userData);
     if (users != null) {
@@ -23,7 +25,6 @@ mixin IsmChatConversationsLifecycleInitializationMixin on GetxController {
     } else {
       await _controller.getUserData();
     }
-    await _controller.getConversationsFromDB();
     await _controller.getChatConversations();
     if (Get.isRegistered<IsmChatMqttController>()) {
       final mqttController = Get.find<IsmChatMqttController>();
