@@ -18,10 +18,13 @@ import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
+    if (dart.library.html) 'package:isometrik_chat_flutter/src/utilities/blob_html.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class IsmChatUtility {
@@ -535,6 +538,141 @@ class IsmChatUtility {
     } on GalException catch (e, st) {
       IsmChatLog.error('error $e stack straas $st');
     }
+  }
+
+  /// Resolves a stable on-disk file name from attachment metadata or URL.
+  static String resolveSaveFileName({
+    required String fileName,
+    required String url,
+    String extension = '',
+  }) {
+    final trimmed = fileName.trim();
+    if (trimmed.isNotEmpty) return trimmed;
+
+    if (url.isValidUrl) {
+      final fromUrl = basename(Uri.parse(url).path);
+      if (fromUrl.isNotEmpty) return fromUrl;
+    }
+
+    final ext = extension.trim().toLowerCase();
+    return ext.isNotEmpty ? 'file.$ext' : 'file';
+  }
+
+  /// Saves audio, documents, and other non-gallery files to device storage.
+  ///
+  /// Network files download to a temp file first (same pattern as gallery media),
+  /// then copy to Downloads or app documents. Modern Android does not require
+  /// legacy storage permission for app-scoped paths.
+  static Future<void> saveFileToDevice({
+    required String url,
+    required String fileName,
+    void Function(int)? downloadProgress,
+  }) async {
+    if (kIsWeb) {
+      if (url.isValidUrl) {
+        IsmChatBlob.fileDownloadWithUrl(url);
+      } else {
+        IsmChatBlob.fileDownloadWithBytes(
+          url.strigToUnit8List,
+          downloadName: fileName,
+        );
+      }
+      showToast('Save your media');
+      return;
+    }
+
+    try {
+      final resolvedName = resolveSaveFileName(fileName: fileName, url: url);
+      late final File sourceFile;
+
+      if (url.isValidUrl) {
+        sourceFile = await _downloadUrlToTempFile(
+          url: url,
+          fileName: resolvedName,
+          onProgress: downloadProgress,
+        );
+      } else {
+        sourceFile = File(url);
+        if (!await sourceFile.exists()) {
+          showToast('Unable to save media');
+          return;
+        }
+      }
+
+      final savedPath = await _copySavedFileToDevice(sourceFile, resolvedName);
+      if (savedPath == null) {
+        await SharePlus.instance.share(
+          ShareParams(files: [XFile(sourceFile.path)]),
+        );
+        showToast('Save your media');
+        return;
+      }
+
+      showToast('Saved media successfully');
+    } catch (e, st) {
+      IsmChatLog.error('saveFileToDevice error: $e', st);
+      showToast('Unable to save media');
+    }
+  }
+
+  static Future<File> _downloadUrlToTempFile({
+    required String url,
+    required String fileName,
+    void Function(int)? onProgress,
+  }) async {
+    final tempPath = join(Directory.systemTemp.path, fileName);
+    final dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 120),
+      ),
+    );
+    final response = await dio.download(
+      url,
+      tempPath,
+      deleteOnError: true,
+      onReceiveProgress: (count, total) {
+        if (total > 0) {
+          onProgress?.call(((count / total) * 100).floor());
+        }
+      },
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Download failed (${response.statusCode})');
+    }
+
+    final file = File(tempPath);
+    if (!await file.exists() || await file.length() == 0) {
+      throw Exception('Downloaded file is empty');
+    }
+    return file;
+  }
+
+  static Future<String?> _copySavedFileToDevice(
+    File sourceFile,
+    String fileName,
+  ) async {
+    final downloadsDir = await getDownloadsDirectory();
+    final destinations = <Directory>[
+      if (downloadsDir != null) downloadsDir,
+      await getApplicationDocumentsDirectory(),
+    ];
+
+    for (final directory in destinations) {
+      try {
+        final destPath = join(directory.path, fileName);
+        final copied = await sourceFile.copy(destPath);
+        if (await copied.exists() && await copied.length() > 0) {
+          return destPath;
+        }
+      } catch (e, st) {
+        IsmChatLog.error(
+          'saveFileToDevice copy failed (${directory.path}): $e',
+          st,
+        );
+      }
+    }
+    return null;
   }
 
   static Widget buildSusWidget(String susTag) => Container(

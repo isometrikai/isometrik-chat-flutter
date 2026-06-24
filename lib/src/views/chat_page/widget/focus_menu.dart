@@ -4,6 +4,43 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Resolved label / icon / row colors for [IsmChatFocusMenu] items.
+class _FocusMenuItemStyle {
+  const _FocusMenuItemStyle({
+    required this.backgroundColor,
+    required this.labelColor,
+    required this.iconColor,
+  });
+
+  final Color backgroundColor;
+  final Color labelColor;
+  final Color iconColor;
+}
+
+_FocusMenuItemStyle _focusMenuItemStyle(
+  BuildContext context,
+  IsmChatFocusMenuType item,
+) {
+  if (item == IsmChatFocusMenuType.delete) {
+    return const _FocusMenuItemStyle(
+      backgroundColor: IsmChatColors.redColor,
+      labelColor: IsmChatColors.whiteColor,
+      iconColor: IsmChatColors.whiteColor,
+    );
+  }
+
+  final headerTheme = IsmChatConfig.chatTheme.chatPageHeaderTheme;
+  final isDark = IsmChatThemeResolver.brightness(context) == Brightness.dark;
+  return _FocusMenuItemStyle(
+    backgroundColor: headerTheme?.popupBackgroundColor ??
+        (isDark ? const Color(0xFF353535) : IsmChatColors.whiteColor),
+    labelColor: headerTheme?.popupLableColor ??
+        (isDark ? IsmChatColors.whiteColor : IsmChatColors.blackColor),
+    iconColor: headerTheme?.iconColor ??
+        (isDark ? IsmChatColors.whiteColor : IsmChatColors.blackColor),
+  );
+}
+
 class IsmChatFocusMenu extends StatelessWidget {
   IsmChatFocusMenu(
     this.message, {
@@ -83,6 +120,8 @@ class IsmChatFocusMenu extends StatelessWidget {
                                 shrinkWrap: true,
                                 itemBuilder: (_, index) {
                                   var item = message.focusMenuList[index];
+                                  final itemStyle =
+                                      _focusMenuItemStyle(context, item);
                                   return IsmChatTapHandler(
                                     onTap: () {
                                       controller
@@ -99,11 +138,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                                           IsmChatDimens.forty,
                                       padding: IsmChatDimens.edgeInsets16_0,
                                       decoration: BoxDecoration(
-                                        color:
-                                            item == IsmChatFocusMenuType.delete
-                                                ? IsmChatColors.redColor
-                                                : IsmChatConfig
-                                                    .chatTheme.backgroundColor,
+                                        color: itemStyle.backgroundColor,
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -117,20 +152,13 @@ class IsmChatFocusMenu extends StatelessWidget {
                                                   .chatPageTheme
                                                   ?.messgaeFocusedTheme
                                                   ?.fontSize,
-                                              color: item ==
-                                                      IsmChatFocusMenuType
-                                                          .delete
-                                                  ? IsmChatColors.whiteColor
-                                                  : null,
+                                              color: itemStyle.labelColor,
                                             ),
                                           ),
                                           const Spacer(),
                                           Icon(
                                             item.icon,
-                                            color: item ==
-                                                    IsmChatFocusMenuType.delete
-                                                ? IsmChatColors.whiteColor
-                                                : null,
+                                            color: itemStyle.iconColor,
                                             size: IsmChatConfig
                                                 .chatTheme
                                                 .chatPageTheme
@@ -212,7 +240,12 @@ class IsmChatFocusMenu extends StatelessWidget {
                               width: IsmChatDimens.oneHundredSeventy,
                               decoration: BoxDecoration(
                                 color: IsmChatConfig.chatTheme
-                                    .chatPageHeaderTheme?.popupBackgroundColor,
+                                        .chatPageHeaderTheme
+                                        ?.popupBackgroundColor ??
+                                    (IsmChatThemeResolver.brightness(context) ==
+                                            Brightness.dark
+                                        ? const Color(0xFF353535)
+                                        : IsmChatColors.whiteColor),
                                 borderRadius: BorderRadius.circular(
                                   IsmChatDimens.sixteen,
                                 ),
@@ -226,6 +259,9 @@ class IsmChatFocusMenu extends StatelessWidget {
                                         itemBuilder: (_, index) {
                                           var item =
                                               message.focusMenuList[index];
+                                          final itemStyle =
+                                              _focusMenuItemStyle(
+                                                  context, item);
                                           return IsmChatTapHandler(
                                             onTap: () {
                                               IsmChatRoute.goBack();
@@ -242,16 +278,7 @@ class IsmChatFocusMenu extends StatelessWidget {
                                               padding:
                                                   IsmChatDimens.edgeInsets16_0,
                                               decoration: BoxDecoration(
-                                                color: item ==
-                                                        IsmChatFocusMenuType
-                                                            .delete
-                                                    ? IsmChatColors.redColor
-                                                    : IsmChatConfig
-                                                            .chatTheme
-                                                            .chatPageHeaderTheme
-                                                            ?.popupBackgroundColor ??
-                                                        IsmChatConfig.chatTheme
-                                                            .backgroundColor,
+                                                color: itemStyle.backgroundColor,
                                               ),
                                               child: Row(
                                                 children: [
@@ -260,29 +287,14 @@ class IsmChatFocusMenu extends StatelessWidget {
                                                     style: IsmChatStyles
                                                         .w400Black12
                                                         .copyWith(
-                                                      color: item ==
-                                                              IsmChatFocusMenuType
-                                                                  .delete
-                                                          ? IsmChatColors
-                                                              .whiteColor
-                                                          : IsmChatConfig
-                                                              .chatTheme
-                                                              .chatPageHeaderTheme
-                                                              ?.popupLableColor,
+                                                      color:
+                                                          itemStyle.labelColor,
                                                     ),
                                                   ),
                                                   const Spacer(),
                                                   Icon(
                                                     item.icon,
-                                                    color: item ==
-                                                            IsmChatFocusMenuType
-                                                                .delete
-                                                        ? IsmChatColors
-                                                            .whiteColor
-                                                        : IsmChatConfig
-                                                            .chatTheme
-                                                            .chatPageHeaderTheme
-                                                            ?.iconColor,
+                                                    color: itemStyle.iconColor,
                                                   ),
                                                 ],
                                               ),

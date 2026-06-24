@@ -62,111 +62,131 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: IsmChatColors.blackColor,
-        appBar: AppBar(
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.light,
-            statusBarColor: IsmChatColors.blackColor,
-            statusBarBrightness: Brightness.dark,
-          ),
-          backgroundColor: IsmChatColors.blackColor,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                initiated
-                    ? IsmChatStrings.you
-                    : widget.mediaUserName.toString(),
-                style: IsmChatStyles.w400White16,
-              ),
-              Text(
-                mediaTime,
-                style: IsmChatStyles.w400White14,
-              )
-            ],
-          ),
-          centerTitle: false,
-          leading: InkWell(
-            child: Icon(
-              Icons.adaptive.arrow_back,
-              color: IsmChatColors.whiteColor,
+  Widget build(BuildContext context) {
+    final mediaTheme = IsmChatThemeResolver.mediaFromConfig(context);
+    final dialogTheme = IsmChatThemeResolver.dialogFromConfig(context);
+    final headerTheme = IsmChatConfig.chatTheme.chatPageHeaderTheme;
+    final isDark = IsmChatThemeResolver.brightness(context) == Brightness.dark;
+    final iconColor =
+        headerTheme?.iconColor ?? mediaTheme.appBarIconColor;
+    final menuLabelStyle = mediaTheme.docTitleTextStyle;
+
+    return Scaffold(
+      backgroundColor: mediaTheme.previewBackgroundColor,
+      appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+          statusBarColor: mediaTheme.previewBackgroundColor,
+          statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        ),
+        backgroundColor: mediaTheme.previewBackgroundColor,
+        iconTheme: IconThemeData(color: iconColor),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              initiated ? IsmChatStrings.you : widget.mediaUserName.toString(),
+              style: mediaTheme.previewTitleTextStyle,
             ),
-            onTap: () {
-              IsmChatRoute.goBack<void>();
-            },
-          ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(
-                  right: IsmChatDimens.five, top: IsmChatDimens.two),
-              child: PopupMenuButton(
-                icon: const Icon(
-                  Icons.more_vert,
-                  color: IsmChatColors.whiteColor,
-                ),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 1,
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.share_rounded,
-                          color: IsmChatColors.blackColor,
-                        ),
-                        IsmChatDimens.boxWidth8,
-                        const Text(IsmChatStrings.share)
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 2,
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.save_rounded,
-                          color: IsmChatColors.blackColor,
-                        ),
-                        IsmChatDimens.boxWidth8,
-                        const Text(IsmChatStrings.save)
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 3,
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.delete_rounded,
-                          color: IsmChatColors.blackColor,
-                        ),
-                        IsmChatDimens.boxWidth8,
-                        const Text(IsmChatStrings.delete)
-                      ],
-                    ),
-                  ),
-                ],
-                elevation: 1,
-                onSelected: (value) async {
-                  if (value == 1) {
-                    await chatPageController
-                        .shareMedia(widget.messageData[mediaIndex]);
-                  } else if (value == 2) {
-                    await chatPageController
-                        .saveMedia(widget.messageData[mediaIndex]);
-                  } else if (value == 3) {
-                    await chatPageController.showDialogForMessageDelete(
-                        widget.messageData[mediaIndex],
-                        fromMediaPrivew: true);
-                  }
-                },
-              ),
-            ),
+            Text(
+              mediaTime,
+              style: mediaTheme.previewSubtitleTextStyle,
+            )
           ],
         ),
-        body: SizedBox(
-          height: IsmChatDimens.percentHeight(1),
-          width: IsmChatDimens.percentWidth(1),
+        centerTitle: false,
+        leading: IconButton(
+          onPressed: IsmChatRoute.goBack<void>,
+          icon: Icon(
+            IsmChatResponsive.isWeb(context)
+                ? Icons.close_rounded
+                : Icons.arrow_back_rounded,
+            color: iconColor,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(
+                right: IsmChatDimens.five, top: IsmChatDimens.two),
+            child: PopupMenuButton(
+              color: dialogTheme.backgroundColor,
+              icon: Icon(
+                Icons.more_vert,
+                color: iconColor,
+              ),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.share_rounded,
+                        color: iconColor,
+                      ),
+                      IsmChatDimens.boxWidth8,
+                      Text(
+                        IsmChatStrings.share,
+                        style: menuLabelStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.save_rounded,
+                        color: iconColor,
+                      ),
+                      IsmChatDimens.boxWidth8,
+                      Text(
+                        IsmChatStrings.save,
+                        style: menuLabelStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 3,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_rounded,
+                        color: iconColor,
+                      ),
+                      IsmChatDimens.boxWidth8,
+                      Text(
+                        IsmChatStrings.delete,
+                        style: menuLabelStyle,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              elevation: 1,
+              onSelected: (value) async {
+                if (value == 1) {
+                  await chatPageController
+                      .shareMedia(widget.messageData[mediaIndex]);
+                } else if (value == 2) {
+                  await chatPageController
+                      .saveMedia(widget.messageData[mediaIndex]);
+                } else if (value == 3) {
+                  await chatPageController.showDialogForMessageDelete(
+                      widget.messageData[mediaIndex],
+                      fromMediaPrivew: true);
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      body: SizedBox(
+        height: IsmChatDimens.percentHeight(1),
+        width: IsmChatDimens.percentWidth(1),
+        child: ColoredBox(
+          color: mediaTheme.previewBackgroundColor,
           child: PageView.builder(
             controller: pageController,
             itemBuilder: (BuildContext context, int index) {
@@ -179,6 +199,9 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
                       : media.customType);
               return customType == IsmChatCustomMessageType.image
                   ? PhotoView(
+                      backgroundDecoration: BoxDecoration(
+                        color: mediaTheme.previewBackgroundColor,
+                      ),
                       imageProvider: url.isValidUrl
                           ? NetworkImage(url) as ImageProvider
                           : kIsWeb
@@ -206,7 +229,9 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
             itemCount: widget.messageData.length,
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 /// Audio preview dialog (from [IsmMedia] or chat). Uses [IsmChatThemeResolver.mediaFromConfig].

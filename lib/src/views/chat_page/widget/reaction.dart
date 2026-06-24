@@ -41,7 +41,10 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
   }
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
+  Widget build(BuildContext context) {
+    final reactionTheme = IsmChatThemeResolver.reactionFromConfig(context);
+
+    return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -69,16 +72,16 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
                 padding:
                     showCount && index == 2 ? IsmChatDimens.edgeInsets4 : null,
                 decoration: BoxDecoration(
-                    boxShadow: const [BoxShadow(color: Colors.black)],
+                    boxShadow: reactionTheme.boxShadow,
                     borderRadius: BorderRadius.all(
                       Radius.circular(IsmChatDimens.fifty),
                     ),
-                    color: IsmChatColors.whiteColor),
+                    color: reactionTheme.backgroundColor),
                 child: showCount && index == 2
                     ? Text(
                         '+ $reactionLength',
                         textAlign: TextAlign.center,
-                        style: IsmChatStyles.w400Black12,
+                        style: reactionTheme.countTextStyle,
                       )
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -101,14 +104,15 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
                               emojiViewConfig: EmojiViewConfig(
                                 emojiSizeMax: IsmChatDimens.twentyFour,
                                 backgroundColor:
-                                    IsmChatConfig.chatTheme.backgroundColor!,
+                                    reactionTheme.emojiBackgroundColor ??
+                                        IsmChatConfig.chatTheme.backgroundColor!,
                               ),
                             ),
                           ),
                           Text(
                             '${widget.message.reactions?[index].userIds.length}',
                             textAlign: TextAlign.center,
-                            style: IsmChatStyles.w400Black12,
+                            style: reactionTheme.countTextStyle,
                           )
                         ],
                       ),
@@ -117,4 +121,5 @@ class _ImsChatReactionState extends State<ImsChatReaction> {
           }),
         ),
       );
+  }
 }

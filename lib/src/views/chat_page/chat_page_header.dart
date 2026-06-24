@@ -234,30 +234,48 @@ class _TitleSubTitleWidget extends StatelessWidget {
     return conversation.opponentDetails?.userName ?? conversation.chatName;
   }
 
+  /// Single-line title within the [Expanded] header column; [crossAxisAlignment]
+  /// on the parent must be [CrossAxisAlignment.stretch] so width is bounded.
+  Widget _buildHeaderTitle(BuildContext context, String title) {
+    final resolvedTitle =
+        IsmChatProperties.chatPageProperties.header?.title?.call(
+              context,
+              controller.conversation,
+              title,
+            ) ??
+            title;
+
+    final titleStyle = IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
+        IsmChatStyles.w600White16;
+
+    return IsmChatProperties.chatPageProperties.header?.titleBuilder?.call(
+          context,
+          controller.conversation,
+          title,
+        ) ??
+        Text(
+          resolvedTitle,
+          style: titleStyle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          softWrap: false,
+        );
+  }
+
   @override
-  Widget build(BuildContext context) => IsmChatTapHandler(
+  Widget build(BuildContext context) {
+    final headerTitle = _resolvedHeaderTitle();
+
+    return IsmChatTapHandler(
         onTap: onTap,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Flexible(
-              child: IsmChatProperties.chatPageProperties.header?.titleBuilder
-                      ?.call(context, controller.conversation,
-                          _resolvedHeaderTitle()) ??
-                  Text(
-                    IsmChatProperties.chatPageProperties.header?.title?.call(
-                            context,
-                            controller.conversation,
-                            _resolvedHeaderTitle()) ??
-                        _resolvedHeaderTitle(),
-                    style: IsmChatConfig
-                            .chatTheme.chatPageHeaderTheme?.titleStyle ??
-                        IsmChatStyles.w600White16,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+            SizedBox(
+              width: double.infinity,
+              child: _buildHeaderTitle(context, headerTitle),
             ),
             if (IsmChatProperties.chatPageProperties.header?.subtitleBuilder !=
                 null) ...[
@@ -285,6 +303,9 @@ class _TitleSubTitleWidget extends StatelessWidget {
                           style: IsmChatConfig.chatTheme.chatPageHeaderTheme
                                   ?.subtileStyle ??
                               IsmChatStyles.w400White12,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         )
                       : Obx(
                           () {
@@ -342,9 +363,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                             // For one-on-one chats, check online status before last seen
                             // This ensures that when typing stops, if user is online, it shows "Online" not "Last seen"
                             final isOnline = controller
-                                    .conversation
-                                    ?.opponentDetails
-                                    ?.online ??
+                                    .conversation?.opponentDetails?.online ??
                                 false;
 
                             if (isOnline) {
@@ -379,6 +398,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
           ],
         ),
       );
+  }
 }
 
 class _PopupMenuWidget extends StatelessWidget {

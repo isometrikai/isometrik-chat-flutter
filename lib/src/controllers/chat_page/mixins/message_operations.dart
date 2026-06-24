@@ -71,6 +71,9 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
       case IsmChatFocusMenuType.delete:
         await _controller.showDialogForMessageDelete(message);
         break;
+      case IsmChatFocusMenuType.save:
+        await _controller.saveMedia(message);
+        break;
       case IsmChatFocusMenuType.selectMessage:
         _controller.selectedMessage.clear();
         _controller.isMessageSeleted = true;

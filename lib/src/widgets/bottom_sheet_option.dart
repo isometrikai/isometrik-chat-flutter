@@ -92,67 +92,74 @@ class IsmChatProfilePhotoBottomSheet extends StatelessWidget {
   final VoidCallback onCameraTap;
 
   @override
-  Widget build(BuildContext context) => CupertinoActionSheet(
-        actions: [
-          CupertinoActionSheetAction(
-            onPressed: onCameraTap,
-            child: Padding(
-              padding: IsmChatDimens.edgeInsets10_0,
-              child: Row(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blueAccent,
-                    ),
-                    width: IsmChatDimens.forty,
-                    height: IsmChatDimens.forty,
-                    child: const Icon(
-                      Icons.camera_alt_rounded,
-                      color: IsmChatColors.whiteColor,
-                    ),
+  Widget build(BuildContext context) {
+    final dialogTheme = IsmChatThemeResolver.dialogFromConfig(context);
+    final optionStyle = dialogTheme.titleTextStyle;
+    return CupertinoActionSheet(
+      actions: [
+        CupertinoActionSheetAction(
+          onPressed: onCameraTap,
+          child: Padding(
+            padding: IsmChatDimens.edgeInsets10_0,
+            child: Row(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blueAccent,
                   ),
-                  IsmChatDimens.boxWidth8,
-                  Text(
-                    IsmChatStrings.camera,
-                    style: IsmChatStyles.w500Black16,
-                  )
-                ],
-              ),
+                  width: IsmChatDimens.forty,
+                  height: IsmChatDimens.forty,
+                  child: const Icon(
+                    Icons.camera_alt_rounded,
+                    color: IsmChatColors.whiteColor,
+                  ),
+                ),
+                IsmChatDimens.boxWidth8,
+                Text(
+                  IsmChatStrings.camera,
+                  style: optionStyle,
+                )
+              ],
             ),
           ),
-          CupertinoActionSheetAction(
-            onPressed: onGalleryTap,
-            child: Padding(
-              padding: IsmChatDimens.edgeInsets10_0,
-              child: Row(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.purpleAccent,
-                    ),
-                    width: IsmChatDimens.forty,
-                    height: IsmChatDimens.forty,
-                    child: const Icon(
-                      Icons.photo_rounded,
-                      color: IsmChatColors.whiteColor,
-                    ),
-                  ),
-                  IsmChatDimens.boxWidth8,
-                  Text(
-                    IsmChatStrings.gallery,
-                    style: IsmChatStyles.w500Black16,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-        cancelButton: const CupertinoActionSheetAction(
-          onPressed: IsmChatRoute.goBack,
-          isDestructiveAction: true,
-          child: Text('Cancel'),
         ),
-      );
+        CupertinoActionSheetAction(
+          onPressed: onGalleryTap,
+          child: Padding(
+            padding: IsmChatDimens.edgeInsets10_0,
+            child: Row(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.purpleAccent,
+                  ),
+                  width: IsmChatDimens.forty,
+                  height: IsmChatDimens.forty,
+                  child: const Icon(
+                    Icons.photo_rounded,
+                    color: IsmChatColors.whiteColor,
+                  ),
+                ),
+                IsmChatDimens.boxWidth8,
+                Text(
+                  IsmChatStrings.gallery,
+                  style: optionStyle,
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        onPressed: IsmChatRoute.goBack,
+        isDestructiveAction: true,
+        child: Text(
+          IsmChatStrings.cancel,
+          style: dialogTheme.actionTextStyle,
+        ),
+      ),
+    );
+  }
 }

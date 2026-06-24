@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/src/res/colors.dart';
 import 'package:isometrik_chat_flutter/src/res/styles.dart';
 
-/// Theme for conversation media ([IsmMedia], [IsmDocsView], [IsmLinksView], [IsmMediaView]).
+/// Theme for conversation media ([IsmMedia], [IsmDocsView], [IsmLinksView],
+/// [IsmMediaView], [IsmMediaPreview]).
 ///
 /// Omit in app config for SDK light/dark defaults ([IsmChatThemeResolver]).
 /// Pass a full instance only when customizing.
@@ -11,6 +12,9 @@ class IsmChatMediaTheme {
     required this.scaffoldBackgroundColor,
     required this.appBarBackgroundColor,
     required this.appBarIconColor,
+    required this.previewBackgroundColor,
+    required this.previewTitleTextStyle,
+    required this.previewSubtitleTextStyle,
     required this.tabBarContainerColor,
     required this.tabSelectedBackgroundColor,
     required this.tabUnselectedBackgroundColor,
@@ -28,6 +32,9 @@ class IsmChatMediaTheme {
         scaffoldBackgroundColor: IsmChatColors.backgroundColorLight,
         appBarBackgroundColor: IsmChatColors.whiteColor,
         appBarIconColor: IsmChatColors.blackColor,
+        previewBackgroundColor: IsmChatColors.whiteColor,
+        previewTitleTextStyle: IsmChatStyles.w400Black16,
+        previewSubtitleTextStyle: IsmChatStyles.w400Black14,
         tabBarContainerColor: IsmChatColors.darkBlueGreyColor,
         tabSelectedBackgroundColor: IsmChatColors.whiteColor,
         tabUnselectedBackgroundColor: IsmChatColors.darkBlueGreyColor,
@@ -45,7 +52,10 @@ class IsmChatMediaTheme {
         scaffoldBackgroundColor: IsmChatColors.backgroundColorDark,
         appBarBackgroundColor: IsmChatColors.backgroundColorDark,
         appBarIconColor: IsmChatColors.whiteColor,
-        tabBarContainerColor: Color(0xFF353535),
+        previewBackgroundColor: IsmChatColors.blackColor,
+        previewTitleTextStyle: IsmChatStyles.w400White16,
+        previewSubtitleTextStyle: IsmChatStyles.w400White14,
+        tabBarContainerColor: const Color(0xFF353535),
         tabSelectedBackgroundColor: IsmChatColors.whiteColor,
         tabUnselectedBackgroundColor: Color(0xFF353535),
         tabSelectedTextStyle: IsmChatStyles.w600Black16,
@@ -61,6 +71,12 @@ class IsmChatMediaTheme {
   final Color scaffoldBackgroundColor;
   final Color appBarBackgroundColor;
   final Color appBarIconColor;
+
+  /// Full-screen image/video preview ([IsmMediaPreview]).
+  final Color previewBackgroundColor;
+  final TextStyle previewTitleTextStyle;
+  final TextStyle previewSubtitleTextStyle;
+
   final Color tabBarContainerColor;
   final Color tabSelectedBackgroundColor;
   final Color tabUnselectedBackgroundColor;

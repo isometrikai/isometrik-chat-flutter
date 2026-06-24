@@ -4,6 +4,7 @@ class IsmChatStrings {
   static const String name = 'Isometrik Flutter Chat';
   static const String dbname = 'isometrik_chat_flutter';
   static const String userData = 'userData';
+
   /// Key used to store last active user id in local DB.
   ///
   /// This prevents chat history leaking across accounts on the same device when
@@ -59,6 +60,7 @@ class IsmChatStrings {
 
   static const String clearChat = 'Clear chat';
   static const String clearAllMessages = 'Clear all messages?';
+  static const String chatClearedSuccessfully = 'Chat cleared successfully!';
   static const String wallpaper = 'Wallpaper';
   static const String hintText = 'Type your message...';
 
@@ -112,6 +114,7 @@ class IsmChatStrings {
   static const String boradcastNotFound = 'Broadcast not found !!';
 
   static const String deleteMessage = 'Delete message?';
+  static const String deleteMessages = 'Delete messages?';
   static const String deleteForEvery = 'Delete for everyone';
   static const String deleteForMe = 'Delete for me';
   static const String deleteFromUser = 'Delete message from';

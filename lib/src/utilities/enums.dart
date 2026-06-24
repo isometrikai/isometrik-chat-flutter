@@ -698,6 +698,7 @@ enum IsmChatFocusMenuType {
   selectMessage,
   reply,
   forward,
+  save,
   delete;
 
   @override
@@ -808,7 +809,7 @@ enum IsmChatFeature {
   reaction,
   chageWallpaper,
   searchMessage,
-  // mediaDownload,
+  mediaDownload,
   showMessageStatus,
   mentionMember,
   clearChat,

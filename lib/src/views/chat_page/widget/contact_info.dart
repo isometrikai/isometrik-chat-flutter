@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Shared contacts detail screen.
@@ -67,25 +64,7 @@ class IsmChatContactsInfoView extends StatelessWidget {
                           style: contactTheme.identifierTextStyle,
                         ),
                         trailing: IsmChatTapHandler(
-                          onTap: () async {
-                            final opnecontact = Contact(
-                                id: contact.contactId ?? '',
-                                displayName: contact.contactName ?? '',
-                                photo:
-                                    (contact.contactImageUrl ?? '').isNotEmpty
-                                        ? (contact.contactImageUrl ?? '')
-                                            .strigToUnit8List
-                                        : Uint8List(0),
-                                phones: [
-                                  Phone(
-                                    contact.contactIdentifier ?? '',
-                                    normalizedNumber:
-                                        contact.contactIdentifier ?? '',
-                                  )
-                                ]);
-                            await FlutterContacts.openExternalInsert(
-                                opnecontact);
-                          },
+                          onTap: contact.openExternalInsert,
                           child: Container(
                             alignment: Alignment.center,
                             width: IsmChatDimens.seventy,

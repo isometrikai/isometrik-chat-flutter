@@ -4,9 +4,13 @@
 /// IsmChatMessageModel, LastMessageDetails, etc. for common model operations.
 library;
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// Extension for IsmChatConversationModel to check block status.
 extension BlockStatus on IsmChatConversationModel {
@@ -458,6 +462,18 @@ extension MentionMessage on IsmChatMessageModel {
         .contains(IsmChatFeature.deleteMessage)) {
       menu.remove(IsmChatFocusMenuType.delete);
     }
+    if (![
+      IsmChatCustomMessageType.audio,
+      IsmChatCustomMessageType.image,
+      IsmChatCustomMessageType.video,
+      IsmChatCustomMessageType.file,
+    ].contains(customType)) {
+      menu.remove(IsmChatFocusMenuType.save);
+    }
+    if (!IsmChatProperties.chatPageProperties.features
+        .contains(IsmChatFeature.mediaDownload)) {
+      menu.remove(IsmChatFocusMenuType.save);
+    }
 
     if (!(IsmChatProperties.chatPageProperties.canReplayMessage?.call(this) ??
         true)) {
@@ -481,6 +497,43 @@ extension MentionMessage on IsmChatMessageModel {
       color: theme?.opponentMessageTheme?.textColor,
     );
   }
+
+  /// Sender name shown above opponent bubbles in group chats.
+  /// Uses [IsmChatMessageTheme.userNameTextStyle] when set; otherwise SDK default.
+  TextStyle get senderNameTextStyle {
+    final opponentTheme =
+        IsmChatConfig.chatTheme.chatPageTheme?.opponentMessageTheme;
+    if (opponentTheme?.userNameTextStyle != null) {
+      return opponentTheme!.userNameTextStyle!;
+    }
+    return IsmChatStyles.w400Black10.copyWith(
+      color: IsmChatConfig.isChatDarkMode
+          ? IsmChatColors.whiteColor
+          : IsmChatColors.blackColor,
+    );
+  }
+
+  /// "Forwarded" label style from message theme [IsmChatMessageTheme.textColor] at 70% opacity.
+  TextStyle get forwardedTextStyle {
+    final pageTheme = IsmChatConfig.chatTheme.chatPageTheme;
+    final messageTheme = sentByMe
+        ? pageTheme?.selfMessageTheme
+        : pageTheme?.opponentMessageTheme;
+    return (sentByMe ? IsmChatStyles.w400White12 : IsmChatStyles.w400Black12)
+        .copyWith(color: _forwardedThemeColor(messageTheme));
+  }
+
+  /// Icon color beside the forwarded label ([IsmChatMessageTheme.textColor] at 70% opacity).
+  Color get forwardedIconColor {
+    final pageTheme = IsmChatConfig.chatTheme.chatPageTheme;
+    final messageTheme = sentByMe
+        ? pageTheme?.selfMessageTheme
+        : pageTheme?.opponentMessageTheme;
+    return _forwardedThemeColor(messageTheme);
+  }
+
+  Color _forwardedThemeColor(IsmChatMessageTheme? messageTheme) =>
+      (messageTheme?.textColor ?? textColor)!.withValues(alpha: 0.7);
 
   /// Returns the read more text style for the message.
   TextStyle get readTextStyle {
@@ -549,5 +602,50 @@ extension MentionMessage on IsmChatMessageModel {
     final key = metaData?.messageSentAt ?? sentAt;
     final mapKey = key != 0 ? key : sentAt;
     return '$mapKey';
+  }
+}
+
+/// Shared-contact metadata helpers for device contacts integration.
+extension IsmChatContactMetaDatExtension on IsmChatContactMetaDatModel {
+  /// Safely decodes [contactImageUrl] (JSON byte list from shared contacts).
+  Uint8List? get contactPhotoBytes {
+    final raw = contactImageUrl ?? '';
+    if (raw.isEmpty) return null;
+    try {
+      final bytes = raw.strigToUnit8List;
+      return bytes.isEmpty ? null : bytes;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Builds a [Contact] for [FlutterContacts.openExternalInsert].
+  ///
+  /// `Name` is required on iOS; setting only the display name is not enough for
+  /// the native contact editor to pre-fill fields.
+  Contact toFlutterContact() {
+    final name = contactName ?? '';
+    final identifier = contactIdentifier ?? '';
+    return Contact(
+      displayName: name,
+      name: Name(first: name),
+      phones: identifier.isNotEmpty ? [Phone(identifier)] : [],
+      photo: contactPhotoBytes,
+    );
+  }
+
+  /// Opens the device contacts app to save this shared contact.
+  Future<void> openExternalInsert() async {
+    final granted = await FlutterContacts.requestPermission() ||
+        await IsmChatUtility.requestPermission(Permission.contacts);
+    if (!granted) {
+      await IsmChatUtility.showSettingsDialogIfPermanentlyDenied(
+        Permission.contacts,
+        title: IsmChatStrings.contactsPermissionBlockedTitle,
+        message: IsmChatStrings.contactsPermissionBlockedMessage,
+      );
+      return;
+    }
+    await FlutterContacts.openExternalInsert(toFlutterContact());
   }
 }

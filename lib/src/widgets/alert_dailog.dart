@@ -31,101 +31,121 @@ class IsmChatAlertDialogBox extends StatelessWidget {
   final ShapeBorder? shape;
   final EdgeInsetsGeometry? contentPadding;
 
+  EdgeInsets _resolveInsets(IsmChatDialogTheme dialogTheme) {
+    final inset = dialogTheme.insetPadding;
+    if (inset is EdgeInsets) return inset;
+    return IsmChatDimens.edgeInsets16;
+  }
+
   @override
-  Widget build(BuildContext context) => StatusBarTransparent(
-        child: (actionLabels?.length ?? 0) <= 1
-            ? AlertDialog(
-                actionsPadding: IsmChatDimens.edgeInsets16,
-                title: Text(title),
-                backgroundColor:
-                    IsmChatConfig.chatTheme.dialogTheme?.backgroundColor ??
-                        IsmChatColors.whiteColor,
-                titleTextStyle:
-                    IsmChatConfig.chatTheme.dialogTheme?.titleTextStyle ??
-                        IsmChatStyles.w600Black14,
-                contentPadding:
-                    IsmChatConfig.chatTheme.dialogTheme?.insetPadding ??
-                        contentPadding,
-                contentTextStyle:
-                    IsmChatConfig.chatTheme.dialogTheme?.contentTextStyle ??
-                        contentTextStyle,
-                content: content,
-                shape: IsmChatConfig.chatTheme.dialogTheme?.shape ?? shape,
-                actions: [
+  Widget build(BuildContext context) {
+    final dialogTheme = IsmChatThemeResolver.dialogFromConfig(context);
+    final resolvedContentStyle =
+        contentTextStyle ?? dialogTheme.contentTextStyle;
+    final resolvedShape = shape ?? dialogTheme.shape;
+    final insets = _resolveInsets(dialogTheme);
+    final titlePadding =
+        EdgeInsets.fromLTRB(insets.left, insets.top, insets.right, 8);
+    final resolvedContentPadding = contentPadding ??
+        EdgeInsets.fromLTRB(
+          insets.left,
+          0,
+          insets.right,
+          content != null ? insets.bottom : 0,
+        );
+    final actionsPadding =
+        EdgeInsets.fromLTRB(8, 0, insets.right, insets.bottom);
+
+    return StatusBarTransparent(
+      child: (actionLabels?.length ?? 0) <= 1
+          ? AlertDialog(
+              titlePadding: titlePadding,
+              actionsPadding: actionsPadding,
+              title: Text(title),
+              backgroundColor: dialogTheme.backgroundColor,
+              titleTextStyle: dialogTheme.titleTextStyle,
+              contentPadding: resolvedContentPadding,
+              contentTextStyle: resolvedContentStyle,
+              content: content,
+              shape: resolvedShape,
+              actions: [
+                IsmChatTapHandler(
+                  onTap: () {
+                    onCancel != null ? onCancel!() : IsmChatRoute.goBack();
+                  },
+                  child: Text(
+                    cancelLabel,
+                    style: dialogTheme.actionTextStyle,
+                  ),
+                ),
+                if (actionLabels != null) ...[
+                  IsmChatDimens.boxWidth8,
                   IsmChatTapHandler(
                     onTap: () {
-                      onCancel != null ? onCancel!() : IsmChatRoute.goBack();
+                      IsmChatRoute.goBack();
+                      callbackActions?.first();
                     },
                     child: Text(
-                      cancelLabel,
-                      style: IsmChatConfig
-                              .chatTheme.dialogTheme?.actionTextStyle ??
-                          IsmChatStyles.w400Black14,
+                      actionLabels?.first ?? '',
+                      style: dialogTheme.actionTextStyle,
                     ),
                   ),
-                  if (actionLabels != null) ...[
-                    IsmChatDimens.boxWidth8,
-                    IsmChatTapHandler(
-                      onTap: () {
-                        IsmChatRoute.goBack();
-                        callbackActions?.first();
-                      },
-                      child: Text(
-                        actionLabels?.first ?? '',
-                        style: IsmChatConfig
-                                .chatTheme.dialogTheme?.actionTextStyle ??
-                            IsmChatStyles.w400Black14,
+                ],
+              ],
+            )
+          : SimpleDialog(
+              backgroundColor: dialogTheme.backgroundColor,
+              shape: resolvedShape,
+              titlePadding: titlePadding,
+              title: Text(
+                title,
+                style: dialogTheme.titleTextStyle,
+              ),
+              children: [
+                if (content != null)
+                  Padding(
+                    padding: resolvedContentPadding,
+                    child: DefaultTextStyle(
+                      style: resolvedContentStyle,
+                      child: content!,
+                    ),
+                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    ...actionLabels!.map<Widget>((label) {
+                      var action =
+                          callbackActions![actionLabels!.indexOf(label)];
+                      return SimpleDialogOption(
+                        child: IsmChatTapHandler(
+                          onTap: () {
+                            IsmChatRoute.goBack();
+                            action.call();
+                          },
+                          child: Text(
+                            label,
+                            style: dialogTheme.actionTextStyle,
+                          ),
+                        ),
+                      );
+                    }),
+                    SimpleDialogOption(
+                      child: IsmChatTapHandler(
+                        onTap: () {
+                          onCancel != null
+                              ? onCancel!()
+                              : IsmChatRoute.goBack();
+                        },
+                        child: Text(
+                          cancelLabel,
+                          style: dialogTheme.actionTextStyle,
+                        ),
                       ),
                     ),
                   ],
-                ],
-              )
-            : SimpleDialog(
-                title: Text(
-                  title,
-                  style: IsmChatConfig.chatTheme.dialogTheme?.titleTextStyle ??
-                      IsmChatStyles.w600Black14,
-                ),
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      ...actionLabels!.map<Widget>((label) {
-                        var action =
-                            callbackActions![actionLabels!.indexOf(label)];
-                        return SimpleDialogOption(
-                          child: IsmChatTapHandler(
-                            onTap: () {
-                              IsmChatRoute.goBack();
-                              action.call();
-                            },
-                            child: Text(
-                              label,
-                              style: IsmChatConfig
-                                      .chatTheme.dialogTheme?.actionTextStyle ??
-                                  IsmChatStyles.w400Black14,
-                            ),
-                          ),
-                        );
-                      }),
-                      SimpleDialogOption(
-                        child: IsmChatTapHandler(
-                          onTap: () {
-                            onCancel != null
-                                ? onCancel!()
-                                : IsmChatRoute.goBack();
-                          },
-                          child: Text(
-                            cancelLabel,
-                            style: IsmChatConfig
-                                    .chatTheme.dialogTheme?.actionTextStyle ??
-                                IsmChatStyles.w400Black14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-      );
+                )
+              ],
+            ),
+    );
+  }
 }

@@ -59,6 +59,8 @@ extension MenuIcon on IsmChatFocusMenuType {
         return Icons.shortcut_rounded;
       case IsmChatFocusMenuType.copy:
         return Icons.copy_rounded;
+      case IsmChatFocusMenuType.save:
+        return Icons.save_rounded;
       case IsmChatFocusMenuType.delete:
         return Icons.delete_outline_rounded;
       case IsmChatFocusMenuType.selectMessage:

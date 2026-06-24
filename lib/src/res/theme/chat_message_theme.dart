@@ -13,6 +13,7 @@ class IsmChatMessageTheme {
     this.timeStyle,
     this.readMoreTextStyle,
     this.linkPreviewColor,
+    this.userNameTextStyle,
   });
 
   final Color? backgroundColor;
@@ -26,6 +27,9 @@ class IsmChatMessageTheme {
   final TextStyle? timeStyle;
   final TextStyle? readMoreTextStyle;
   final Color? linkPreviewColor;
+
+  /// Group chat sender label shown above opponent message bubbles.
+  final TextStyle? userNameTextStyle;
 }
 
 class ShowProfile {

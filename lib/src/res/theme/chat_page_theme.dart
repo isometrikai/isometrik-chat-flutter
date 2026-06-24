@@ -6,6 +6,7 @@ import 'package:isometrik_chat_flutter/src/res/theme/chat_message_focused_theme.
 import 'package:isometrik_chat_flutter/src/res/theme/chat_message_hover_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_message_status_them.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_message_theme.dart';
+import 'package:isometrik_chat_flutter/src/res/theme/chat_reaction_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_replay_messae_theme.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_send_button_them.dart';
 import 'package:isometrik_chat_flutter/src/res/theme/chat_textfiled_theme.dart';
@@ -37,6 +38,7 @@ class IsmChatPageTheme {
     this.replyMessageTheme,
     this.messageStatusTheme,
     this.messageHoverTheme,
+    this.reactionTheme,
     this.messageConstraints,
     this.searchTextFiledTheme,
     this.messgaeFocusedTheme,
@@ -60,12 +62,18 @@ class IsmChatPageTheme {
   final Color? backgroundColor;
 
   final IsmChatSendButtonTheme? sendButtonTheme;
+
+  /// Composer ([IsmChatMessageField]). Null → SDK light/dark via [IsmChatThemeResolver.textFieldFromConfig].
   final IsmChatTextFiledTheme? textFiledTheme;
   final IsmChatTextFiledTheme? searchTextFiledTheme;
   final IsmChatCenterMessageTheme? centerMessageTheme;
   final IsmChatReplyMessageTheme? replyMessageTheme;
   final IsmChatMessageStatusTheme? messageStatusTheme;
   final IsmChatMessageHoverTheme? messageHoverTheme;
+
+  /// Message reaction chips ([ImsChatReaction]) and user list ([ImsChatShowUserReaction]).
+  final IsmChatReactionTheme? reactionTheme;
+
   final IsmChatMessageConstraints? messageConstraints;
   final IsmChatFocusedMessageTheme? messgaeFocusedTheme;
 

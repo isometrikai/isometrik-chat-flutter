@@ -295,8 +295,55 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
 
   /// Saves media from a message to device.
   Future<void> saveMedia(IsmChatMessageModel message) async {
+    final attachment = message.attachments?.firstOrNull;
+    if (attachment == null) return;
+
+    final extension = (attachment.extension ?? '').toLowerCase();
+    final isAudio = message.customType == IsmChatCustomMessageType.audio ||
+        attachment.attachmentType == IsmChatMediaType.audio ||
+        IsmChatConstants.audioExtensions.contains(extension);
+    final isGalleryMedia = !isAudio &&
+        (IsmChatConstants.imageExtensions.contains(extension) ||
+            IsmChatConstants.videoExtensions.contains(extension));
+
+    if (!isGalleryMedia) {
+      final mediaUrl = attachment.mediaUrl ?? '';
+      final isNetwork = mediaUrl.isValidUrl;
+      if (isNetwork) {
+        _controller.mediaDownloadProgress = 0;
+        _controller.snackBarController = Get.showSnackbar(
+          GetSnackBar(
+            backgroundColor: IsmChatConfig.chatTheme.primaryColor ??
+                IsmChatColors.primaryColorLight,
+            messageText: Obx(() => CustomeSnackBar(
+                  downloadProgress: _controller.mediaDownloadProgress,
+                  downloadedFileCount: 1,
+                  noOfFiles: 1,
+                )),
+          ),
+        );
+      }
+
+      await IsmChatUtility.saveFileToDevice(
+        url: mediaUrl,
+        fileName: IsmChatUtility.resolveSaveFileName(
+          fileName: attachment.name ?? '',
+          url: mediaUrl,
+          extension: extension,
+        ),
+        downloadProgress: isNetwork
+            ? (value) => _controller.mediaDownloadProgress = value
+            : null,
+      );
+
+      if (_controller.snackBarController != null) {
+        await _controller.snackBarController?.close();
+      }
+      return;
+    }
+
     await IsmChatUtility.requestForGallery();
-    if ((message.attachments?.first.mediaUrl ?? '').isValidUrl) {
+    if ((attachment.mediaUrl ?? '').isValidUrl) {
       _controller.mediaDownloadProgress = 0;
       _controller.snackBarController = Get.showSnackbar(
         GetSnackBar(
@@ -309,10 +356,9 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
               )),
         ),
       );
-      if (IsmChatConstants.videoExtensions
-          .contains(message.attachments?.first.extension)) {
+      if (IsmChatConstants.videoExtensions.contains(extension)) {
         await IsmChatUtility.downloadMediaFromNetworkPath(
-          url: message.attachments?.first.mediaUrl ?? '',
+          url: attachment.mediaUrl ?? '',
           isVideo: true,
           downloadProgrees: (value) {
             _controller.mediaDownloadProgress = value;
@@ -320,7 +366,7 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
         );
       } else {
         await IsmChatUtility.downloadMediaFromNetworkPath(
-          url: message.attachments?.first.mediaUrl ?? '',
+          url: attachment.mediaUrl ?? '',
           downloadProgrees: (value) {
             _controller.mediaDownloadProgress = value;
           },
@@ -330,15 +376,14 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
         await _controller.snackBarController?.close();
       }
     } else {
-      if (IsmChatConstants.videoExtensions
-          .contains(message.attachments?.first.extension)) {
+      if (IsmChatConstants.videoExtensions.contains(extension)) {
         await IsmChatUtility.downloadMediaFromLocalPath(
-          url: message.attachments?.first.mediaUrl ?? '',
+          url: attachment.mediaUrl ?? '',
           isVideo: true,
         );
       } else {
         await IsmChatUtility.downloadMediaFromLocalPath(
-          url: message.attachments?.first.mediaUrl ?? '',
+          url: attachment.mediaUrl ?? '',
         );
       }
     }

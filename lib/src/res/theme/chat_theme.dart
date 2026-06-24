@@ -13,7 +13,7 @@ class IsmChatThemeData with Diagnosticable {
     Color? notificationColor,
     FloatingActionButtonThemeData? floatingActionButtonTheme,
     IconThemeData? iconTheme,
-    IsmChatDialogTheme? dialogTheme,
+    this.dialogTheme,
     this.chatPageHeaderTheme,
     this.chatPageTheme,
     this.chatListCardThemData,
@@ -28,7 +28,6 @@ class IsmChatThemeData with Diagnosticable {
         floatingActionButtonTheme = floatingActionButtonTheme ??
             IsmChatThemeData.light().floatingActionButtonTheme,
         iconTheme = iconTheme ?? IsmChatThemeData.light().iconTheme,
-        dialogTheme = dialogTheme ?? IsmChatThemeData.light().dialogTheme,
         chatListTheme = chatListTheme ?? IsmChatThemeData.light().chatListTheme,
         dividerColor = dividerColor ?? primaryColor,
         borderColor = borderColor ?? primaryColor;
@@ -50,11 +49,17 @@ class IsmChatThemeData with Diagnosticable {
         iconTheme: const IconThemeData(
           color: IsmChatColors.primaryColorLight,
         ),
-        dialogTheme: IsmChatDialogTheme(),
       );
 
   factory IsmChatThemeData.dark() => IsmChatThemeData(
-        chatPageTheme: IsmChatPageTheme(),
+        chatPageTheme: IsmChatPageTheme(
+          opponentMessageTheme: IsmChatMessageTheme(
+            textColor: IsmChatColors.whiteColor,
+            userNameTextStyle: IsmChatStyles.w400Black10.copyWith(
+              color: IsmChatColors.whiteColor,
+            ),
+          ),
+        ),
         chatPageHeaderTheme: IsmChatHeaderTheme.dark(),
         chatListTheme: const IsmChatListTheme.dark(),
         primaryColor: IsmChatColors.primaryColorDark,
@@ -68,7 +73,6 @@ class IsmChatThemeData with Diagnosticable {
         iconTheme: const IconThemeData(
           color: IsmChatColors.primaryColorDark,
         ),
-        dialogTheme: IsmChatDialogTheme(),
       );
 
   final Color? primaryColor;
@@ -91,6 +95,8 @@ class IsmChatThemeData with Diagnosticable {
 
   final IconThemeData? iconTheme;
 
+  /// Popups / alerts ([IsmChatAlertDialogBox]).
+  /// Null → SDK light/dark default via [IsmChatThemeResolver.dialogFromConfig].
   final IsmChatDialogTheme? dialogTheme;
 
   final IsmChatPageTheme? chatPageTheme;

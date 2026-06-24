@@ -68,7 +68,6 @@ mixin IsmChatConversationsForwardOperationsMixin on GetxController {
     );
     if (response?.hasError == false) {
       IsmChatRoute.goBack();
-      await _controller.getChatConversations();
     }
   }
 

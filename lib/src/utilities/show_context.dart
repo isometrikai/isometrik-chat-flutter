@@ -4,6 +4,37 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class IsmChatContextWidget {
   IsmChatContextWidget._();
 
+  static BuildContext _dialogContext(BuildContext? context) =>
+      context ??
+      IsmChatConfig.kNavigatorKey.currentContext ??
+      IsmChatConfig.context;
+
+  /// Themed alert used by [IsmChatShowDialogMixin] and confirmation flows.
+  static Future<void> showThemedAlertDialog({
+    required String title,
+    List<String>? actionLabels,
+    List<VoidCallback>? callbackActions,
+    String cancelLabel = IsmChatStrings.cancel,
+    VoidCallback? onCancel,
+    Widget? content,
+    TextStyle? contentTextStyle,
+    bool barrierDismissible = true,
+    BuildContext? context,
+  }) =>
+      showDialogContext(
+        context: context,
+        barrierDismissible: barrierDismissible,
+        content: IsmChatAlertDialogBox(
+          title: title,
+          actionLabels: actionLabels,
+          callbackActions: callbackActions,
+          cancelLabel: cancelLabel,
+          onCancel: onCancel,
+          content: content,
+          contentTextStyle: contentTextStyle,
+        ),
+      );
+
   static Future<T?> showDialogContext<T>({
     required Widget content,
     bool barrierDismissible = true,
@@ -14,20 +45,24 @@ class IsmChatContextWidget {
     RouteSettings? routeSettings,
     Offset? anchorPoint,
     TraversalEdgeBehavior? traversalEdgeBehavior,
-  }) async =>
-      await showDialog(
-        context:
-            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
-        builder: (context) => content,
-        anchorPoint: anchorPoint,
-        barrierColor: barrierColor,
-        barrierDismissible: barrierDismissible,
-        barrierLabel: barrierLabel,
-        routeSettings: routeSettings,
-        traversalEdgeBehavior: traversalEdgeBehavior,
-        useRootNavigator: useRootNavigator,
-        useSafeArea: useSafeArea,
-      );
+    BuildContext? context,
+  }) async {
+    final hostContext = _dialogContext(context);
+    final dialogTheme = IsmChatThemeResolver.dialogFromConfig(hostContext);
+    return showDialog<T>(
+      context: hostContext,
+      builder: (dialogContext) => content,
+      anchorPoint: anchorPoint,
+      barrierColor: barrierColor ?? dialogTheme.barrierColor,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      routeSettings: routeSettings,
+      traversalEdgeBehavior: traversalEdgeBehavior,
+      useRootNavigator: useRootNavigator,
+      useSafeArea: useSafeArea,
+    );
+  }
+
   static Future<T?> showBottomsheetContext<T>({
     required Widget content,
     Color? backgroundColor,
@@ -47,28 +82,30 @@ class IsmChatContextWidget {
     AnimationController? transitionAnimationController,
     Offset? anchorPoint,
     AnimationStyle? sheetAnimationStyle,
-  }) async =>
-      await showModalBottomSheet(
-        context:
-            IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
-        builder: (context) => content,
-        anchorPoint: anchorPoint,
-        barrierColor: barrierColor,
-        barrierLabel: barrierLabel,
-        routeSettings: routeSettings,
-        useRootNavigator: useRootNavigator,
-        useSafeArea: useSafeArea,
-        backgroundColor: backgroundColor,
-        clipBehavior: clipBehavior,
-        constraints: constraints,
-        elevation: elevation,
-        enableDrag: enableDrag,
-        isDismissible: isDismissible,
-        isScrollControlled: isScrollControlled,
-        // scrollControlDisabledMaxHeightRatio:
-        shape: shape,
-        sheetAnimationStyle: sheetAnimationStyle,
-        showDragHandle: showDragHandle,
-        transitionAnimationController: transitionAnimationController,
-      );
+    BuildContext? context,
+  }) async {
+    final hostContext = _dialogContext(context);
+    final dialogTheme = IsmChatThemeResolver.dialogFromConfig(hostContext);
+    return showModalBottomSheet<T>(
+      context: hostContext,
+      builder: (sheetContext) => content,
+      anchorPoint: anchorPoint,
+      barrierColor: barrierColor ?? dialogTheme.barrierColor,
+      barrierLabel: barrierLabel,
+      routeSettings: routeSettings,
+      useRootNavigator: useRootNavigator,
+      useSafeArea: useSafeArea,
+      backgroundColor: backgroundColor ?? dialogTheme.backgroundColor,
+      clipBehavior: clipBehavior,
+      constraints: constraints,
+      elevation: elevation,
+      enableDrag: enableDrag,
+      isDismissible: isDismissible,
+      isScrollControlled: isScrollControlled,
+      shape: shape,
+      sheetAnimationStyle: sheetAnimationStyle,
+      showDragHandle: showDragHandle,
+      transitionAnimationController: transitionAnimationController,
+    );
+  }
 }

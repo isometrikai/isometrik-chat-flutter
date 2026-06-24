@@ -241,266 +241,232 @@ class MessageBubble extends StatelessWidget {
     IsmChatPageController controller,
   ) =>
       Container(
-              key: IsmChatResponsive.isWeb(context) ? _globalKey : null,
-              margin:
-                  _message.reactions?.isNotEmpty == true && !showMessageInCenter
-                      ? IsmChatDimens.edgeInsetsB25
-                      : null,
-              padding: showMessageInCenter ? IsmChatDimens.edgeInsets4 : null,
-              constraints: showMessageInCenter
-                  ? BoxConstraints(
-                      maxWidth: context.width * .8,
-                      minWidth: context.width * .1,
-                    )
-                  : IsmChatConfig.chatTheme.chatPageTheme?.messageConstraints
-                          ?.messageConstraints ??
-                      BoxConstraints(
-                        maxWidth: (IsmChatResponsive.isWeb(context))
-                            ? context.width * .25
-                            : context.width * .6,
-                        minWidth: IsmChatResponsive.isWeb(context)
-                            ? context.width * .05
-                            : context.width * .25,
-                      ),
-              decoration: showMessageInCenter
-                  ? null
-                  : BoxDecoration(
-                      color: _message.backgroundColor,
-                      gradient: _message.gradient,
-                      border: _message.borderColor != null
-                          ? Border.all(color: _message.borderColor!)
-                          : null,
-                      borderRadius: _message.sentByMe
-                          ? IsmChatConfig.chatTheme.chatPageTheme
-                                  ?.selfMessageTheme?.borderRadius ??
-                              BorderRadius.circular(IsmChatDimens.twelve)
-                                  .copyWith(
-                                bottomRight:
-                                    Radius.circular(IsmChatDimens.four),
-                              )
-                          : IsmChatConfig.chatTheme.chatPageTheme
-                                  ?.opponentMessageTheme?.borderRadius ??
-                              BorderRadius.circular(IsmChatDimens.twelve)
-                                  .copyWith(
-                                topLeft: Radius.circular(IsmChatDimens.four),
-                              ),
-                    ),
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    padding: !showMessageInCenter
-                        ? (IsmChatProperties.chatPageProperties.messageStatus
-                                    ?.shouldShowTimeStatusInner ??
-                                true)
-                            ? _getPaddingForMessage(controller)
-                            : IsmChatDimens.edgeInsets5
-                        : IsmChatDimens.edgeInsets0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: _message.sentByMe
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
-                          children: [
-                            if (!showMessageInCenter &&
-                                (controller.conversation?.isGroup ?? false) &&
-                                !_message.sentByMe) ...[
-                              Padding(
-                                padding: IsmChatDimens.edgeInsetsL2,
-                                child: FittedBox(
-                                  child: Builder(builder: (context) {
-                                    var name = '';
-                                    if (IsmChatProperties.chatPageProperties
-                                            .messageSenderName
-                                            ?.call(
-                                          context,
-                                          _message,
-                                          controller.conversation,
-                                        ) !=
-                                        null) {
-                                      name = IsmChatProperties
-                                              .chatPageProperties
-                                              .messageSenderName
-                                              ?.call(
-                                            context,
-                                            _message,
-                                            controller.conversation,
-                                          ) ??
-                                          '';
-                                    } else {
-                                      name =
-                                          '${_message.senderInfo?.metaData?.firstName ?? ''} ${_message.senderInfo?.metaData?.lastName ?? ''}';
-                                    }
-                                    return IsmChatProperties.chatPageProperties
-                                            .messageSenderNameBuilder
-                                            ?.call(
-                                          context,
-                                          _message,
-                                          controller.conversation,
-                                        ) ??
-                                        Text(
-                                          name.trim().isNotEmpty
-                                              ? name
-                                              : _message.senderInfo?.userName ??
-                                                  '',
-                                          style: IsmChatStyles.w400Black10,
-                                          softWrap: true,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: _message.sentByMe
-                                              ? TextAlign.end
-                                              : TextAlign.start,
-                                          maxLines: 1,
-                                        );
-                                  }),
-                                ),
-                              ),
-                            ],
-                            if (_message.messageType ==
-                                IsmChatMessageType.forward) ...[
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.shortcut_outlined,
-                                    color: IsmChatColors.whiteColor,
-                                    size: IsmChatDimens.fifteen,
-                                  ),
-                                  Text(
-                                    IsmChatStrings.forwarded,
-                                    style: _message.sentByMe
-                                        ? IsmChatStyles.w400White12.copyWith(
-                                            color: IsmChatConfig
-                                                    .chatTheme
-                                                    .chatPageTheme
-                                                    ?.selfMessageTheme
-                                                    ?.textColor ??
-                                                IsmChatColors.whiteColor,
-                                          )
-                                        : IsmChatStyles.w400Black12.copyWith(
-                                            color: IsmChatConfig
-                                                    .chatTheme
-                                                    .chatPageTheme
-                                                    ?.selfMessageTheme
-                                                    ?.textColor ??
-                                                IsmChatColors.blackColor,
-                                          ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ],
+        key: IsmChatResponsive.isWeb(context) ? _globalKey : null,
+        margin: _message.reactions?.isNotEmpty == true && !showMessageInCenter
+            ? IsmChatDimens.edgeInsetsB25
+            : null,
+        padding: showMessageInCenter ? IsmChatDimens.edgeInsets4 : null,
+        constraints: showMessageInCenter
+            ? BoxConstraints(
+                maxWidth: context.width * .8,
+                minWidth: context.width * .1,
+              )
+            : IsmChatConfig.chatTheme.chatPageTheme?.messageConstraints
+                    ?.messageConstraints ??
+                BoxConstraints(
+                  maxWidth: (IsmChatResponsive.isWeb(context))
+                      ? context.width * .25
+                      : context.width * .6,
+                  minWidth: IsmChatResponsive.isWeb(context)
+                      ? context.width * .05
+                      : context.width * .25,
+                ),
+        decoration: showMessageInCenter
+            ? null
+            : BoxDecoration(
+                color: _message.backgroundColor,
+                gradient: _message.gradient,
+                border: _message.borderColor != null
+                    ? Border.all(color: _message.borderColor!)
+                    : null,
+                borderRadius: _message.sentByMe
+                    ? IsmChatConfig.chatTheme.chatPageTheme?.selfMessageTheme
+                            ?.borderRadius ??
+                        BorderRadius.circular(IsmChatDimens.twelve).copyWith(
+                          bottomRight: Radius.circular(IsmChatDimens.four),
+                        )
+                    : IsmChatConfig.chatTheme.chatPageTheme
+                            ?.opponentMessageTheme?.borderRadius ??
+                        BorderRadius.circular(IsmChatDimens.twelve).copyWith(
+                          topLeft: Radius.circular(IsmChatDimens.four),
                         ),
-                        _buildMessageContent(context, controller)
-                      ],
-                    ),
-                  ),
-                  if (!showMessageInCenter &&
-                      (IsmChatProperties.chatPageProperties.messageStatus
+              ),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: !showMessageInCenter
+                  ? (IsmChatProperties.chatPageProperties.messageStatus
                               ?.shouldShowTimeStatusInner ??
-                          true)) ...[
-                    Positioned(
-                      bottom: _getTimeBottomPosition(controller),
-                      right: IsmChatDimens.ten,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: _message.sentByMe
-                              ? MainAxisAlignment.end
-                              : MainAxisAlignment.start,
-                          children: [
-                            if (IsmChatProperties.chatPageProperties
-                                    .messageStatus?.shouldShowMessageTime ??
-                                true) ...[
-                              Text(
-                                _message.sentAt.toTimeString,
-                                style: _message.timeStyle,
-                              )
-                            ],
-                            if ((IsmChatProperties
-                                        .chatPageProperties
-                                        .messageStatus
-                                        ?.shouldShowMessgaeStatus ??
-                                    true) &&
-                                _message.sentByMe &&
-                                ![
-                                  IsmChatCustomMessageType.oneToOneCall,
-                                  IsmChatCustomMessageType.deletedForEveryone
-                                ].contains(_message.customType)) ...[
-                              if (_message.messageId?.isEmpty == true) ...[
-                                IsmChatDimens.boxWidth2,
-                                if (_message.isInvalidMessage == true) ...[
-                                  Icon(
-                                    Icons.error_outlined,
-                                    color: IsmChatConfig
-                                            .chatTheme
-                                            .chatPageTheme
-                                            ?.messageStatusTheme
-                                            ?.inValidIconColor ??
-                                        IsmChatColors.redColor,
-                                    size: IsmChatConfig.chatTheme.chatPageTheme
-                                            ?.messageStatusTheme?.checkSize ??
-                                        IsmChatDimens.forteen,
-                                  ),
-                                ] else ...[
-                                  Icon(
-                                    Icons.watch_later_outlined,
-                                    color: IsmChatConfig
-                                            .chatTheme
-                                            .chatPageTheme
-                                            ?.messageStatusTheme
-                                            ?.unreadCheckColor ??
-                                        IsmChatColors.whiteColor,
-                                    size: IsmChatConfig.chatTheme.chatPageTheme
-                                            ?.messageStatusTheme?.checkSize ??
-                                        IsmChatDimens.forteen,
-                                  ),
-                                ]
-                              ] else if (IsmChatProperties
-                                  .chatPageProperties.features
-                                  .contains(
-                                IsmChatFeature.showMessageStatus,
-                              )) ...[
-                                IsmChatDimens.boxWidth2,
-                                Icon(
-                                  // If readByAll is true, deliveredToAll must also be true
-                                  // Always show double checkmark if read
-                                  (_message.readByAll ?? false) ||
-                                          (_message.deliveredToAll ?? false)
-                                      ? Icons.done_all_rounded
-                                      : Icons.done_rounded,
-                                  color: _message.readByAll ?? false
-                                      ? IsmChatConfig
-                                              .chatTheme
-                                              .chatPageTheme
-                                              ?.messageStatusTheme
-                                              ?.readCheckColor ??
-                                          Colors.blue
-                                      : IsmChatConfig
-                                              .chatTheme
-                                              .chatPageTheme
-                                              ?.messageStatusTheme
-                                              ?.unreadCheckColor ??
-                                          IsmChatColors.whiteColor,
-                                  size: IsmChatConfig.chatTheme.chatPageTheme
-                                          ?.messageStatusTheme?.checkSize ??
-                                      IsmChatDimens.forteen,
-                                ),
-                              ]
-                            ],
-                          ],
+                          true)
+                      ? _getPaddingForMessage(controller)
+                      : IsmChatDimens.edgeInsets5
+                  : IsmChatDimens.edgeInsets0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: _message.sentByMe
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      if (!showMessageInCenter &&
+                          (controller.conversation?.isGroup ?? false) &&
+                          !_message.sentByMe) ...[
+                        Padding(
+                          padding: IsmChatDimens.edgeInsetsL2,
+                          child: FittedBox(
+                            child: Builder(builder: (context) {
+                              var name = '';
+                              if (IsmChatProperties
+                                      .chatPageProperties.messageSenderName
+                                      ?.call(
+                                    context,
+                                    _message,
+                                    controller.conversation,
+                                  ) !=
+                                  null) {
+                                name = IsmChatProperties
+                                        .chatPageProperties.messageSenderName
+                                        ?.call(
+                                      context,
+                                      _message,
+                                      controller.conversation,
+                                    ) ??
+                                    '';
+                              } else {
+                                name =
+                                    '${_message.senderInfo?.metaData?.firstName ?? ''} ${_message.senderInfo?.metaData?.lastName ?? ''}';
+                              }
+                              return IsmChatProperties.chatPageProperties
+                                      .messageSenderNameBuilder
+                                      ?.call(
+                                    context,
+                                    _message,
+                                    controller.conversation,
+                                  ) ??
+                                  Text(
+                                    name.trim().isNotEmpty
+                                        ? name
+                                        : _message.senderInfo?.userName ?? '',
+                                    style: _message.senderNameTextStyle,
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: _message.sentByMe
+                                        ? TextAlign.end
+                                        : TextAlign.start,
+                                    maxLines: 1,
+                                  );
+                            }),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
+                      ],
+                      if (_message.messageType ==
+                          IsmChatMessageType.forward) ...[
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.shortcut_outlined,
+                              color: _message.forwardedIconColor,
+                              size: IsmChatDimens.fifteen,
+                            ),
+                            Text(
+                              IsmChatStrings.forwarded,
+                              style: _message.forwardedTextStyle,
+                            ),
+                          ],
+                        )
+                      ],
+                    ],
+                  ),
+                  _buildMessageContent(context, controller)
                 ],
               ),
-            );
+            ),
+            if (!showMessageInCenter &&
+                (IsmChatProperties.chatPageProperties.messageStatus
+                        ?.shouldShowTimeStatusInner ??
+                    true)) ...[
+              Positioned(
+                bottom: _getTimeBottomPosition(controller),
+                right: IsmChatDimens.ten,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: _message.sentByMe
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.start,
+                    children: [
+                      if (IsmChatProperties.chatPageProperties.messageStatus
+                              ?.shouldShowMessageTime ??
+                          true) ...[
+                        Text(
+                          _message.sentAt.toTimeString,
+                          style: _message.timeStyle,
+                        )
+                      ],
+                      if ((IsmChatProperties.chatPageProperties.messageStatus
+                                  ?.shouldShowMessgaeStatus ??
+                              true) &&
+                          _message.sentByMe &&
+                          ![
+                            IsmChatCustomMessageType.oneToOneCall,
+                            IsmChatCustomMessageType.deletedForEveryone
+                          ].contains(_message.customType)) ...[
+                        if (_message.messageId?.isEmpty == true) ...[
+                          IsmChatDimens.boxWidth2,
+                          if (_message.isInvalidMessage == true) ...[
+                            Icon(
+                              Icons.error_outlined,
+                              color: IsmChatConfig.chatTheme.chatPageTheme
+                                      ?.messageStatusTheme?.inValidIconColor ??
+                                  IsmChatColors.redColor,
+                              size: IsmChatConfig.chatTheme.chatPageTheme
+                                      ?.messageStatusTheme?.checkSize ??
+                                  IsmChatDimens.forteen,
+                            ),
+                          ] else ...[
+                            Icon(
+                              Icons.watch_later_outlined,
+                              color: IsmChatConfig.chatTheme.chatPageTheme
+                                      ?.messageStatusTheme?.unreadCheckColor ??
+                                  IsmChatColors.whiteColor,
+                              size: IsmChatConfig.chatTheme.chatPageTheme
+                                      ?.messageStatusTheme?.checkSize ??
+                                  IsmChatDimens.forteen,
+                            ),
+                          ]
+                        ] else if (IsmChatProperties.chatPageProperties.features
+                            .contains(
+                          IsmChatFeature.showMessageStatus,
+                        )) ...[
+                          IsmChatDimens.boxWidth2,
+                          Icon(
+                            // If readByAll is true, deliveredToAll must also be true
+                            // Always show double checkmark if read
+                            (_message.readByAll ?? false) ||
+                                    (_message.deliveredToAll ?? false)
+                                ? Icons.done_all_rounded
+                                : Icons.done_rounded,
+                            color: _message.readByAll ?? false
+                                ? IsmChatConfig.chatTheme.chatPageTheme
+                                        ?.messageStatusTheme?.readCheckColor ??
+                                    Colors.blue
+                                : IsmChatConfig
+                                        .chatTheme
+                                        .chatPageTheme
+                                        ?.messageStatusTheme
+                                        ?.unreadCheckColor ??
+                                    IsmChatColors.whiteColor,
+                            size: IsmChatConfig.chatTheme.chatPageTheme
+                                    ?.messageStatusTheme?.checkSize ??
+                                IsmChatDimens.forteen,
+                          ),
+                        ]
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmChatPageController>(

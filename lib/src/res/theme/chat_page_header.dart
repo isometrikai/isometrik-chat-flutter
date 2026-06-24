@@ -30,7 +30,7 @@ class IsmChatHeaderTheme {
         popupshadowColor = IsmChatColors.whiteColor,
         systemUiOverlayStyle = null,
         popupLableStyle = null,
-        popupLableColor = null;
+        popupLableColor = IsmChatColors.blackColor;
 
   IsmChatHeaderTheme.dark()
       : backgroundColor = IsmChatColors.backgroundColorDark,
@@ -39,12 +39,12 @@ class IsmChatHeaderTheme {
         shadowColor = IsmChatColors.greyColor,
         titleStyle = IsmChatStyles.w400White14,
         subtileStyle = IsmChatStyles.w400White12,
-        popupBackgroundColor = IsmChatColors.whiteColor,
+        popupBackgroundColor = const Color(0xFF353535),
         popupShape = null,
         popupLableStyle = null,
-        popupLableColor = null,
+        popupLableColor = IsmChatColors.whiteColor,
         systemUiOverlayStyle = null,
-        popupshadowColor = IsmChatColors.whiteColor;
+        popupshadowColor = IsmChatColors.greyColor;
   final Color? backgroundColor;
   final Color? iconColor;
 

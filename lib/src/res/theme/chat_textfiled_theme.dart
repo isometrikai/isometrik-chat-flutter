@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Composer / message input styling on [IsmChatPageTheme.textFiledTheme].
+///
+/// Omit for SDK light/dark defaults via [IsmChatThemeResolver.textFieldFromConfig].
+/// Pass only the fields you need to override (e.g. [recordingTimerTextStyle]).
 class IsmChatTextFiledTheme {
-  IsmChatTextFiledTheme({
+  const IsmChatTextFiledTheme({
     this.inputTextStyle,
     this.decoration,
     this.backgroundColor,
@@ -11,7 +16,45 @@ class IsmChatTextFiledTheme {
     this.emojiColor,
     this.borderColor,
     this.hintTextStyle,
+    this.recordingTimerTextStyle,
+    this.emojiBoardBackgroundColor,
+    this.emojiBoardCategoryIconColor,
+    this.emojiBoardActionIconColor,
   });
+
+  factory IsmChatTextFiledTheme.light() => IsmChatTextFiledTheme(
+        inputTextStyle: IsmChatStyles.w400Black12,
+        hintTextStyle: IsmChatStyles.w400Black12.copyWith(
+          color: IsmChatColors.greyColor,
+        ),
+        backgroundColor: IsmChatColors.whiteColor,
+        cursorColor: IsmChatColors.primaryColorLight,
+        attchmentColor: IsmChatColors.primaryColorLight,
+        emojiColor: IsmChatColors.primaryColorLight,
+        borderColor: IsmChatColors.primaryColorLight,
+        recordingTimerTextStyle: IsmChatStyles.w600Black20,
+        emojiBoardBackgroundColor: IsmChatColors.whiteColor,
+        emojiBoardCategoryIconColor: IsmChatColors.greyColor,
+        emojiBoardActionIconColor: IsmChatColors.blackColor,
+      );
+
+  factory IsmChatTextFiledTheme.dark() => IsmChatTextFiledTheme(
+        inputTextStyle: IsmChatStyles.w400White14,
+        hintTextStyle: IsmChatStyles.w400White12.copyWith(
+          color: IsmChatColors.greyColorLight,
+        ),
+        backgroundColor: const Color(0xFF353535),
+        cursorColor: IsmChatColors.primaryColorDark,
+        attchmentColor: IsmChatColors.primaryColorDark,
+        emojiColor: IsmChatColors.primaryColorDark,
+        borderColor: IsmChatColors.greyColor,
+        recordingTimerTextStyle: IsmChatStyles.w600White16.copyWith(
+          fontSize: IsmChatDimens.twenty,
+        ),
+        emojiBoardBackgroundColor: const Color(0xFF353535),
+        emojiBoardCategoryIconColor: IsmChatColors.greyColorLight,
+        emojiBoardActionIconColor: IsmChatColors.whiteColor,
+      );
 
   final TextStyle? inputTextStyle;
   final TextStyle? hintTextStyle;
@@ -22,4 +65,16 @@ class IsmChatTextFiledTheme {
   final Color? attchmentColor;
   final Color? emojiColor;
   final Color? borderColor;
+
+  /// Voice-note recording timer in [IsmChatMessageField].
+  final TextStyle? recordingTimerTextStyle;
+
+  /// [EmojiBoard] panel, category bar, and search backgrounds.
+  final Color? emojiBoardBackgroundColor;
+
+  /// Unselected category icons on [EmojiBoard].
+  final Color? emojiBoardCategoryIconColor;
+
+  /// Bottom action bar icons on [EmojiBoard].
+  final Color? emojiBoardActionIconColor;
 }
