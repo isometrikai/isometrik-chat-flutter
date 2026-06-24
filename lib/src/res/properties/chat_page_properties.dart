@@ -174,9 +174,9 @@ class IsmChatPageProperties {
   /// [IsmChatConfirmationAction.onPressed]. Use [IsmChatConfirmationType] and
   /// [IsmChatConfirmationActionId] to branch UI.
   ///
-  /// Return `true` when your UI handled the request; return `null` or `false` to
-  /// use the default [IsmChatAlertDialogBox]. When this property is null, the SDK
-  /// always uses the default dialog.
+  /// When set, the SDK does not show [IsmChatAlertDialogBox] for that request.
+  /// Call [IsmChatConfirmationHelper.presentDefault] inside the presenter to
+  /// delegate specific cases to the SDK dialog.
   final ChatConfirmationPresenter? chatConfirmationPresenter;
 
   /// Required parameter
