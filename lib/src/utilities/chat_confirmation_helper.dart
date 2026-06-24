@@ -3,9 +3,9 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 /// Presents block/delete/clear/delete-chat confirmations via
 /// [IsmChatPageProperties.chatConfirmationPresenter] or default dialog.
 ///
-/// When [IsmChatPageProperties.chatConfirmationPresenter] is set, the SDK never
-/// shows its default dialog after the presenter completes. Call [presentDefault]
-/// from the presenter if a specific request should use the SDK UI.
+/// When [IsmChatPageProperties.chatConfirmationPresenter] is set, it is invoked
+/// first. Return `true` from the presenter to skip the default dialog;
+/// return `false` to show the SDK default UI for that request.
 class IsmChatConfirmationHelper {
   IsmChatConfirmationHelper._();
 
@@ -15,14 +15,17 @@ class IsmChatConfirmationHelper {
     final context =
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
     if (presenter != null) {
-      await presenter(context, request);
-      return;
+      final handled = await presenter(context, request);
+      if (handled) {
+        return;
+      }
     }
 
     await presentDefault(request);
   }
 
-  /// SDK default [IsmChatAlertDialogBox]. Use from a custom presenter when needed.
+  /// SDK default [IsmChatAlertDialogBox]. Used when no presenter is set, or
+  /// when the presenter returns `false` for a request.
   static Future<void> presentDefault(IsmChatConfirmationRequest request) async {
     final labels = request.actions.map((a) => a.label).toList();
     final callbacks = request.actions.map((a) => a.onPressed).toList();
@@ -38,7 +41,8 @@ class IsmChatConfirmationHelper {
   }
 
   /// Server clear is skipped when the last message is "you were removed" from a group.
-  static bool shouldClearMessagesFromServer(IsmChatConversationModel? conversation) =>
+  static bool shouldClearMessagesFromServer(
+          IsmChatConversationModel? conversation) =>
       !(conversation?.lastMessageDetails?.customType ==
               IsmChatCustomMessageType.removeMember &&
           conversation?.lastMessageDetails?.userId ==

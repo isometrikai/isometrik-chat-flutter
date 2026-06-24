@@ -70,7 +70,7 @@ mixin IsmChatShowDialogMixin on GetxController {
         IsmChatProperties.chatPageProperties.chatConfirmationPresenter;
     if (presenter != null) {
       final handled = await presenter(_dialogHostContext, request);
-      if (handled == true) {
+      if (handled) {
         return;
       }
     }

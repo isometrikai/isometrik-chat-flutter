@@ -170,13 +170,11 @@ class IsmChatPageProperties {
   /// Custom UI for confirmations before destructive actions (block, delete message,
   /// clear chat, delete chat/group from list or chat header menu).
   ///
-  /// Show a bottom sheet or dialog; on confirm, pop your route then call
-  /// [IsmChatConfirmationAction.onPressed]. Use [IsmChatConfirmationType] and
-  /// [IsmChatConfirmationActionId] to branch UI.
+  /// Return `true` when your UI handled the request. Return `false` for types
+  /// that should use the SDK default [IsmChatAlertDialogBox]. Branch on
+  /// [IsmChatConfirmationType] and [IsmChatConfirmationActionId] as needed.
   ///
-  /// When set, the SDK does not show [IsmChatAlertDialogBox] for that request.
-  /// Call [IsmChatConfirmationHelper.presentDefault] inside the presenter to
-  /// delegate specific cases to the SDK dialog.
+  /// On confirm, pop your route then call [IsmChatConfirmationAction.onPressed].
   final ChatConfirmationPresenter? chatConfirmationPresenter;
 
   /// Required parameter

@@ -57,13 +57,14 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
 
 /// Presents block/delete confirmation UI (sheet, dialog, etc.).
 ///
-/// Call [IsmChatConfirmationAction.onPressed] on confirm so SDK logic stays
-/// unchanged. Pop your sheet/route before calling `onPressed` (same as the
-/// default [IsmChatAlertDialogBox], which calls [IsmChatRoute.goBack] first).
+/// Return `true` when your UI handled the request (SDK will not show the
+/// default dialog). Return `false` to fall back to the SDK default dialog
+/// for that request — useful when you only customize some
+/// [IsmChatConfirmationType] values.
 ///
-/// When set, the SDK does not show its default dialog. Call
-/// [IsmChatConfirmationHelper.presentDefault] to delegate a request to SDK UI.
-typedef ChatConfirmationPresenter = Future<void> Function(
+/// On confirm, pop your sheet/route then call [IsmChatConfirmationAction.onPressed]
+/// so SDK logic stays unchanged (same as the default [IsmChatAlertDialogBox]).
+typedef ChatConfirmationPresenter = Future<bool> Function(
   BuildContext context,
   IsmChatConfirmationRequest request,
 );
