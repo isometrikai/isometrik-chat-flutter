@@ -313,7 +313,7 @@ mixin IsmChatPageSendMessageCoreMixin {
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-    final notificationBody = encrypted ? 'New Message' : textMessage.body;
+    final notificationBody = body;
     _controller.sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,

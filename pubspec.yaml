@@ -48,11 +48,7 @@ dependencies:
   image_picker: ^1.1.2
   intl: ^0.20.2
   just_audio: ^0.10.0
-  mqtt_client: ^10.7.0
-  mqtt_helper:
-    git:
-      url: https://github.com/rahulsaryam/mqtt_helper.git
-      ref: main
+  mqtt_client: ^10.11.11
   open_filex: ^4.6.0
   path: ^1.9.1
   path_provider: ^2.1.5
