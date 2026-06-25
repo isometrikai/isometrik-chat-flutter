@@ -136,20 +136,37 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                                           quality: 50,
                                           position: 1);
 
-                                  var bytes = await mediaFile.readAsBytes();
+                                  final currentMedia = controller
+                                      .webMedia[controller.assetsIndex];
+                                  final bytes = await mediaFile.readAsBytes();
                                   final fileSize = IsmChatUtility.formatBytes(
                                     int.parse(bytes.length.toString()),
                                   );
+                                  final trimmedPathName =
+                                      mediaFile.path.split('/').last;
+                                  final trimmedName = mediaFile.name.isNotEmpty
+                                      ? mediaFile.name
+                                      : trimmedPathName;
+                                  final name = trimmedName.contains('.')
+                                      ? trimmedName
+                                      : trimmedPathName.contains('.')
+                                          ? trimmedPathName
+                                          : '$trimmedName.mp4';
+                                  final extension = name.contains('.')
+                                      ? name.split('.').last.toLowerCase()
+                                      : 'mp4';
                                   controller.webMedia[controller.assetsIndex] =
                                       WebMediaModel(
                                     dataSize: fileSize,
                                     isVideo: true,
+                                    caption: currentMedia.caption,
+                                    duration: currentMedia.duration,
                                     platformFile: IsmchPlatformFile(
-                                      name: mediaFile.name,
+                                      name: name,
                                       bytes: bytes,
                                       path: mediaFile.path,
                                       size: bytes.length,
-                                      extension: mediaFile.mimeType,
+                                      extension: extension,
                                       thumbnailBytes: thumb,
                                     ),
                                   );

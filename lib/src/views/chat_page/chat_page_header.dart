@@ -245,8 +245,9 @@ class _TitleSubTitleWidget extends StatelessWidget {
             ) ??
             title;
 
-    final titleStyle = IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
-        IsmChatStyles.w600White16;
+    final titleStyle =
+        IsmChatConfig.chatTheme.chatPageHeaderTheme?.titleStyle ??
+            IsmChatStyles.w600White16;
 
     return IsmChatProperties.chatPageProperties.header?.titleBuilder?.call(
           context,
@@ -267,137 +268,135 @@ class _TitleSubTitleWidget extends StatelessWidget {
     final headerTitle = _resolvedHeaderTitle();
 
     return IsmChatTapHandler(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: _buildHeaderTitle(context, headerTitle),
-            ),
-            if (IsmChatProperties.chatPageProperties.header?.subtitleBuilder !=
-                null) ...[
-              Obx(
-                () =>
-                    IsmChatProperties.chatPageProperties.header?.subtitleBuilder
-                        ?.call(
-                      context,
-                      controller.conversation,
-                    ) ??
-                    IsmChatDimens.box0,
-              )
-            ] else ...[
-              (!(controller.conversation?.isChattingAllowed == true))
-                  ? IsmChatDimens.box0
-                  : IsmChatProperties.chatPageProperties.header?.subtitle !=
-                          null
-                      ? Text(
-                          IsmChatProperties.chatPageProperties.header?.subtitle
-                                  ?.call(
-                                context,
-                                controller.conversation,
-                              ) ??
-                              IsmChatStrings.tapInfo,
-                          style: IsmChatConfig.chatTheme.chatPageHeaderTheme
-                                  ?.subtileStyle ??
-                              IsmChatStyles.w400White12,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: false,
-                        )
-                      : Obx(
-                          () {
-                            // Priority order: Typing > Online > Last Seen
-                            // Check if someone is typing first (highest priority)
-                            if (controller.conversation?.isSomeoneTyping ==
-                                true) {
-                              return Text(
-                                controller.conversation?.typingUsers ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: IsmChatConfig.chatTheme
-                                        .chatPageHeaderTheme?.subtileStyle ??
-                                    IsmChatStyles.w400White12,
-                              );
-                            }
-
-                            // For groups, the member list must stay within the [Expanded]
-                            // title column — a fixed % of *screen* width was wider than
-                            // that column and caused [Row] overflow, clipping
-                            // [actionBuilder] and the overflow menu on mobile.
-                            if (controller.conversation?.isGroup == true) {
-                              return Text(
-                                controller.conversation?.members
-                                            ?.isNullOrEmpty ==
-                                        true
-                                    ? controller.isBroadcast
-                                        ? '${controller.conversation?.membersCount} ${IsmChatStrings.participants.toUpperCase()}'
-                                        : IsmChatStrings.tapInfo
-                                    : (controller.conversation?.members ?? [])
-                                        .map(
-                                        (e) {
-                                          if (e.userId ==
-                                              IsmChatConfig.communicationConfig
-                                                  .userConfig.userId) {
-                                            return IsmChatStrings.you;
-                                          }
-                                          final name =
-                                              '${e.metaData?.firstName ?? ''} ${e.metaData?.lastName ?? ''} ';
-                                          if (name.trim().isNotEmpty) {
-                                            return name;
-                                          } else {
-                                            return e.userName;
-                                          }
-                                        },
-                                      ).join(', '),
-                                style: IsmChatConfig.chatTheme
-                                        .chatPageHeaderTheme?.subtileStyle ??
-                                    IsmChatStyles.w400White12,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              );
-                            }
-
-                            // For one-on-one chats, check online status before last seen
-                            // This ensures that when typing stops, if user is online, it shows "Online" not "Last seen"
-                            final isOnline = controller
-                                    .conversation?.opponentDetails?.online ??
-                                false;
-
-                            if (isOnline) {
-                              return Text(
-                                IsmChatStrings.online,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: IsmChatConfig.chatTheme
-                                        .chatPageHeaderTheme?.subtileStyle ??
-                                    IsmChatStyles.w400White12,
-                              );
-                            }
-
-                            // If not online, show last seen timestamp
-                            final opponentDetails =
-                                controller.conversation?.opponentDetails;
-                            final lastActive = opponentDetails?.lastSeen;
-
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: _buildHeaderTitle(context, headerTitle),
+          ),
+          if (IsmChatProperties.chatPageProperties.header?.subtitleBuilder !=
+              null) ...[
+            Obx(
+              () =>
+                  IsmChatProperties.chatPageProperties.header?.subtitleBuilder
+                      ?.call(
+                    context,
+                    controller.conversation,
+                  ) ??
+                  IsmChatDimens.box0,
+            )
+          ] else ...[
+            (!(controller.conversation?.isChattingAllowed == true))
+                ? IsmChatDimens.box0
+                : IsmChatProperties.chatPageProperties.header?.subtitle != null
+                    ? Text(
+                        IsmChatProperties.chatPageProperties.header?.subtitle
+                                ?.call(
+                              context,
+                              controller.conversation,
+                            ) ??
+                            IsmChatStrings.tapInfo,
+                        style: IsmChatConfig
+                                .chatTheme.chatPageHeaderTheme?.subtileStyle ??
+                            IsmChatStyles.w400White12,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                      )
+                    : Obx(
+                        () {
+                          // Priority order: Typing > Online > Last Seen
+                          // Check if someone is typing first (highest priority)
+                          if (controller.conversation?.isSomeoneTyping ==
+                              true) {
                             return Text(
-                              (lastActive != null && lastActive > 0)
-                                  ? lastActive.toCurrentTimeStirng()
-                                  : IsmChatStrings.tapInfo,
-                              maxLines: 2,
+                              controller.conversation?.typingUsers ?? '',
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: IsmChatConfig.chatTheme.chatPageHeaderTheme
                                       ?.subtileStyle ??
                                   IsmChatStyles.w400White12,
                             );
-                          },
-                        ),
-            ]
-          ],
-        ),
-      );
+                          }
+
+                          // For groups, the member list must stay within the [Expanded]
+                          // title column — a fixed % of *screen* width was wider than
+                          // that column and caused [Row] overflow, clipping
+                          // [actionBuilder] and the overflow menu on mobile.
+                          if (controller.conversation?.isGroup == true) {
+                            return Text(
+                              controller.conversation?.members?.isNullOrEmpty ==
+                                      true
+                                  ? controller.isBroadcast
+                                      ? '${controller.conversation?.membersCount} ${IsmChatStrings.participants.toUpperCase()}'
+                                      : IsmChatStrings.tapInfo
+                                  : (controller.conversation?.members ?? [])
+                                      .map(
+                                      (e) {
+                                        if (e.userId ==
+                                            IsmChatConfig.communicationConfig
+                                                .userConfig.userId) {
+                                          return IsmChatStrings.you;
+                                        }
+                                        final name =
+                                            '${e.metaData?.firstName ?? ''} ${e.metaData?.lastName ?? ''} ';
+                                        if (name.trim().isNotEmpty) {
+                                          return name;
+                                        } else {
+                                          return e.userName;
+                                        }
+                                      },
+                                    ).join(', '),
+                              style: IsmChatConfig.chatTheme.chatPageHeaderTheme
+                                      ?.subtileStyle ??
+                                  IsmChatStyles.w400White12,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            );
+                          }
+
+                          // For one-on-one chats, check online status before last seen
+                          // This ensures that when typing stops, if user is online, it shows "Online" not "Last seen"
+                          final isOnline = controller
+                                  .conversation?.opponentDetails?.online ??
+                              false;
+
+                          if (isOnline) {
+                            return Text(
+                              IsmChatStrings.online,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: IsmChatConfig.chatTheme.chatPageHeaderTheme
+                                      ?.subtileStyle ??
+                                  IsmChatStyles.w400White12,
+                            );
+                          }
+
+                          // If not online, show last seen timestamp
+                          final opponentDetails =
+                              controller.conversation?.opponentDetails;
+                          final lastActive = opponentDetails?.lastSeen;
+
+                          return Text(
+                            (lastActive != null && lastActive > 0)
+                                ? lastActive.toCurrentTimeStirng()
+                                : IsmChatStrings.tapInfo,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: IsmChatConfig.chatTheme.chatPageHeaderTheme
+                                    ?.subtileStyle ??
+                                IsmChatStyles.w400White12,
+                          );
+                        },
+                      ),
+          ]
+        ],
+      ),
+    );
   }
 }
 
@@ -464,7 +463,8 @@ class _PopupMenuWidget extends StatelessWidget {
             )
           ],
           if ((!(controller.conversation?.isGroup ?? false)) &&
-              controller.conversation?.isOpponentDetailsEmpty == false)
+              controller.conversation?.isOpponentDetailsEmpty == false &&
+              (controller.conversation?.conversationId?.isNotEmpty ?? false))
             PopupMenuItem(
               value: 3,
               child: Row(
