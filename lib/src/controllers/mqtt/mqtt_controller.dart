@@ -51,13 +51,34 @@ class IsmChatMqttController extends GetxController
   /// MQTT-specific configuration settings.
   IsmChatMqttConfig? mqttConfig;
 
-  bool _mqttEventListenersAttached = false;
   bool _mqttSetupInProgress = false;
   List<String>? _savedExtraTopics;
   List<String>? _savedTopicChannels;
   bool _savedAutoReconnect = true;
   bool _savedEnableLogging = true;
-  Timer? _mqttReconnectDebounce;
+
+  /// True after a successful [MqttHelper.initialize] for this session. Used to
+  /// decide between a soft broker auto-reconnect nudge and a full re-init.
+  bool _mqttInitialized = false;
+
+  /// Active subscriptions to the helper's broadcast streams. The helper creates
+  /// brand-new stream controllers on every [MqttHelper.initialize], so these
+  /// must be cancelled and re-attached after each (re)initialize; otherwise
+  /// stale subscriptions to the replaced controllers leak.
+  StreamSubscription<bool>? _mqttConnectionSub;
+  StreamSubscription<EventModel>? _mqttEventSub;
+
+  /// Grace period before surfacing a disconnected state, preventing UI flicker
+  /// from brief network hiccups where the broker auto-reconnect recovers
+  /// quickly. Connected transitions are applied immediately.
+  static const Duration _disconnectDebounce = Duration(seconds: 3);
+  Timer? _disconnectDebounceTimer;
+
+  /// Consecutive soft reconnect nudges since the last successful connect. Once
+  /// this exceeds [_maxNudgesBeforeReinit] the next [ensureMqttConnected]
+  /// escalates to a full re-init so a dead/faulted client can never get stuck.
+  int _consecutiveNudges = 0;
+  static const int _maxNudgesBeforeReinit = 3;
 
   /// Configuration instance that holds all communication-related settings for the chat system.
   ///
@@ -181,6 +202,8 @@ class IsmChatMqttController extends GetxController
         onSubscribeFail: _onSubscribeFailed,
         onUnsubscribed: _onUnSubscribed,
         pongCallback: _pong,
+        onAutoReconnect: _onAutoReconnectStarted,
+        onAutoReconnected: _onAutoReconnectCompleted,
       ),
       autoSubscribe: true,
 
@@ -192,57 +215,104 @@ class IsmChatMqttController extends GetxController
       //   subscribedTopics = topics;
       // },
     );
+    _mqttInitialized = true;
     _attachMqttListeners();
   }
 
+  /// (Re)attaches listeners to the helper's broadcast streams.
+  ///
+  /// The helper replaces its stream controllers on every
+  /// [MqttHelper.initialize], so any previous subscriptions are stale and must
+  /// be cancelled before re-subscribing — otherwise they leak and may keep
+  /// firing into replaced state.
   void _attachMqttListeners() {
-    if (_mqttEventListenersAttached) return;
-    _mqttEventListenersAttached = true;
-    mqttHelper
-      ..onConnectionChange(_handleMqttConnectionChange)
-      ..onEvent(
-        (event) {
-          IsmChatLog.info('Mqtt event ${event.toMap()}');
-          onMqttEvent(event: event);
-        },
-      );
+    _mqttConnectionSub?.cancel();
+    _mqttEventSub?.cancel();
+    _mqttConnectionSub =
+        mqttHelper.onConnectionChange(_handleMqttConnectionChange);
+    _mqttEventSub = mqttHelper.onEvent(
+      (event) {
+        IsmChatLog.info('Mqtt event: => ${event.toMap()}');
+        onMqttEvent(event: event);
+      },
+    );
   }
 
   void _handleMqttConnectionChange(bool connected) {
     if (connected) {
-      _mqttReconnectDebounce?.cancel();
-      connectionState = IsmChatConnectionState.connected;
-      IsmChatConfig.mqttConnectionStatus?.call(connectionState);
-      return;
+      _markConnected();
+    } else {
+      _markDisconnected('connection-stream');
     }
-    connectionState = IsmChatConnectionState.disconnected;
-    IsmChatConfig.mqttConnectionStatus?.call(connectionState);
-    _scheduleMqttReconnect();
   }
 
-  void _scheduleMqttReconnect() {
-    if (!IsmChatConfig.shouldSetupMqtt) return;
-    _mqttReconnectDebounce?.cancel();
-    _mqttReconnectDebounce = Timer(const Duration(seconds: 3), () {
-      if (connectionState != IsmChatConnectionState.connected) {
+  /// Applies the connected state immediately, cancels any pending disconnect
+  /// debounce, resets the nudge counter, and re-asserts topic subscriptions.
+  void _markConnected() {
+    _disconnectDebounceTimer?.cancel();
+    _disconnectDebounceTimer = null;
+    _consecutiveNudges = 0;
+    if (connectionState != IsmChatConnectionState.connected) {
+      connectionState = IsmChatConnectionState.connected;
+      IsmChatConfig.mqttConnectionStatus?.call(connectionState);
+    }
+    // Topics added during a brief disconnect may have been queued and lost on a
+    // client swap; re-assert them. Broker-level resubscribe handles the rest.
+    _ensureTopicsSubscribed();
+  }
+
+  /// Debounces the disconnected state so a quick broker auto-reconnect does not
+  /// flicker the UI indicator. After the grace window, if the broker is still
+  /// down, surfaces the disconnected state and triggers an app-level reconnect.
+  void _markDisconnected(String reason) {
+    _disconnectDebounceTimer?.cancel();
+    _disconnectDebounceTimer = Timer(_disconnectDebounce, () {
+      _disconnectDebounceTimer = null;
+      // Recovered during the grace window — nothing to surface.
+      if (mqttHelper.isConnected) return;
+      if (connectionState != IsmChatConnectionState.disconnected) {
+        connectionState = IsmChatConnectionState.disconnected;
+        IsmChatConfig.mqttConnectionStatus?.call(connectionState);
+      }
+      IsmChatLog.error('MQTT disconnected ($reason)');
+      if (IsmChatConfig.shouldSetupMqtt) {
         unawaited(ensureMqttConnected());
       }
     });
   }
 
   /// Reconnects MQTT when disconnected; no-op when already connected.
+  ///
+  /// Prefers a soft nudge of the broker's own auto-reconnect over a full
+  /// re-init (replacing the client mid-flight while its auto-reconnect is
+  /// recovering can drop subscriptions and surface stale callbacks). Escalates
+  /// to a full re-init when the helper was never initialized, or after repeated
+  /// nudges fail to recover.
   Future<void> ensureMqttConnected({bool refreshChatList = true}) async {
     if (!IsmChatConfig.shouldSetupMqtt || _mqttSetupInProgress) return;
 
-    // Already connected — do nothing (avoids redundant subscribe / API calls).
-    if (connectionState == IsmChatConnectionState.connected) {
+    // Use the real broker state, not the debounced UI flag — the grace window
+    // can mask a socket that is actually down.
+    if (mqttHelper.isConnected) {
+      _markConnected();
+      return;
+    }
+
+    // Soft nudge path: initialized client that is just temporarily down.
+    if (_mqttInitialized && _consecutiveNudges < _maxNudgesBeforeReinit) {
+      _consecutiveNudges++;
+      IsmChatLog.info(
+        'MQTT down — nudging broker auto-reconnect '
+        '(attempt $_consecutiveNudges/$_maxNudgesBeforeReinit)',
+      );
+      mqttHelper.requestAutoReconnectIfDisconnected();
       return;
     }
 
     _mqttSetupInProgress = true;
     try {
-      IsmChatLog.info('MQTT disconnected — reconnecting via ensureMqttConnected');
-      _mqttEventListenersAttached = false;
+      IsmChatLog.info('MQTT down — full re-init via ensureMqttConnected');
+      _consecutiveNudges = 0;
       subscribedTopics.clear();
       await setupIsmMqttConnection(
         topics: _savedExtraTopics,
@@ -261,24 +331,84 @@ class IsmChatMqttController extends GetxController
     }
   }
 
+  /// Lightweight reconnect hint for app resume — nudges the broker's own
+  /// auto-reconnect when the socket is down. Falls back to a full re-init only
+  /// when the helper was never initialized. Safe no-op when already connected.
+  void nudgeReconnectAfterAppResume() {
+    if (!IsmChatConfig.shouldSetupMqtt) return;
+    if (mqttHelper.isConnected) {
+      _markConnected();
+      return;
+    }
+    if (_mqttInitialized) {
+      mqttHelper.requestAutoReconnectIfDisconnected();
+    } else {
+      unawaited(ensureMqttConnected());
+    }
+  }
+
+  /// Re-asserts all known topic subscriptions. Broker-level resubscribe covers
+  /// topics known at disconnect time, but topics added while briefly
+  /// disconnected may have been queued and lost on a client swap. Idempotent:
+  /// the helper only subscribes to topics not already active.
+  void _ensureTopicsSubscribed() {
+    if (!_mqttInitialized || subscribedTopics.isEmpty) return;
+    if (!mqttHelper.isConnected) return;
+    for (final topic in subscribedTopics) {
+      try {
+        mqttHelper.subscribeTopic(topic);
+      } catch (e) {
+        IsmChatLog.error('Re-subscribe topic "$topic" failed: $e');
+      }
+    }
+  }
+
+  /// Recovers data that may have been missed while MQTT was down. Triggered
+  /// after a successful auto-reconnect.
+  Future<void> _refreshAfterReconnect() async {
+    try {
+      if (IsmChatUtility.conversationControllerRegistered) {
+        await IsmChatUtility.conversationController.getChatConversations();
+      }
+    } catch (e, st) {
+      IsmChatLog.error('Refresh after MQTT reconnect failed: $e', st);
+    }
+  }
+
   @override
   void onClose() {
-    _mqttReconnectDebounce?.cancel();
+    _disconnectDebounceTimer?.cancel();
+    _mqttConnectionSub?.cancel();
+    _mqttEventSub?.cancel();
     super.onClose();
   }
 
   /// onConnected callback, it will be called when connection is established
   void _onConnected() {
-    connectionState = IsmChatConnectionState.connected;
-    IsmChatConfig.mqttConnectionStatus?.call(connectionState);
-    IsmChatLog.success('Mqtt event');
+    _markConnected();
+    IsmChatLog.success('MQTT connected');
   }
 
   /// onDisconnected callback, it will be called when connection is breaked
   void _onDisconnected() {
-    connectionState = IsmChatConnectionState.disconnected;
-    IsmChatConfig.mqttConnectionStatus?.call(connectionState);
-    IsmChatLog.error('MQTT Disconnected Successfully');
+    _markDisconnected('broker/network');
+    IsmChatLog.error('MQTT Disconnected');
+  }
+
+  /// Called when the broker's own auto-reconnect cycle starts (connection lost).
+  void _onAutoReconnectStarted() {
+    IsmChatLog.info('MQTT auto-reconnect started');
+    _markDisconnected('auto-reconnect-started');
+  }
+
+  /// Called when the broker's auto-reconnect completes successfully.
+  void _onAutoReconnectCompleted({required bool updatesReattached}) {
+    IsmChatLog.success(
+      'MQTT auto-reconnect completed (updates reattached: $updatesReattached)',
+    );
+    _markConnected();
+    // Recover anything missed while the socket was down.
+    unawaited(_refreshAfterReconnect());
   }
 
   /// onSubscribed callback, it will be called when connection successfully subscribes to certain topic
@@ -428,14 +558,14 @@ class IsmChatMqttController extends GetxController
   ///   this specific conversation. If not provided, the method will search for a conversation
   ///   with the specified user. Defaults to an empty string.
   Future<bool> deleteChatFormDB(
-    String isometrickChatId, {
-    String conversationId = '',
-  }) async {
+      String isometrickChatId, {
+        String conversationId = '',
+      }) async {
     if (conversationId.isEmpty) {
       final conversations = await getAllConversationFromDB();
       if (conversations != null || conversations?.isNotEmpty == true) {
         var conversation = conversations?.firstWhere(
-            (element) => element.opponentDetails?.userId == isometrickChatId,
+                (element) => element.opponentDetails?.userId == isometrickChatId,
             orElse: IsmChatConversationModel.new);
 
         if (conversation?.conversationId != null) {
@@ -486,7 +616,7 @@ class IsmChatMqttController extends GetxController
         limit: limit,
         searchTag: searchTag ?? '',
         includeConversationStatusMessagesInUnreadMessagesCount:
-            includeConversationStatusMessagesInUnreadMessagesCount,
+        includeConversationStatusMessagesInUnreadMessagesCount,
       );
 
   /// Retrieves user messages from the server or local database.
@@ -550,7 +680,7 @@ class IsmChatMqttController extends GetxController
       final userMeessages = response.reversed.toList();
       for (final message in userMeessages) {
         final isSender =
-            message.deliveredTo?.any((e) => e.userId == senderIds?.first);
+        message.deliveredTo?.any((e) => e.userId == senderIds?.first);
         if (isSender == false) {
           await Future.delayed(
             const Duration(milliseconds: 100),

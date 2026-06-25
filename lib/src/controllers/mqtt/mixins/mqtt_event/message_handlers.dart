@@ -133,6 +133,10 @@ mixin IsmChatMqttEventMessageHandlersMixin {
     final notificationTitle =
         '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}'
             .trim();
+    final notificationBody = _resolveNotificationBody(
+      message,
+      preferNotificationBody: false,
+    );
     if (IsmChatResponsive.isMobile(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
       if (self is IsmChatMqttEventVariablesMixin) {
@@ -150,7 +154,7 @@ mixin IsmChatMqttEventMessageHandlersMixin {
                 title: notificationTitle.isNotEmpty
                     ? notificationTitle
                     : message.notificationTitle ?? '',
-                body: message.notificationBody ?? '',
+                body: notificationBody,
                 data: notificationData);
           }
           return;
@@ -176,9 +180,45 @@ mixin IsmChatMqttEventMessageHandlersMixin {
             title: notificationTitle.isNotEmpty
                 ? notificationTitle
                 : message.notificationTitle ?? '',
-            body: message.notificationBody ?? '',
+            body: _resolveNotificationBody(
+              message,
+              preferNotificationBody: true,
+            ),
             data: notificationData);
       }
     } catch (_) {}
   }
+}
+
+String _resolveNotificationBody(
+  IsmChatMessageModel message, {
+  required bool preferNotificationBody,
+}) {
+  if (message.encrypted == true) {
+    return _truncateNotificationBody(_decryptedNotificationBody(message));
+  }
+  if (preferNotificationBody) {
+    return message.notificationBody ?? '';
+  }
+  return message.body;
+}
+
+String _decryptedNotificationBody(IsmChatMessageModel message) {
+  if (message.body.isNotEmpty) return message.body;
+
+  final encryptedText = message.notificationBody ?? '';
+  if (encryptedText.isEmpty) return '';
+
+  final metaData = message.metaData;
+  final isBroadcast = metaData?.isBroadCastMessage == true;
+  final groupcastId = metaData?.groupCastId ?? '';
+  final decryptionId = isBroadcast && groupcastId.isNotEmpty
+      ? groupcastId
+      : message.conversationId ?? '';
+  return IsmChatUtility.decryptMessage(encryptedText, decryptionId);
+}
+
+String _truncateNotificationBody(String text) {
+  if (text.length <= 10) return text;
+  return '${text.substring(0, 10)}...';
 }

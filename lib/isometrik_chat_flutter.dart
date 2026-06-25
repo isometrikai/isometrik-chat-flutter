@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter_platform_interface.dart';
 
-export 'package:mqtt_helper/mqtt_helper.dart';
 
 // Public API exported early so host apps (e.g. Dubly) resolve config/theme types reliably.
 export 'src/utilities/config/chat_config.dart';
