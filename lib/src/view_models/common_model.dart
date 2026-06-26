@@ -232,7 +232,8 @@ class IsmChatCommonViewModel {
               ..addEntries({'$createdAt': pendingMessage}.entries);
             conversationModel = conversationModel.copyWith(
               messages: messages,
-              lastMessageDetails: conversationModel.lastMessageDetails?.copyWith(
+              lastMessageDetails:
+                  conversationModel.lastMessageDetails?.copyWith(
                 reactionType: '',
                 messageId: '',
                 action: '',
@@ -253,11 +254,14 @@ class IsmChatCommonViewModel {
             if (decoded is Map && decoded['message'] is String) {
               message = decoded['message'] as String;
             }
+            if ([400].contains(response.respone.errorCode)) {
+              message = decoded['error'] as String;
+              message = message.isNotEmpty ? message : 'Message not sent';
+            }
             // Provide a clearer hint for common "long text" failures.
             if ([413, 422].contains(response.respone.errorCode)) {
-              message = message.isNotEmpty
-                  ? message
-                  : 'Message is too long to send.';
+              message =
+                  message.isNotEmpty ? message : 'Message is too long to send.';
             }
             unawaited(IsmChatUtility.showErrorDialog(message));
           } catch (_) {}
