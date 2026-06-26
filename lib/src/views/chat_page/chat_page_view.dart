@@ -413,31 +413,21 @@ class _IsmChatPageView extends StatelessWidget {
                                     (
                                         // Explicit "removed" state from API/logic
                                         controller.isActionAllowed == true ||
-                                        // Last message says removed AND the user is not a current member
-                                        (controller
-                                                    .conversation
-                                                    ?.lastMessageDetails
-                                                    ?.customType ==
-                                                IsmChatCustomMessageType
-                                                    .removeMember &&
-                                            controller
-                                                    .conversation
-                                                    ?.lastMessageDetails
-                                                    ?.userId ==
-                                                IsmChatConfig
-                                                    .communicationConfig
-                                                    .userConfig
-                                                    .userId &&
-                                            !(controller.conversation?.members
-                                                    ?.any((m) =>
-                                                        m.userId.trim() ==
-                                                        IsmChatConfig
-                                                            .communicationConfig
-                                                            .userConfig
-                                                            .userId
-                                                            .trim()) ??
-                                                false))
-                                        )) ...[
+                                            // Last message says removed AND the user is not a current member
+                                            (controller
+                                                        .conversation
+                                                        ?.lastMessageDetails
+                                                        ?.customType ==
+                                                    IsmChatCustomMessageType
+                                                        .removeMember &&
+                                                controller.conversation
+                                                        ?.lastMessageDetails?.userId ==
+                                                    IsmChatConfig
+                                                        .communicationConfig
+                                                        .userConfig
+                                                        .userId &&
+                                                !(controller.conversation?.members?.any((m) => m.userId.trim() == IsmChatConfig.communicationConfig.userConfig.userId.trim()) ??
+                                                    false)))) ...[
                                   // User is removed from group
                                   const _MessageNotAllowedWidget(
                                     showMessage:
@@ -453,8 +443,7 @@ class _IsmChatPageView extends StatelessWidget {
                                             .messageAllowedConfig
                                             ?.isShowTextfiledConfig
                                             ?.isShowMessageAllowed
-                                            .call(context,
-                                                controller.conversation) ==
+                                            .call(context, controller.conversation) ==
                                         true)) ...[
                                   // Custom message restriction from properties
                                   _MessageNotAllowedWidget(
@@ -474,8 +463,7 @@ class _IsmChatPageView extends StatelessWidget {
                                         ?.call(
                                             context, controller.conversation),
                                   )
-                                ] else if (controller.conversation?.isOpponentDetailsEmpty ==
-                                    true) ...[
+                                ] else if (controller.conversation?.isOpponentDetailsEmpty == true) ...[
                                   // Opponent user has been deleted
                                   const _MessageNotAllowedWidget(
                                     showMessage:
@@ -513,15 +501,17 @@ class _IsmChatPageView extends StatelessWidget {
                             () => !controller.showDownSideButton
                                 ? IsmChatDimens.box0
                                 : Positioned(
+                                    // Sit above the compose bar + send button (right-aligned).
                                     bottom: IsmChatResponsive.isMobile(context)
                                         ? controller.isreplying
-                                            ? IsmChatDimens.oneHundredThirty
-                                            : IsmChatDimens.ninty
-                                        : IsmChatDimens.oneHundredFifty,
+                                            ? IsmChatDimens.oneHundredSeventy
+                                            : IsmChatDimens.oneHundredTwenty
+                                        : IsmChatDimens.oneHundredSeventy,
                                     right: IsmChatDimens.eight,
                                     child: IsmChatTapHandler(
                                       onTap: controller.scrollDown,
                                       child: Container(
+                                        margin: IsmChatDimens.edgeInsets4,
                                         decoration: BoxDecoration(
                                           color: IsmChatConfig
                                               .chatTheme.backgroundColor
