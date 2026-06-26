@@ -355,9 +355,14 @@ class IsmChatCommonViewModel {
   }
 
   List<IsmChatMessageModel> sortMessages(List<IsmChatMessageModel> messages) {
-    messages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
+    // Date rows are UI-only; strip any persisted/in-memory copies before
+    // re-inserting so unblock/reload flows do not show duplicate date stamps.
+    final withoutDateStamps = messages
+        .where((m) => m.customType != IsmChatCustomMessageType.date)
+        .toList()
+      ..sort((a, b) => a.sentAt.compareTo(b.sentAt));
 
-    return _parseMessagesWithDate(messages);
+    return _parseMessagesWithDate(withoutDateStamps);
   }
 
   List<IsmChatMessageModel> _parseMessagesWithDate(
