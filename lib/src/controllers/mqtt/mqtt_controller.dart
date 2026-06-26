@@ -80,6 +80,22 @@ class IsmChatMqttController extends GetxController
   int _consecutiveNudges = 0;
   static const int _maxNudgesBeforeReinit = 3;
 
+  /// Guards [setupIsmMqttConnection] so two callers (e.g. setup() and the
+  /// chat-list health check firing at the same time) can never run a full
+  /// initialize concurrently — overlapping inits tear each other's client down
+  /// and were a source of the zombie-connection event loss.
+  bool _initInFlight = false;
+
+  /// Whether a usable MQTT server config is present. Guards every init /
+  /// reconnect path against firing before [setup] has supplied the config —
+  /// otherwise the client connects to an empty host (`server , port 0`), fails
+  /// with `Failed host lookup: '' (errno = 7)`, and gets auto-reconnect
+  /// disabled, leaving a dead client that later blocks a proper init.
+  bool get _hasValidMqttConfig =>
+      _config != null &&
+      (mqttConfig?.hostName ?? '').trim().isNotEmpty &&
+      (mqttConfig?.port ?? 0) > 0;
+
   /// Configuration instance that holds all communication-related settings for the chat system.
   ///
   /// This private variable stores the core configuration settings including:
@@ -114,17 +130,45 @@ class IsmChatMqttController extends GetxController
     required IsmChatCommunicationConfig config,
     required IsmMqttProperties mqttProperties,
   }) async {
+    final previousUserId = userConfig?.userId;
     _config = config;
     projectConfig = _config?.projectConfig;
     mqttConfig = _config?.mqttConfig;
     userConfig = _config?.userConfig;
+
     if (mqttProperties.shouldSetupMqtt) {
-      await setupIsmMqttConnection(
-        topics: mqttProperties.topics,
-        topicChannels: mqttProperties.topicChannels,
-        autoReconnect: mqttProperties.autoReconnect,
-        enableLogging: mqttProperties.enableLogging,
-      );
+      final userChanged =
+          previousUserId != null && previousUserId != userConfig?.userId;
+
+      if (_mqttInitialized && !userChanged) {
+        // MQTT is already initialized for this user. Calling setup() again —
+        // e.g. on app resume or a repeated initialize() — must NOT trigger a
+        // full re-init here. Tearing down a client whose auto-reconnect is
+        // already in-flight races two clients: the torn-down client can still
+        // complete its reconnect and fire inbound messages into a now-closed
+        // event bus ("event bus is closed - event not fired"), while the fresh
+        // client may fail its first connect (e.g. DNS not yet back on resume)
+        // and get auto-reconnect disabled — silently stopping real-time events.
+        //
+        // Instead, merge any newly requested topics and let the existing client
+        // recover via its own auto-reconnect (soft nudge), with no teardown.
+        IsmChatLog.info(
+          'MQTT already initialized — ensuring connection instead of '
+          'destructive re-init',
+        );
+        final extraTopics = mqttProperties.topics;
+        if (extraTopics != null && extraTopics.isNotEmpty) {
+          subscribeTopics(extraTopics);
+        }
+        unawaited(ensureMqttConnected());
+      } else {
+        await setupIsmMqttConnection(
+          topics: mqttProperties.topics,
+          topicChannels: mqttProperties.topicChannels,
+          autoReconnect: mqttProperties.autoReconnect,
+          enableLogging: mqttProperties.enableLogging,
+        );
+      }
     }
     await Future.wait([
       getChatConversationsUnreadCount(),
@@ -147,76 +191,103 @@ class IsmChatMqttController extends GetxController
     bool autoReconnect = true,
     bool enableLogging = true,
   }) async {
-    _savedExtraTopics = topics;
-    _savedTopicChannels = topicChannels;
-    _savedAutoReconnect = autoReconnect;
-    _savedEnableLogging = enableLogging;
+    // Never initialize without a usable config. Doing so connects to an empty
+    // host, fails, and disables auto-reconnect on a client that then gets
+    // marked "initialized" — blocking the real init once setup() provides the
+    // config. setup() (or a later ensureMqttConnected) re-runs this once the
+    // config is ready.
+    if (!_hasValidMqttConfig) {
+      IsmChatLog.error(
+        'MQTT setup skipped — config not ready '
+        '(host: "${mqttConfig?.hostName ?? ''}", port: ${mqttConfig?.port ?? 0})',
+      );
+      return;
+    }
 
-    final topicPrefix =
-        '/${projectConfig?.accountId ?? ''}/${projectConfig?.projectId ?? ''}';
-    final userTopic = '$topicPrefix/User/${userConfig?.userId ?? ''}';
-    final messageTopic = '$topicPrefix/Message/${userConfig?.userId ?? ''}';
-    final statusTopic = '$topicPrefix/Status/${userConfig?.userId ?? ''}';
+    // Prevent two overlapping full initializes (e.g. setup() and the chat-list
+    // health check at the same time) from tearing down each other's client.
+    if (_initInFlight) {
+      IsmChatLog.info('MQTT init already in progress — skipping concurrent setup');
+      return;
+    }
+    _initInFlight = true;
+    try {
+      _savedExtraTopics = topics;
+      _savedTopicChannels = topicChannels;
+      _savedAutoReconnect = autoReconnect;
+      _savedEnableLogging = enableLogging;
 
-    var channelTopics = topicChannels
-        ?.map((e) => '$topicPrefix/$e/${userConfig?.userId ?? ''}')
-        .toList();
+      final topicPrefix =
+          '/${projectConfig?.accountId ?? ''}/${projectConfig?.projectId ?? ''}';
+      final userTopic = '$topicPrefix/User/${userConfig?.userId ?? ''}';
+      final messageTopic = '$topicPrefix/Message/${userConfig?.userId ?? ''}';
+      final statusTopic = '$topicPrefix/Status/${userConfig?.userId ?? ''}';
 
-    final topicsToSubscribe = <String>{
-      ...?topics,
-      ...?channelTopics,
-      userTopic,
-      messageTopic,
-      statusTopic,
-    };
-    subscribedTopics.addAll(
-      topicsToSubscribe.where((t) => !subscribedTopics.contains(t)),
-    );
+      var channelTopics = topicChannels
+          ?.map((e) => '$topicPrefix/$e/${userConfig?.userId ?? ''}')
+          .toList();
 
-    await mqttHelper.initialize(
-      MqttConfig(
-        projectConfig: ProjectConfig(
-          deviceId: projectConfig?.deviceId ?? '',
-          userIdentifier: userConfig?.userId ?? '',
-          username: _config?.username ?? '',
-          password: _config?.password ?? '',
+      final topicsToSubscribe = <String>{
+        ...?topics,
+        ...?channelTopics,
+        userTopic,
+        messageTopic,
+        statusTopic,
+      };
+      subscribedTopics.addAll(
+        topicsToSubscribe.where((t) => !subscribedTopics.contains(t)),
+      );
+
+      await mqttHelper.initialize(
+        MqttConfig(
+          projectConfig: ProjectConfig(
+            deviceId: projectConfig?.deviceId ?? '',
+            userIdentifier: userConfig?.userId ?? '',
+            username: _config?.username ?? '',
+            password: _config?.password ?? '',
+          ),
+          serverConfig: ServerConfig(
+            hostName: mqttConfig?.hostName ?? '',
+            port: mqttConfig?.port ?? 0,
+          ),
+          enableLogging: enableLogging,
+          secure: false,
+          autoReconnect: autoReconnect,
+          maxAutoReconnectRetry: 15,
+          webSocketConfig: WebSocketConfig(
+            useWebsocket: mqttConfig?.useWebSocket ?? false,
+            websocketProtocols: mqttConfig?.websocketProtocols ?? [],
+          ),
         ),
-        serverConfig: ServerConfig(
-          hostName: mqttConfig?.hostName ?? '',
-          port: mqttConfig?.port ?? 0,
+        callbacks: MqttCallbacks(
+          onConnected: _onConnected,
+          onDisconnected: _onDisconnected,
+          onSubscribed: _onSubscribed,
+          onSubscribeFail: _onSubscribeFailed,
+          onUnsubscribed: _onUnSubscribed,
+          pongCallback: _pong,
+          onAutoReconnect: _onAutoReconnectStarted,
+          onAutoReconnected: _onAutoReconnectCompleted,
         ),
-        enableLogging: enableLogging,
-        secure: false,
-        autoReconnect: autoReconnect,
-        maxAutoReconnectRetry: 15,
-        webSocketConfig: WebSocketConfig(
-          useWebsocket: mqttConfig?.useWebSocket ?? false,
-          websocketProtocols: mqttConfig?.websocketProtocols ?? [],
-        ),
-      ),
-
-      callbacks: MqttCallbacks(
-        onConnected: _onConnected,
-        onDisconnected: _onDisconnected,
-        onSubscribed: _onSubscribed,
-        onSubscribeFail: _onSubscribeFailed,
-        onUnsubscribed: _onUnSubscribed,
-        pongCallback: _pong,
-        onAutoReconnect: _onAutoReconnectStarted,
-        onAutoReconnected: _onAutoReconnectCompleted,
-      ),
-      autoSubscribe: true,
-
-      topics: subscribedTopics,
-      subscribedTopicsCallback: (topics) {
-        subscribedTopics = topics;
-      },
-      // unSubscribedTopicsCallback: (topics) {
-      //   subscribedTopics = topics;
-      // },
-    );
-    _mqttInitialized = true;
-    _attachMqttListeners();
+        autoSubscribe: true,
+        topics: subscribedTopics,
+        subscribedTopicsCallback: (topics) {
+          subscribedTopics = topics;
+        },
+        // unSubscribedTopicsCallback: (topics) {
+        //   subscribedTopics = topics;
+        // },
+      );
+      // Reflect whether the initialize actually established a connection. If the
+      // initial connect failed (e.g. network down), the helper already disabled
+      // auto-reconnect on this client, so it must NOT be treated as a live,
+      // nudge-able client — leaving this false lets a later ensureMqttConnected
+      // / setup() build a fresh client instead of nudging a dead one.
+      _mqttInitialized = mqttHelper.isConnected;
+      _attachMqttListeners();
+    } finally {
+      _initInFlight = false;
+    }
   }
 
   /// (Re)attaches listeners to the helper's broadcast streams.
@@ -252,6 +323,9 @@ class IsmChatMqttController extends GetxController
     _disconnectDebounceTimer?.cancel();
     _disconnectDebounceTimer = null;
     _consecutiveNudges = 0;
+    // A live connection means we definitely have a usable initialized client,
+    // regardless of whether the initial connect attempt had succeeded.
+    _mqttInitialized = true;
     if (connectionState != IsmChatConnectionState.connected) {
       connectionState = IsmChatConnectionState.connected;
       IsmChatConfig.mqttConnectionStatus?.call(connectionState);
@@ -291,6 +365,14 @@ class IsmChatMqttController extends GetxController
   Future<void> ensureMqttConnected({bool refreshChatList = true}) async {
     if (!IsmChatConfig.shouldSetupMqtt || _mqttSetupInProgress) return;
 
+    // Config not ready yet (setup() hasn't supplied it) — do nothing. Prevents
+    // a connect to an empty host that would disable auto-reconnect and leave a
+    // dead client behind.
+    if (!_hasValidMqttConfig) {
+      IsmChatLog.info('ensureMqttConnected skipped — MQTT config not ready');
+      return;
+    }
+
     // Use the real broker state, not the debounced UI flag — the grace window
     // can mask a socket that is actually down.
     if (mqttHelper.isConnected) {
@@ -313,7 +395,10 @@ class IsmChatMqttController extends GetxController
     try {
       IsmChatLog.info('MQTT down — full re-init via ensureMqttConnected');
       _consecutiveNudges = 0;
-      subscribedTopics.clear();
+      // Do NOT clear subscribedTopics here: it holds runtime-added topics that
+      // must survive the re-init. setupIsmMqttConnection merges the standard
+      // topics in without duplicates, and the fresh client subscribes the full
+      // set on connect.
       await setupIsmMqttConnection(
         topics: _savedExtraTopics,
         topicChannels: _savedTopicChannels,
@@ -335,7 +420,7 @@ class IsmChatMqttController extends GetxController
   /// auto-reconnect when the socket is down. Falls back to a full re-init only
   /// when the helper was never initialized. Safe no-op when already connected.
   void nudgeReconnectAfterAppResume() {
-    if (!IsmChatConfig.shouldSetupMqtt) return;
+    if (!IsmChatConfig.shouldSetupMqtt || !_hasValidMqttConfig) return;
     if (mqttHelper.isConnected) {
       _markConnected();
       return;
@@ -439,31 +524,40 @@ class IsmChatMqttController extends GetxController
 
   /// Subscribes to the specified list of topics.
   ///
-  /// This method allows the client to subscribe to multiple MQTT topics simultaneously.
-  /// It only processes the subscription request when the connection state is
-  /// `IsmChatConnectionState.connected`. If the client is disconnected, the subscription
-  /// request will be ignored.
+  /// The topics are always recorded in [subscribedTopics] first, so they
+  /// survive any future reconnect or full re-init (they are re-asserted on
+  /// every connect via [_ensureTopicsSubscribed] and passed to the fresh
+  /// client on re-init). This is what keeps events flowing for runtime-added
+  /// topics after a reconnect.
   ///
-  /// - `topic`: List of topics to subscribe to. Each topic should follow the MQTT topic format
-  ///   and adhere to any project-specific topic structure conventions.
-
+  /// The topics are then handed to the helper: if the client is connected they
+  /// are subscribed immediately; if not, the helper enqueues them to its
+  /// pending queue and flushes them once the connection is (re)established.
+  ///
+  /// - `topic`: List of topics to subscribe to. Each topic should follow the
+  ///   MQTT topic format and adhere to any project-specific topic conventions.
   void subscribeTopics(List<String> topic) {
-    if (connectionState == IsmChatConnectionState.connected) {
+    for (final t in topic) {
+      if (t.isNotEmpty && !subscribedTopics.contains(t)) {
+        subscribedTopics.add(t);
+      }
+    }
+    if (_mqttInitialized) {
       mqttHelper.subscribeTopics(topic);
     }
   }
 
   /// Unsubscribes from the specified list of topics.
   ///
-  /// This method allows the client to unsubscribe from multiple MQTT topics simultaneously.
-  /// It only processes the unsubscription request when the connection state is
-  /// `IsmChatConnectionState.connected`. If the client is disconnected, the unsubscription
-  /// request will be ignored.
+  /// The topics are removed from [subscribedTopics] first so they are not
+  /// re-subscribed on the next reconnect / re-init, then handed to the helper
+  /// to unsubscribe from the broker when initialized.
   ///
-  /// - `topic`: List of topics to unsubscribe from. These should be topics that the client
-  ///   has previously subscribed to.
+  /// - `topic`: List of topics to unsubscribe from. These should be topics that
+  ///   the client has previously subscribed to.
   void unSubscribeTopics(List<String> topic) {
-    if (connectionState == IsmChatConnectionState.connected) {
+    subscribedTopics.removeWhere(topic.contains);
+    if (_mqttInitialized) {
       mqttHelper.unsubscribeTopics(topic);
     }
   }
