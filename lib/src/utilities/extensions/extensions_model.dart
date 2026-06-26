@@ -513,27 +513,18 @@ extension MentionMessage on IsmChatMessageModel {
     );
   }
 
-  /// "Forwarded" label style from message theme [IsmChatMessageTheme.textColor] at 70% opacity.
-  TextStyle get forwardedTextStyle {
-    final pageTheme = IsmChatConfig.chatTheme.chatPageTheme;
-    final messageTheme = sentByMe
-        ? pageTheme?.selfMessageTheme
-        : pageTheme?.opponentMessageTheme;
-    return (sentByMe ? IsmChatStyles.w400White12 : IsmChatStyles.w400Black12)
-        .copyWith(color: _forwardedThemeColor(messageTheme));
-  }
+  /// "Forwarded" label style derived from the message text color at 70% opacity.
+  TextStyle get forwardedTextStyle => style.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: _forwardedColor,
+      );
 
-  /// Icon color beside the forwarded label ([IsmChatMessageTheme.textColor] at 70% opacity).
-  Color get forwardedIconColor {
-    final pageTheme = IsmChatConfig.chatTheme.chatPageTheme;
-    final messageTheme = sentByMe
-        ? pageTheme?.selfMessageTheme
-        : pageTheme?.opponentMessageTheme;
-    return _forwardedThemeColor(messageTheme);
-  }
+  /// Icon color beside the forwarded label (message text color at 70% opacity).
+  Color get forwardedIconColor => _forwardedColor;
 
-  Color _forwardedThemeColor(IsmChatMessageTheme? messageTheme) =>
-      (messageTheme?.textColor ?? textColor)!.withValues(alpha: 0.7);
+  Color get _forwardedColor =>
+      (style.color ?? textColor)!.withValues(alpha: 0.7);
 
   /// Returns the read more text style for the message.
   TextStyle get readTextStyle {
