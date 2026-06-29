@@ -89,10 +89,10 @@ class _IsmChatTextMessageState extends State<IsmChatTextMessage> {
                                           );
                                         },
                                         () async {
-                                          final contact =
-                                              Contact(phones: [Phone(e.text)]);
-                                          await FlutterContacts
-                                              .openExternalInsert(contact);
+                                          await IsmChatUtility
+                                              .openContactSaveScreen(
+                                            Contact(phones: [Phone(e.text)]),
+                                          );
                                         },
                                       ],
                                     ),

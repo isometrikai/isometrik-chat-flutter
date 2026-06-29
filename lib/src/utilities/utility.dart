@@ -10,6 +10,8 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gal/gal.dart';
 import 'package:get/get.dart';
@@ -440,6 +442,56 @@ class IsmChatUtility {
 
     if (await canLaunchUrl(sms)) {
       await launchUrl(sms);
+    }
+  }
+
+  /// Opens the platform contact-save UI with [contact] pre-filled.
+  ///
+  /// - **Android / iOS:** native "new contact" screen via
+  ///   [FlutterContacts.openExternalInsert] (no contacts read permission needed).
+  /// - **Web:** downloads a `.vcf` file the user can import into their address book.
+  static Future<void> openContactSaveScreen(Contact contact) async {
+    if (kIsWeb) {
+      _downloadContactVCard(contact);
+      return;
+    }
+
+    try {
+      await FlutterContacts.openExternalInsert(contact);
+    } on PlatformException catch (e, st) {
+      IsmChatLog.error('openContactSaveScreen: $e', st);
+      await _shareContactVCard(contact);
+    } catch (e, st) {
+      IsmChatLog.error('openContactSaveScreen: $e', st);
+      showToast('Unable to open contacts');
+    }
+  }
+
+  static void _downloadContactVCard(Contact contact) {
+    final vCard = contact.toVCard();
+    final displayName = contact.displayName.trim();
+    final fileName = displayName.isNotEmpty
+        ? '${displayName.replaceAll(RegExp(r'[^\w\s-]'), '').trim()}.vcf'
+        : 'contact.vcf';
+    IsmChatBlob.fileDownloadWithBytes(
+      utf8.encode(vCard),
+      downloadName: fileName,
+    );
+    showToast(IsmChatStrings.addToContact);
+  }
+
+  /// Share a vCard when the native insert screen is unavailable.
+  static Future<void> _shareContactVCard(Contact contact) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final file = File(join(dir.path, 'contact.vcf'));
+      await file.writeAsString(contact.toVCard());
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)]),
+      );
+    } catch (e, st) {
+      IsmChatLog.error('_shareContactVCard: $e', st);
+      showToast('Unable to open contacts');
     }
   }
 
