@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// Extension for IsmChatConversationModel to check block status.
 extension BlockStatus on IsmChatConversationModel {
@@ -610,33 +609,25 @@ extension IsmChatContactMetaDatExtension on IsmChatContactMetaDatModel {
     }
   }
 
-  /// Builds a [Contact] for [FlutterContacts.openExternalInsert].
+  /// Builds a [Contact] for [IsmChatUtility.openContactSaveScreen].
   ///
   /// `Name` is required on iOS; setting only the display name is not enough for
   /// the native contact editor to pre-fill fields.
   Contact toFlutterContact() {
-    final name = contactName ?? '';
-    final identifier = contactIdentifier ?? '';
+    final name = (contactName ?? '').trim();
+    final identifier = (contactIdentifier ?? '').trim();
+    final parts = name.split(RegExp(r'\s+'));
+    final first = parts.isNotEmpty ? parts.first : '';
+    final last = parts.length > 1 ? parts.sublist(1).join(' ') : '';
     return Contact(
       displayName: name,
-      name: Name(first: name),
+      name: Name(first: first, last: last),
       phones: identifier.isNotEmpty ? [Phone(identifier)] : [],
       photo: contactPhotoBytes,
     );
   }
 
   /// Opens the device contacts app to save this shared contact.
-  Future<void> openExternalInsert() async {
-    final granted = await FlutterContacts.requestPermission() ||
-        await IsmChatUtility.requestPermission(Permission.contacts);
-    if (!granted) {
-      await IsmChatUtility.showSettingsDialogIfPermanentlyDenied(
-        Permission.contacts,
-        title: IsmChatStrings.contactsPermissionBlockedTitle,
-        message: IsmChatStrings.contactsPermissionBlockedMessage,
-      );
-      return;
-    }
-    await FlutterContacts.openExternalInsert(toFlutterContact());
-  }
+  Future<void> openExternalInsert() =>
+      IsmChatUtility.openContactSaveScreen(toFlutterContact());
 }

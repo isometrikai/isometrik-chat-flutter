@@ -61,10 +61,10 @@ class IsmChatSocialMessage extends StatelessWidget {
                                         );
                                       },
                                       () async {
-                                        final contact =
-                                            Contact(phones: [Phone(e.text)]);
-                                        await FlutterContacts
-                                            .openExternalInsert(contact);
+                                        await IsmChatUtility
+                                            .openContactSaveScreen(
+                                          Contact(phones: [Phone(e.text)]),
+                                        );
                                       },
                                     ],
                                   ),
