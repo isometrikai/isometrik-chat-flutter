@@ -477,8 +477,11 @@ class IsmChatPageViewModel {
   Future<IsmChatResponseModel?> addReacton({required Reaction reaction}) async {
     final response = await _repository.addReacton(reaction: reaction);
 
-    if (response == null || response.hasError) {
+    if (response == null) {
       return null;
+    }
+    if (response.hasError) {
+      return response;
     }
     var conversation =
         await IsmChatConfig.dbWrapper?.getConversation(reaction.conversationId);

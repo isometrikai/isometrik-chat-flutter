@@ -60,7 +60,7 @@ typedef FutureConversationVoidCallback = Future<bool> Function(
 /// Return `true` when your UI handled the request (SDK will not show the
 /// default dialog). Return `false` to fall back to the SDK default dialog
 /// for that request — useful when you only customize some
-/// [IsmChatConfirmationType] values.
+/// [IsmChatConfirmationType] values (e.g. clear chat, duplicate reaction).
 ///
 /// On confirm, pop your sheet/route then call [IsmChatConfirmationAction.onPressed]
 /// so SDK logic stays unchanged (same as the default [IsmChatAlertDialogBox]).

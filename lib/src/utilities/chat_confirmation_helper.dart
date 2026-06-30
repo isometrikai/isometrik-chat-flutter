@@ -47,4 +47,19 @@ class IsmChatConfirmationHelper {
               IsmChatCustomMessageType.removeMember &&
           conversation?.lastMessageDetails?.userId ==
               IsmChatConfig.communicationConfig.userConfig.userId);
+
+  /// Duplicate reaction (API 404). Uses [chatConfirmationPresenter] when set.
+  static Future<void> presentAlreadyAddedReaction({
+    IsmChatMessageModel? message,
+  }) async {
+    await present(
+      IsmChatConfirmationRequest(
+        type: IsmChatConfirmationType.alreadyAddedReaction,
+        title: IsmChatStrings.alreadyAddedReaction,
+        message: message,
+        cancelLabel: IsmChatStrings.okay,
+        actions: const [],
+      ),
+    );
+  }
 }

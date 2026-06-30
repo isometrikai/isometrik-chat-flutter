@@ -32,7 +32,20 @@ mixin IsmChatPageSendMessageReactionsMixin {
       return;
     }
     final response = await _controller.viewModel.addReacton(reaction: reaction);
-    if (response != null && !response.hasError) {
+    if (response == null) {
+      return;
+    }
+    if (response.hasError && response.errorCode == 404) {
+      final message = _controller.messages.cast<IsmChatMessageModel?>().firstWhere(
+            (m) => m?.messageId == reaction.messageId,
+            orElse: () => null,
+          );
+      await IsmChatConfirmationHelper.presentAlreadyAddedReaction(
+        message: message,
+      );
+      return;
+    }
+    if (!response.hasError) {
       await _controller.conversationController.getChatConversations();
     }
   }

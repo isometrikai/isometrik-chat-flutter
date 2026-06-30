@@ -155,6 +155,7 @@ class IsmChatStrings {
   static const String exit = 'Exit anyway';
   static const String tapInfo = 'Tap to more info';
   static const String removeReaction = 'Tap to remove reaction';
+  static const String alreadyAddedReaction = 'You have already added reaction';
   static const String remove = 'Remove';
 
   static const String youAreOnlyAdmin =

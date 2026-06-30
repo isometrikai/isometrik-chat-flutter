@@ -39,6 +39,9 @@ enum IsmChatConfirmationType {
 
   /// Delete a 1-1 (or non-group) chat from list or conversation info.
   deleteChat,
+
+  /// User tapped a reaction they already added to a message.
+  alreadyAddedReaction,
 }
 
 /// Action ids map to the same SDK handlers as default alert dialog buttons.

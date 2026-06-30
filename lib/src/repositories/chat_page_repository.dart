@@ -579,13 +579,8 @@ class IsmChatPageRepository {
         headers: IsmChatUtility.tokenCommonHeader(),
       );
 
-      if (response.hasError && response.errorCode == 404) {
-        await IsmChatUtility.showErrorDialog(
-            'You have alreaday added reaction ');
-        return null;
-      }
       if (response.hasError) {
-        return null;
+        return response;
       }
       return response;
     } catch (e, st) {

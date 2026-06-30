@@ -168,7 +168,8 @@ class IsmChatPageProperties {
   final BlockUnblockSuccessCallback? onBlockUnblockSuccess;
 
   /// Custom UI for confirmations before destructive actions (block, delete message,
-  /// clear chat, delete chat/group from list or chat header menu).
+  /// clear chat, delete chat/group from list or chat header menu) and duplicate
+  /// reaction alerts ([IsmChatConfirmationType.alreadyAddedReaction]).
   ///
   /// Return `true` when your UI handled the request. Return `false` for types
   /// that should use the SDK default [IsmChatAlertDialogBox]. Branch on
