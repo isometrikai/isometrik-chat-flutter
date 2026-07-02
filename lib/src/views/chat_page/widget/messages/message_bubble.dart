@@ -33,7 +33,8 @@ class MessageBubble extends StatelessWidget {
   List<IsmChatMessageModel>? _getGroupedMediaMessages(
     IsmChatPageController controller,
   ) {
-    final isImage = _message.customType == IsmChatCustomMessageType.image;
+    final isImage = _message.isGridEligibleMedia &&
+        _message.customType == IsmChatCustomMessageType.image;
     final isVideo = _message.customType == IsmChatCustomMessageType.video;
 
     if (!isImage && !isVideo) {
@@ -68,7 +69,8 @@ class MessageBubble extends StatelessWidget {
     var groupStartIndex = reversedIndex;
     for (var i = reversedIndex; i >= 0; i--) {
       final msg = allMessages[i];
-      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsImage = msg.isGridEligibleMedia &&
+          msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
 
       // Stop if we hit a non-media message or different sender
@@ -92,7 +94,8 @@ class MessageBubble extends StatelessWidget {
     // Now collect all messages in the group starting from groupStartIndex
     for (var i = groupStartIndex; i < allMessages.length; i++) {
       final msg = allMessages[i];
-      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsImage = msg.isGridEligibleMedia &&
+          msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
 
       // Stop if we hit a non-media message or different sender
@@ -261,7 +264,7 @@ class MessageBubble extends StatelessWidget {
                       ? context.width * .05
                       : context.width * .25,
                 ),
-        decoration: showMessageInCenter
+        decoration: showMessageInCenter || _message.isGifOrStickerMessage
             ? null
             : BoxDecoration(
                 color: _message.backgroundColor,
