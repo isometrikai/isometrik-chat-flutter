@@ -631,3 +631,26 @@ extension IsmChatContactMetaDatExtension on IsmChatContactMetaDatModel {
   Future<void> openExternalInsert() =>
       IsmChatUtility.openContactSaveScreen(toFlutterContact());
 }
+
+/// GIF / sticker helpers based on [AttachmentModel.attachmentType].
+extension IsmChatMessageMediaExtension on IsmChatMessageModel {
+  IsmChatMediaType? get primaryAttachmentType =>
+      attachments?.firstOrNull?.attachmentType;
+
+  bool get isGifMessage =>
+      primaryAttachmentType == IsmChatMediaType.gif ||
+      body == IsmChatStrings.gif ||
+      (attachments?.firstOrNull?.extension?.toLowerCase() == 'gif' &&
+          customType == IsmChatCustomMessageType.image);
+
+  bool get isStickerMessage =>
+      primaryAttachmentType == IsmChatMediaType.sticker ||
+      body == IsmChatStrings.sticker;
+
+  bool get isGifOrStickerMessage => isGifMessage || isStickerMessage;
+
+  /// Regular photos/videos that participate in the multi-media grid.
+  bool get isGridEligibleMedia =>
+      (customType == IsmChatCustomMessageType.image && !isGifOrStickerMessage) ||
+      customType == IsmChatCustomMessageType.video;
+}

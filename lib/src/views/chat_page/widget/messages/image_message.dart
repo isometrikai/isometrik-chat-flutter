@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -29,6 +33,26 @@ class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
   @override
   Widget build(BuildContext context) {
     final message = widget.message;
+    final isSticker = message.isStickerMessage;
+    final isGif = message.isGifMessage;
+    final maxWidth = isSticker
+        ? IsmChatDimens.hundredFourty
+        : isGif
+            ? (IsmChatResponsive.isWeb(context)
+                ? context.width * .28
+                : context.width * .45)
+            : (IsmChatResponsive.isWeb(context)
+                ? context.width * .35
+                : context.width * .6);
+    final maxHeight = isSticker
+        ? IsmChatDimens.hundredFourty
+        : isGif
+            ? (IsmChatResponsive.isWeb(context)
+                ? context.height * .28
+                : context.height * .35)
+            : (IsmChatResponsive.isWeb(context)
+                ? context.height * .35
+                : context.height * .6);
     final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
         ?.call(context, message);
     return Material(
@@ -53,27 +77,24 @@ class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
                   },
                   child: Container(
                     constraints: BoxConstraints(
-                      maxHeight: (IsmChatResponsive.isWeb(context))
-                          ? context.height * .35
-                          : context.height * .6,
+                      maxWidth: maxWidth,
+                      maxHeight: maxHeight,
                     ),
-                    child: IsmChatImage(
-                      message.attachments?.first.mediaUrl ?? '',
-                      isNetworkImage:
-                          message.attachments?.first.mediaUrl?.isValidUrl ??
-                              false,
-                      isBytes:
-                          (IsmChatResponsive.isWeb(context)) ? true : false,
+                    child: _MessageMediaImage(
+                      message: message,
+                      isSticker: isSticker,
+                      isGif: isGif,
                     ),
                   ),
                 ),
-                if (message.metaData?.caption?.isNotEmpty == true) ...[
+                if (!isGif &&
+                    !isSticker &&
+                    message.metaData?.caption?.isNotEmpty == true) ...[
                   Padding(
                     padding: IsmChatDimens.edgeInsetsTop5,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final caption = message.metaData?.caption ?? '';
-                        // Determine if caption is overflowing right now given expansion state:
                         final textSpan = TextSpan(
                           text: caption,
                           style: message.style,
@@ -150,7 +171,8 @@ class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
                 ]
               ],
             ),
-            if (message.isUploading == true)
+            if (message.isUploading == true &&
+                !_MessageMediaImage.hasDisplayableMedia(message))
               Center(
                 child: SizedBox(
                   width: 30,
@@ -166,5 +188,91 @@ class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
       ),
     );
   }
+}
 
+class _MessageMediaImage extends StatelessWidget {
+  const _MessageMediaImage({
+    required this.message,
+    required this.isSticker,
+    required this.isGif,
+  });
+
+  final IsmChatMessageModel message;
+  final bool isSticker;
+  final bool isGif;
+
+  static bool hasDisplayableMedia(IsmChatMessageModel message) {
+    final attachment = message.attachments?.firstOrNull;
+    if (attachment == null) {
+      return false;
+    }
+    final mediaUrl = attachment.mediaUrl ?? '';
+    if (mediaUrl.isValidUrl) {
+      return true;
+    }
+    if (attachment.bytes != null && attachment.bytes!.isNotEmpty) {
+      return true;
+    }
+    if (!kIsWeb && mediaUrl.isNotEmpty && File(mediaUrl).existsSync()) {
+      return true;
+    }
+    if (kIsWeb && mediaUrl.isNotEmpty && mediaUrl.strigToUnit8List.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final attachment = message.attachments?.firstOrNull;
+    final mediaUrl = attachment?.mediaUrl ?? '';
+    final bytes = attachment?.bytes;
+    final hasNetworkUrl = mediaUrl.isValidUrl;
+    final hasBytes = bytes != null && bytes.isNotEmpty;
+    final hasLocalFile = !kIsWeb &&
+        !hasNetworkUrl &&
+        mediaUrl.isNotEmpty &&
+        File(mediaUrl).existsSync();
+    final fit = isSticker ? BoxFit.contain : BoxFit.cover;
+    final borderRadius =
+        isSticker ? BorderRadius.zero : BorderRadius.circular(IsmChatDimens.eight);
+
+    Widget child;
+    if (hasNetworkUrl) {
+      child = CachedNetworkImage(
+        imageUrl: mediaUrl,
+        fit: fit,
+        placeholder: (_, __) => const Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+          ),
+        ),
+        errorWidget: (_, __, ___) => _mediaError(),
+      );
+    } else if (hasBytes) {
+      child = Image.memory(bytes, fit: fit);
+    } else if (hasLocalFile) {
+      child = Image.file(File(mediaUrl), fit: fit);
+    } else if (IsmChatResponsive.isWeb(context) && mediaUrl.isNotEmpty) {
+      final webBytes = mediaUrl.strigToUnit8List;
+      child = webBytes.isEmpty
+          ? _mediaError()
+          : Image.memory(webBytes, fit: fit);
+    } else {
+      child = _mediaError();
+    }
+
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: child,
+    );
+  }
+
+  Widget _mediaError() => Container(
+        alignment: Alignment.center,
+        color: IsmChatColors.greyColor.applyIsmOpacity(0.15),
+        child: const Icon(Icons.broken_image_outlined),
+      );
 }

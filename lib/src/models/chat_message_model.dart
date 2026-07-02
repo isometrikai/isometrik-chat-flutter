@@ -135,14 +135,12 @@ class IsmChatMessageModel {
     if (!IsmChatConfig.configInitilized) {
       return model.sentByMe;
     }
-    final currentUserId =
-        IsmChatConfig.communicationConfig.userConfig.userId;
+    final currentUserId = IsmChatConfig.communicationConfig.userConfig.userId;
 
     final fromMeta = model.metaData?.senderInfo?.userId.trim();
     final fromSender = model.senderInfo?.userId.trim();
-    final senderId = (fromMeta != null && fromMeta.isNotEmpty)
-        ? fromMeta
-        : fromSender;
+    final senderId =
+        (fromMeta != null && fromMeta.isNotEmpty) ? fromMeta : fromSender;
     if (senderId != null && senderId.isNotEmpty) {
       return senderId == currentUserId;
     }

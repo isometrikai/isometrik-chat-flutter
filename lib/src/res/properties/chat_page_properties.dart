@@ -56,6 +56,7 @@ class IsmChatPageProperties {
     this.voiceMessageProgressOverlayColorMe,
     this.voiceMessageProgressOverlayColorOpponent,
     this.onUserConversationInfoTap,
+    this.giphyApiKey,
   });
 
   final Widget? placeholder;
@@ -327,4 +328,10 @@ class IsmChatPageProperties {
   /// Use this when you want to open your app-side user profile screen.
   /// If null, SDK keeps its existing behavior (e.g. opens profile image preview).
   final ConversationVoidCallback? onUserConversationInfoTap;
+
+  /// Giphy API key for the in-chat GIF and sticker picker.
+  ///
+  /// Get a free key at https://developers.giphy.com/
+  /// Requires [IsmChatFeature.giphyPicker] in [features].
+  final String? giphyApiKey;
 }

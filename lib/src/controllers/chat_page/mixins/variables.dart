@@ -63,6 +63,10 @@ mixin IsmChatPageVariablesMixin on GetxController {
   bool get showEmojiBoard => _showEmojiBoard.value;
   set showEmojiBoard(bool value) => _showEmojiBoard.value = value;
 
+  final Rx<IsmChatEmojiBoardTab> _emojiBoardTab = IsmChatEmojiBoardTab.emoji.obs;
+  IsmChatEmojiBoardTab get emojiBoardTab => _emojiBoardTab.value;
+  set emojiBoardTab(IsmChatEmojiBoardTab value) => _emojiBoardTab.value = value;
+
   final RxBool _showAttachment = false.obs;
   bool get showAttachment => _showAttachment.value;
   set showAttachment(bool value) => _showAttachment.value = value;

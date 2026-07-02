@@ -68,6 +68,7 @@ class IsmChatCommonRepository {
     List<Map<String, dynamic>>? mentionedUsers,
     Map<String, dynamic>? events,
     List<Map<String, dynamic>>? attachments,
+    List<String>? searchableTags,
   }) async {
     try {
       final payload = {
@@ -84,7 +85,10 @@ class IsmChatCommonRepository {
         'attachments': attachments,
         'notificationBody': notificationBody,
         'notificationTitle': notificationTitle,
-        if (!encrypted) 'searchableTags': [body],
+        if (searchableTags != null)
+          'searchableTags': searchableTags
+        else if (!encrypted)
+          'searchableTags': [body],
         'mentionedUsers': mentionedUsers
       }.removeNullValues();
 
@@ -94,6 +98,10 @@ class IsmChatCommonRepository {
         headers: IsmChatUtility.tokenCommonHeader(),
       );
       if (response.hasError) {
+        IsmChatLog.error(
+          'sendMessage API rejected customType=$customType '
+          'code=${response.errorCode} body=${response.data}',
+        );
         return (messageId: '', respone: response);
       }
       var data = jsonDecode(response.data);

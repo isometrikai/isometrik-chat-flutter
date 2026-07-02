@@ -48,7 +48,11 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                   IsmChatConstants.imageExtensions.contains(controller
                           .webMedia[controller.assetsIndex]
                           .platformFile
-                          .extension)
+                          .extension) &&
+                      controller.webMedia[controller.assetsIndex].platformFile
+                              .extension
+                              ?.toLowerCase() !=
+                          'gif'
                       ? Row(
                           children: [
                             InkWell(

@@ -19,6 +19,7 @@ class AttachmentModel {
     this.address,
     this.attachmentType,
     this.bytes,
+    this.stillUrl,
   });
 
   factory AttachmentModel.fromMap(Map<String, dynamic> map) => AttachmentModel(
@@ -37,6 +38,7 @@ class AttachmentModel {
         longitude: map['longitude'] as double? ?? 0,
         title: map['title'] as String? ?? '',
         address: map['address'] as String? ?? '',
+        stillUrl: map['stillUrl'] as String? ?? '',
         bytes: map['bytes'].runtimeType is String && map['bytes'] != 'null'
             ? (map['bytes'] as String? ?? '[]').strigToUnit8List
             : Uint8List(0),
@@ -59,6 +61,7 @@ class AttachmentModel {
   String? title;
   String? address;
   Uint8List? bytes;
+  String? stillUrl;
   final IsmChatMediaType? attachmentType;
 
   AttachmentModel copyWith({
@@ -75,6 +78,7 @@ class AttachmentModel {
     String? address,
     Uint8List? bytes,
     IsmChatMediaType? attachmentType,
+    String? stillUrl,
   }) =>
       AttachmentModel(
         thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
@@ -90,6 +94,7 @@ class AttachmentModel {
         address: address ?? this.address,
         attachmentType: attachmentType ?? this.attachmentType,
         bytes: bytes ?? this.bytes,
+        stillUrl: stillUrl ?? this.stillUrl,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -104,15 +109,44 @@ class AttachmentModel {
         'longitude': longitude,
         'title': title,
         'address': address,
+        'stillUrl': stillUrl,
         'bytes': bytes.isNullOrEmpty == true ? '' : bytes.toString(),
         'attachmentType': attachmentType?.value,
       }.removeNullValues();
+
+  /// Builds the attachment object expected by the send-message API.
+  ///
+  /// GIF/sticker messages use the `GifSticker` schema (not the image schema).
+  Map<String, dynamic> toOutgoingMap() {
+    final type = attachmentType;
+    if (type != null && type.usesGifStickerSchema) {
+      final url = (mediaUrl?.isNotEmpty == true ? mediaUrl : thumbnailUrl) ?? '';
+      final thumb =
+          (thumbnailUrl?.isNotEmpty == true ? thumbnailUrl : url) ?? '';
+      final still =
+          (stillUrl?.isNotEmpty == true ? stillUrl : thumb.isNotEmpty ? thumb : url) ??
+              '';
+      return {
+        'thumbnailUrl': thumb,
+        'attachmentSchemaType': 'GifSticker',
+        'mediaUrl': url,
+        'stillUrl': still,
+        'attachmentType': type.value,
+        'name': name ?? '',
+        'attachmentMessageType': type.gifStickerMessageType,
+      };
+    }
+
+    final map = toMap();
+    map.remove('bytes');
+    return map;
+  }
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'AttachmentModel(thumbnailUrl: $thumbnailUrl, size: $size, name: $name, mimeType: $mimeType, mediaUrl: $mediaUrl, mediaId: $mediaId, extension: $extension, latitude: $latitude, longitude: $longitude, title: $title, address: $address, attachmentType: $attachmentType, bytes: $bytes)';
+      'AttachmentModel(thumbnailUrl: $thumbnailUrl, size: $size, name: $name, mimeType: $mimeType, mediaUrl: $mediaUrl, mediaId: $mediaId, extension: $extension, latitude: $latitude, longitude: $longitude, title: $title, address: $address, attachmentType: $attachmentType, stillUrl: $stillUrl, bytes: $bytes)';
 
   @override
   bool operator ==(covariant AttachmentModel other) {
@@ -129,6 +163,7 @@ class AttachmentModel {
         other.longitude == longitude &&
         other.title == title &&
         other.address == address &&
+        other.stillUrl == stillUrl &&
         other.bytes == bytes &&
         other.attachmentType == attachmentType;
   }
@@ -146,6 +181,7 @@ class AttachmentModel {
       longitude.hashCode ^
       title.hashCode ^
       address.hashCode ^
+      stillUrl.hashCode ^
       bytes.hashCode ^
       attachmentType.hashCode;
 }
