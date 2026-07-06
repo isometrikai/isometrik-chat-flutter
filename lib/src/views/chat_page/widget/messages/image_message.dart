@@ -234,8 +234,9 @@ class _MessageMediaImage extends StatelessWidget {
         mediaUrl.isNotEmpty &&
         File(mediaUrl).existsSync();
     final fit = isSticker ? BoxFit.contain : BoxFit.cover;
-    final borderRadius =
-        isSticker ? BorderRadius.zero : BorderRadius.circular(IsmChatDimens.eight);
+    final borderRadius = isSticker
+        ? BorderRadius.zero
+        : BorderRadius.circular(IsmChatDimens.eight);
 
     Widget child;
     if (hasNetworkUrl) {
@@ -257,9 +258,8 @@ class _MessageMediaImage extends StatelessWidget {
       child = Image.file(File(mediaUrl), fit: fit);
     } else if (IsmChatResponsive.isWeb(context) && mediaUrl.isNotEmpty) {
       final webBytes = mediaUrl.strigToUnit8List;
-      child = webBytes.isEmpty
-          ? _mediaError()
-          : Image.memory(webBytes, fit: fit);
+      child =
+          webBytes.isEmpty ? _mediaError() : Image.memory(webBytes, fit: fit);
     } else {
       child = _mediaError();
     }
