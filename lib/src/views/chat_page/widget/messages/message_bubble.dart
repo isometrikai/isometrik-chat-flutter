@@ -264,7 +264,7 @@ class MessageBubble extends StatelessWidget {
                       ? context.width * .05
                       : context.width * .25,
                 ),
-        decoration: showMessageInCenter || _message.isGifOrStickerMessage
+        decoration: showMessageInCenter || _message.isStickerMessage
             ? null
             : BoxDecoration(
                 color: _message.backgroundColor,

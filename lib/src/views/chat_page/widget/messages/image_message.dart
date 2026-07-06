@@ -37,22 +37,14 @@ class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
     final isGif = message.isGifMessage;
     final maxWidth = isSticker
         ? IsmChatDimens.hundredFourty
-        : isGif
-            ? (IsmChatResponsive.isWeb(context)
-                ? context.width * .28
-                : context.width * .45)
-            : (IsmChatResponsive.isWeb(context)
-                ? context.width * .35
-                : context.width * .6);
+        : (IsmChatResponsive.isWeb(context)
+            ? context.width * .35
+            : context.width * .6);
     final maxHeight = isSticker
         ? IsmChatDimens.hundredFourty
-        : isGif
-            ? (IsmChatResponsive.isWeb(context)
-                ? context.height * .28
-                : context.height * .35)
-            : (IsmChatResponsive.isWeb(context)
-                ? context.height * .35
-                : context.height * .6);
+        : (IsmChatResponsive.isWeb(context)
+            ? context.height * .35
+            : context.height * .6);
     final data = IsmChatProperties.chatPageProperties.isShowMessageBlur
         ?.call(context, message);
     return Material(
