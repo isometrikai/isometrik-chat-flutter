@@ -95,7 +95,37 @@ extension LastMessageWidget on String {
             ),
             IsmChatDimens.boxWidth2,
             Text(
-              'Image',
+              IsmChatStrings.image,
+              style: IsmChatStyles.w400Black12,
+            )
+          ],
+        );
+
+      case 'GIF':
+        return Row(
+          children: [
+            Icon(
+              Icons.gif_box_outlined,
+              size: IsmChatDimens.sixteen,
+            ),
+            IsmChatDimens.boxWidth2,
+            Text(
+              IsmChatStrings.gif,
+              style: IsmChatStyles.w400Black12,
+            )
+          ],
+        );
+
+      case 'Sticker':
+        return Row(
+          children: [
+            Icon(
+              Icons.emoji_emotions_outlined,
+              size: IsmChatDimens.sixteen,
+            ),
+            IsmChatDimens.boxWidth2,
+            Text(
+              IsmChatStrings.sticker,
               style: IsmChatStyles.w400Black12,
             )
           ],

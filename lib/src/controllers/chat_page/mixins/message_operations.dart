@@ -285,6 +285,12 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
 
   /// Gets the display body text for a reply message.
   String getMessageBody(IsmChatMessageModel? replayMessage) {
+    if (replayMessage?.isGifMessage == true) {
+      return IsmChatStrings.gif;
+    }
+    if (replayMessage?.isStickerMessage == true) {
+      return IsmChatStrings.sticker;
+    }
     if (replayMessage?.customType == IsmChatCustomMessageType.location) {
       return IsmChatStrings.location;
     } else if (replayMessage?.customType == IsmChatCustomMessageType.contact) {

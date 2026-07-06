@@ -118,6 +118,7 @@ class IsmChatCommonViewModel {
         notificationBody: notificationBody,
         notificationTitle: notificationTitle,
         body: body,
+        searchableTags: searchableTags,
       );
       if (response == null) return false;
       if (!isUpdateMesage) return false;

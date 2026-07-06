@@ -12,6 +12,7 @@ export 'contact_sync_model.dart';
 export 'conversation_action.dart';
 export 'conversation_config_model.dart';
 export 'events.dart';
+export 'giphy_item_model.dart';
 export 'header_model.dart';
 export 'last_message_details.dart';
 export 'last_read_model.dart';

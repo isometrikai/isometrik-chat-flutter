@@ -71,7 +71,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
   /// Checks if this message should be hidden because it's part of a grid group
   /// but not the first message in that group
   bool _shouldHideMessage(IsmChatPageController controller) {
-    final isImage =
+    final isImage = widget._message?.isGridEligibleMedia == true &&
         widget._message?.customType == IsmChatCustomMessageType.image;
     final isVideo =
         widget._message?.customType == IsmChatCustomMessageType.video;
@@ -108,7 +108,8 @@ class _IsmChatMessageState extends State<IsmChatMessage>
     var groupStartIndex = reversedIndex;
     for (var i = reversedIndex; i >= 0; i--) {
       final msg = allMessages[i];
-      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsImage = msg.isGridEligibleMedia &&
+          msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
 
       // Stop if we hit a non-media message or different sender
@@ -132,7 +133,8 @@ class _IsmChatMessageState extends State<IsmChatMessage>
     // Now collect all messages in the group starting from groupStartIndex
     for (var i = groupStartIndex; i < allMessages.length; i++) {
       final msg = allMessages[i];
-      final msgIsImage = msg.customType == IsmChatCustomMessageType.image;
+      final msgIsImage = msg.isGridEligibleMedia &&
+          msg.customType == IsmChatCustomMessageType.image;
       final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
 
       // Stop if we hit a non-media message or different sender

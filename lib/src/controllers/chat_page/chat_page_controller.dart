@@ -23,6 +23,7 @@ import 'package:isometrik_chat_flutter/src/utilities/blob_io.dart'
 import 'package:isometrik_chat_flutter/src/views/chat_page/widget/profile_change.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';

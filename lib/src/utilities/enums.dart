@@ -509,6 +509,42 @@ enum IsmChatMediaType {
   }
 
   final int value;
+
+  /// API `customType` string used when sending this attachment.
+  String get attachmentMessageCustomType {
+    switch (this) {
+      case IsmChatMediaType.gif:
+        return 'AttachmentMessage:Gif';
+      case IsmChatMediaType.sticker:
+        return 'AttachmentMessage:Sticker';
+      case IsmChatMediaType.image:
+        return 'AttachmentMessage:Image';
+      case IsmChatMediaType.video:
+        return 'AttachmentMessage:Video';
+      case IsmChatMediaType.audio:
+        return 'AttachmentMessage:Audio';
+      case IsmChatMediaType.file:
+        return 'AttachmentMessage:File';
+      case IsmChatMediaType.location:
+        return 'AttachmentMessage:Location';
+      case IsmChatMediaType.adminMessage:
+        return 'AttachmentMessage:Text';
+    }
+  }
+
+  /// Value for `attachments[].attachmentMessageType` (GifSticker schema).
+  String get gifStickerMessageType {
+    switch (this) {
+      case IsmChatMediaType.sticker:
+        return 'Sticker';
+      case IsmChatMediaType.gif:
+      default:
+        return 'Gif';
+    }
+  }
+
+  bool get usesGifStickerSchema =>
+      this == IsmChatMediaType.gif || this == IsmChatMediaType.sticker;
 }
 
 enum IsmChatActionEvents {
@@ -817,7 +853,15 @@ enum IsmChatFeature {
   copyMessage,
   selectMessage,
   emojiIcon,
-  audioMessage;
+  audioMessage,
+  giphyPicker;
+}
+
+/// Tabs shown in the emoji/GIF/sticker input panel.
+enum IsmChatEmojiBoardTab {
+  emoji,
+  gif,
+  sticker,
 }
 
 enum IsmChatDbBox { main, pending }

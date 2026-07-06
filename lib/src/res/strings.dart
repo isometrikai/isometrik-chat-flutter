@@ -232,6 +232,13 @@ class IsmChatStrings {
   static const String sentContact = 'Sent you a Contact';
   static const String sentLocation = 'Sent you a Location';
   static const String sentImage = 'Sent you an Image';
+  static const String sentGif = 'Sent you a GIF';
+  static const String sentSticker = 'Sent you a Sticker';
+  static const String gif = 'GIF';
+  static const String sticker = 'Sticker';
+  static const String searchGifs = 'Search GIFs';
+  static const String searchStickers = 'Search stickers';
+  static const String giphyAttribution = 'Powered by GIPHY';
   static const String sentVideo = 'Sent you an Video';
   static const String sentDoc = 'Sent you an Document';
   static const String sentAudio = 'Sent you a Audio';

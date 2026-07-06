@@ -171,6 +171,20 @@ extension ModelConversion on IsmChatConversationModel {
   }
 }
 
+/// Helpers to detect GIF/sticker rows in the conversation list preview.
+extension LastMessageMediaPreview on LastMessageDetails {
+  bool get isGifLastMessage {
+    final normalized = body.trim().toLowerCase();
+    return normalized == IsmChatStrings.gif.toLowerCase() || normalized == 'gif';
+  }
+
+  bool get isStickerLastMessage {
+    final normalized = body.trim().toLowerCase();
+    return normalized == IsmChatStrings.sticker.toLowerCase() ||
+        normalized == 'sticker';
+  }
+}
+
 /// Extension for LastMessageDetails to get message body and icon.
 extension LastMessageBody on LastMessageDetails {
   /// Returns the formatted message body based on custom type.
@@ -180,7 +194,13 @@ extension LastMessageBody on LastMessageDetails {
         //return 'Replied to $body';
         return body;
       case IsmChatCustomMessageType.image:
-        return 'Image';
+        if (isStickerLastMessage) {
+          return IsmChatStrings.sticker;
+        }
+        if (isGifLastMessage) {
+          return IsmChatStrings.gif;
+        }
+        return IsmChatStrings.image;
       case IsmChatCustomMessageType.video:
         return 'Video';
       case IsmChatCustomMessageType.audio:
@@ -257,7 +277,13 @@ extension LastMessageBody on LastMessageDetails {
       //   iconData = Icons.reply_rounded;
       //   break;
       case IsmChatCustomMessageType.image:
-        iconData = Icons.image_rounded;
+        if (isStickerLastMessage) {
+          iconData = Icons.emoji_emotions_outlined;
+        } else if (isGifLastMessage) {
+          iconData = Icons.gif_box_outlined;
+        } else {
+          iconData = Icons.image_rounded;
+        }
         break;
       case IsmChatCustomMessageType.video:
         iconData = Icons.videocam_rounded;
@@ -630,4 +656,27 @@ extension IsmChatContactMetaDatExtension on IsmChatContactMetaDatModel {
   /// Opens the device contacts app to save this shared contact.
   Future<void> openExternalInsert() =>
       IsmChatUtility.openContactSaveScreen(toFlutterContact());
+}
+
+/// GIF / sticker helpers based on [AttachmentModel.attachmentType].
+extension IsmChatMessageMediaExtension on IsmChatMessageModel {
+  IsmChatMediaType? get primaryAttachmentType =>
+      attachments?.firstOrNull?.attachmentType;
+
+  bool get isGifMessage =>
+      primaryAttachmentType == IsmChatMediaType.gif ||
+      body == IsmChatStrings.gif ||
+      (attachments?.firstOrNull?.extension?.toLowerCase() == 'gif' &&
+          customType == IsmChatCustomMessageType.image);
+
+  bool get isStickerMessage =>
+      primaryAttachmentType == IsmChatMediaType.sticker ||
+      body == IsmChatStrings.sticker;
+
+  bool get isGifOrStickerMessage => isGifMessage || isStickerMessage;
+
+  /// Regular photos/videos that participate in the multi-media grid.
+  bool get isGridEligibleMedia =>
+      (customType == IsmChatCustomMessageType.image && !isGifOrStickerMessage) ||
+      customType == IsmChatCustomMessageType.video;
 }

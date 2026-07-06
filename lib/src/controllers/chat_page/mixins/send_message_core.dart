@@ -39,7 +39,7 @@ mixin IsmChatPageSendMessageCoreMixin {
   ///
   /// Note: This method requires `sendBroadcastMessage` to be available through
   /// send_message_broadcast mixin on the controller.
-  void sendMessage({
+  Future<void> sendMessage({
     required int messageType,
     required String deviceId,
     required String conversationId,
@@ -55,6 +55,7 @@ mixin IsmChatPageSendMessageCoreMixin {
     bool isBroadcast = false,
     bool sendPushNotification = true,
     bool encrypted = false,
+    List<String>? searchableTags,
   }) async {
     notificationBody = IsmChatConfig.notificationBody?.call(notificationBody,
             IsmChatCustomMessageType.fromString(customType)) ??
@@ -127,6 +128,7 @@ mixin IsmChatPageSendMessageCoreMixin {
         body: body,
         createdAt: createdAt,
         isBroadcast: isBroadcast,
+        searchableTags: searchableTags,
       );
       if (isMessageSent && !isBroadcast) {
         _controller.didReactedLast = false;
