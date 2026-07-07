@@ -457,6 +457,148 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     );
   }
 
+  int _groupAdminCount(IsmChatConversationModel conversation) {
+    final count =
+        (conversation.members ?? []).where((member) => member.isAdmin).length;
+    if (count == 0 && _isCurrentUserGroupAdmin(conversation)) {
+      return 1;
+    }
+    return count;
+  }
+
+  bool _isCurrentUserGroupAdmin(IsmChatConversationModel conversation) =>
+      conversation.usersOwnDetails?.isAdmin ??
+      (conversation.members ?? []).any(
+        (member) =>
+            member.userId ==
+                IsmChatConfig.communicationConfig.userConfig.userId &&
+            member.isAdmin,
+      );
+
+  BuildContext get _dialogHostContext =>
+      IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
+
+  Future<void> _showExitGroupAlertDialog({
+    required String title,
+    List<String>? actionLabels,
+    List<VoidCallback>? callbackActions,
+    String cancelLabel = IsmChatStrings.cancel,
+    VoidCallback? onCancel,
+    Widget? content,
+  }) =>
+      IsmChatContextWidget.showThemedAlertDialog(
+        context: _dialogHostContext,
+        title: title,
+        actionLabels: actionLabels,
+        callbackActions: callbackActions,
+        cancelLabel: cancelLabel,
+        onCancel: onCancel,
+        content: content,
+      );
+
+  Future<void> showExitGroupDialog(
+    IsmChatConversationModel conversation, [
+    bool askToLeave = false,
+  ]) async {
+    final adminCount = _groupAdminCount(conversation);
+    final isUserAdmin = _isCurrentUserGroupAdmin(conversation);
+    if (adminCount == 1 && !askToLeave && isUserAdmin) {
+      await _showExitGroupAlertDialog(
+        title: IsmChatStrings.areYouSure,
+        content: const Text(IsmChatStrings.youAreOnlyAdmin),
+        actionLabels: const [IsmChatStrings.exit],
+        callbackActions: [
+          () => showExitGroupDialog(conversation, true),
+        ],
+        cancelLabel: IsmChatStrings.assignAdmin,
+      );
+      return;
+    }
+
+    await _showExitGroupAlertDialog(
+      title: 'Exit ${conversation.chatName}?',
+      content: const Text(
+        'Only group admins will be notified that you left the group',
+      ),
+      actionLabels: const ['Exit'],
+      callbackActions: [
+        () async => leaveGroup(
+              conversation: conversation,
+              adminCount: adminCount,
+              isUserAdmin: isUserAdmin,
+            ),
+      ],
+    );
+  }
+
+  Future<void> leaveGroup({
+    required IsmChatConversationModel conversation,
+    required int adminCount,
+    required bool isUserAdmin,
+  }) async {
+    final conversationId = conversation.conversationId ?? '';
+    if (conversationId.isEmpty) {
+      return;
+    }
+
+    if (IsmChatUtility.chatPageControllerRegistered &&
+        IsmChatUtility.chatPageController.conversation?.conversationId ==
+            conversationId) {
+      await IsmChatUtility.chatPageController.leaveGroup(
+        adminCount: adminCount,
+        isUserAdmin: isUserAdmin,
+      );
+      return;
+    }
+
+    if (adminCount == 1 && isUserAdmin) {
+      final members = (conversation.members ?? [])
+          .where((member) => !member.isAdmin)
+          .toList();
+      if (members.isNotEmpty) {
+        final member = members[Random().nextInt(members.length)];
+        final didPromote = await _controller.viewModel.makeAdmin(
+          memberId: member.userId,
+          conversationId: conversationId,
+          isLoading: true,
+        );
+        if (!didPromote) {
+          return;
+        }
+      }
+    }
+
+    final didLeft = await _controller.viewModel.leaveConversation(
+      conversationId,
+      isLoading: true,
+    );
+    if (!didLeft) {
+      return;
+    }
+
+    final isCurrentConversation =
+        _controller.currentConversationId == conversationId;
+    if (isCurrentConversation) {
+      _controller.currentConversation = null;
+      _controller.currentConversationId = '';
+      _controller.isRenderChatPageaScreen = IsRenderChatPageScreen.none;
+      if (IsmChatUtility.chatPageControllerRegistered) {
+        final chatPageController = IsmChatUtility.chatPageController;
+        chatPageController
+          ..messages.clear()
+          ..conversation = null
+          ..isMessageSeleted = false
+          ..selectedMessage.clear()
+          ..closeOverlay();
+      }
+    }
+
+    await Future.wait([
+      IsmChatConfig.dbWrapper!.removeConversation(conversationId),
+      _controller.getChatConversations(),
+    ]);
+  }
+
   /// Filters suggestions based on the search query.
   ///
   /// `query`: The search query to filter suggestions.
