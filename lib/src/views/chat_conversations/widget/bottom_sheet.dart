@@ -81,24 +81,7 @@ class IsmChatClearConversationBottomSheet extends StatelessWidget {
                 onPressed: () async {
                   IsmChatRoute.goBack();
                   if (conversation.isGroup == true) {
-                    // await IsmChatContextWidget.showDialogContext(
-                    //   IsmChatAlertDialogBox(
-                    //     title: 'Exit ${conversation.chatName}?',
-                    //     content: const Text(
-                    //       'Only group admins will be notified that you left the group',
-                    //     ),
-                    //     contentTextStyle: IsmChatStyles.w400Grey14,
-                    //     actionLabels: const ['Exit'],
-                    //     callbackActions: [
-                    //       () {
-                    //         //  _leaveGroup(
-                    //         //     adminCount: adminCount,
-                    //         //     isUserAdmin: isUserAdmin,
-                    //         //   )
-                    //       }
-                    //     ],
-                    //   ),
-                    // );
+                    await controller.showExitGroupDialog(conversation);
                   } else {
                     await IsmChatConfirmationHelper.present(
                       IsmChatConfirmationRequest(

@@ -159,6 +159,30 @@ class IsmChatConversationsViewModel {
   Future<IsmChatResponseModel?> deleteChat(String conversationId) async =>
       await _repository.deleteChat(conversationId);
 
+  Future<bool> leaveConversation(
+    String conversationId, {
+    bool isLoading = false,
+  }) async {
+    final response = await _repository.leaveConversation(
+      conversationId,
+      isLoading: isLoading,
+    );
+    return response != null && !response.hasError;
+  }
+
+  Future<bool> makeAdmin({
+    required String memberId,
+    required String conversationId,
+    bool isLoading = false,
+  }) async {
+    final response = await _repository.makeAdmin(
+      memberId: memberId,
+      conversationId: conversationId,
+      isLoading: isLoading,
+    );
+    return response != null && !response.hasError;
+  }
+
   Future<void> clearAllMessages(String conversationId,
       {bool fromServer = true}) async {
     final response = await _repository.clearAllMessages(

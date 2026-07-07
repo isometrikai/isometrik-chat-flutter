@@ -230,6 +230,50 @@ class IsmChatConversationsRepository {
     }
   }
 
+  Future<IsmChatResponseModel?> leaveConversation(
+    String conversationId, {
+    bool isLoading = false,
+  }) async {
+    try {
+      final response = await _apiWrapper.delete(
+        '${IsmChatAPI.leaveConversation}?conversationId=$conversationId',
+        payload: null,
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+      if (response.hasError) {
+        return null;
+      }
+      return response;
+    } catch (e, st) {
+      IsmChatLog.error('Leave conversation $e', st);
+      return null;
+    }
+  }
+
+  Future<IsmChatResponseModel?> makeAdmin({
+    required String memberId,
+    required String conversationId,
+    bool isLoading = false,
+  }) async {
+    final payload = {'memberId': memberId, 'conversationId': conversationId};
+    try {
+      final response = await _apiWrapper.put(
+        IsmChatAPI.conversationAdmin,
+        payload: payload,
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+      if (response.hasError) {
+        return null;
+      }
+      return response;
+    } catch (e, st) {
+      IsmChatLog.error('Make admin $e', st);
+      return null;
+    }
+  }
+
   Future<IsmChatResponseModel?> clearAllMessages({
     required String conversationId,
   }) async {
