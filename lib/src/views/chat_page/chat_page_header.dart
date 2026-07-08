@@ -355,7 +355,7 @@ class _TitleSubTitleWidget extends StatelessWidget {
                                       ?.subtileStyle ??
                                   IsmChatStyles.w400White12,
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
+                              maxLines: 1,
                             );
                           }
 
