@@ -54,6 +54,7 @@ enum IsmChatConfirmationActionId {
   deleteGroup,
   deleteChat,
   dismiss,
+  cannotBlockWhenTheyBlockedMe,
 }
 
 /// One confirm/cancel control; [onPressed] runs the same logic as the default dialog.
