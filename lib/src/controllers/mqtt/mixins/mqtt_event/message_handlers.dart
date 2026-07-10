@@ -135,9 +135,7 @@ mixin IsmChatMqttEventMessageHandlersMixin {
         message.events?.sendPushNotification == false) {
       return;
     }
-    final notificationTitle =
-        '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}'
-            .trim();
+    final notificationTitle = resolveMessageNotificationTitle(message);
     final notificationBody = _resolveNotificationBody(
       message,
       preferNotificationBody: false,
@@ -156,9 +154,7 @@ mixin IsmChatMqttEventMessageHandlersMixin {
           }
           if (self is IsmChatMqttEventUtilitiesMixin) {
             (self as IsmChatMqttEventUtilitiesMixin).showPushNotification(
-                title: notificationTitle.isNotEmpty
-                    ? notificationTitle
-                    : message.notificationTitle ?? '',
+                title: notificationTitle,
                 body: notificationBody,
                 data: notificationData);
           }
@@ -182,9 +178,7 @@ mixin IsmChatMqttEventMessageHandlersMixin {
       }
       if (self is IsmChatMqttEventUtilitiesMixin) {
         (self as IsmChatMqttEventUtilitiesMixin).showPushNotification(
-            title: notificationTitle.isNotEmpty
-                ? notificationTitle
-                : message.notificationTitle ?? '',
+            title: notificationTitle,
             body: _resolveNotificationBody(
               message,
               preferNotificationBody: true,
