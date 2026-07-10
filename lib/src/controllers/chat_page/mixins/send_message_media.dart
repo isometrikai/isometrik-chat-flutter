@@ -207,17 +207,22 @@ mixin IsmChatPageSendMessageMediaMixin {
     if (IsmChatResponsive.isMobile(IsmChatConfig.kNavigatorKey.currentContext ??
             IsmChatConfig.context) &
         !kIsWeb) {
-      final mediaInfo = await VideoCompress.compressVideo(
-        webMediaModel.platformFile.path ?? '',
-        quality: VideoQuality.DefaultQuality,
-        deleteOrigin: false,
-      );
+      final compressionQuality = _resolveVideoCompressionQuality();
+      if (compressionQuality != null) {
+        final mediaInfo = await VideoCompress.compressVideo(
+          webMediaModel.platformFile.path ?? '',
+          quality: compressionQuality,
+          deleteOrigin: false,
+        );
 
-      if (mediaInfo != null) {
-        final videoCompresFile = mediaInfo.file;
-        bytes = await videoCompresFile?.readAsBytes();
+        if (mediaInfo != null) {
+          final videoCompresFile = mediaInfo.file;
+          bytes = await videoCompresFile?.readAsBytes();
+        } else {
+          bytes = await _readVideoBytes(webMediaModel);
+        }
       } else {
-        bytes = webMediaModel.platformFile.bytes;
+        bytes = await _readVideoBytes(webMediaModel);
       }
     } else {
       bytes = webMediaModel.platformFile.bytes;
@@ -1078,4 +1083,56 @@ mixin IsmChatPageSendMessageMediaMixin {
     }
     _controller.update();
   }
+}
+
+VideoQuality? _resolveVideoCompressionQuality() {
+  final config =
+      IsmChatProperties.chatPageProperties.attachmentConfig?.videoCompression;
+  final IsmChatVideoCompressionSettings settings;
+  if (Platform.isIOS) {
+    settings = config?.ios ?? const IsmChatVideoCompressionSettings();
+  } else if (Platform.isAndroid) {
+    settings = config?.android ?? const IsmChatVideoCompressionSettings();
+  } else {
+    return null;
+  }
+  if (!settings.enabled) {
+    return null;
+  }
+  return _mapVideoCompressionQuality(settings.quality);
+}
+
+VideoQuality _mapVideoCompressionQuality(
+  IsmChatVideoCompressionQuality quality,
+) {
+  switch (quality) {
+    case IsmChatVideoCompressionQuality.defaultQuality:
+      return VideoQuality.DefaultQuality;
+    case IsmChatVideoCompressionQuality.lowQuality:
+      return VideoQuality.LowQuality;
+    case IsmChatVideoCompressionQuality.mediumQuality:
+      return VideoQuality.MediumQuality;
+    case IsmChatVideoCompressionQuality.highestQuality:
+      return VideoQuality.HighestQuality;
+    case IsmChatVideoCompressionQuality.res640x480:
+      return VideoQuality.Res640x480Quality;
+    case IsmChatVideoCompressionQuality.res960x540:
+      return VideoQuality.Res960x540Quality;
+    case IsmChatVideoCompressionQuality.res1280x720:
+      return VideoQuality.Res1280x720Quality;
+    case IsmChatVideoCompressionQuality.res1920x1080:
+      return VideoQuality.Res1920x1080Quality;
+  }
+}
+
+Future<Uint8List?> _readVideoBytes(WebMediaModel webMediaModel) async {
+  final cachedBytes = webMediaModel.platformFile.bytes;
+  if (cachedBytes != null && cachedBytes.isNotEmpty) {
+    return cachedBytes;
+  }
+  final path = webMediaModel.platformFile.path;
+  if (path != null && path.isNotEmpty) {
+    return File(path).readAsBytes();
+  }
+  return cachedBytes;
 }
