@@ -152,6 +152,9 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           e.action == IsmChatActionEvents.meetingCreated.name &&
           _isSdkCallBubbleCustomType(e.customType),
     );
+    messages.removeWhere(
+      (m) => !m.isVisibleInGroupChat(_controller.conversation),
+    );
     return messages;
   }
 

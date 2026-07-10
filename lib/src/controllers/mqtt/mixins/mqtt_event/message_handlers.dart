@@ -29,9 +29,12 @@ mixin IsmChatMqttEventMessageHandlersMixin {
     }
     var conversation = await IsmChatConfig.dbWrapper
         ?.getConversation(message.conversationId ?? '');
+    final hideMemberLeave =
+        !message.isVisibleInGroupChat(conversation);
     if (conversation != null && IsmChatUtility.chatPageControllerRegistered) {
       final controller = IsmChatUtility.chatPageController;
-      if (message.conversationId == controller.conversation?.conversationId) {
+      if (message.conversationId == controller.conversation?.conversationId &&
+          !hideMemberLeave) {
         if (controller.messages.isEmpty) {
           controller.messages =
               controller.commonController.sortMessages([message]);
@@ -49,36 +52,38 @@ mixin IsmChatMqttEventMessageHandlersMixin {
     if (conversation == null) return;
     if (conversation.lastMessageDetails?.messageId == message.messageId) return;
 
-    // To handle and show last message & unread count in conversation list
-    conversation = conversation.copyWith(
-      unreadMessagesCount: IsmChatResponsive.isWeb(
-                  IsmChatConfig.kNavigatorKey.currentContext ??
-                      IsmChatConfig.context) &&
-              (IsmChatUtility.chatPageControllerRegistered &&
-                  IsmChatUtility
-                          .chatPageController.conversation?.conversationId ==
-                      message.conversationId)
-          ? 0
-          : (conversation.unreadMessagesCount ?? 0) + 1,
-      lastMessageDetails: conversation.lastMessageDetails?.copyWith(
-        sentByMe: message.sentByMe,
-        senderId: message.senderInfo?.userId ?? '',
-        showInConversation: true,
-        sentAt: message.sentAt,
-        senderName: message.senderInfo?.userName,
-        messageType: message.messageType?.value ?? 0,
-        messageId: message.messageId ?? '',
-        conversationId: message.conversationId ?? '',
-        body: message.body,
-        customType: message.customType,
-        action: '',
-        deliverCount: 0,
-        deliveredTo: [],
-        readCount: 0,
-        readBy: [],
-        reactionType: '',
-      ),
-    );
+    if (!hideMemberLeave) {
+      // To handle and show last message & unread count in conversation list
+      conversation = conversation.copyWith(
+        unreadMessagesCount: IsmChatResponsive.isWeb(
+                    IsmChatConfig.kNavigatorKey.currentContext ??
+                        IsmChatConfig.context) &&
+                (IsmChatUtility.chatPageControllerRegistered &&
+                    IsmChatUtility
+                            .chatPageController.conversation?.conversationId ==
+                        message.conversationId)
+            ? 0
+            : (conversation.unreadMessagesCount ?? 0) + 1,
+        lastMessageDetails: conversation.lastMessageDetails?.copyWith(
+          sentByMe: message.sentByMe,
+          senderId: message.senderInfo?.userId ?? '',
+          showInConversation: true,
+          sentAt: message.sentAt,
+          senderName: message.senderInfo?.userName,
+          messageType: message.messageType?.value ?? 0,
+          messageId: message.messageId ?? '',
+          conversationId: message.conversationId ?? '',
+          body: message.body,
+          customType: message.customType,
+          action: '',
+          deliverCount: 0,
+          deliveredTo: [],
+          readCount: 0,
+          readBy: [],
+          reactionType: '',
+        ),
+      );
+    }
 
     if (message.conversationId == conversation.conversationId) {
       if (conversation.messages?.isNotEmpty == true) {

@@ -13,6 +13,16 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Extension for IsmChatConversationModel to check block status.
 extension BlockStatus on IsmChatConversationModel {
+  /// True when the signed-in user is a group admin.
+  bool get isCurrentUserGroupAdmin =>
+      usersOwnDetails?.isAdmin ??
+      (members ?? []).any(
+        (member) =>
+            member.userId.trim() ==
+                IsmChatConfig.communicationConfig.userConfig.userId.trim() &&
+            member.isAdmin,
+      );
+
   /// Returns true if chatting is allowed (messaging is not disabled).
   bool get isChattingAllowed => !(messagingDisabled ?? false);
 
@@ -354,6 +364,15 @@ extension LastMessageBody on LastMessageDetails {
       );
     }
     return IsmChatDimens.box0;
+  }
+}
+
+/// Member leave system messages are only visible to group admins.
+extension MemberLeaveVisibility on IsmChatMessageModel {
+  bool isVisibleInGroupChat(IsmChatConversationModel? conversation) {
+    if (customType != IsmChatCustomMessageType.memberLeave) return true;
+    if (conversation?.isGroup != true) return true;
+    return conversation!.isCurrentUserGroupAdmin;
   }
 }
 
