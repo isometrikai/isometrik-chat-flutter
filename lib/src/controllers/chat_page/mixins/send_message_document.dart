@@ -27,7 +27,11 @@ mixin IsmChatPageSendMessageDocumentMixin {
             ?.call(
                 IsmChatConfig.kNavigatorKey.currentContext ??
                     IsmChatConfig.context,
-                IsmChatUtility.chatPageController.conversation!,
+                // `isMessgeAllowed` accepts a nullable conversation
+                // (IsmChatConversationModel?). Force-unwrapping here crashed
+                // the app when sending a document while `conversation` was
+                // null. Pass it nullable instead.
+                IsmChatUtility.chatPageController.conversation,
                 IsmChatCustomMessageType.file,
                 _controller.chatInputController.text.trim()) ??
         true) {

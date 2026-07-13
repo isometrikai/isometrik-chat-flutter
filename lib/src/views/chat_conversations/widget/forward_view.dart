@@ -366,8 +366,11 @@ class IsmChatForwardView extends StatelessWidget {
                                             IsmChatConfig.kNavigatorKey
                                                     .currentContext ??
                                                 IsmChatConfig.context,
+                                            // Nullable param: do not
+                                            // force-unwrap (crash risk when
+                                            // conversation is null).
                                             IsmChatUtility.chatPageController
-                                                .conversation!,
+                                                .conversation,
                                             IsmChatCustomMessageType.forward,
                                             IsmChatUtility
                                                 .chatPageController

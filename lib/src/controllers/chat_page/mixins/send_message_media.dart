@@ -148,7 +148,12 @@ mixin IsmChatPageSendMessageMediaMixin {
                 ?.call(
                     IsmChatConfig.kNavigatorKey.currentContext ??
                         IsmChatConfig.context,
-                    IsmChatUtility.chatPageController.conversation!,
+                    // `isMessgeAllowed` accepts a nullable conversation
+                    // (IsmChatConversationModel?), so we must NOT force-unwrap
+                    // here. Force-unwrapping crashed the app when sending
+                    // attachments while `conversation` was momentarily null
+                    // (e.g. group chats). Passing it nullable is safe.
+                    IsmChatUtility.chatPageController.conversation,
                     media.isVideo
                         ? IsmChatCustomMessageType.video
                         : IsmChatCustomMessageType.image,

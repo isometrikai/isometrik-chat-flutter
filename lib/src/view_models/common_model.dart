@@ -203,8 +203,14 @@ class IsmChatCommonViewModel {
               ),
               messages: messages,
             );
+            // Only persist when we actually have a conversation. Previously this
+            // used `conversationModel!` OUTSIDE the null-check, which threw
+            // "Null check operator used on a null value" whenever the
+            // conversation was missing from the local DB (e.g. a freshly opened
+            // group), silently failing the send. Guarding matches the sibling
+            // failed-message block below.
+            await dbBox?.saveConversation(conversation: conversationModel);
           }
-          await dbBox?.saveConversation(conversation: conversationModel!);
           return true;
         }
         // Server rejected message -> mark it failed so UI shows error icon
