@@ -27,11 +27,7 @@ mixin IsmChatPageSendMessageDocumentMixin {
             ?.call(
                 IsmChatConfig.kNavigatorKey.currentContext ??
                     IsmChatConfig.context,
-                // `isMessgeAllowed` accepts a nullable conversation
-                // (IsmChatConversationModel?). Force-unwrapping here crashed
-                // the app when sending a document while `conversation` was
-                // null. Pass it nullable instead.
-                IsmChatUtility.chatPageController.conversation,
+                IsmChatUtility.chatPageController.conversation!,
                 IsmChatCustomMessageType.file,
                 _controller.chatInputController.text.trim()) ??
         true) {
@@ -135,8 +131,7 @@ mixin IsmChatPageSendMessageDocumentMixin {
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.file,
-                parentMessageMessageType:
-                    _controller.replayMessage?.customType,
+                parentMessageMessageType: _controller.replayMessage?.customType,
                 parentMessageInitiator: _controller.replayMessage?.sentByMe,
                 parentMessageBody:
                     _controller.getMessageBody(_controller.replayMessage),
@@ -157,9 +152,8 @@ mixin IsmChatPageSendMessageDocumentMixin {
       await IsmChatConfig.dbWrapper!
           .saveMessage(documentMessage, IsmChatDbBox.pending);
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext ??
-                  IsmChatConfig.context)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(documentMessage);
       }
     }
