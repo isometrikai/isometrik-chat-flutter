@@ -86,9 +86,11 @@ mixin IsmChatMqttEventMessageHandlersMixin {
     }
 
     if (message.conversationId == conversation.conversationId) {
-      if (conversation.messages?.isNotEmpty == true) {
-        conversation.messages?.addEntries({message.key: message}.entries);
-      }
+      final messages = Map<String, IsmChatMessageModel>.from(
+        conversation.messages ?? {},
+      );
+      messages[message.key] = message;
+      conversation = conversation.copyWith(messages: messages);
     }
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
     unawaited(IsmChatUtility.conversationController.getConversationsFromDB());
