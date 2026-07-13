@@ -303,6 +303,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       return;
     }
     _controller.deliverdMessageMembers = response;
+    _syncMessageStatusFlags(message);
   }
 
   Future<void> getMessageReadTime(IsmChatMessageModel message) async {
@@ -316,6 +317,55 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       return;
     }
     _controller.readMessageMembers = response;
+    _syncMessageStatusFlags(message);
+  }
+
+  void _syncMessageStatusFlags(IsmChatMessageModel message) {
+    final isGroup = _controller.conversation?.isGroup ?? false;
+    final membersCount = _controller.conversation?.membersCount ?? 0;
+    final expectedRecipients =
+        isGroup ? (membersCount > 0 ? membersCount - 1 : 0) : 1;
+    final deliveredCount = _controller.deliverdMessageMembers.length;
+    final readCount = _controller.readMessageMembers.length;
+
+    var deliveredToAll = message.deliveredToAll ?? false;
+    var readByAll = message.readByAll ?? false;
+
+    if (isGroup) {
+      if (expectedRecipients > 0 && deliveredCount > 0) {
+        deliveredToAll = deliveredCount >= expectedRecipients;
+      }
+      if (expectedRecipients > 0 && readCount > 0) {
+        readByAll = readCount >= expectedRecipients;
+        if (readByAll) {
+          deliveredToAll = true;
+        }
+      }
+    } else {
+      if (deliveredCount > 0) {
+        deliveredToAll = true;
+      }
+      if (readCount > 0) {
+        readByAll = true;
+        deliveredToAll = true;
+      }
+    }
+
+    if (deliveredToAll == (message.deliveredToAll ?? false) &&
+        readByAll == (message.readByAll ?? false)) {
+      return;
+    }
+
+    final index = _controller.messages
+        .indexWhere((m) => m.messageId == message.messageId);
+    if (index == -1) {
+      return;
+    }
+
+    _controller.messages[index] = _controller.messages[index].copyWith(
+      deliveredToAll: deliveredToAll,
+      readByAll: readByAll,
+    );
   }
 
   Future<IsmChatConversationModel?> getConverstaionDetails(
