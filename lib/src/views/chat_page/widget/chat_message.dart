@@ -172,6 +172,13 @@ class _IsmChatMessageState extends State<IsmChatMessage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final conversation = IsmChatUtility.chatPageControllerRegistered
+        ? IsmChatUtility.chatPageController.conversation
+        : coverstaionController.currentConversation;
+    if (widget._message != null &&
+        !widget._message!.isVisibleInGroupChat(conversation)) {
+      return const SizedBox.shrink();
+    }
     var theme = IsmChatConfig.chatTheme.chatPageTheme;
     return GetBuilder<IsmChatPageController>(
       tag: IsmChat.i.chatPageTag,

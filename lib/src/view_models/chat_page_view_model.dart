@@ -75,6 +75,9 @@ class IsmChatPageViewModel {
         ].contains(e.action));
     // Block/unblock banners are managed locally (Option A), not merged from API.
     messages.removeWhere(IsmChatBlockUnblockCoordinator.isBannerMessage);
+    final conversation =
+        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+    messages.removeWhere((m) => !m.isVisibleInGroupChat(conversation));
     if (searchText == null || searchText.isEmpty) {
       final controller = IsmChatUtility.chatPageController;
       if (controller.messages.isNotEmpty) {
@@ -83,9 +86,6 @@ class IsmChatPageViewModel {
       }
 
       if (!isBroadcast) {
-        final conversation =
-            await IsmChatConfig.dbWrapper?.getConversation(conversationId);
-
         if (conversation != null) {
           final data = <String, IsmChatMessageModel>{};
           for (var message in messages) {

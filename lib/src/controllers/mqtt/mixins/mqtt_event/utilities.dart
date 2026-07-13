@@ -47,3 +47,59 @@ mixin IsmChatMqttEventUtilitiesMixin {
   }
 }
 
+String resolveMessageNotificationTitle(IsmChatMessageModel message) {
+  // Prefer conversation title when present — MQTT may omit isGroup but still
+  // send conversationTitle (e.g. group chats).
+  final conversationTitle = _resolveGroupNotificationTitle(
+    conversationId: message.conversationId,
+    conversationTitle: message.conversationTitle,
+    conversationDetails: message.conversationDetails,
+  );
+  if (conversationTitle.isNotEmpty) return conversationTitle;
+
+  final senderFullName =
+      '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}'
+          .trim();
+  if (senderFullName.isNotEmpty) return senderFullName;
+  final notificationTitle = message.notificationTitle?.trim();
+  if (notificationTitle != null && notificationTitle.isNotEmpty) {
+    return notificationTitle;
+  }
+  return message.senderInfo?.userName ?? '';
+}
+
+String resolveCreateConversationNotificationTitle(
+    IsmChatMqttActionModel actionModel) {
+  final conversationTitle = _resolveGroupNotificationTitle(
+    conversationId: actionModel.conversationId,
+    conversationTitle: actionModel.conversationDetails?.conversationTitle,
+  );
+  if (conversationTitle.isNotEmpty) return conversationTitle;
+  return actionModel.userDetails?.userName ?? '';
+}
+
+String _resolveGroupNotificationTitle({
+  String? conversationId,
+  String? conversationTitle,
+  Map<String, dynamic>? conversationDetails,
+}) {
+  final fromMessage = conversationTitle?.trim();
+  if (fromMessage != null && fromMessage.isNotEmpty) {
+    return fromMessage;
+  }
+  final fromDetails =
+      conversationDetails?['conversationTitle'] as String?;
+  final detailsTitle = fromDetails?.trim();
+  if (detailsTitle != null && detailsTitle.isNotEmpty) {
+    return detailsTitle;
+  }
+  if (IsmChatUtility.conversationControllerRegistered) {
+    final conversation = IsmChatUtility.conversationController
+        .getConversation(conversationId ?? '');
+    final fromCache = conversation?.conversationTitle?.trim();
+    if (fromCache != null && fromCache.isNotEmpty) {
+      return fromCache;
+    }
+  }
+  return '';
+}

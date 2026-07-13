@@ -21,7 +21,7 @@ mixin IsmChatMqttEventConversationOperationsMixin {
       final utils = self as IsmChatMqttEventUtilitiesMixin;
       if (utils.isSenderMe(actionModel.userDetails?.userId)) return;
       utils.showPushNotification(
-        title: actionModel.userDetails?.userName ?? '',
+        title: resolveCreateConversationNotificationTitle(actionModel),
         body: 'Conversation Created',
         data: actionModel.toMap(),
       );

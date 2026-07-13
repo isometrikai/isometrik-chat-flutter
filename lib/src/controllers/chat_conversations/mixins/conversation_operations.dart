@@ -56,7 +56,8 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
         if (m.customType == IsmChatCustomMessageType.date ||
             m.customType == IsmChatCustomMessageType.conversationCreated ||
             m.customType == IsmChatCustomMessageType.block ||
-            m.customType == IsmChatCustomMessageType.unblock) {
+            m.customType == IsmChatCustomMessageType.unblock ||
+            !m.isVisibleInGroupChat(conv)) {
           continue;
         }
         lastReal = m;
