@@ -54,8 +54,15 @@ class IsmChatAttachmentCard extends StatelessWidget {
                         var attachment = allowedAttachments[index];
                         return IsmChatTapHandler(
                           onTap: () {
-                            IsmChatRoute.goBack();
-                            controller.onBottomAttachmentTapped(
+                            // Return the tapped attachment type as the bottom
+                            // sheet result instead of firing the action here.
+                            // The caller (see `_AttachmentIcon` in
+                            // chat_message_field.dart) waits for the sheet to
+                            // fully dismiss before invoking
+                            // `onBottomAttachmentTapped`. Launching a native
+                            // picker (gallery/camera) while the sheet is still
+                            // animating out causes a visible flicker on iOS.
+                            IsmChatRoute.goBack<IsmChatAttachmentType>(
                                 attachment.attachmentType);
                           },
                           child: Column(
