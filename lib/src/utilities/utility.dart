@@ -179,19 +179,26 @@ class IsmChatUtility {
     }
   }
 
-  /// Shared toast styling for the SDK: primary background, white label text.
-  /// Shown at the bottom of the screen (e.g. Group Info admin actions).
+  /// Shared toast helper — uses the platform native toast on mobile.
   /// All call sites should use this helper rather than [Fluttertoast] directly.
   static void showToast(String message, {int timeOutInSec = 1}) {
+    if (kIsWeb) {
+      Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: timeOutInSec,
+        webBgColor: '#323232',
+        webPosition: 'center',
+      );
+      return;
+    }
+
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: timeOutInSec,
-      backgroundColor: IsmChatConfig.chatTheme.primaryColor ??
-          IsmChatColors.primaryColorLight,
-      textColor: IsmChatColors.whiteColor,
-      fontSize: IsmChatDimens.sixteen,
     );
   }
 
