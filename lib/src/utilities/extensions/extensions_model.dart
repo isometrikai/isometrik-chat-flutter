@@ -96,6 +96,8 @@ extension ModelConversion on IsmChatConversationModel {
 
       if ([
         IsmChatCustomMessageType.addMember,
+        IsmChatCustomMessageType.addAdmin,
+        IsmChatCustomMessageType.removeAdmin,
         IsmChatCustomMessageType.unblock,
         IsmChatCustomMessageType.block,
         IsmChatCustomMessageType.deletedForEveryone,
