@@ -495,11 +495,10 @@ class IsmChatUtility {
     }
   }
 
-  static Future<void> requestForGallery() async {
-    final hasAccess = await Gal.hasAccess(toAlbum: true);
-    if (hasAccess == false) {
-      await Gal.requestAccess(toAlbum: true);
-    }
+  static Future<bool> requestForGallery({bool toAlbum = false}) async {
+    final hasAccess = await Gal.hasAccess(toAlbum: toAlbum);
+    if (hasAccess) return true;
+    return Gal.requestAccess(toAlbum: toAlbum);
   }
 
   static Future<Uint8List> getUint8ListFromUrl(
@@ -539,10 +538,7 @@ class IsmChatUtility {
   }) async {
     try {
       if (isVideo) {
-        await Gal.putVideo(
-          url,
-          album: albumName ?? 'IsmChat',
-        );
+        await _putVideoToGallery(url, albumName: albumName);
       } else {
         await Gal.putImage(
           url,
@@ -551,7 +547,11 @@ class IsmChatUtility {
       }
       IsmChatUtility.showToast('Save your media');
     } on GalException catch (e, st) {
-      IsmChatLog.error('error $e stack straas $st');
+      IsmChatLog.error('downloadMediaFromLocalPath error: $e', st);
+      showToast('Unable to save media');
+    } catch (e, st) {
+      IsmChatLog.error('downloadMediaFromLocalPath error: $e', st);
+      showToast('Unable to save media');
     }
   }
 
@@ -559,25 +559,42 @@ class IsmChatUtility {
     required String url,
     bool isVideo = false,
     String? albumName,
+    String fileName = '',
+    String extension = '',
     required Function(int) downloadProgrees,
   }) async {
     try {
-      final path = '${Directory.systemTemp.path}/${basename(url)}';
+      final fallbackExtension = extension.isNotEmpty
+          ? extension
+          : (isVideo ? 'mp4' : 'jpg');
+      final resolvedName = ensureFileExtension(
+        resolveSaveFileName(
+          fileName: fileName,
+          url: url,
+          extension: fallbackExtension,
+        ),
+        fallbackExtension,
+      );
+      final path = join(Directory.systemTemp.path, resolvedName);
       var dio = Dio();
       final res = await dio.download(
         url,
         path,
         onReceiveProgress: (count, total) async {
+          if (total <= 0) return;
           var percentage = ((count / total) * 100).floor();
           downloadProgrees.call(percentage);
         },
       );
       if (res.statusCode == 200) {
+        final file = File(path);
+        if (!await file.exists() || await file.length() == 0) {
+          showToast('Unable to save media');
+          return;
+        }
+
         if (isVideo) {
-          await Gal.putVideo(
-            path,
-            album: albumName ?? 'IsmChat',
-          );
+          await _putVideoToGallery(path, albumName: albumName);
         } else {
           await Gal.putImage(
             path,
@@ -586,10 +603,29 @@ class IsmChatUtility {
         }
 
         IsmChatUtility.showToast('Save your media');
+      } else {
+        showToast('Unable to save media');
       }
     } on GalException catch (e, st) {
-      IsmChatLog.error('error $e stack straas $st');
+      IsmChatLog.error('downloadMediaFromNetworkPath Gal error: $e', st);
+      showToast('Unable to save media');
+    } catch (e, st) {
+      IsmChatLog.error('downloadMediaFromNetworkPath error: $e', st);
+      showToast('Unable to save media');
     }
+  }
+
+  /// ponytail: Gal routes album videos into Pictures on Android; skip album
+  /// there so files land under Movies and appear in the gallery app.
+  static Future<void> _putVideoToGallery(
+    String path, {
+    String? albumName,
+  }) async {
+    if (!kIsWeb && Platform.isAndroid) {
+      await Gal.putVideo(path);
+      return;
+    }
+    await Gal.putVideo(path, album: albumName ?? 'IsmChat');
   }
 
   /// Resolves a stable on-disk file name from attachment metadata or URL.
@@ -608,6 +644,26 @@ class IsmChatUtility {
 
     final ext = extension.trim().toLowerCase();
     return ext.isNotEmpty ? 'file.$ext' : 'file';
+  }
+
+  /// Guarantees [name] ends with [extension] for gallery save APIs.
+  static String ensureFileExtension(String name, String extension) {
+    final normalizedExt =
+        extension.startsWith('.') ? extension.substring(1) : extension;
+    if (normalizedExt.isEmpty) return name;
+
+    final sanitized = name.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
+    if (sanitized.isEmpty) return 'file.$normalizedExt';
+
+    final lower = sanitized.toLowerCase();
+    final dottedExt = '.$normalizedExt'.toLowerCase();
+    if (lower.endsWith(dottedExt)) return sanitized;
+
+    final dotIndex = sanitized.lastIndexOf('.');
+    if (dotIndex > 0 && dotIndex < sanitized.length - 1) {
+      return sanitized;
+    }
+    return '$sanitized.$normalizedExt';
   }
 
   /// Saves audio, documents, and other non-gallery files to device storage.

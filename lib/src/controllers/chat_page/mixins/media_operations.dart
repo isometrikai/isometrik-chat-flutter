@@ -295,96 +295,96 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
 
   /// Saves media from a message to device.
   Future<void> saveMedia(IsmChatMessageModel message) async {
+    await WidgetsBinding.instance.endOfFrame;
+
     final attachment = message.attachments?.firstOrNull;
     if (attachment == null) return;
 
     final extension = (attachment.extension ?? '').toLowerCase();
-    final isAudio = message.customType == IsmChatCustomMessageType.audio ||
-        attachment.attachmentType == IsmChatMediaType.audio ||
-        IsmChatConstants.audioExtensions.contains(extension);
-    final isGalleryMedia = !isAudio &&
-        (IsmChatConstants.imageExtensions.contains(extension) ||
+    final mimeType = (attachment.mimeType ?? '').toLowerCase();
+    final isVideoMessage = message.customType == IsmChatCustomMessageType.video ||
+        attachment.attachmentType == IsmChatMediaType.video;
+    final isImageMessage = message.customType == IsmChatCustomMessageType.image ||
+        attachment.attachmentType == IsmChatMediaType.image ||
+        attachment.attachmentType == IsmChatMediaType.gif;
+    final isAudioMessage = message.customType == IsmChatCustomMessageType.audio ||
+        attachment.attachmentType == IsmChatMediaType.audio;
+    // Message/attachment type wins over extension overlap (e.g. mp4 is in both lists).
+    final isVideo = isVideoMessage ||
+        mimeType.startsWith('video/') ||
+        (!isAudioMessage &&
+            !isImageMessage &&
             IsmChatConstants.videoExtensions.contains(extension));
+    final isImage = isImageMessage ||
+        mimeType.startsWith('image/') ||
+        (!isAudioMessage &&
+            !isVideoMessage &&
+            IsmChatConstants.imageExtensions.contains(extension));
+    final isAudio = isAudioMessage ||
+        mimeType.startsWith('audio/') ||
+        (!isVideoMessage &&
+            !isImageMessage &&
+            IsmChatConstants.audioExtensions.contains(extension));
+    final isGalleryMedia = !isAudio && (isVideo || isImage);
+    final resolvedExtension = extension.isNotEmpty
+        ? extension
+        : isVideo
+            ? 'mp4'
+            : 'jpg';
+    final mediaUrl = attachment.mediaUrl ?? '';
 
-    if (!isGalleryMedia) {
-      final mediaUrl = attachment.mediaUrl ?? '';
-      final isNetwork = mediaUrl.isValidUrl;
-      if (isNetwork) {
-        _controller.mediaDownloadProgress = 0;
-        _controller.snackBarController = Get.showSnackbar(
-          GetSnackBar(
-            backgroundColor: IsmChatConfig.chatTheme.primaryColor ??
-                IsmChatColors.primaryColorLight,
-            messageText: Obx(() => CustomeSnackBar(
-                  downloadProgress: _controller.mediaDownloadProgress,
-                  downloadedFileCount: 1,
-                  noOfFiles: 1,
-                )),
+    var showedLoader = false;
+    try {
+      if (!isGalleryMedia) {
+        final isNetwork = mediaUrl.isValidUrl;
+        if (isNetwork) {
+          IsmChatUtility.showLoader();
+          showedLoader = true;
+        }
+
+        await IsmChatUtility.saveFileToDevice(
+          url: mediaUrl,
+          fileName: IsmChatUtility.resolveSaveFileName(
+            fileName: attachment.name ?? '',
+            url: mediaUrl,
+            extension: extension,
           ),
         );
+        return;
       }
 
-      await IsmChatUtility.saveFileToDevice(
-        url: mediaUrl,
-        fileName: IsmChatUtility.resolveSaveFileName(
-          fileName: attachment.name ?? '',
+      final toAlbum = !isVideo || kIsWeb || !Platform.isAndroid;
+      final hasGalleryAccess = await IsmChatUtility.requestForGallery(
+        toAlbum: toAlbum,
+      );
+      if (!hasGalleryAccess) {
+        IsmChatUtility.showToast('Gallery permission required');
+        return;
+      }
+
+      IsmChatUtility.showLoader();
+      showedLoader = true;
+
+      if (mediaUrl.isValidUrl) {
+        await IsmChatUtility.downloadMediaFromNetworkPath(
           url: mediaUrl,
-          extension: extension,
-        ),
-        downloadProgress: isNetwork
-            ? (value) => _controller.mediaDownloadProgress = value
-            : null,
-      );
-
-      if (_controller.snackBarController != null) {
-        await _controller.snackBarController?.close();
-      }
-      return;
-    }
-
-    await IsmChatUtility.requestForGallery();
-    if ((attachment.mediaUrl ?? '').isValidUrl) {
-      _controller.mediaDownloadProgress = 0;
-      _controller.snackBarController = Get.showSnackbar(
-        GetSnackBar(
-          backgroundColor: IsmChatConfig.chatTheme.primaryColor ??
-              IsmChatColors.primaryColorLight,
-          messageText: Obx(() => CustomeSnackBar(
-                downloadProgress: _controller.mediaDownloadProgress,
-                downloadedFileCount: 1,
-                noOfFiles: 1,
-              )),
-        ),
-      );
-      if (IsmChatConstants.videoExtensions.contains(extension)) {
-        await IsmChatUtility.downloadMediaFromNetworkPath(
-          url: attachment.mediaUrl ?? '',
-          isVideo: true,
-          downloadProgrees: (value) {
-            _controller.mediaDownloadProgress = value;
-          },
-        );
-      } else {
-        await IsmChatUtility.downloadMediaFromNetworkPath(
-          url: attachment.mediaUrl ?? '',
-          downloadProgrees: (value) {
-            _controller.mediaDownloadProgress = value;
-          },
-        );
-      }
-      if (_controller.snackBarController != null) {
-        await _controller.snackBarController?.close();
-      }
-    } else {
-      if (IsmChatConstants.videoExtensions.contains(extension)) {
-        await IsmChatUtility.downloadMediaFromLocalPath(
-          url: attachment.mediaUrl ?? '',
-          isVideo: true,
+          isVideo: isVideo,
+          fileName: attachment.name ?? '',
+          extension: resolvedExtension,
+          downloadProgrees: (_) {},
         );
       } else {
         await IsmChatUtility.downloadMediaFromLocalPath(
-          url: attachment.mediaUrl ?? '',
+          url: mediaUrl,
+          isVideo: isVideo,
         );
+      }
+    } catch (e, st) {
+      IsmChatLog.error('saveMedia error: $e', st);
+      IsmChatUtility.showToast('Unable to save media');
+    } finally {
+      if (showedLoader) {
+        IsmChatUtility.closeLoader();
       }
     }
   }

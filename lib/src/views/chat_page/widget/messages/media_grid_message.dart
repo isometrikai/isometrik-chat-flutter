@@ -153,6 +153,14 @@ class _IsmChatMediaGridMessageState extends State<IsmChatMediaGridMessage> {
                         .tapForMediaPreview(messageToShow);
                   }
                 },
+                onLongPress: () {
+                  if (IsmChatUtility.chatPageControllerRegistered) {
+                    IsmChatUtility.chatPageController.onMessageLongPress(
+                      context,
+                      message,
+                    );
+                  }
+                },
                 child: Stack(
                   fit: StackFit.expand,
                   children: [

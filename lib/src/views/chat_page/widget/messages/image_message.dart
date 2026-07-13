@@ -67,6 +67,14 @@ class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
                           .tapForMediaPreview(message);
                     }
                   },
+                  onLongPress: () {
+                    if (IsmChatUtility.chatPageControllerRegistered) {
+                      IsmChatUtility.chatPageController.onMessageLongPress(
+                        context,
+                        message,
+                      );
+                    }
+                  },
                   child: Container(
                     constraints: BoxConstraints(
                       maxWidth: maxWidth,

@@ -51,6 +51,14 @@ class _IsmChatVideoMessageState extends State<IsmChatVideoMessage> {
                   IsmChatUtility.chatPageController.tapForMediaPreview(message);
                 }
               },
+              onLongPress: () {
+                if (IsmChatUtility.chatPageControllerRegistered) {
+                  IsmChatUtility.chatPageController.onMessageLongPress(
+                    context,
+                    message,
+                  );
+                }
+              },
               child: Container(
                 margin: IsmChatDimens.edgeInsetsBottom4,
                 child: SizedBox.square(

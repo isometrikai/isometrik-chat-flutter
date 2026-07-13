@@ -16,7 +16,7 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
   }
 
   /// Handles menu item selection for a message.
-  void onMenuItemSelected(
+  Future<void> onMenuItemSelected(
     IsmChatFocusMenuType menuType,
     IsmChatMessageModel message,
     BuildContext context,
@@ -193,6 +193,35 @@ mixin IsmChatPageMessageOperationsMixin on GetxController {
     final mediaUrl = firstAttachment?.mediaUrl ?? '';
     final thumbnailUrl = firstAttachment?.thumbnailUrl ?? '';
     return 'tmp:${message.sentAt}:${message.sentByMe}:${message.customType?.value ?? -1}:$mediaUrl:$thumbnailUrl:${message.body}';
+  }
+
+  /// Long-press handler shared by message rows and inline media thumbnails.
+  Future<void> onMessageLongPress(
+    BuildContext context,
+    IsmChatMessageModel message, {
+    bool showMessageInCenter = false,
+  }) async {
+    if (showMessageInCenter) return;
+    if (IsmChatProperties.chatPageProperties.shouldShowHoverHold
+            ?.call(context, _controller.conversation, message) ??
+        false) {
+      return;
+    }
+
+    if (message.customType == IsmChatCustomMessageType.deletedForEveryone) {
+      _controller.isMessageSeleted = true;
+      _controller.selectedMessage.add(message);
+      return;
+    }
+
+    if (IsmChatResponsive.isWeb(context)) return;
+
+    if (!(_controller.conversation?.isChattingAllowed ?? false)) {
+      _controller.showDialogCheckBlockUnBlock();
+      return;
+    }
+
+    await _controller.showOverlay(context, message);
   }
 
   /// Shows overlay for message focus menu (mobile).

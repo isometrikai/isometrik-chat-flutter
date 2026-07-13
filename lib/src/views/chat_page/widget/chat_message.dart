@@ -197,24 +197,11 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                 widget._message!) ??
                         false)
                 ? null
-                : () async {
-                    if (widget._message?.customType !=
-                        IsmChatCustomMessageType.deletedForEveryone) {
-                      if (!IsmChatResponsive.isWeb(context)) {
-                        if (!(controller.conversation?.isChattingAllowed ??
-                            false)) {
-                          controller.showDialogCheckBlockUnBlock();
-                          return;
-                        } else {
-                          await controller.showOverlay(
-                              context, widget._message!);
-                        }
-                      }
-                    } else {
-                      controller.isMessageSeleted = true;
-                      controller.selectedMessage.add(widget._message!);
-                    }
-                  },
+                : () => controller.onMessageLongPress(
+                      context,
+                      widget._message!,
+                      showMessageInCenter: showMessageInCenter,
+                    ),
             onTap: showMessageInCenter
                 ? null
                 : () {
