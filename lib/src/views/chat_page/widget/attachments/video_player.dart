@@ -60,6 +60,119 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
     }
   }
 
+  Size _orientedVideoSize(VideoPlayerValue value) {
+    final raw = value.size;
+    if (raw.width == 0 || raw.height == 0) {
+      return const Size(1, 1);
+    }
+    final isRotated = (value.rotationCorrection ~/ 90).isOdd;
+    if (isRotated) {
+      return Size(raw.height, raw.width);
+    }
+    return raw;
+  }
+
+  Widget _buildVideoContent() {
+    if (!_controller.value.isInitialized) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: IsmChatColors.whiteColor,
+        ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final size = _orientedVideoSize(_controller.value);
+        final aspectRatio = size.width / size.height;
+        final maxW = constraints.maxWidth;
+        final maxH = constraints.maxHeight;
+
+        // Width-first: fill screen width without cropping when possible.
+        var width = maxW;
+        var height = width / aspectRatio;
+        if (height > maxH) {
+          height = maxH;
+          width = height * aspectRatio;
+        }
+
+        return Center(
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: VideoPlayer(_controller),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildControls() {
+    const progressColors = VideoProgressColors(
+      backgroundColor: Color(0x66FFFFFF),
+      playedColor: IsmChatColors.greenColor,
+      bufferedColor: Color(0x99FFFFFF),
+    );
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.transparent, Colors.black54],
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          minimum: EdgeInsets.only(bottom: IsmChatDimens.eight),
+          child: SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                IsmChatDimens.sixteen,
+                IsmChatDimens.sixteen,
+                IsmChatDimens.sixteen,
+                IsmChatDimens.ten,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ValueListenableBuilder<VideoPlayerValue>(
+                    valueListenable: _controller,
+                    builder: (context, value, child) => Text(
+                      value.position.formatDuration,
+                      style: IsmChatStyles.w600White14,
+                    ),
+                  ),
+                  SizedBox(
+                    height: IsmChatDimens.five,
+                    width: IsmChatDimens.percentWidth(.6),
+                    child: VideoProgressIndicator(
+                      _controller,
+                      allowScrubbing: true,
+                      colors: progressColors,
+                      padding: IsmChatDimens.edgeInsetsHorizontal10,
+                    ),
+                  ),
+                  ValueListenableBuilder<VideoPlayerValue>(
+                    valueListenable: _controller,
+                    builder: (context, value, child) => Text(
+                      value.duration.formatDuration,
+                      style: IsmChatStyles.w600White14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   void didUpdateWidget(VideoViewPage oldWidget) {
     if (widget.path != oldWidget.path) {
@@ -104,143 +217,53 @@ class VideoViewPageState extends State<VideoViewPage> with RouteAware {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.transparent,
-        body: VisibilityDetector(
-          key: const Key('Video_Player'),
-          onVisibilityChanged: (VisibilityInfo info) {
-            if (chatPageController.isVideoVisible) {
-              if (info.visibleFraction == 0) {
-                _controller.pause();
-              } else {
-                _controller.play();
+        backgroundColor: Colors.black,
+        body: SizedBox.expand(
+          child: VisibilityDetector(
+            key: const Key('Video_Player'),
+            onVisibilityChanged: (VisibilityInfo info) {
+              if (chatPageController.isVideoVisible) {
+                if (info.visibleFraction == 0) {
+                  _controller.pause();
+                } else {
+                  _controller.play();
+                }
+                updateState();
               }
-              updateState();
-            }
-          },
-          child: Stack(
-            fit: kIsWeb ? StackFit.loose : StackFit.expand,
-            children: [
-              _controller.value.isInitialized
-                  ? Center(
-                      child: AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        // Use the VideoPlayer widget to display the video.
-                        child: Stack(children: [
-                          VideoPlayer(_controller),
-                          if (!widget.showVideoPlaying && kIsWeb)
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: IsmChatDimens.edgeInsets20,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ValueListenableBuilder(
-                                      valueListenable: _controller,
-                                      builder: (context, VideoPlayerValue value,
-                                              child) =>
-                                          Text(
-                                        value.position.formatDuration,
-                                        style: IsmChatStyles.w600White14,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: SizedBox(
-                                        height: IsmChatDimens.five,
-                                        child: VideoProgressIndicator(
-                                            _controller,
-                                            allowScrubbing: true,
-                                            colors: const VideoProgressColors(
-                                                backgroundColor:
-                                                    IsmChatColors.whiteColor,
-                                                playedColor:
-                                                    IsmChatColors.greenColor),
-                                            padding: IsmChatDimens
-                                                .edgeInsetsHorizontal10),
-                                      ),
-                                    ),
-                                    if (!kIsWeb)
-                                      Text(
-                                        _controller
-                                            .value.duration.formatDuration,
-                                        style: IsmChatStyles.w600White14,
-                                      )
-                                  ],
-                                ),
-                              ),
-                            )
-                        ]),
+            },
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned.fill(child: _buildVideoContent()),
+                Align(
+                  alignment: Alignment.center,
+                  child: InkWell(
+                    onTap: () {
+                      if (_controller.value.isInitialized &&
+                          !_controller.value.position.isNegative &&
+                          _controller.value.duration > Duration.zero) {
+                        _controller.value.isPlaying
+                            ? _controller.pause()
+                            : _controller.play();
+                        updateState();
+                      }
+                    },
+                    child: CircleAvatar(
+                      radius: 33,
+                      backgroundColor: Colors.black38,
+                      child: Icon(
+                        _controller.value.isPlaying
+                            ? Icons.pause
+                            : Icons.play_arrow,
+                        color: Colors.white,
+                        size: 50,
                       ),
-                    )
-                  : const Center(
-                      child: CircularProgressIndicator(
-                        color: IsmChatColors.whiteColor,
-                      ),
-                    ),
-              Align(
-                alignment: Alignment.center,
-                child: InkWell(
-                  onTap: () {
-                    if (_controller.value.isInitialized &&
-                        !_controller.value.position.isNegative &&
-                        _controller.value.duration > Duration.zero) {
-                      _controller.value.isPlaying
-                          ? _controller.pause()
-                          : _controller.play();
-                      updateState();
-                    }
-                  },
-                  child: CircleAvatar(
-                    radius: 33,
-                    backgroundColor: Colors.black38,
-                    child: Icon(
-                      _controller.value.isPlaying
-                          ? Icons.pause
-                          : Icons.play_arrow,
-                      color: Colors.white,
-                      size: 50,
                     ),
                   ),
                 ),
-              ),
-              if (!kIsWeb)
-                if (!widget.showVideoPlaying)
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: IsmChatDimens.edgeInsets20,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ValueListenableBuilder(
-                              valueListenable: _controller,
-                              builder:
-                                  (context, VideoPlayerValue value, child) =>
-                                      Text(
-                                        value.position.formatDuration,
-                                        style: IsmChatStyles.w600White14,
-                                      )),
-                          SizedBox(
-                            height: IsmChatDimens.five,
-                            width: IsmChatDimens.percentWidth(.6),
-                            child: VideoProgressIndicator(_controller,
-                                allowScrubbing: true,
-                                colors: const VideoProgressColors(
-                                    backgroundColor: IsmChatColors.whiteColor,
-                                    playedColor: IsmChatColors.greenColor),
-                                padding: IsmChatDimens.edgeInsetsHorizontal10),
-                          ),
-                          Text(
-                            _controller.value.duration.formatDuration,
-                            style: IsmChatStyles.w600White14,
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-            ],
+                if (!widget.showVideoPlaying) _buildControls(),
+              ],
+            ),
           ),
         ),
       );

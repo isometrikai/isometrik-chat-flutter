@@ -123,11 +123,13 @@ class IsmChatFocusMenu extends StatelessWidget {
                                   final itemStyle =
                                       _focusMenuItemStyle(context, item);
                                   return IsmChatTapHandler(
-                                    onTap: () {
-                                      controller
-                                        ..closeOverlay()
-                                        ..onMenuItemSelected(
-                                            item, message, context);
+                                    onTap: () async {
+                                      controller.closeOverlay();
+                                      await controller.onMenuItemSelected(
+                                        item,
+                                        message,
+                                        context,
+                                      );
                                     },
                                     child: Container(
                                       height: IsmChatConfig
@@ -263,15 +265,18 @@ class IsmChatFocusMenu extends StatelessWidget {
                                               _focusMenuItemStyle(
                                                   context, item);
                                           return IsmChatTapHandler(
-                                            onTap: () {
-                                              IsmChatRoute.goBack();
-                                              controller
-                                                ..closeOverlay()
-                                                ..onMenuItemSelected(
-                                                  item,
-                                                  message,
-                                                  context,
-                                                );
+                                            onTap: () async {
+                                              Navigator.of(context).pop();
+                                              controller.closeOverlay();
+                                              await WidgetsBinding.instance
+                                                  .endOfFrame;
+                                              if (!context.mounted) return;
+                                              await controller
+                                                  .onMenuItemSelected(
+                                                item,
+                                                message,
+                                                context,
+                                              );
                                             },
                                             child: Container(
                                               height: IsmChatDimens.forty,

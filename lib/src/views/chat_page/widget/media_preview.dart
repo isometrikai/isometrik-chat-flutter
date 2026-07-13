@@ -212,7 +212,9 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
                           const IsmChatLoadingDialog(),
                       wantKeepAlive: true,
                     )
-                  : VideoViewPage(path: url);
+                  : SizedBox.expand(
+                      child: VideoViewPage(path: url),
+                    );
             },
             onPageChanged: (index) {
               final timeStamp = DateTime.fromMillisecondsSinceEpoch(

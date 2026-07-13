@@ -33,8 +33,6 @@ mixin IsmChatPageVariablesMixin on GetxController {
 
   final participnatsEditingController = TextEditingController();
 
-  SnackbarController? snackBarController;
-
   var pageController = PageController();
 
   var noises = <int, Widget>{};

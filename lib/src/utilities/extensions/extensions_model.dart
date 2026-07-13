@@ -187,7 +187,8 @@ extension ModelConversion on IsmChatConversationModel {
 extension LastMessageMediaPreview on LastMessageDetails {
   bool get isGifLastMessage {
     final normalized = body.trim().toLowerCase();
-    return normalized == IsmChatStrings.gif.toLowerCase() || normalized == 'gif';
+    return normalized == IsmChatStrings.gif.toLowerCase() ||
+        normalized == 'gif';
   }
 
   bool get isStickerLastMessage {
@@ -698,6 +699,7 @@ extension IsmChatMessageMediaExtension on IsmChatMessageModel {
 
   /// Regular photos/videos that participate in the multi-media grid.
   bool get isGridEligibleMedia =>
-      (customType == IsmChatCustomMessageType.image && !isGifOrStickerMessage) ||
+      (customType == IsmChatCustomMessageType.image &&
+          !isGifOrStickerMessage) ||
       customType == IsmChatCustomMessageType.video;
 }
