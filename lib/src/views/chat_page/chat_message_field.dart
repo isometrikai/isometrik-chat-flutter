@@ -919,7 +919,14 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                   if (context.mounted) {
                     final attachmentCardTheme =
                         IsmChatThemeResolver.attachmentCardFromConfig(context);
-                    await showModalBottomSheet(
+                    // The sheet returns the tapped attachment type instead of
+                    // triggering the action itself. We wait for this future to
+                    // resolve (i.e. the sheet is fully dismissed) before
+                    // launching the corresponding action. Doing so prevents the
+                    // iOS flicker caused by presenting a native picker while the
+                    // bottom sheet is still animating out.
+                    final selectedAttachment =
+                        await showModalBottomSheet<IsmChatAttachmentType>(
                       context: context,
                       builder: (context) => const IsmChatAttachmentCard(),
                       elevation: 0,
@@ -931,6 +938,9 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                         ),
                       ),
                     );
+                    if (selectedAttachment != null) {
+                      controller.onBottomAttachmentTapped(selectedAttachment);
+                    }
                   }
                 }
               }

@@ -697,21 +697,22 @@ mixin IsmChatPageSendMessageMediaMixin {
         _updateUploadingMessageMediaUrl(
           createdAt: createdAt,
           mediaUrl: mediaUrlPath,
-          thumbnailUrl: !(imageAndFile ?? false) ? thumbnailUrlPath : mediaUrlPath,
+          thumbnailUrl:
+              !(imageAndFile ?? false) ? thumbnailUrlPath : mediaUrlPath,
         );
         final uploadedAttachment = AttachmentModel(
-            thumbnailUrl:
-                !(imageAndFile ?? false) ? thumbnailUrlPath : mediaUrlPath,
-            size: ismChatChatMessageModel.attachments?.first.size ?? 0,
-            name: ismChatChatMessageModel.attachments?.first.name,
-            mimeType: ismChatChatMessageModel.attachments?.first.mimeType,
-            mediaUrl: mediaUrlPath,
-            mediaId: mediaId,
-            extension: ismChatChatMessageModel.attachments?.first.extension,
-            attachmentType:
-                ismChatChatMessageModel.attachments?.first.attachmentType,
-            stillUrl: mediaUrlPath,
-          );
+          thumbnailUrl:
+              !(imageAndFile ?? false) ? thumbnailUrlPath : mediaUrlPath,
+          size: ismChatChatMessageModel.attachments?.first.size ?? 0,
+          name: ismChatChatMessageModel.attachments?.first.name,
+          mimeType: ismChatChatMessageModel.attachments?.first.mimeType,
+          mediaUrl: mediaUrlPath,
+          mediaId: mediaId,
+          extension: ismChatChatMessageModel.attachments?.first.extension,
+          attachmentType:
+              ismChatChatMessageModel.attachments?.first.attachmentType,
+          stillUrl: mediaUrlPath,
+        );
         final attachment = <Map<String, dynamic>>[
           uploadedAttachment.toOutgoingMap(),
         ];
@@ -804,8 +805,7 @@ mixin IsmChatPageSendMessageMediaMixin {
     _controller.update();
   }
 
-  bool _isGifExtension(String? extension) =>
-      extension?.toLowerCase() == 'gif';
+  bool _isGifExtension(String? extension) => extension?.toLowerCase() == 'gif';
 
   Future<String> _resolveLocalMediaPath({
     required WebMediaModel webMediaModel,
@@ -824,7 +824,8 @@ mixin IsmChatPageSendMessageMediaMixin {
     }
     try {
       final dir = await getTemporaryDirectory();
-      final safeName = nameWithExtension.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
+      final safeName =
+          nameWithExtension.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
       final file = File('${dir.path}/$safeName');
       await file.writeAsBytes(bytes, flush: true);
       return file.path;
@@ -905,19 +906,17 @@ mixin IsmChatPageSendMessageMediaMixin {
     final allowed = await IsmChatProperties
             .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
             ?.call(
-              IsmChatConfig.kNavigatorKey.currentContext ??
-                  IsmChatConfig.context,
-              _controller.conversation,
-              IsmChatCustomMessageType.image,
-              '',
-            ) ??
+          IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+          _controller.conversation,
+          IsmChatCustomMessageType.image,
+          '',
+        ) ??
         true;
     if (!allowed) {
       return;
     }
 
-    final extension =
-        item.extension.isNotEmpty ? item.extension : 'gif';
+    final extension = item.extension.isNotEmpty ? item.extension : 'gif';
     final mediaType =
         isSticker ? IsmChatMediaType.sticker : IsmChatMediaType.gif;
     final giphyPath = isSticker ? 'stickers' : 'gifs';

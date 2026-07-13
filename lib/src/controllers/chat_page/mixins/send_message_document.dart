@@ -131,8 +131,7 @@ mixin IsmChatPageSendMessageDocumentMixin {
         replyMessage: _controller.isreplying
             ? IsmChatReplyMessageModel(
                 forMessageType: IsmChatCustomMessageType.file,
-                parentMessageMessageType:
-                    _controller.replayMessage?.customType,
+                parentMessageMessageType: _controller.replayMessage?.customType,
                 parentMessageInitiator: _controller.replayMessage?.sentByMe,
                 parentMessageBody:
                     _controller.getMessageBody(_controller.replayMessage),
@@ -153,9 +152,8 @@ mixin IsmChatPageSendMessageDocumentMixin {
       await IsmChatConfig.dbWrapper!
           .saveMessage(documentMessage, IsmChatDbBox.pending);
       if (kIsWeb &&
-          IsmChatResponsive.isWeb(
-              IsmChatConfig.kNavigatorKey.currentContext ??
-                  IsmChatConfig.context)) {
+          IsmChatResponsive.isWeb(IsmChatConfig.kNavigatorKey.currentContext ??
+              IsmChatConfig.context)) {
         _controller.updateLastMessagOnCurrentTime(documentMessage);
       }
     }
