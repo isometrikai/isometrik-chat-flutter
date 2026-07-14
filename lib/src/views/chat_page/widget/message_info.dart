@@ -83,17 +83,58 @@ class IsmChatMessageInfo extends StatelessWidget {
                     ),
                   ),
                   IsmChatDimens.boxHeight16,
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: message.sentByMe
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                    children: [
-                      MessageBubble(
-                        message: message,
-                        showMessageInCenter: false,
-                      )
-                    ],
+                  Obx(
+                    () {
+                      final deliveredCount =
+                          chatController.deliverdMessageMembers.length;
+                      final readCount =
+                          chatController.readMessageMembers.length;
+                      final membersCount =
+                          chatController.conversation?.membersCount ?? 0;
+                      final expectedRecipients = isGroup
+                          ? (membersCount > 0 ? membersCount - 1 : 0)
+                          : 1;
+
+                      var deliveredToAll = message.deliveredToAll ?? false;
+                      var readByAll = message.readByAll ?? false;
+
+                      if (isGroup) {
+                        if (expectedRecipients > 0 && deliveredCount > 0) {
+                          deliveredToAll =
+                              deliveredCount >= expectedRecipients;
+                        }
+                        if (expectedRecipients > 0 && readCount > 0) {
+                          readByAll = readCount >= expectedRecipients;
+                          if (readByAll) {
+                            deliveredToAll = true;
+                          }
+                        }
+                      } else {
+                        if (deliveredCount > 0) {
+                          deliveredToAll = true;
+                        }
+                        if (readCount > 0) {
+                          readByAll = true;
+                          deliveredToAll = true;
+                        }
+                      }
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: message.sentByMe
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
+                        children: [
+                          MessageBubble(
+                            message: message.copyWith(
+                              deliveredToAll: deliveredToAll,
+                              readByAll: readByAll,
+                            ),
+                            showMessageInCenter: false,
+                          )
+                        ],
+                      );
+                    },
                   ),
                   IsmChatDimens.boxHeight16,
                   isGroup
