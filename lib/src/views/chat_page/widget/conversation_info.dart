@@ -38,6 +38,7 @@ class _IsmChatConverstaionInfoViewState
   final ScrollController _scrollController = ScrollController();
   final FocusNode _participantsSearchFocusNode = FocusNode();
   final GlobalKey _participantsSearchKey = GlobalKey();
+  bool _isUpdatingMute = false;
 
   @override
   void initState() {
@@ -76,6 +77,26 @@ class _IsmChatConverstaionInfoViewState
         '${member.metaData?.firstName ?? ''} ${member.metaData?.lastName ?? ''}'
             .trim();
     return fullName.isNotEmpty ? fullName : member.userName;
+  }
+
+  /// Mute ON ⇒ `pushNotifications: false` on the conversation settings API.
+  Future<void> _onMuteNotificationsChanged(
+    IsmChatPageController controller,
+    bool isMuted,
+  ) async {
+    final conversationId = controller.conversation?.conversationId;
+    if (conversationId == null || conversationId.isEmpty) return;
+    setState(() => _isUpdatingMute = true);
+    try {
+      await conversationController.updateConversationSetting(
+        conversationId: conversationId,
+        events: IsmChatEvents(pushNotifications: !isMuted),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isUpdatingMute = false);
+      }
+    }
   }
 
   @override
@@ -437,6 +458,45 @@ class _IsmChatConverstaionInfoViewState
                                   ),
                                 ],
                               ),
+                            ),
+                          ),
+                          IsmChatDimens.boxHeight10,
+                          Container(
+                            padding: IsmChatDimens.edgeInsets16_8_16_8,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(IsmChatDimens.sixteen),
+                              color: groupTheme.surfaceBackgroundColor,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.notifications_off_outlined,
+                                  color: groupTheme.actionIconColor,
+                                  size: IsmChatDimens.twentyFour,
+                                ),
+                                IsmChatDimens.boxWidth12,
+                                Expanded(
+                                  child: Text(
+                                    IsmChatStrings.muteNotifications,
+                                    style: groupTheme.sectionTitleTextStyle,
+                                  ),
+                                ),
+                                Switch.adaptive(
+                                  value: !(controller.conversation?.config
+                                          ?.pushNotifications ??
+                                      true),
+                                  activeTrackColor:
+                                      IsmChatConfig.chatTheme.primaryColor,
+                                  onChanged: _isUpdatingMute
+                                      ? null
+                                      : (isMuted) =>
+                                          _onMuteNotificationsChanged(
+                                            controller,
+                                            isMuted,
+                                          ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

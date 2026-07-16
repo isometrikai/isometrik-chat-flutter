@@ -446,16 +446,78 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   /// `conversationId`: The ID of the conversation to update.
   /// `events`: The events to update in the conversation.
   /// `isLoading`: Indicates if loading should be shown.
-  Future<void> updateConversationSetting({
+  ///
+  /// On success, syncs `pushNotifications` (and nested `config`) locally so the
+  /// mute toggle and MQTT local notification gating stay consistent.
+  Future<bool> updateConversationSetting({
     required String conversationId,
     required IsmChatEvents events,
     bool isLoading = false,
   }) async {
-    await _controller.viewModel.updateConversationSetting(
+    final response = await _controller.viewModel.updateConversationSetting(
       conversationId: conversationId,
       events: events,
       isLoading: isLoading,
     );
+    if (response == null || response.hasError) {
+      return false;
+    }
+    if (events.pushNotifications != null) {
+      await _syncLocalPushNotifications(
+        conversationId: conversationId,
+        pushNotifications: events.pushNotifications!,
+      );
+    }
+    return true;
+  }
+
+  /// Persists mute / push-notification setting across DB, list, and open chat.
+  Future<void> _syncLocalPushNotifications({
+    required String conversationId,
+    required bool pushNotifications,
+  }) async {
+    var conversation =
+        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+    conversation ??= getConversation(conversationId);
+    if (conversation == null &&
+        IsmChatUtility.chatPageControllerRegistered &&
+        IsmChatUtility.chatPageController.conversation?.conversationId ==
+            conversationId) {
+      conversation = IsmChatUtility.chatPageController.conversation;
+    }
+    if (conversation == null) return;
+
+    final updated = conversation.copyWith(
+      pushNotifications: pushNotifications,
+      config: (conversation.config ??
+              ConversationConfigModel(
+                typingEvents: true,
+                readEvents: true,
+                pushNotifications: pushNotifications,
+              ))
+          .copyWith(pushNotifications: pushNotifications),
+    );
+
+    await IsmChatConfig.dbWrapper?.saveConversation(conversation: updated);
+
+    final index = _controller.conversations
+        .indexWhere((e) => e.conversationId == conversationId);
+    if (index != -1) {
+      final list = List<IsmChatConversationModel>.from(_controller.conversations);
+      list[index] = updated;
+      _controller.conversations = list;
+    }
+
+    if (_controller.currentConversationId == conversationId) {
+      _controller.currentConversation = updated;
+    }
+
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      final chatController = IsmChatUtility.chatPageController;
+      if (chatController.conversation?.conversationId == conversationId) {
+        chatController.conversation = updated;
+      }
+    }
   }
 
   int _groupAdminCount(IsmChatConversationModel conversation) {

@@ -124,7 +124,7 @@ mixin IsmChatMqttEventMessageHandlersMixin {
   /// Handles a local notification.
   ///
   /// * `message`: The message to handle
-  void handleLocalNotification(IsmChatMessageModel message) {
+  Future<void> handleLocalNotification(IsmChatMessageModel message) async {
     final self = this;
     if (self is IsmChatMqttEventUtilitiesMixin) {
       final utils = self as IsmChatMqttEventUtilitiesMixin;
@@ -137,6 +137,22 @@ mixin IsmChatMqttEventMessageHandlersMixin {
         message.events?.sendPushNotification == false) {
       return;
     }
+
+    // Skip local alerts when this conversation has push notifications muted.
+    final conversationId = message.conversationId ?? '';
+    if (conversationId.isNotEmpty) {
+      IsmChatConversationModel? conversation;
+      if (IsmChatUtility.conversationControllerRegistered) {
+        conversation = IsmChatUtility.conversationController
+            .getConversation(conversationId);
+      }
+      conversation ??=
+          await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+      if (conversation?.config?.pushNotifications == false) {
+        return;
+      }
+    }
+
     final notificationTitle = resolveMessageNotificationTitle(message);
     final notificationBody = _resolveNotificationBody(
       message,
