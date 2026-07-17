@@ -43,6 +43,8 @@ mixin IsmChatPageUiStateManagementMixin on GetxController {
 
         break;
       case IsmChatAttachmentType.gallery:
+        _controller.mediaProcessingGeneration++;
+        _controller.isProcessingMedia = false;
         _controller.webMedia.clear();
         _controller.getMedia();
         break;

@@ -20,6 +20,24 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
           state.controller?.selectAssets(mediaXFile);
         },
         builder: (controller) {
+          if (controller.isProcessingMedia) {
+            return Scaffold(
+              backgroundColor: IsmChatColors.blackColor,
+              body: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    IsmChatDimens.boxHeight16,
+                    Text(
+                      'Processing ${controller.webMedia.length} of ${controller.mediaAssetsTotal}...',
+                      style: IsmChatStyles.w400White16,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           if (controller.webMedia.isNotEmpty) {
             return Scaffold(
               resizeToAvoidBottomInset: true,
@@ -40,8 +58,11 @@ class IsmChatGalleryAssetsView extends StatelessWidget {
                   ),
                   onTap: () {
                     IsmChatRoute.goBack<void>();
-                    controller.webMedia.clear();
-                    controller.isVideoVisible = false;
+                    controller.mediaProcessingGeneration++;
+                    controller
+                      ..isProcessingMedia = false
+                      ..webMedia.clear()
+                      ..isVideoVisible = false;
                   },
                 ),
                 action: [

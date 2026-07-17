@@ -666,6 +666,129 @@ extension MentionMessage on IsmChatMessageModel {
     final mapKey = key != 0 ? key : sentAt;
     return '$mapKey';
   }
+
+  /// Batch id for multi-select gallery sends (`customMetaData.mediaBatchId`).
+  int? get mediaBatchId {
+    final raw = metaData?.customMetaData?['mediaBatchId'];
+    if (raw is int) {
+      return raw;
+    }
+    if (raw is String) {
+      return int.tryParse(raw);
+    }
+    return null;
+  }
+
+  bool get isGridDisplayableMedia =>
+      customType == IsmChatCustomMessageType.video ||
+      (isGridEligibleMedia && customType == IsmChatCustomMessageType.image);
+
+  bool sharesMediaGridWith(IsmChatMessageModel other) {
+    if (!isGridDisplayableMedia || !other.isGridDisplayableMedia) {
+      return false;
+    }
+    if (sentByMe != other.sentByMe) {
+      return false;
+    }
+    final batchA = mediaBatchId;
+    final batchB = other.mediaBatchId;
+    if (batchA != null && batchB != null) {
+      return batchA == batchB;
+    }
+    return (sentAt - other.sentAt).abs() <= IsmChatMediaGridGrouping.timeWindowMs;
+  }
+
+  bool hasSameMediaGridIdentityAs(IsmChatMessageModel other) {
+    final idA = (messageId ?? '').trim();
+    final idB = (other.messageId ?? '').trim();
+    if (idA.isNotEmpty && idB.isNotEmpty) {
+      return idA == idB;
+    }
+    return sentAt == other.sentAt && sentByMe == other.sentByMe;
+  }
+}
+
+/// Groups consecutive image/video messages for the chat grid UI.
+class IsmChatMediaGridGrouping {
+  IsmChatMediaGridGrouping._();
+
+  static const int timeWindowMs = 10000;
+
+  static List<IsmChatMessageModel> collect(
+    List<IsmChatMessageModel> chronologicMessages,
+    IsmChatMessageModel anchor,
+  ) {
+    if (!anchor.isGridDisplayableMedia) {
+      return const [];
+    }
+
+    final batchId = anchor.mediaBatchId;
+    if (batchId != null) {
+      final batchGroup = chronologicMessages
+          .where(
+            (msg) =>
+                msg.isGridDisplayableMedia && msg.mediaBatchId == batchId,
+          )
+          .toList()
+        ..sort((a, b) => a.sentAt.compareTo(b.sentAt));
+      return batchGroup.length >= 2 ? batchGroup : const [];
+    }
+
+    final anchorIndex = chronologicMessages.indexWhere(
+      (msg) => msg.hasSameMediaGridIdentityAs(anchor),
+    );
+    if (anchorIndex == -1) {
+      return const [];
+    }
+
+    final grouped = <IsmChatMessageModel>[];
+    var groupStartIndex = anchorIndex;
+    final anchorMessage = chronologicMessages[anchorIndex];
+
+    for (var i = anchorIndex; i >= 0; i--) {
+      final msg = chronologicMessages[i];
+      if (!msg.isGridDisplayableMedia || msg.sentByMe != anchorMessage.sentByMe) {
+        break;
+      }
+      if (!msg.sharesMediaGridWith(anchorMessage)) {
+        break;
+      }
+      groupStartIndex = i;
+    }
+
+    for (var i = groupStartIndex; i < chronologicMessages.length; i++) {
+      final msg = chronologicMessages[i];
+      if (!msg.isGridDisplayableMedia || msg.sentByMe != anchorMessage.sentByMe) {
+        break;
+      }
+      if (grouped.isNotEmpty &&
+          !msg.sharesMediaGridWith(chronologicMessages[groupStartIndex])) {
+        break;
+      }
+      if (grouped.isNotEmpty) {
+        final last = grouped.last;
+        if ((msg.sentAt - last.sentAt).abs() > timeWindowMs &&
+            msg.mediaBatchId == null) {
+          break;
+        }
+      }
+      grouped.add(msg);
+    }
+
+    return grouped.length >= 2 ? grouped : const [];
+  }
+
+  static bool isGridHost(
+    List<IsmChatMessageModel> group,
+    IsmChatMessageModel current,
+  ) =>
+      group.length >= 2 && group.first.hasSameMediaGridIdentityAs(current);
+
+  static bool shouldHide(
+    List<IsmChatMessageModel> group,
+    IsmChatMessageModel current,
+  ) =>
+      group.length >= 2 && !group.first.hasSameMediaGridIdentityAs(current);
 }
 
 /// Shared-contact metadata helpers for device contacts integration.

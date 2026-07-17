@@ -33,103 +33,11 @@ class MessageBubble extends StatelessWidget {
   List<IsmChatMessageModel>? _getGroupedMediaMessages(
     IsmChatPageController controller,
   ) {
-    final isImage = _message.isGridEligibleMedia &&
-        _message.customType == IsmChatCustomMessageType.image;
-    final isVideo = _message.customType == IsmChatCustomMessageType.video;
-
-    if (!isImage && !isVideo) {
-      return null;
-    }
-
-    // Get all messages (excluding date messages) - these are in chronological order
     final allMessages = controller.messages
         .where((msg) => msg.customType != IsmChatCustomMessageType.date)
         .toList();
-
-    if (allMessages.isEmpty || index == null) {
-      return null;
-    }
-
-    // Since ListView is reversed, the index in the reversed list corresponds to
-    // (allMessages.length - 1 - index) in the chronological list
-    final reversedIndex = allMessages.length - 1 - index!;
-
-    if (reversedIndex < 0 || reversedIndex >= allMessages.length) {
-      return null;
-    }
-
-    final currentMessage = allMessages[reversedIndex];
-    final sentByMe = currentMessage.sentByMe;
-    final timeWindow =
-        10000; // 10 seconds in milliseconds - allows for upload delays
-    final groupedMessages = <IsmChatMessageModel>[];
-
-    // Find the first message in the group by going backwards chronologically
-    // (which means going forward in the reversed list)
-    var groupStartIndex = reversedIndex;
-    for (var i = reversedIndex; i >= 0; i--) {
-      final msg = allMessages[i];
-      final msgIsImage = msg.isGridEligibleMedia &&
-          msg.customType == IsmChatCustomMessageType.image;
-      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
-
-      // Stop if we hit a non-media message or different sender
-      if (!msgIsImage && !msgIsVideo) {
-        break;
-      }
-
-      if (msg.sentByMe != sentByMe) {
-        break;
-      }
-
-      // Check if message is within time window
-      final timeDiff = (msg.sentAt - currentMessage.sentAt).abs();
-      if (timeDiff > timeWindow) {
-        break;
-      }
-
-      groupStartIndex = i;
-    }
-
-    // Now collect all messages in the group starting from groupStartIndex
-    for (var i = groupStartIndex; i < allMessages.length; i++) {
-      final msg = allMessages[i];
-      final msgIsImage = msg.isGridEligibleMedia &&
-          msg.customType == IsmChatCustomMessageType.image;
-      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
-
-      // Stop if we hit a non-media message or different sender
-      if (!msgIsImage && !msgIsVideo) {
-        break;
-      }
-
-      if (msg.sentByMe != sentByMe) {
-        break;
-      }
-
-      // Check if message is within time window
-      final timeDiff = (msg.sentAt - allMessages[groupStartIndex].sentAt).abs();
-      if (timeDiff > timeWindow && groupedMessages.isNotEmpty) {
-        break;
-      }
-
-      groupedMessages.add(msg);
-    }
-
-    // Only return grouped messages if there are 2 or more
-    // And only if the current message is the first one in the group
-    if (groupedMessages.length >= 2) {
-      final firstMessage = groupedMessages.first;
-      final isFirstMessage = firstMessage.sentAt == currentMessage.sentAt &&
-          (firstMessage.messageId == currentMessage.messageId ||
-              (firstMessage.messageId?.isEmpty == true &&
-                  currentMessage.messageId?.isEmpty == true));
-
-      // Only return the group if this is the first message
-      return isFirstMessage ? groupedMessages : null;
-    }
-
-    return null;
+    final group = IsmChatMediaGridGrouping.collect(allMessages, _message);
+    return IsmChatMediaGridGrouping.isGridHost(group, _message) ? group : null;
   }
 
   /// Gets appropriate padding based on message type

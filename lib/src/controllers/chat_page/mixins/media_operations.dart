@@ -8,8 +8,14 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
   /// Gets the controller instance.
   IsmChatPageController get _controller => this as IsmChatPageController;
 
+  void _cancelInFlightMediaProcessing() {
+    _controller.mediaProcessingGeneration++;
+    _controller.isProcessingMedia = false;
+  }
+
   /// Gets media from gallery or file picker.
   void getMedia() async {
+    _cancelInFlightMediaProcessing();
     _controller.webMedia.clear();
     _controller.assetsIndex = 0;
 
@@ -21,8 +27,15 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
     if (result.isEmpty) return;
     if (IsmChatResponsive.isWeb(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context)) {
+      final generation = _controller.mediaProcessingGeneration;
+      _controller
+        ..isProcessingMedia = true
+        ..mediaAssetsTotal = result.where((x) => x != null).length;
       IsmChatUtility.showLoader();
       for (var x in result) {
+        if (generation != _controller.mediaProcessingGeneration) {
+          break;
+        }
         final bytes = await x?.readAsBytes();
         final extension = x?.name.split('.').last;
         final dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
@@ -75,6 +88,10 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
             ),
           );
         }
+        await Future<void>.delayed(Duration.zero);
+      }
+      if (generation == _controller.mediaProcessingGeneration) {
+        _controller.isProcessingMedia = false;
       }
       IsmChatUtility.closeLoader();
     } else if (IsmChatResponsive.isMobile(
@@ -90,30 +107,40 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
     _controller.textEditingController.clear();
     _controller.webMedia.clear();
     _controller.assetsIndex = 0;
-    for (var file in assetList) {
-      final bytes = await file?.readAsBytes();
+    final generation = _controller.mediaProcessingGeneration;
+    _controller
+      ..isProcessingMedia = true
+      ..mediaAssetsTotal = assetList.where((file) => file != null).length;
+    try {
+      for (var file in assetList) {
+        if (generation != _controller.mediaProcessingGeneration) {
+          return;
+        }
+        if (file == null) {
+          continue;
+        }
+        final bytes = await file.readAsBytes();
       var name = '';
       if (kIsWeb) {
-        name = file?.name ?? '';
+        name = file.name;
       } else {
-        name = (file?.path ?? '').split('/').last;
+        name = file.path.split('/').last;
       }
       final extension = name.split('.').last;
-      final dataSize = IsmChatUtility.formatBytes(bytes?.length ?? 0);
+      final dataSize = IsmChatUtility.formatBytes(bytes.length);
       final platformFile = IsmchPlatformFile(
         name: name,
-        size: bytes?.length,
+        size: bytes.length,
         bytes: bytes,
-        path: file?.path,
+        path: file.path,
         extension: extension,
       );
       if (IsmChatConstants.videoExtensions.contains(extension)) {
         try {
           print(
-              'Generating thumbnail for video: $name, size: ${bytes?.length} bytes');
+              'Generating thumbnail for video: $name, size: ${bytes.length} bytes');
           final thumbnailBytes =
-              await IsmChatBlob.getVideoThumbnailBytesWithPackage(
-                  bytes ?? Uint8List(0));
+              await IsmChatBlob.getVideoThumbnailBytesWithPackage(bytes);
           print(
               'Thumbnail generation result: ${thumbnailBytes?.length ?? 0} bytes');
           // print('Raw thumbnail bytes: ${thumbnailBytes?.take(50).toList() ?? []}'); // Commented out to avoid byte spam
@@ -146,6 +173,12 @@ mixin IsmChatPageMediaOperationsMixin on GetxController {
             dataSize: dataSize,
           ),
         );
+      }
+        await Future<void>.delayed(Duration.zero);
+      }
+    } finally {
+      if (generation == _controller.mediaProcessingGeneration) {
+        _controller.isProcessingMedia = false;
       }
     }
   }

@@ -72,80 +72,15 @@ class _MessageCardState extends State<MessageCard>
   /// Checks if this message should be hidden because it's part of a group
   /// but not the first message in that group
   bool _shouldHideMessage(IsmChatPageController controller) {
-    final isImage = widget.message.isGridEligibleMedia &&
-        widget.message.customType == IsmChatCustomMessageType.image;
-    final isVideo = widget.message.customType == IsmChatCustomMessageType.video;
-
-    if (!isImage && !isVideo) {
+    if (!widget.message.isGridDisplayableMedia) {
       return false;
     }
 
-    // Get all messages (excluding date messages) - these are in chronological order
     final allMessages = controller.messages
         .where((msg) => msg.customType != IsmChatCustomMessageType.date)
         .toList();
-
-    if (allMessages.isEmpty) {
-      return false;
-    }
-
-    final reversedIndex = allMessages.length - 1 - widget.index;
-    if (reversedIndex < 0 || reversedIndex >= allMessages.length) {
-      return false;
-    }
-
-    final currentMessage = allMessages[reversedIndex];
-    final sentByMe = currentMessage.sentByMe;
-    final timeWindow =
-        10000; // 10 seconds in milliseconds - allows for upload delays
-    final groupedMessages = <IsmChatMessageModel>[];
-
-    // Find the first message in the group
-    var groupStartIndex = reversedIndex;
-    for (var i = reversedIndex; i >= 0; i--) {
-      final msg = allMessages[i];
-      final msgIsImage = msg.isGridEligibleMedia &&
-          msg.customType == IsmChatCustomMessageType.image;
-      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
-
-      if (!msgIsImage && !msgIsVideo) break;
-      if (msg.sentByMe != sentByMe) break;
-
-      final timeDiff = (msg.sentAt - currentMessage.sentAt).abs();
-      if (timeDiff > timeWindow) break;
-
-      groupStartIndex = i;
-    }
-
-    // Collect all messages in the group
-    for (var i = groupStartIndex; i < allMessages.length; i++) {
-      final msg = allMessages[i];
-      final msgIsImage = msg.isGridEligibleMedia &&
-          msg.customType == IsmChatCustomMessageType.image;
-      final msgIsVideo = msg.customType == IsmChatCustomMessageType.video;
-
-      if (!msgIsImage && !msgIsVideo) break;
-      if (msg.sentByMe != sentByMe) break;
-
-      final timeDiff = (msg.sentAt - allMessages[groupStartIndex].sentAt).abs();
-      if (timeDiff > timeWindow && groupedMessages.isNotEmpty) break;
-
-      groupedMessages.add(msg);
-    }
-
-    // If there are 2+ messages in the group and this is not the first, hide it
-    if (groupedMessages.length >= 2) {
-      final firstMessage = groupedMessages.first;
-      final firstMessageId = firstMessage.messageId ?? '';
-      final currentMessageId = currentMessage.messageId ?? '';
-      final isFirstMessage = firstMessage.sentAt == currentMessage.sentAt &&
-          (firstMessageId == currentMessageId ||
-              (firstMessageId.isEmpty && currentMessageId.isEmpty));
-
-      return !isFirstMessage;
-    }
-
-    return false;
+    final group = IsmChatMediaGridGrouping.collect(allMessages, widget.message);
+    return IsmChatMediaGridGrouping.shouldHide(group, widget.message);
   }
 
   @override

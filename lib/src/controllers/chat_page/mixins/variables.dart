@@ -292,6 +292,34 @@ mixin IsmChatPageVariablesMixin on GetxController {
   RxList<WebMediaModel> get webMedia => _webMedia;
   set webMedia(List<WebMediaModel> value) => _webMedia.value = value;
 
+  final RxBool _isProcessingMedia = false.obs;
+  bool get isProcessingMedia => _isProcessingMedia.value;
+  set isProcessingMedia(bool value) => _isProcessingMedia.value = value;
+
+  final RxInt _mediaAssetsTotal = 0.obs;
+  int get mediaAssetsTotal => _mediaAssetsTotal.value;
+  set mediaAssetsTotal(int value) => _mediaAssetsTotal.value = value;
+
+  /// Bumped when gallery selection is cancelled or a new pick starts so an
+  /// in-flight asset preparation loop stops writing to [webMedia].
+  int mediaProcessingGeneration = 0;
+
+  int _lastMediaSentAt = 0;
+
+  /// Monotonic sentAt for outbound media — avoids DB key collisions when
+  /// multiple attachments are sent in the same millisecond.
+  int nextUniqueMediaSentAt() {
+    var now = DateTime.now().millisecondsSinceEpoch;
+    if (now <= _lastMediaSentAt) {
+      now = _lastMediaSentAt + 1;
+    }
+    _lastMediaSentAt = now;
+    return now;
+  }
+
+  /// While > 0, [sendMessage] skips per-message DB reloads during batch media upload.
+  int activeBatchMediaUploads = 0;
+
   final Rx<OverlayEntry?> _attchmentOverlayEntry = Rx<OverlayEntry?>(null);
   OverlayEntry? get attchmentOverlayEntry => _attchmentOverlayEntry.value;
   set attchmentOverlayEntry(OverlayEntry? value) =>
