@@ -375,6 +375,31 @@ class IsmChatConversationsRepository {
     }
   }
 
+  Future<IsmChatResponseModel?> updateConversationNotifications({
+    required String conversationId,
+    required bool pushNotification,
+    bool isLoading = false,
+  }) async {
+    try {
+      final response = await _apiWrapper.patch(
+        IsmChatAPI.conversationNotifications,
+        payload: {
+          'conversationId': conversationId,
+          'pushNotification': pushNotification,
+        },
+        headers: IsmChatUtility.tokenCommonHeader(),
+        showLoader: isLoading,
+      );
+
+      if (response.hasError) {
+        return response;
+      }
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<IsmChatResponseModel?> sendForwardMessage(
       {required List<String> userIds,
       required bool showInConversation,

@@ -59,6 +59,7 @@ class IsmChatAPI {
   static String getChatConversations = '$baseUrl/chat/conversations';
   static String conversationDetails = '$chatConversation/details';
   static String conversationSetting = '$chatConversation/settings';
+  static String conversationNotifications = '$chatConversation/notifications';
   static String getPublicAndOpenConversation =
       '${chatConversation}s/publicoropen';
   static String observer = '$chatConversation/observer';
@@ -86,6 +87,7 @@ class IsmChatAPI {
   static String sendForwardMessage = '$baseUrl/chat/message/forward';
   static String chatStatus = '$sendMessage/status';
   static String readStatus = '$chatStatus/read';
+
   /// Delivery status endpoint.
   /// POST: Mark messages as delivered
   static String deliverStatus = '$chatStatus/delivery';

@@ -23,6 +23,31 @@ extension BlockStatus on IsmChatConversationModel {
             member.isAdmin,
       );
 
+  /// Current signed-in user's entry in [members], if present.
+  UserDetails? get currentUserMember {
+    final currentUserId =
+        IsmChatConfig.communicationConfig.userConfig.userId.trim();
+    if (currentUserId.isEmpty) return null;
+    for (final member in members ?? const <UserDetails>[]) {
+      if (member.userId.trim() == currentUserId) {
+        return member;
+      }
+    }
+    return null;
+  }
+
+  /// Whether the current user should receive push for this conversation.
+  ///
+  /// Prefers per-member `pushNotification` from conversations / details APIs.
+  /// Falls back to conversation-level flags for older cached data.
+  bool get isPushNotificationEnabled {
+    final member = currentUserMember;
+    if (member != null) {
+      return member.pushNotification;
+    }
+    return config?.pushNotifications ?? pushNotifications ?? true;
+  }
+
   /// Returns true if chatting is allowed (messaging is not disabled).
   bool get isChattingAllowed => !(messagingDisabled ?? false);
 

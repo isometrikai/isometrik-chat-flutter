@@ -45,8 +45,8 @@ mixin IsmChatMqttEventMessageStatusMixin {
                 ),
               );
             }
-            message.deliveredToAll = message.deliveredTo?.length ==
-                (conversation?.membersCount ?? 0) - 1;
+            message.deliveredToAll =
+                message.deliveredTo?.length == _othersToAckCount(conversation);
             conversation?.messages?[message.key] = message;
             conversation = conversation?.copyWith(
               lastMessageDetails: conversation.lastMessageDetails?.copyWith(
@@ -107,7 +107,7 @@ mixin IsmChatMqttEventMessageStatusMixin {
               );
             }
             message.readByAll =
-                message.readBy?.length == (conversation?.membersCount ?? 0) - 1;
+                message.readBy?.length == _othersToAckCount(conversation);
             // If readByAll is true, deliveredToAll must also be true
             // (you can't read a message that hasn't been delivered)
             if (message.readByAll == true) {
@@ -182,11 +182,9 @@ mixin IsmChatMqttEventMessageStatusMixin {
             );
 
             final readByAllValue =
-                modified.readBy?.length == (conversation.membersCount ?? 0) - 1;
-            final deliveredToAllValue = modified.deliveredTo?.length ==
-                    (conversation.membersCount ?? 0) - 1
-                ? true
-                : false;
+                modified.readBy?.length == _othersToAckCount(conversation);
+            final deliveredToAllValue =
+                modified.deliveredTo?.length == _othersToAckCount(conversation);
 
             modified = modified.copyWith(
               readByAll: readByAllValue,
@@ -271,4 +269,21 @@ mixin IsmChatMqttEventMessageStatusMixin {
       }
     }
   }
+}
+
+/// Number of *other* participants that must acknowledge a message for it to be
+/// considered delivered/read by all.
+///
+/// For 1-1 chats there is always exactly one other participant, so we must not
+/// derive this from [IsmChatConversationModel.membersCount]: 1-1 conversations
+/// are frequently created with `membersCount` of `1` or `null`, which made the
+/// old `membersCount - 1` evaluate to `0`/`-1`. That never matched
+/// `readBy.length`/`deliveredTo.length` (always 1 once the opponent acted), so
+/// real-time delivered/read ticks stayed stuck until an API status re-sync.
+/// Group behaviour is unchanged (`membersCount - 1`).
+int _othersToAckCount(IsmChatConversationModel? conversation) {
+  if (conversation?.isGroup ?? false) {
+    return (conversation?.membersCount ?? 0) - 1;
+  }
+  return 1;
 }

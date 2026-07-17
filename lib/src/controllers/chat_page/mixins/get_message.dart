@@ -378,8 +378,9 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       final conversationId = _controller.conversation?.conversationId ?? '';
       final data = await _controller.viewModel.getConverstaionDetails(
         conversationId: conversationId,
-        includeMembers:
-            _controller.conversation?.isGroup == true ? true : false,
+        // Always include members so per-member `pushNotification` (mute) is available
+        // for both group and 1:1 conversations.
+        includeMembers: true,
         isLoading: isLoading,
       );
 
@@ -402,9 +403,15 @@ mixin IsmChatPageGetMessageMixin on GetxController {
             responeData.messagingDisabled ??
             false;
 
+        final resolvedMembers =
+            (responeData.members != null && responeData.members!.isNotEmpty)
+                ? responeData.members
+                : (_controller.conversation?.members ?? cached?.members);
+
         _controller.conversation = responeData.copyWith(
           conversationId: conversationId,
           messagingDisabled: messagingDisabled,
+          members: resolvedMembers,
           metaData: responeData.metaData?.copyWith(blockedMessage: null),
           outSideMessage: _controller.conversation?.outSideMessage,
           messages: messageMap,
