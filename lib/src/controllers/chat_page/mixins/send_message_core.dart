@@ -132,12 +132,14 @@ mixin IsmChatPageSendMessageCoreMixin {
       );
       if (isMessageSent && !isBroadcast) {
         _controller.didReactedLast = false;
-        await _controller.getMessagesFromDB(conversationId);
-        if (kIsWeb &&
-            IsmChatResponsive.isWeb(
-                IsmChatConfig.kNavigatorKey.currentContext ??
-                    IsmChatConfig.context)) {
-          await _controller.conversationController.getConversationsFromDB();
+        if (_controller.activeBatchMediaUploads == 0) {
+          await _controller.getMessagesFromDB(conversationId);
+          if (kIsWeb &&
+              IsmChatResponsive.isWeb(
+                  IsmChatConfig.kNavigatorKey.currentContext ??
+                      IsmChatConfig.context)) {
+            await _controller.conversationController.getConversationsFromDB();
+          }
         }
       }
     } else {

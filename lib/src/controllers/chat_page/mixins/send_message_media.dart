@@ -13,6 +13,9 @@ mixin IsmChatPageSendMessageMediaMixin {
 
   /// Validates and sends media files (mobile).
   void sendMedia() async {
+    if (_controller.isProcessingMedia || _controller.webMedia.isEmpty) {
+      return;
+    }
     var isMaxSize = false;
     for (var media in _controller.webMedia) {
       if (media.dataSize.split(' ').last == 'KB') {
@@ -38,6 +41,9 @@ mixin IsmChatPageSendMessageMediaMixin {
 
   /// Validates and sends media files (web).
   void sendMediaWeb() async {
+    if (_controller.isProcessingMedia || _controller.webMedia.isEmpty) {
+      return;
+    }
     var isMaxSize = false;
     _controller.showCloseLoaderForMoble();
 
@@ -63,7 +69,14 @@ mixin IsmChatPageSendMessageMediaMixin {
 
   /// Sends photos and videos for web platform.
   void sendPhotoAndVideoForWeb() async {
-    if (_controller.webMedia.isNotEmpty) {
+    if (_controller.webMedia.isEmpty || _controller.isProcessingMedia) {
+      return;
+    }
+    final mediaList = List<WebMediaModel>.from(_controller.webMedia);
+    _controller.mediaProcessingGeneration++;
+    _controller.isProcessingMedia = false;
+    _controller.webMedia.clear();
+    if (mediaList.isNotEmpty) {
       // Check if paid media handling is enabled and delegate
       Map<String, dynamic>? paidMediaMetaData;
       if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
@@ -73,13 +86,12 @@ mixin IsmChatPageSendMessageMediaMixin {
         final result = await IsmChat.i.onPaidMediaSend!(
           context,
           _controller.conversation,
-          _controller.webMedia,
+          mediaList,
         );
         if (result.handled) {
           _controller
             ..showCloseLoaderForMoble(showLoader: false)
-            ..isCameraView = false
-            ..webMedia.clear();
+            ..isCameraView = false;
           return;
         }
         paidMediaMetaData = result.metaData;
@@ -87,43 +99,26 @@ mixin IsmChatPageSendMessageMediaMixin {
 
       _controller.showCloseLoaderForMoble();
 
-      for (var media in _controller.webMedia) {
-        if (IsmChatConstants.imageExtensions
-            .contains(media.platformFile.extension)) {
-          if (_isGifExtension(media.platformFile.extension)) {
-            await sendGif(
-              conversationId: _controller.conversation?.conversationId ?? '',
-              userId: _controller.conversation?.opponentDetails?.userId ?? '',
-              webMediaModel: media,
-              metaDataFromDelegate: paidMediaMetaData,
-            );
-          } else {
-            await sendImage(
-              conversationId: _controller.conversation?.conversationId ?? '',
-              userId: _controller.conversation?.opponentDetails?.userId ?? '',
-              webMediaModel: media,
-              metaDataFromDelegate: paidMediaMetaData,
-            );
-          }
-        } else {
-          await sendVideo(
-            webMediaModel: media,
-            conversationId: _controller.conversation?.conversationId ?? '',
-            userId: _controller.conversation?.opponentDetails?.userId ?? '',
-            metaDataFromDelegate: paidMediaMetaData,
-          );
-        }
-      }
+      await _sendMediaList(
+        mediaList: mediaList,
+        metaDataFromDelegate: paidMediaMetaData,
+      );
       _controller
         ..showCloseLoaderForMoble(showLoader: false)
-        ..isCameraView = false
-        ..webMedia.clear();
+        ..isCameraView = false;
     }
   }
 
   /// Sends photos and videos for mobile platform.
   void sendPhotoAndVideo() async {
-    if (_controller.webMedia.isNotEmpty) {
+    if (_controller.webMedia.isEmpty || _controller.isProcessingMedia) {
+      return;
+    }
+    final mediaList = List<WebMediaModel>.from(_controller.webMedia);
+    _controller.mediaProcessingGeneration++;
+    _controller.isProcessingMedia = false;
+    _controller.webMedia.clear();
+    if (mediaList.isNotEmpty) {
       // Check if paid media handling is enabled and delegate
       Map<String, dynamic>? paidMediaMetaData;
       if (IsmChatProperties.chatPageProperties.enablePaidMediaHandling &&
@@ -133,52 +128,133 @@ mixin IsmChatPageSendMessageMediaMixin {
         final result = await IsmChat.i.onPaidMediaSend!(
           context,
           _controller.conversation,
-          _controller.webMedia,
+          mediaList,
         );
         if (result.handled) {
-          _controller.webMedia.clear();
           return;
         }
         paidMediaMetaData = result.metaData;
       }
 
-      for (var media in _controller.webMedia) {
-        if (await IsmChatProperties
-                .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-                ?.call(
-                    IsmChatConfig.kNavigatorKey.currentContext ??
-                        IsmChatConfig.context,
-                    IsmChatUtility.chatPageController.conversation!,
-                    media.isVideo
-                        ? IsmChatCustomMessageType.video
-                        : IsmChatCustomMessageType.image,
-                    _controller.chatInputController.text.trim()) ??
-            true) {
-          if (media.isVideo) {
-            await sendVideo(
-              webMediaModel: media,
-              conversationId: _controller.conversation?.conversationId ?? '',
-              userId: _controller.conversation?.opponentDetails?.userId ?? '',
-              metaDataFromDelegate: paidMediaMetaData,
-            );
-          } else if (_isGifExtension(media.platformFile.extension)) {
-            await sendGif(
-              conversationId: _controller.conversation?.conversationId ?? '',
-              userId: _controller.conversation?.opponentDetails?.userId ?? '',
-              webMediaModel: media,
-              metaDataFromDelegate: paidMediaMetaData,
-            );
-          } else {
-            await sendImage(
-              conversationId: _controller.conversation?.conversationId ?? '',
-              userId: _controller.conversation?.opponentDetails?.userId ?? '',
-              webMediaModel: media,
-              metaDataFromDelegate: paidMediaMetaData,
-            );
-          }
-        }
+      await _sendMediaList(
+        mediaList: mediaList,
+        metaDataFromDelegate: paidMediaMetaData,
+      );
+    }
+  }
+
+  /// Stages every picked item in the chat immediately, then uploads one by one.
+  /// Reserves timestamps up front so multi-select items stay in one grid.
+  Future<void> _sendMediaList({
+    required List<WebMediaModel> mediaList,
+    Map<String, dynamic>? metaDataFromDelegate,
+  }) async {
+    final conversationId = _controller.conversation?.conversationId ?? '';
+    final userId = _controller.conversation?.opponentDetails?.userId ?? '';
+    final resolvedConversationId = await _controller.createConversation(
+      conversationId: conversationId,
+      userId: userId,
+    );
+
+    final batchSentAts = List.generate(
+      mediaList.length,
+      (_) => _controller.nextUniqueMediaSentAt(),
+    );
+    final batchMetaData = <String, dynamic>{
+      ...?metaDataFromDelegate,
+      'mediaBatchId': batchSentAts.first,
+    };
+
+    final pendingUploads = <Future<void> Function()>[];
+
+    for (var i = 0; i < mediaList.length; i++) {
+      final media = mediaList[i];
+      final sentAt = batchSentAts[i];
+      final isAllowed = await IsmChatProperties
+              .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
+              ?.call(
+                IsmChatConfig.kNavigatorKey.currentContext ??
+                    IsmChatConfig.context,
+                IsmChatUtility.chatPageController.conversation!,
+                media.isVideo
+                    ? IsmChatCustomMessageType.video
+                    : IsmChatCustomMessageType.image,
+                _controller.chatInputController.text.trim(),
+              ) ??
+          true;
+      if (!isAllowed) {
+        continue;
       }
-      _controller.webMedia.clear();
+
+      if (media.isVideo) {
+        await sendVideo(
+          webMediaModel: media,
+          conversationId: resolvedConversationId,
+          userId: userId,
+          metaDataFromDelegate: batchMetaData,
+          preAssignedSentAt: sentAt,
+          skipConversationCreate: true,
+          deferUpload: true,
+        );
+        pendingUploads.add(
+          () => _completeDeferredVideoUpload(
+            sentAt: sentAt,
+            webMediaModel: media,
+            conversationId: resolvedConversationId,
+          ),
+        );
+      } else if (_isGifExtension(media.platformFile.extension)) {
+        await sendGif(
+          conversationId: resolvedConversationId,
+          userId: userId,
+          webMediaModel: media,
+          metaDataFromDelegate: batchMetaData,
+          preAssignedSentAt: sentAt,
+          skipConversationCreate: true,
+          deferUpload: true,
+        );
+        pendingUploads.add(
+          () => _completeDeferredVisualUpload(
+            sentAt: sentAt,
+            webMediaModel: media,
+            notificationBody: IsmChatStrings.sentGif,
+          ),
+        );
+      } else {
+        await sendImage(
+          conversationId: resolvedConversationId,
+          userId: userId,
+          webMediaModel: media,
+          metaDataFromDelegate: batchMetaData,
+          preAssignedSentAt: sentAt,
+          skipConversationCreate: true,
+          deferUpload: true,
+        );
+        pendingUploads.add(
+          () => _completeDeferredImageUpload(
+            sentAt: sentAt,
+            webMediaModel: media,
+          ),
+        );
+      }
+    }
+
+    _controller.isreplying = false;
+    unawaited(_controller.scrollDown());
+
+    _controller.activeBatchMediaUploads++;
+    try {
+      for (final upload in pendingUploads) {
+        await upload();
+      }
+    } finally {
+      _controller.activeBatchMediaUploads--;
+      if (_controller.activeBatchMediaUploads < 0) {
+        _controller.activeBatchMediaUploads = 0;
+      }
+      if (_controller.activeBatchMediaUploads == 0) {
+        await _controller.getMessagesFromDB(resolvedConversationId);
+      }
     }
   }
 
@@ -195,46 +271,24 @@ mixin IsmChatPageSendMessageMediaMixin {
     required String userId,
     required WebMediaModel webMediaModel,
     Map<String, dynamic>? metaDataFromDelegate,
+    int? preAssignedSentAt,
+    bool skipConversationCreate = false,
+    bool deferUpload = false,
   }) async {
-    // Note: createConversation is provided by send_message_core mixin
-    conversationId = await _controller.createConversation(
-      conversationId: conversationId,
-      userId: userId,
-    );
-    IsmChatMessageModel? videoMessage;
-    Uint8List? bytes;
-    var sentAt = DateTime.now().millisecondsSinceEpoch;
-    if (IsmChatResponsive.isMobile(IsmChatConfig.kNavigatorKey.currentContext ??
-            IsmChatConfig.context) &
-        !kIsWeb) {
-      final compressionQuality = _resolveVideoCompressionQuality();
-      if (compressionQuality != null) {
-        final mediaInfo = await VideoCompress.compressVideo(
-          webMediaModel.platformFile.path ?? '',
-          quality: compressionQuality,
-          deleteOrigin: false,
-        );
-
-        if (mediaInfo != null) {
-          final videoCompresFile = mediaInfo.file;
-          bytes = await videoCompresFile?.readAsBytes();
-        } else {
-          bytes = await _readVideoBytes(webMediaModel);
-        }
-      } else {
-        bytes = await _readVideoBytes(webMediaModel);
-      }
-    } else {
-      bytes = webMediaModel.platformFile.bytes;
+    if (!skipConversationCreate) {
+      conversationId = await _controller.createConversation(
+        conversationId: conversationId,
+        userId: userId,
+      );
     }
+    final sentAt = preAssignedSentAt ?? _controller.nextUniqueMediaSentAt();
     final thumbnailBytes = webMediaModel.platformFile.thumbnailBytes;
-    final thumbnailNameWithExtension = '$sentAt.png';
-    final thumbnailMediaId = '$sentAt';
     final nameWithExtension = webMediaModel.platformFile.name;
     final mediaId = '$sentAt';
     final extension = webMediaModel.platformFile.extension;
+    final localPath = webMediaModel.platformFile.path ?? '';
 
-    videoMessage = IsmChatMessageModel(
+    final videoMessage = IsmChatMessageModel(
       body: IsmChatStrings.video,
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
@@ -245,12 +299,12 @@ mixin IsmChatPageSendMessageMediaMixin {
         AttachmentModel(
           attachmentType: IsmChatMediaType.video,
           thumbnailUrl: thumbnailBytes.toString(),
-          size: bytes?.length ?? 0,
+          size: webMediaModel.platformFile.size ?? 0,
           name: nameWithExtension,
           mimeType: extension,
           mediaUrl: kIsWeb
               ? webMediaModel.platformFile.bytes.toString()
-              : webMediaModel.platformFile.path,
+              : localPath,
           mediaId: mediaId,
           extension: extension,
         )
@@ -290,8 +344,10 @@ mixin IsmChatPageSendMessageMediaMixin {
     );
 
     _controller.messages.add(videoMessage);
-    unawaited(_controller.scrollDown());
-    _controller.isreplying = false;
+    if (!deferUpload) {
+      unawaited(_controller.scrollDown());
+      _controller.isreplying = false;
+    }
 
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
@@ -303,6 +359,60 @@ mixin IsmChatPageSendMessageMediaMixin {
         _controller.updateLastMessagOnCurrentTime(videoMessage);
       }
     }
+
+    if (deferUpload) {
+      return;
+    }
+
+    await _completeDeferredVideoUpload(
+      sentAt: sentAt,
+      webMediaModel: webMediaModel,
+      conversationId: conversationId,
+    );
+  }
+
+  Future<void> _completeDeferredVideoUpload({
+    required int sentAt,
+    required WebMediaModel webMediaModel,
+    required String conversationId,
+  }) async {
+    Uint8List? bytes;
+    if (IsmChatResponsive.isMobile(IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context) &
+        !kIsWeb) {
+      final compressionQuality = _resolveVideoCompressionQuality();
+      if (compressionQuality != null) {
+        final mediaInfo = await VideoCompress.compressVideo(
+          webMediaModel.platformFile.path ?? '',
+          quality: compressionQuality,
+          deleteOrigin: false,
+        );
+
+        if (mediaInfo != null) {
+          final videoCompresFile = mediaInfo.file;
+          bytes = await videoCompresFile?.readAsBytes();
+        } else {
+          bytes = await _readVideoBytes(webMediaModel);
+        }
+      } else {
+        bytes = await _readVideoBytes(webMediaModel);
+      }
+    } else {
+      bytes = webMediaModel.platformFile.bytes;
+    }
+
+    final index = _controller.messages.indexWhere(
+      (message) => message.sentAt == sentAt,
+    );
+    if (index == -1) {
+      return;
+    }
+    final videoMessage = _controller.messages[index];
+    final thumbnailBytes = webMediaModel.platformFile.thumbnailBytes;
+    final thumbnailNameWithExtension = '$sentAt.png';
+    final thumbnailMediaId = '$sentAt';
+    final nameWithExtension = webMediaModel.platformFile.name;
+    final mediaId = '$sentAt';
 
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
@@ -338,17 +448,19 @@ mixin IsmChatPageSendMessageMediaMixin {
     required String userId,
     required WebMediaModel webMediaModel,
     Map<String, dynamic>? metaDataFromDelegate,
+    int? preAssignedSentAt,
+    bool skipConversationCreate = false,
+    bool deferUpload = false,
   }) async {
-    // Note: createConversation is provided by send_message_core mixin
-    conversationId = await _controller.createConversation(
-        conversationId: conversationId, userId: userId);
-    IsmChatMessageModel? imageMessage;
-    final sentAt = DateTime.now().millisecondsSinceEpoch;
-    final bytes = webMediaModel.platformFile.bytes;
+    if (!skipConversationCreate) {
+      conversationId = await _controller.createConversation(
+          conversationId: conversationId, userId: userId);
+    }
+    final sentAt = preAssignedSentAt ?? _controller.nextUniqueMediaSentAt();
     final nameWithExtension = webMediaModel.platformFile.name;
     final mediaId = sentAt.toString();
     final extension = webMediaModel.platformFile.extension;
-    imageMessage = IsmChatMessageModel(
+    final imageMessage = IsmChatMessageModel(
       body: IsmChatStrings.image,
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
@@ -403,8 +515,10 @@ mixin IsmChatPageSendMessageMediaMixin {
     );
 
     _controller.messages.add(imageMessage);
-    unawaited(_controller.scrollDown());
-    _controller.isreplying = false;
+    if (!deferUpload) {
+      unawaited(_controller.scrollDown());
+      _controller.isreplying = false;
+    }
 
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
@@ -417,6 +531,30 @@ mixin IsmChatPageSendMessageMediaMixin {
       }
     }
 
+    if (deferUpload) {
+      return;
+    }
+
+    await _completeDeferredImageUpload(
+      sentAt: sentAt,
+      webMediaModel: webMediaModel,
+    );
+  }
+
+  Future<void> _completeDeferredImageUpload({
+    required int sentAt,
+    required WebMediaModel webMediaModel,
+  }) async {
+    final index = _controller.messages.indexWhere(
+      (message) => message.sentAt == sentAt,
+    );
+    if (index == -1) {
+      return;
+    }
+    final imageMessage = _controller.messages[index];
+    final bytes = webMediaModel.platformFile.bytes;
+    final nameWithExtension = webMediaModel.platformFile.name;
+    final mediaId = sentAt.toString();
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
@@ -866,6 +1004,9 @@ mixin IsmChatPageSendMessageMediaMixin {
     required String userId,
     required WebMediaModel webMediaModel,
     Map<String, dynamic>? metaDataFromDelegate,
+    int? preAssignedSentAt,
+    bool skipConversationCreate = false,
+    bool deferUpload = false,
   }) =>
       _sendVisualAttachment(
         conversationId: conversationId,
@@ -875,6 +1016,9 @@ mixin IsmChatPageSendMessageMediaMixin {
         body: IsmChatStrings.gif,
         notificationBody: IsmChatStrings.sentGif,
         metaDataFromDelegate: metaDataFromDelegate,
+        preAssignedSentAt: preAssignedSentAt,
+        skipConversationCreate: skipConversationCreate,
+        deferUpload: deferUpload,
       );
 
   /// Sends a sticker picked from Giphy or another source.
@@ -957,12 +1101,17 @@ mixin IsmChatPageSendMessageMediaMixin {
     required String body,
     required String notificationBody,
     Map<String, dynamic>? metaDataFromDelegate,
+    int? preAssignedSentAt,
+    bool skipConversationCreate = false,
+    bool deferUpload = false,
   }) async {
-    conversationId = await _controller.createConversation(
-      conversationId: conversationId,
-      userId: userId,
-    );
-    final sentAt = DateTime.now().millisecondsSinceEpoch;
+    if (!skipConversationCreate) {
+      conversationId = await _controller.createConversation(
+        conversationId: conversationId,
+        userId: userId,
+      );
+    }
+    final sentAt = preAssignedSentAt ?? _controller.nextUniqueMediaSentAt();
     final bytes = webMediaModel.platformFile.bytes ?? Uint8List(0);
     final nameWithExtension = webMediaModel.platformFile.name;
     final mediaId = sentAt.toString();
@@ -1031,8 +1180,10 @@ mixin IsmChatPageSendMessageMediaMixin {
     );
 
     _controller.messages.add(visualMessage);
-    unawaited(_controller.scrollDown());
-    _controller.isreplying = false;
+    if (!deferUpload) {
+      unawaited(_controller.scrollDown());
+      _controller.isreplying = false;
+    }
 
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper!
@@ -1045,12 +1196,36 @@ mixin IsmChatPageSendMessageMediaMixin {
       }
     }
 
+    if (deferUpload) {
+      return;
+    }
+
+    await _completeDeferredVisualUpload(
+      sentAt: sentAt,
+      webMediaModel: webMediaModel,
+      notificationBody: notificationBody,
+    );
+  }
+
+  Future<void> _completeDeferredVisualUpload({
+    required int sentAt,
+    required WebMediaModel webMediaModel,
+    required String notificationBody,
+  }) async {
+    final index = _controller.messages.indexWhere(
+      (message) => message.sentAt == sentAt,
+    );
+    if (index == -1) {
+      return;
+    }
+    final visualMessage = _controller.messages[index];
+    final bytes = webMediaModel.platformFile.bytes ?? Uint8List(0);
+    final nameWithExtension = webMediaModel.platformFile.name;
+    final mediaId = sentAt.toString();
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-    // Presigned URL API uses image mediaType (0), same as photos. GIF/sticker
-    // kind is carried in attachments[].attachmentType when sendMessage runs.
     await _controller.ismPostMediaUrl(
       bytes: bytes,
       createdAt: sentAt,
