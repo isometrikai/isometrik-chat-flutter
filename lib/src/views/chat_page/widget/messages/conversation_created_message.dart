@@ -8,22 +8,32 @@ class IsmChatConversationCreatedMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final conversation = IsmChatUtility.chatPageController.conversation;
+    final customWidget = IsmChatProperties
+        .chatPageProperties.conversationCreatedMessageBuilder
+        ?.call(
+      context,
+      message,
+      conversation,
+    );
+    if (customWidget != null) {
+      return customWidget;
+    }
+
     var name = '';
     if (IsmChatProperties.chatPageProperties.messageSenderName?.call(
           context,
           message,
-          IsmChatUtility.chatPageController.conversation!,
+          conversation,
         ) !=
         null) {
       name = IsmChatProperties.chatPageProperties.messageSenderName?.call(
             context,
             message,
-            IsmChatUtility.chatPageController.conversation!,
+            conversation,
           ) ??
           '';
     } else {
-      // name =
-      // '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}';
       name = message.userName ?? '';
     }
     return Center(

@@ -68,6 +68,15 @@ class ChatList extends StatelessWidget {
                 // Default is 1 minute. You can customize it as needed:
                 conversationDetailsApiInterval:
                     Duration(seconds: 30), // Every 30 seconds
+                // Host-app custom UI for conversationCreated (affiliate intro card).
+                // Returns null → SDK keeps its default production UI.
+                conversationCreatedMessageBuilder:
+                    (context, message, conversation) {
+                  return _AffiliateConversationCreatedMessage.buildIfNeeded(
+                    message: message,
+                    conversation: conversation,
+                  );
+                },
                 // backgroundImageUrl: AssetConstants.background,
                 // isShowMessageBlur: (p0, p1) => true,
                 // stackWidget: Container(
@@ -221,4 +230,159 @@ class ChatList extends StatelessWidget {
           );
         },
       );
+}
+
+/// Example host-app UI for affiliate `conversationCreated` messages.
+///
+/// Shown only when:
+/// - `metaData.isAffiliateIncluded == true`
+/// - `metaData.affiliateIsometrikUserId` exists in conversation members
+///
+/// Otherwise returns `null` so SDK default UI is used.
+class _AffiliateConversationCreatedMessage extends StatelessWidget {
+  const _AffiliateConversationCreatedMessage({
+    required this.message,
+    required this.affiliate,
+    required this.membersLabel,
+  });
+
+  final IsmChatMessageModel message;
+  final UserDetails affiliate;
+  final String membersLabel;
+
+  static Widget? buildIfNeeded({
+    required IsmChatMessageModel message,
+    required IsmChatConversationModel? conversation,
+  }) {
+    final meta = conversation?.metaData?.customMetaData ??
+        message.metaData?.customMetaData;
+    if (meta == null) return null;
+
+    final isAffiliateIncluded = meta['isAffiliateIncluded'] == true;
+    final affiliateId =
+        (meta['affiliateIsometrikUserId'] as String?)?.trim() ?? '';
+    if (!isAffiliateIncluded || affiliateId.isEmpty) return null;
+
+    final members = conversation?.members ?? const <UserDetails>[];
+    UserDetails? affiliate;
+    for (final member in members) {
+      if (member.userId.trim() == affiliateId ||
+          (member.memberId?.trim() ?? '') == affiliateId) {
+        affiliate = member;
+        break;
+      }
+    }
+    if (affiliate == null) return null;
+
+    return _AffiliateConversationCreatedMessage(
+      message: message,
+      affiliate: affiliate,
+      membersLabel: _membersLabel(members),
+    );
+  }
+
+  static String _membersLabel(List<UserDetails> members) {
+    final currentUserId =
+        IsmChatConfig.communicationConfig.userConfig.userId.trim();
+    final otherNames = members
+        .where((m) => m.userId.trim() != currentUserId)
+        .map((m) {
+          final name = m.userName.trim().isNotEmpty
+              ? m.userName.trim()
+              : (m.memberName ?? '').trim();
+          return name;
+        })
+        .where((name) => name.isNotEmpty)
+        .toList();
+
+    if (otherNames.isEmpty) return 'You';
+    if (otherNames.length == 1) return '${otherNames.first} & You';
+    return '${otherNames.join(', ')} & You';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final name = affiliate.userName.trim().isNotEmpty
+        ? affiliate.userName.trim()
+        : (affiliate.memberName ?? '').trim();
+    final displayName = name.isNotEmpty ? name : 'Affiliate Manager';
+    final about = affiliate.metaData?.aboutText?.title?.trim();
+    final intro = (about != null && about.isNotEmpty)
+        ? about
+        : "Hi both — I'm $displayName, Affiliate Manager. "
+            'Looping in to help coordinate timing on this one.';
+    final dateLabel = message.sentAt.toMessageDateString();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFFBEB),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFFDE68A)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IsmChatImage.profile(
+                  affiliate.profileUrl,
+                  name: displayName,
+                  dimensions: 40,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'AFFILIATE MANAGER',
+                        style: TextStyle(
+                          color: Color(0xFFB45309),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        intro,
+                        style: const TextStyle(
+                          color: Color(0xFF292524),
+                          fontSize: 14,
+                          height: 1.35,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              'Group created · $membersLabel · $dateLabel',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFF6B7280),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

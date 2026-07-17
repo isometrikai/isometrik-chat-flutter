@@ -28,6 +28,7 @@ class IsmChatPageProperties {
     this.messageSenderProfileBuilder,
     this.messageSenderNameBuilder,
     this.messageSenderName,
+    this.conversationCreatedMessageBuilder,
     this.messageSenderProfileUrl,
     this.messageInfoAcknowldge,
     this.isSendMediaAllowed,
@@ -93,6 +94,11 @@ class IsmChatPageProperties {
   final MessageSenderInfoBuilder? messageSenderNameBuilder;
 
   final MessageSenderInfoCallback? messageSenderName;
+
+  /// Custom host-app UI for `conversationCreated` center/system messages.
+  ///
+  /// Return `null` to use the SDK default widget.
+  final ConversationCreatedMessageBuilder? conversationCreatedMessageBuilder;
 
   final MessageSenderInfoCallback? messageSenderProfileUrl;
 

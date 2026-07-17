@@ -119,6 +119,15 @@ typedef MessageSenderInfoBuilder = Widget? Function(
   IsmChatConversationModel?,
 );
 
+/// Builds the center/system UI for a `conversationCreated` message.
+///
+/// Return `null` to fall back to the SDK default widget.
+typedef ConversationCreatedMessageBuilder = Widget? Function(
+  BuildContext,
+  IsmChatMessageModel,
+  IsmChatConversationModel?,
+);
+
 typedef MessageSenderInfoCallback = String? Function(
   BuildContext,
   IsmChatMessageModel,
