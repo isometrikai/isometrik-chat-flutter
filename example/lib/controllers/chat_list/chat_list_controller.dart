@@ -39,7 +39,6 @@ class ChatListController extends GetxController {
     super.onClose();
   }
 
-
   /// Stops the last active timer
   void _stopLastActiveTimer() {
     _lastActiveTimer?.cancel();
