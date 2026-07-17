@@ -446,28 +446,38 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   /// `conversationId`: The ID of the conversation to update.
   /// `events`: The events to update in the conversation.
   /// `isLoading`: Indicates if loading should be shown.
-  ///
-  /// On success, syncs `pushNotifications` (and nested `config`) locally so the
-  /// mute toggle and MQTT local notification gating stay consistent.
-  Future<bool> updateConversationSetting({
+  Future<void> updateConversationSetting({
     required String conversationId,
     required IsmChatEvents events,
     bool isLoading = false,
   }) async {
-    final response = await _controller.viewModel.updateConversationSetting(
+    await _controller.viewModel.updateConversationSetting(
       conversationId: conversationId,
       events: events,
+      isLoading: isLoading,
+    );
+  }
+
+  /// Updates push-notification (mute) settings for a conversation.
+  ///
+  /// `pushNotification`: `true` to enable notifications, `false` to mute.
+  Future<bool> updateConversationNotifications({
+    required String conversationId,
+    required bool pushNotification,
+    bool isLoading = false,
+  }) async {
+    final response = await _controller.viewModel.updateConversationNotifications(
+      conversationId: conversationId,
+      pushNotification: pushNotification,
       isLoading: isLoading,
     );
     if (response == null || response.hasError) {
       return false;
     }
-    if (events.pushNotifications != null) {
-      await _syncLocalPushNotifications(
-        conversationId: conversationId,
-        pushNotifications: events.pushNotifications!,
-      );
-    }
+    await _syncLocalPushNotifications(
+      conversationId: conversationId,
+      pushNotifications: pushNotification,
+    );
     return true;
   }
 
@@ -487,8 +497,19 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     }
     if (conversation == null) return;
 
+    final currentUserId =
+        IsmChatConfig.communicationConfig.userConfig.userId.trim();
+    final updatedMembers = (conversation.members ?? const <UserDetails>[])
+        .map(
+          (member) => member.userId.trim() == currentUserId
+              ? member.copyWith(pushNotification: pushNotifications)
+              : member,
+        )
+        .toList();
+
     final updated = conversation.copyWith(
       pushNotifications: pushNotifications,
+      members: updatedMembers.isEmpty ? conversation.members : updatedMembers,
       config: (conversation.config ??
               ConversationConfigModel(
                 typingEvents: true,

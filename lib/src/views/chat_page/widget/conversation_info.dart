@@ -79,7 +79,7 @@ class _IsmChatConverstaionInfoViewState
     return fullName.isNotEmpty ? fullName : member.userName;
   }
 
-  /// Mute ON ⇒ `pushNotifications: false` on the conversation settings API.
+  /// Mute ON ⇒ `pushNotification: false` on the notifications API.
   Future<void> _onMuteNotificationsChanged(
     IsmChatPageController controller,
     bool isMuted,
@@ -88,9 +88,9 @@ class _IsmChatConverstaionInfoViewState
     if (conversationId == null || conversationId.isEmpty) return;
     setState(() => _isUpdatingMute = true);
     try {
-      await conversationController.updateConversationSetting(
+      await conversationController.updateConversationNotifications(
         conversationId: conversationId,
-        events: IsmChatEvents(pushNotifications: !isMuted),
+        pushNotification: !isMuted,
       );
     } finally {
       if (mounted) {
@@ -483,8 +483,8 @@ class _IsmChatConverstaionInfoViewState
                                   ),
                                 ),
                                 Switch.adaptive(
-                                  value: !(controller.conversation?.config
-                                          ?.pushNotifications ??
+                                  value: !(controller.conversation
+                                          ?.isPushNotificationEnabled ??
                                       true),
                                   activeTrackColor:
                                       IsmChatConfig.chatTheme.primaryColor,

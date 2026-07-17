@@ -116,6 +116,34 @@ mixin IsmChatConversationOperationsMixin {
         isLoading: isLoading,
       );
 
+  /// Mute or unmute push notifications for a conversation.
+  ///
+  /// Parameters:
+  /// [conversationId]: The ID of the conversation to update.
+  /// [pushNotification]: `true` to enable notifications, `false` to mute.
+  /// [isLoading]: Whether to show a loading indicator. Defaults to false.
+  ///
+  /// Returns `true` when the update succeeds.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Mute notifications
+  /// await IsmChat.i.updateConversationNotifications(
+  ///   conversationId: 'conversation_id',
+  ///   pushNotification: false,
+  /// );
+  /// ```
+  Future<bool> updateConversationNotifications({
+    required String conversationId,
+    required bool pushNotification,
+    bool isLoading = false,
+  }) async =>
+      await _delegate.updateConversationNotifications(
+        conversationId: conversationId,
+        pushNotification: pushNotification,
+        isLoading: isLoading,
+      );
+
   /// Get the total count of conversations.
   ///
   /// This function retrieves the total count of conversations. It returns a future that resolves to an integer representing the count.

@@ -268,13 +268,22 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-26. This method use for retrieves the total count of conversations. It returns a future that resolves to an integer representing the count.
+26. This method use for mute/unmute push notifications for a conversation.
+
+```dart
+    await IsmChat.i.updateConversationNotifications(
+    conversationId: 'conversation_id',
+    pushNotification: false, // mute
+    );
+```
+
+27. This method use for retrieves the total count of conversations. It returns a future that resolves to an integer representing the count.
 
 ```dart
     int conversationCount = await IsmChat.i.getChatConversationsCount();
 ```
 
-27. This method use for retrieves the total count of messages in a conversation. It returns a future that resolves to an integer representing the count.
+28. This method use for retrieves the total count of messages in a conversation. It returns a future that resolves to an integer representing the count.
 
 ```dart
     int messageCount = await IsmChat.i.getChatConversationsMessageCount(
@@ -283,7 +292,7 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-28. This method use for retrieves the details of a conversation. It returns a future that resolves to an `IsmChatConversationModel` object.
+29. This method use for retrieves the details of a conversation. It returns a future that resolves to an `IsmChatConversationModel` object.
 
 ```dart
     IsmChatConversationModel? conversationDetails = await IsmChat.i.getConverstaionDetails(
@@ -292,7 +301,7 @@ IsmChat.i.removeEventListener((event) {
     );
 ```
 
-29. Block/Unblock : Allows users to manage their chat interactions by blocking unwanted user and unblocking them when necessary
+30. Block/Unblock : Allows users to manage their chat interactions by blocking unwanted user and unblocking them when necessary
 
 ```dart
 await IsmChat.i.unblockUser({
@@ -304,7 +313,7 @@ await IsmChat.i.blockUser({
 })
 ```
 
-30. This method use for fetch a list of chat messages from the API for a given `conversationId` and `lastMessageTimestamp`. It also allows specifying the `limit` and `skip` parameters for pagination, as well as an optional `searchText` for filtering messages.
+31. This method use for fetch a list of chat messages from the API for a given `conversationId` and `lastMessageTimestamp`. It also allows specifying the `limit` and `skip` parameters for pagination, as well as an optional `searchText` for filtering messages.
 
 ```dart
 final messages = await IsmChat.i.getMessagesFromApi(

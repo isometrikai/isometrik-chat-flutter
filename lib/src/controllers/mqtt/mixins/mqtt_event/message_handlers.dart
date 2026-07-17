@@ -148,7 +148,7 @@ mixin IsmChatMqttEventMessageHandlersMixin {
       }
       conversation ??=
           await IsmChatConfig.dbWrapper?.getConversation(conversationId);
-      if (conversation?.config?.pushNotifications == false) {
+      if (conversation?.isPushNotificationEnabled == false) {
         return;
       }
     }

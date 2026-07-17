@@ -55,6 +55,20 @@ mixin IsmChatDelegateConversationMixin {
         isLoading: isLoading,
       );
 
+  /// Updates push-notification (mute) settings for a conversation.
+  ///
+  /// Returns `true` when the API call succeeds and local state is synced.
+  Future<bool> updateConversationNotifications({
+    required String conversationId,
+    required bool pushNotification,
+    bool isLoading = false,
+  }) async =>
+      await IsmChatUtility.conversationController.updateConversationNotifications(
+        conversationId: conversationId,
+        pushNotification: pushNotification,
+        isLoading: isLoading,
+      );
+
   /// Gets chat conversations from the API.
   Future<void> getChatConversation() async {
     if (IsmChatUtility.conversationControllerRegistered) {

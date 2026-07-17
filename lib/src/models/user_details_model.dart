@@ -26,6 +26,8 @@ class UserDetails {
         order: map['order'] as int? ?? 0,
         wordCount: map['wordCount'] as int? ?? 0,
         isAdmin: map['isAdmin'] as bool? ?? false,
+        // Defaults to true when absent so older cached members do not mute by accident.
+        pushNotification: map['pushNotification'] as bool? ?? true,
       );
 
   UserDetails({
@@ -45,6 +47,7 @@ class UserDetails {
     this.order,
     this.wordCount,
     this.isAdmin = false,
+    this.pushNotification = true,
   });
 
   final String userProfileImageUrl;
@@ -63,6 +66,10 @@ class UserDetails {
   final bool isAdmin;
   final int? wordCount;
   final int? order;
+
+  /// Per-member mute/unmute flag from conversations / conversation details APIs.
+  /// `false` means notifications are muted for this member.
+  final bool pushNotification;
 
   String get profileUrl {
     if (metaData == null || metaData?.profilePic.isNullOrEmpty == true) {
@@ -88,6 +95,7 @@ class UserDetails {
     bool? isAdmin,
     int? wordCount,
     int? order,
+    bool? pushNotification,
   }) =>
       UserDetails(
           userProfileImageUrl: userProfileImageUrl ?? this.userProfileImageUrl,
@@ -104,7 +112,8 @@ class UserDetails {
           order: order ?? this.order,
           wordCount: wordCount ?? this.wordCount,
           isAdmin: isAdmin ?? this.isAdmin,
-          memberId: memberId ?? this.memberId);
+          memberId: memberId ?? this.memberId,
+          pushNotification: pushNotification ?? this.pushNotification);
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'userProfileImageUrl': userProfileImageUrl,
@@ -121,14 +130,15 @@ class UserDetails {
         'memberName': memberName,
         'order': order,
         'wordCount': wordCount,
-        'memberId': memberId
+        'memberId': memberId,
+        'pushNotification': pushNotification,
       }.removeNullValues();
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId, online: $online, lastSeen: $lastSeen, visibility: $visibility, notification: $notification, language: $language, isAdmin : $isAdmin, memberName : $memberName, order : $order, wordCount : $wordCount, memberId : $memberId, metaData : $metaData)';
+      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId, online: $online, lastSeen: $lastSeen, visibility: $visibility, notification: $notification, language: $language, isAdmin : $isAdmin, memberName : $memberName, order : $order, wordCount : $wordCount, memberId : $memberId, metaData : $metaData, pushNotification : $pushNotification)';
 
   @override
   bool operator ==(covariant UserDetails other) {
@@ -148,7 +158,8 @@ class UserDetails {
         other.isAdmin == isAdmin &&
         other.wordCount == wordCount &&
         other.memberId == memberId &&
-        other.order == order;
+        other.order == order &&
+        other.pushNotification == pushNotification;
   }
 
   @override
@@ -167,5 +178,6 @@ class UserDetails {
       wordCount.hashCode ^
       order.hashCode ^
       language.hashCode ^
-      memberId.hashCode;
+      memberId.hashCode ^
+      pushNotification.hashCode;
 }
