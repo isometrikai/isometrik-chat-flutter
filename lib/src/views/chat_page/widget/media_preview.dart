@@ -223,6 +223,7 @@ class _MediaPreviewState extends State<IsmMediaPreview> {
               final monthDay = DateFormat.MMMd().format(timeStamp);
               setState(
                 () {
+                  mediaIndex = index;
                   initiated = widget.messageData[index].sentByMe;
                   mediaTime = '$monthDay, $time';
                 },
