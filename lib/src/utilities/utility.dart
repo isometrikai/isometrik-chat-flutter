@@ -179,6 +179,48 @@ class IsmChatUtility {
     }
   }
 
+  /// Truncates notification preview text for FCM / local notifications.
+  static String truncateNotificationBody(String text, {int maxLength = 10}) {
+    if (text.length <= maxLength) return text;
+    return '${text.substring(0, maxLength)}...';
+  }
+
+  /// Builds FCM-safe notification body for encrypted messages.
+  ///
+  /// If [notificationBody] was set to the encrypted [body], decrypts it first.
+  /// Always returns a truncated plaintext preview.
+  static String resolveEncryptedNotificationBody({
+    required String notificationBody,
+    required String body,
+    required String conversationId,
+  }) {
+    final plain = notificationBody == body
+        ? decryptMessage(body, conversationId)
+        : notificationBody;
+    return truncateNotificationBody(plain);
+  }
+
+  /// FCM / push notification title for outgoing messages.
+  ///
+  /// Same rule as local MQTT notifications: prefer conversationTitle when
+  /// present (group chats). Fall back to [senderUserName] for 1:1.
+  static String resolveSendNotificationTitle({
+    IsmChatConversationModel? conversation,
+    String? conversationId,
+    required String senderUserName,
+  }) {
+    final title = conversation?.conversationTitle?.trim() ?? '';
+    if (title.isNotEmpty) return title;
+
+    final id = conversationId ?? conversation?.conversationId ?? '';
+    if (id.isNotEmpty && conversationControllerRegistered) {
+      final cached =
+          conversationController.getConversation(id)?.conversationTitle?.trim();
+      if (cached != null && cached.isNotEmpty) return cached;
+    }
+    return senderUserName;
+  }
+
   /// Shared toast helper — uses the platform native toast on mobile.
   /// All call sites should use this helper rather than [Fluttertoast] directly.
   static void showToast(String message, {int timeOutInSec = 1}) {
