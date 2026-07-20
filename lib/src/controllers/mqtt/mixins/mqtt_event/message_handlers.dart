@@ -212,7 +212,9 @@ String _resolveNotificationBody(
   required bool preferNotificationBody,
 }) {
   if (message.encrypted == true) {
-    return _truncateNotificationBody(_decryptedNotificationBody(message));
+    return IsmChatUtility.truncateNotificationBody(
+      _decryptedNotificationBody(message),
+    );
   }
   if (preferNotificationBody) {
     return message.notificationBody ?? '';
@@ -233,9 +235,4 @@ String _decryptedNotificationBody(IsmChatMessageModel message) {
       ? groupcastId
       : message.conversationId ?? '';
   return IsmChatUtility.decryptMessage(encryptedText, decryptionId);
-}
-
-String _truncateNotificationBody(String text) {
-  if (text.length <= 10) return text;
-  return '${text.substring(0, 10)}...';
 }

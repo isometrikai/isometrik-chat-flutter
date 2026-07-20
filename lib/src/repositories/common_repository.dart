@@ -71,6 +71,13 @@ class IsmChatCommonRepository {
     List<String>? searchableTags,
   }) async {
     try {
+      final fcmNotificationBody = encrypted
+          ? IsmChatUtility.resolveEncryptedNotificationBody(
+              notificationBody: notificationBody,
+              body: body,
+              conversationId: conversationId,
+            )
+          : notificationBody;
       final payload = {
         'showInConversation': showInConversation,
         'messageType': messageType,
@@ -83,7 +90,7 @@ class IsmChatCommonRepository {
         'events': events,
         'customType': customType,
         'attachments': attachments,
-        'notificationBody': notificationBody,
+        'notificationBody': fcmNotificationBody,
         'notificationTitle': notificationTitle,
         if (searchableTags != null)
           'searchableTags': searchableTags
@@ -130,6 +137,13 @@ class IsmChatCommonRepository {
     List<Map<String, dynamic>>? attachments,
   }) async {
     try {
+      final fcmNotificationBody = encrypted
+          ? IsmChatUtility.resolveEncryptedNotificationBody(
+              notificationBody: notificationBody,
+              body: body,
+              conversationId: conversationId,
+            )
+          : notificationBody;
       final payload = {
         'showInConversation': showInConversation,
         'messageType': messageType,
@@ -142,7 +156,7 @@ class IsmChatCommonRepository {
         'events': events,
         'customType': customType,
         'attachments': attachments,
-        'notificationBody': notificationBody,
+        'notificationBody': fcmNotificationBody,
         'notificationTitle': notificationTitle,
         if (!(IsmChatConfig.messageEncrypted == true &&
             IsmChatCustomMessageType.fromString(customType) ==

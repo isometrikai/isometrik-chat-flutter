@@ -28,12 +28,19 @@ mixin IsmChatConversationsPendingMessagesMixin on GetxController {
     if (messages.isEmpty) {
       return;
     }
-    final notificationTitle =
+    final senderUserName =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.userDetails?.userName ??
             '';
 
     for (final x in messages.values) {
+      final conversation = _controller.getConversation(x.conversationId ?? '') ??
+          await IsmChatConfig.dbWrapper?.getConversation(x.conversationId ?? '');
+      final notificationTitle = IsmChatUtility.resolveSendNotificationTitle(
+        conversation: conversation,
+        conversationId: x.conversationId,
+        senderUserName: senderUserName,
+      );
       List<Map<String, dynamic>>? attachments;
       if ([
         IsmChatCustomMessageType.image,

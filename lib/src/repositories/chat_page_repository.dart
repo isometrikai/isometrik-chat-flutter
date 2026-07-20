@@ -684,13 +684,20 @@ class IsmChatPageRepository {
       List<Map<String, dynamic>>? mentionedUsers,
       bool isLoading = false}) async {
     try {
+      final fcmNotificationBody = encrypted
+          ? IsmChatUtility.resolveEncryptedNotificationBody(
+              notificationBody: notificationBody,
+              body: body,
+              conversationId: groupcastId,
+            )
+          : notificationBody;
       final payload = <String, dynamic>{
         'showInConversation': showInConversation,
         'sendPushForNewConversationCreated': sendPushForNewConversationCreated,
         'searchableTags': searchableTags,
         'parentMessageId': parentMessageId,
         'notifyOnCompletion': notifyOnCompletion,
-        'notificationBody': notificationBody,
+        'notificationBody': fcmNotificationBody,
         'notificationTitle': notificationTitle,
         'messageType': messageType,
         'metaData': metaData?.toMap(),

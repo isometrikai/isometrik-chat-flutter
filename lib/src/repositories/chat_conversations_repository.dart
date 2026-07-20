@@ -416,6 +416,13 @@ class IsmChatConversationsRepository {
       List<Map<String, dynamic>>? attachments,
       bool isLoading = false}) async {
     try {
+      final fcmNotificationBody = encrypted
+          ? IsmChatUtility.resolveEncryptedNotificationBody(
+              notificationBody: notificationBody,
+              body: body,
+              conversationId: '',
+            )
+          : notificationBody;
       final payload = {
         'userIds': userIds,
         'showInConversation': showInConversation,
@@ -427,7 +434,7 @@ class IsmChatConversationsRepository {
         'events': events,
         'customType': customType,
         'attachments': attachments,
-        'notificationBody': notificationBody,
+        'notificationBody': fcmNotificationBody,
         'notificationTitle': notificationTitle,
         'searchableTags': searchableTags,
       }.removeNullValues();

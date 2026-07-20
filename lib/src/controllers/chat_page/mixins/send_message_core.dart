@@ -57,6 +57,20 @@ mixin IsmChatPageSendMessageCoreMixin {
     bool encrypted = false,
     List<String>? searchableTags,
   }) async {
+    // Same as local MQTT notifications: prefer conversationTitle when present.
+    notificationTitle = IsmChatUtility.resolveSendNotificationTitle(
+      conversation: _controller.conversation,
+      conversationId: conversationId,
+      senderUserName: notificationTitle,
+    );
+    // Backend uses notificationBody for FCM — never send ciphertext.
+    if (encrypted) {
+      notificationBody = IsmChatUtility.resolveEncryptedNotificationBody(
+        notificationBody: notificationBody,
+        body: body,
+        conversationId: conversationId,
+      );
+    }
     notificationBody = IsmChatConfig.notificationBody?.call(notificationBody,
             IsmChatCustomMessageType.fromString(customType)) ??
         notificationBody;
@@ -307,17 +321,21 @@ mixin IsmChatPageSendMessageCoreMixin {
       }
     }
     final encrypted = IsmChatConfig.messageEncrypted ?? false;
+    final plainBody = textMessage.body;
     var body = encrypted
         ? IsmChatUtility.encryptMessage(
-            textMessage.body,
+            plainBody,
             conversationId,
           )
-        : textMessage.body;
+        : plainBody;
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-    final notificationBody = body;
+    // FCM preview: plaintext truncated when encrypted; full text otherwise.
+    final notificationBody = encrypted
+        ? IsmChatUtility.truncateNotificationBody(plainBody)
+        : plainBody;
     _controller.sendMessage(
       isBroadcast: _controller.isBroadcast,
       metaData: textMessage.metaData,
