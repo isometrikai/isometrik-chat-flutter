@@ -56,6 +56,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     // read was running, ignore this result so messages from old chat don't show.
     if ((_controller.conversation?.conversationId ?? '') !=
         requestedConversationId) {
+      _controller.isMessagesLoading = false;
       return;
     }
     // If local cache is empty, continue with an empty map so we can still
@@ -171,8 +172,12 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     bool isBroadcast = false,
   }) async {
     if (IsmChatUtility.chatPageControllerRegistered) {
+      final conversationID = _controller.conversation?.conversationId ?? '';
+      if (conversationID.isEmpty) return;
+
       if (_controller.canCallCurrentApi) return;
       _controller.canCallCurrentApi = true;
+      final requestedConversationId = conversationID;
 
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = true;
@@ -188,8 +193,6 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           _controller.messages))
         ..removeWhere(
             (element) => element.customType == IsmChatCustomMessageType.date);
-      final conversationID = _controller.conversation?.conversationId ?? '';
-      final requestedConversationId = conversationID;
 
       final data = await _controller.viewModel.getChatMessages(
         skip: forPagination ? messagesList.length.pagination() : 0,
@@ -202,6 +205,9 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if ((_controller.conversation?.conversationId ?? '') !=
           requestedConversationId) {
         _controller.canCallCurrentApi = false;
+        if (_controller.messages.isEmpty) {
+          _controller.isMessagesLoading = false;
+        }
         return;
       }
 
@@ -211,8 +217,22 @@ mixin IsmChatPageGetMessageMixin on GetxController {
 
       if (data.isNotEmpty && !_controller.isBroadcast) {
         await getMessagesFromDB(conversationID);
-      } else {
+      } else if (data.isNotEmpty) {
         _controller.messages.addAll(data);
+      } else if (_controller.messages.isEmpty ||
+          (_controller.messages.length == 1 &&
+              _controller.messages.first.customType ==
+                  IsmChatCustomMessageType.conversationCreated)) {
+        // API returned nothing — still show the local placeholder row.
+        _controller.messages = _controller.commonController.sortMessages(
+          filterMessages(
+            insertEndtoEndMessage(
+              timeStamp: DateTime.now().millisecondsSinceEpoch,
+              messages: List<IsmChatMessageModel>.from(_controller.messages),
+            ),
+          ),
+        );
+        _controller.isMessagesLoading = false;
       }
       _controller.canCallCurrentApi = false;
     }
@@ -375,7 +395,13 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         return null;
       }
       _controller.isCoverationApiDetails = false;
+      // Snapshot the ID at request time. After await, the user may have left
+      // this group or opened a different chat — never apply a stale response.
       final conversationId = _controller.conversation?.conversationId ?? '';
+      if (conversationId.isEmpty) {
+        _controller.isCoverationApiDetails = true;
+        return null;
+      }
       final data = await _controller.viewModel.getConverstaionDetails(
         conversationId: conversationId,
         // Always include members so per-member `pushNotification` (mute) is available
@@ -384,8 +410,17 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         isLoading: isLoading,
       );
 
-      if (data.data != null &&
-          (_controller.conversation?.conversationId == conversationId)) {
+      // Active chat changed while this request was in flight (leave group /
+      // open another conversation). Drop the response entirely so we never
+      // push the exited group's conversationId back into currentConversation.
+      final stillSameChat =
+          _controller.conversation?.conversationId == conversationId;
+      if (!stillSameChat) {
+        _controller.isCoverationApiDetails = true;
+        return null;
+      }
+
+      if (data.data != null) {
         final responeData = data.data as IsmChatConversationModel;
         // If we can successfully fetch conversation details, it generally means
         // the current user still has access to this conversation. We explicitly
@@ -397,6 +432,11 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         };
         final cached =
             await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+        // Re-check after the async DB read — user may have switched chats.
+        if (_controller.conversation?.conversationId != conversationId) {
+          _controller.isCoverationApiDetails = true;
+          return null;
+        }
         // Prefer local DB for block flag so a just-completed unblock is not
         // overwritten by stale conversation-details API data.
         final messagingDisabled = cached?.messagingDisabled ??
@@ -478,12 +518,17 @@ mixin IsmChatPageGetMessageMixin on GetxController {
           );
         }
       }
+      // Only mark as removed when this response is still for the open chat.
       if (data.statusCode == 400 && conversationId.isNotEmpty) {
         _controller.isActionAllowed = true;
       }
       _controller.isCoverationApiDetails = true;
-      _controller.conversationController.currentConversation =
-          _controller.conversation;
+      // Sync list controller only when this response still matches the open chat.
+      // Previously this always ran and could restore an exited group's ID after leave.
+      if (_controller.conversation?.conversationId == conversationId) {
+        _controller.conversationController.currentConversation =
+            _controller.conversation;
+      }
       return _controller.conversation;
     }
     return null;

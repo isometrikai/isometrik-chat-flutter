@@ -190,6 +190,10 @@ class IsmChatStrings {
   static const String removeGroupMessage =
       'You have been removed out of the group...!';
 
+  /// Shown after the current user voluntarily leaves a group.
+  static const String leftGroupMessage =
+      'You have left this group. You can view old messages but can no longer send messages.';
+
   static const String userDeleteMessage =
       'This user is currently unavailable for messaging...!';
 

@@ -30,11 +30,20 @@ mixin IsmChatPageOtherOperationsMixin on GetxController {
     }
     final didLeft = await _controller.leaveConversation(conversationId);
     if (didLeft) {
+      // Clear BOTH conversation controllers. Leaving only
+      // `currentConversation` null while keeping `conversation` set to the
+      // exited group lets a late `getConverstaionDetails` response write that
+      // old conversationId back as "current", so the next group opens with
+      // the wrong ID in the conversation-details API.
       _controller.conversationController
         ..currentConversation = null
         ..currentConversationId = ''
         ..isRenderChatPageaScreen = IsRenderChatPageScreen.none;
       _controller
+        ..conversation = null
+        ..isActionAllowed = false
+        ..isCoverationApiDetails = true
+        ..canCallCurrentApi = false
         ..messages.clear()
         ..selectedMessage.clear()
         ..isMessageSeleted = false;

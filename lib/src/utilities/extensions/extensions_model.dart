@@ -51,6 +51,41 @@ extension BlockStatus on IsmChatConversationModel {
   /// Returns true if chatting is allowed (messaging is not disabled).
   bool get isChattingAllowed => !(messagingDisabled ?? false);
 
+  /// True when the signed-in user is no longer a member of this group.
+  ///
+  /// Requires an explicit, populated [members] list that omits the current
+  /// user. An empty/null members list is treated as "unknown" (not left) so
+  /// stale [lastMessageDetails] from another group cannot trigger a false
+  /// "removed" banner.
+  bool get hasCurrentUserLeftGroup {
+    if (isGroup != true) return false;
+    final currentUserId =
+        IsmChatConfig.communicationConfig.userConfig.userId.trim();
+    if (currentUserId.isEmpty) return false;
+
+    final memberList = members;
+    if (memberList == null || memberList.isEmpty) return false;
+
+    return !memberList.any((m) => m.userId.trim() == currentUserId);
+  }
+
+  /// Whether the last system message indicates the current user was removed
+  /// or left *this* conversation (matched by [conversationId]).
+  bool get isLastMessageCurrentUserRemovedFromGroup {
+    if (isGroup != true) return false;
+    final currentUserId =
+        IsmChatConfig.communicationConfig.userConfig.userId.trim();
+    final last = lastMessageDetails;
+    if (last == null || currentUserId.isEmpty) return false;
+    if (last.conversationId.isNotEmpty &&
+        last.conversationId != conversationId) {
+      return false;
+    }
+    if (last.userId != currentUserId) return false;
+    return last.customType == IsmChatCustomMessageType.removeMember ||
+        last.customType == IsmChatCustomMessageType.memberLeave;
+  }
+
   /// Returns true if the conversation is blocked by the current user.
   bool get isBlockedByMe {
     if (isChattingAllowed) {

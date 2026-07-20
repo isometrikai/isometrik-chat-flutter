@@ -52,13 +52,29 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
     if (_controller.conversationController.currentConversation != null) {
       _controller
         .._currentUser()
-        ..conversation = _controller.conversationController.currentConversation;
+        // Always take the *latest* selection from the conversations controller.
+        // A late details-API response for an exited group must not leave the
+        // chat page stuck on that old conversationId.
+        ..conversation = _controller.conversationController.currentConversation
+        ..isActionAllowed = false
+        ..isCoverationApiDetails = true
+        ..canCallCurrentApi = false
+        ..isMessagesLoading = true;
       // Reset previous chat data before loading another conversation to avoid
       // cross-chat message leakage when controller is reused (e.g. web/tab).
       // Without this, old messages can flash/show in a newly opened chat.
       _controller.messages.clear();
       // Allow UI to render before heavy operations
       await Future.delayed(Duration.zero);
+      // Re-sync after the yield — another async path may have updated the
+      // selected conversation while we were waiting.
+      final selected =
+          _controller.conversationController.currentConversation;
+      if (selected != null &&
+          selected.conversationId !=
+              _controller.conversation?.conversationId) {
+        _controller.conversation = selected;
+      }
       try {
         final arguments = Get.arguments as Map<String, dynamic>? ?? {};
         _controller.isBroadcast =
@@ -164,9 +180,15 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
     _controller._getBackGroundAsset();
     if (!_controller.isBroadcast) {
       await _controller.getMessagesFromDB(conversationId);
-      await _controller.getConverstaionDetails();
+      // Do not block message sync on conversation-details. After leaving one
+      // group and opening another, a slow/stale details request used to
+      // delay `getMessagesFromAPI`, and a stuck `canCallCurrentApi` from the
+      // previous chat could skip the fetch entirely — empty screen until re-open.
+      await Future.wait([
+        _controller.getConverstaionDetails(),
+        _controller.getMessagesFromAPI(),
+      ]);
       await _controller.getMessageForStatus();
-      await _controller.getMessagesFromAPI();
       await _controller.readAllMessages();
       _controller.checkUserStatus();
     } else {

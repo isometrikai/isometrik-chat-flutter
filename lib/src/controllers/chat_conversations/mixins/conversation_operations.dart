@@ -328,9 +328,15 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   ///
   /// `userId`: The ID of the user to find the conversation for.
   String getConversationId(String userId) {
+    // Groups do not have a unique opponentDetails.userId — matching only on
+    // userId would return the first group that shares a member, which breaks
+    // when multiple groups contain the same person.
     final conversation = _controller.conversations.firstWhere(
-        (element) => element.opponentDetails?.userId == userId,
-        orElse: IsmChatConversationModel.new);
+      (element) =>
+          element.isGroup != true &&
+          element.opponentDetails?.userId == userId,
+      orElse: IsmChatConversationModel.new,
+    );
 
     if (conversation.conversationId == null) {
       return '';
@@ -414,6 +420,20 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       IsmChatConversationModel conversation) async {
     _controller.currentConversation = conversation;
     _controller.currentConversationId = conversation.conversationId ?? '';
+
+    // The chat page controller is often reused (especially on web). Point it
+    // at the newly selected conversation *immediately* so any in-flight
+    // `getConverstaionDetails` for a previously exited group cannot win the
+    // race and keep using the old conversationId.
+    if (IsmChatUtility.chatPageControllerRegistered) {
+      final chatPage = IsmChatUtility.chatPageController;
+      chatPage
+        ..conversation = conversation
+        ..isActionAllowed = false
+        ..isCoverationApiDetails = true
+        ..canCallCurrentApi = false
+        ..messages.clear();
+    }
 
     // Save conversation to database to persist metadata and other changes
     await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
