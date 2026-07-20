@@ -261,6 +261,10 @@ mixin IsmChatPageVariablesMixin on GetxController {
   bool get canCallCurrentApi => _canCallCurrentApi.value;
   set canCallCurrentApi(bool value) => _canCallCurrentApi.value = value;
 
+  /// Incremented on every chat open so overlapping [startInit] runs from an
+  /// older navigation can bail out instead of clearing/loading wrong data.
+  int chatOpenGeneration = 0;
+
   final _groupEligibleUser = <SelectedMembers>[].obs;
   List<SelectedMembers> get groupEligibleUser => _groupEligibleUser;
   set groupEligibleUser(List<SelectedMembers> value) =>

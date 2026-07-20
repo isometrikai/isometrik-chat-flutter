@@ -11,9 +11,9 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Defer initialization to allow UI to render first
-    // This improves perceived performance by showing the screen immediately
-    Future.microtask(_controller.startInit);
+    // Message/conversation loading is triggered from [IsmChatPageView.initState]
+    // (mobile route push) and [goToChatPage] (web). The GetX controller survives
+    // pop/push, so onInit alone only runs once and is not enough on re-open.
   }
 
   @override
@@ -40,6 +40,7 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   void startInit({
     bool isBroadcasts = false,
   }) async {
+    final generation = ++_controller.chatOpenGeneration;
     _controller
       ..chatInputController.clear()
       ..recordVoice = AudioRecorder()
@@ -66,6 +67,7 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
       _controller.messages.clear();
       // Allow UI to render before heavy operations
       await Future.delayed(Duration.zero);
+      if (generation != _controller.chatOpenGeneration) return;
       // Re-sync after the yield — another async path may have updated the
       // selected conversation while we were waiting.
       final selected =
@@ -93,10 +95,12 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
       if (_controller.conversation?.conversationId?.isNotEmpty == true) {
         await _controller.callFunctionsWithConversationId(
           _controller.conversation?.conversationId ?? '',
+          openGeneration: generation,
         );
       } else {
         await _controller.callFunctions();
       }
+      if (generation != _controller.chatOpenGeneration) return;
       // Attempt to flush any pending (clock) messages whenever a chat opens.
       // Previously this only happened on connectivity change; with stable network
       // a stuck pending message would never retry.
@@ -176,10 +180,17 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   }
 
   /// Calls initialization functions when conversation ID is available.
-  Future<void> callFunctionsWithConversationId(String conversationId) async {
+  Future<void> callFunctionsWithConversationId(
+    String conversationId, {
+    int? openGeneration,
+  }) async {
     _controller._getBackGroundAsset();
     if (!_controller.isBroadcast) {
       await _controller.getMessagesFromDB(conversationId);
+      if (openGeneration != null &&
+          openGeneration != _controller.chatOpenGeneration) {
+        return;
+      }
       // Do not block message sync on conversation-details. After leaving one
       // group and opening another, a slow/stale details request used to
       // delay `getMessagesFromAPI`, and a stuck `canCallCurrentApi` from the
@@ -188,6 +199,10 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
         _controller.getConverstaionDetails(),
         _controller.getMessagesFromAPI(),
       ]);
+      if (openGeneration != null &&
+          openGeneration != _controller.chatOpenGeneration) {
+        return;
+      }
       await _controller.getMessageForStatus();
       await _controller.readAllMessages();
       _controller.checkUserStatus();

@@ -36,6 +36,13 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     if (!IsmChatUtility.chatPageControllerRegistered) {
       IsmChatPageBinding().dependencies();
     }
+    // The GetX chat controller outlives this route (pop/push reuse). Reload
+    // messages every time the chat page is opened — not only on first onInit.
+    Future.microtask(() {
+      if (IsmChatUtility.chatPageControllerRegistered) {
+        IsmChatUtility.chatPageController.startInit();
+      }
+    });
   }
 
   @override
