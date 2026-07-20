@@ -26,6 +26,7 @@ class UserDetails {
         order: map['order'] as int? ?? 0,
         wordCount: map['wordCount'] as int? ?? 0,
         isAdmin: map['isAdmin'] as bool? ?? false,
+        customUserType: map['customUserType'] as String?,
         // Defaults to true when absent so older cached members do not mute by accident.
         pushNotification: map['pushNotification'] as bool? ?? true,
       );
@@ -47,6 +48,7 @@ class UserDetails {
     this.order,
     this.wordCount,
     this.isAdmin = false,
+    this.customUserType,
     this.pushNotification = true,
   });
 
@@ -64,6 +66,7 @@ class UserDetails {
   final String? memberName;
   final String? memberId;
   final bool isAdmin;
+  final String? customUserType;
   final int? wordCount;
   final int? order;
 
@@ -93,6 +96,7 @@ class UserDetails {
     String? memberName,
     String? memberId,
     bool? isAdmin,
+    String? customUserType,
     int? wordCount,
     int? order,
     bool? pushNotification,
@@ -112,6 +116,7 @@ class UserDetails {
           order: order ?? this.order,
           wordCount: wordCount ?? this.wordCount,
           isAdmin: isAdmin ?? this.isAdmin,
+          customUserType: customUserType ?? this.customUserType,
           memberId: memberId ?? this.memberId,
           pushNotification: pushNotification ?? this.pushNotification);
 
@@ -127,6 +132,7 @@ class UserDetails {
         'notification': notification,
         'language': language,
         'isAdmin': isAdmin,
+        'customUserType': customUserType,
         'memberName': memberName,
         'order': order,
         'wordCount': wordCount,
@@ -138,7 +144,7 @@ class UserDetails {
 
   @override
   String toString() =>
-      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId, online: $online, lastSeen: $lastSeen, visibility: $visibility, notification: $notification, language: $language, isAdmin : $isAdmin, memberName : $memberName, order : $order, wordCount : $wordCount, memberId : $memberId, metaData : $metaData, pushNotification : $pushNotification)';
+      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId, online: $online, lastSeen: $lastSeen, visibility: $visibility, notification: $notification, language: $language, isAdmin : $isAdmin, customUserType : $customUserType, memberName : $memberName, order : $order, wordCount : $wordCount, memberId : $memberId, metaData : $metaData, pushNotification : $pushNotification)';
 
   @override
   bool operator ==(covariant UserDetails other) {
@@ -156,6 +162,7 @@ class UserDetails {
         other.language == language &&
         other.memberName == memberName &&
         other.isAdmin == isAdmin &&
+        other.customUserType == customUserType &&
         other.wordCount == wordCount &&
         other.memberId == memberId &&
         other.order == order &&
@@ -174,6 +181,7 @@ class UserDetails {
       visibility.hashCode ^
       notification.hashCode ^
       isAdmin.hashCode ^
+      customUserType.hashCode ^
       memberName.hashCode ^
       wordCount.hashCode ^
       order.hashCode ^
