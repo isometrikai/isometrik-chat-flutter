@@ -441,7 +441,7 @@ class IsmChatCommonViewModel {
 
   Future<List<IsmChatMessageModel>> getChatMessages({
     required String conversationId,
-    required int lastMessageTimestamp,
+    int? lastMessageTimestamp,
     int limit = 20,
     int skip = 0,
     String? searchText,

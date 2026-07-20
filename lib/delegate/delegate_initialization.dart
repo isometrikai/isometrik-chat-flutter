@@ -27,6 +27,10 @@ mixin IsmChatDelegateInitializationMixin {
     bool messageEncrypted = false,
     NotificationBodyCallback? notificationBody,
   }) async {
+    final initTimer = IsmChatInitTimer(
+      'SDK.initialize',
+      context: communicationConfig.userConfig.userId,
+    );
     IsmChatConfig.kNavigatorKey = kNavigatorKey;
     IsmChatConfig.messageEncrypted = messageEncrypted;
     IsmChatConfig.notificationBody = notificationBody;
@@ -44,7 +48,10 @@ mixin IsmChatDelegateInitializationMixin {
     IsmChatConfig.chatInvalidate = chatInvalidate;
     IsmChatConfig.isMonthFirst = isMonthFirst;
     IsmChatConfig.configInitilized = true;
+    initTimer.checkpoint('config applied');
+
     IsmChatConfig.dbWrapper = await IsmChatDBWrapper.create();
+    initTimer.checkpoint('local database ready');
 
     // Safety: prevent local history leaking across accounts.
     //
@@ -66,17 +73,21 @@ mixin IsmChatDelegateInitializationMixin {
           lastUserId.isNotEmpty &&
           lastUserId != currentUserId) {
         await IsmChatConfig.dbWrapper?.deleteChatLocalDb();
+        initTimer.checkpoint('cleared DB for new user');
       }
       await IsmChatConfig.dbWrapper?.userDetailsBox.put(
         IsmChatStrings.activeUserIdKey,
         currentUserId,
       );
     }
+    initTimer.checkpoint('user session validated');
 
     await _initializeMqtt(
       config: communicationConfig,
       mqttProperties: mqttProperties ?? IsmMqttProperties(),
+      initTimer: initTimer,
     );
+    initTimer.finish('SDK ready');
   }
 
   /// Initializes the MQTT connection with the provided configuration.
@@ -85,14 +96,17 @@ mixin IsmChatDelegateInitializationMixin {
   Future<void> _initializeMqtt({
     required IsmChatCommunicationConfig config,
     required IsmMqttProperties mqttProperties,
+    IsmChatInitTimer? initTimer,
   }) async {
     if (!Get.isRegistered<IsmChatMqttController>()) {
       IsmChatMqttBinding().dependencies();
+      initTimer?.checkpoint('mqtt controller registered');
     }
     IsmChatConfig.shouldSetupMqtt = mqttProperties.shouldSetupMqtt;
     await Get.find<IsmChatMqttController>().setup(
       config: config,
       mqttProperties: mqttProperties,
     );
+    initTimer?.checkpoint('mqtt setup complete');
   }
 }

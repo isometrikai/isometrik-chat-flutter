@@ -8,7 +8,7 @@ mixin IsmChatDelegateMessageMixin {
   /// Gets messages from the API.
   Future<List<IsmChatMessageModel>?> getMessagesFromApi({
     required String conversationId,
-    required int lastMessageTimestamp,
+    int? lastMessageTimestamp,
     required int limit,
     required int skip,
     String? searchText,
@@ -37,7 +37,7 @@ mixin IsmChatDelegateMessageMixin {
         isBroadcast: isBroadcast,
         lastMessageTimestamp: controller.messages.isNotEmpty
             ? controller.messages.last.sentAt
-            : 0,
+            : null,
       );
     }
   }

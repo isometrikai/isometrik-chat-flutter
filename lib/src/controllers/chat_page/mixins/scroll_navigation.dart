@@ -27,10 +27,7 @@ mixin IsmChatPageScrollNavigationMixin on GetxController {
         if (_controller.messagesScrollController.position.pixels.toInt() ==
             _controller.messagesScrollController.position.maxScrollExtent.toInt()) {
           _controller.canCallCurrentApi = false;
-          await _controller.getMessagesFromAPI(
-            forPagination: true,
-            lastMessageTimestamp: 0,
-          );
+          await _controller.getMessagesFromAPI(forPagination: true);
         }
         // Keep keyboard focus while scrolling/sending; only collapse emoji panel.
         if (_controller.showEmojiBoard) {
@@ -139,7 +136,7 @@ mixin IsmChatPageScrollNavigationMixin on GetxController {
         preferPosition: AutoScrollPosition.middle,
       );
     } else {
-      await _controller.getMessagesFromAPI(forPagination: true, lastMessageTimestamp: 0);
+      await _controller.getMessagesFromAPI(forPagination: true);
     }
   }
 }

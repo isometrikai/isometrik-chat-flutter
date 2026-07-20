@@ -46,7 +46,7 @@ class IsmChatPageViewModel {
 
   Future<List<IsmChatMessageModel>> getChatMessages({
     required String conversationId,
-    required int lastMessageTimestamp,
+    int? lastMessageTimestamp,
     int limit = 20,
     int skip = 0,
     String? searchText,
@@ -108,7 +108,7 @@ class IsmChatPageViewModel {
 
   Future<List<IsmChatMessageModel>> getBroadcastMessages({
     required String groupcastId,
-    int lastMessageTimestamp = 0,
+    int? lastMessageTimestamp,
     int limit = 20,
     int skip = 0,
     int sort = -1,

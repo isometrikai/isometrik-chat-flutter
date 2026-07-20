@@ -74,7 +74,7 @@ class IsmChatPageRepository {
   /// that supports text search. Otherwise, it uses pagination based on timestamp.
   Future<List<IsmChatMessageModel>?> getChatMessages({
     required String conversationId,
-    int lastMessageTimestamp = 0,
+    int? lastMessageTimestamp,
     int limit = 20,
     int skip = 0,
     String? searchText,
@@ -86,8 +86,11 @@ class IsmChatPageRepository {
         url =
             '${IsmChatAPI.chatMessages}?conversationId=$conversationId&searchTag=$searchText&sort=-1&limit=$limit&skip=$skip';
       } else {
+        final timestampQuery = lastMessageTimestamp != null && lastMessageTimestamp > 0
+            ? '&lastMessageTimestamp=$lastMessageTimestamp'
+            : '';
         url =
-            '${IsmChatAPI.chatMessages}?conversationId=$conversationId&limit=$limit&skip=$skip&lastMessageTimestamp=$lastMessageTimestamp';
+            '${IsmChatAPI.chatMessages}?conversationId=$conversationId&limit=$limit&skip=$skip$timestampQuery';
       }
       var response = await _apiWrapper.get(url,
           headers: IsmChatUtility.tokenCommonHeader(), showLoader: isLoading);
@@ -111,7 +114,7 @@ class IsmChatPageRepository {
     required bool sendPushForNewConversationCreated,
     required bool notifyOnCompletion,
     required bool executionFinished,
-    int lastMessageTimestamp = 0,
+    int? lastMessageTimestamp,
     int limit = 20,
     int skip = 0,
     int sort = -1,
@@ -130,8 +133,11 @@ class IsmChatPageRepository {
         url =
             '${IsmChatAPI.chatGroupCastMessages}?groupcastId=$groupcastId&searchTag=$searchText&sort=$sort&limit=$limit&skip=$skip';
       } else {
+        final timestampQuery = lastMessageTimestamp != null && lastMessageTimestamp > 0
+            ? '&lastMessageTimestamp=$lastMessageTimestamp'
+            : '';
         url =
-            '${IsmChatAPI.chatGroupCastMessages}?groupcastId=$groupcastId&sort=$sort&limit=$limit&skip=$skip&lastMessageTimestamp=$lastMessageTimestamp';
+            '${IsmChatAPI.chatGroupCastMessages}?groupcastId=$groupcastId&sort=$sort&limit=$limit&skip=$skip$timestampQuery';
       }
       var response = await _apiWrapper.get(url,
           headers: IsmChatUtility.tokenCommonHeader(), showLoader: isLoading);

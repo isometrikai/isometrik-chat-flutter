@@ -122,6 +122,10 @@ mixin IsmChatInitializationMixin {
     // Access _delegate directly since we're in the same library (part of)
     // Cast to dynamic to access private field, then cast to correct type
     final delegate = (this as dynamic)._delegate as IsmChatDelegate;
+    final initTimer = IsmChatInitTimer(
+      'IsmChat.initialize',
+      context: communicationConfig.userConfig.userId,
+    );
     await delegate.initialize(
       kNavigatorKey: kNavigatorKey,
       communicationConfig: communicationConfig,
@@ -142,5 +146,6 @@ mixin IsmChatInitializationMixin {
     );
     // Set static field - IsmChat is defined in the same library (part of)
     IsmChat._initialized = true;
+    initTimer.finish('_initialized=true');
   }
 }

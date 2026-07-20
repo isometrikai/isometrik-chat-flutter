@@ -146,7 +146,9 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       await IsmChatConfig.dbWrapper?.saveConversation(conversation: patched);
     }
 
-    _controller.conversations = updatedConversations;
+    _controller.conversations = updatedConversations
+        .map((conversation) => conversation.normalizeOpponentDetails())
+        .toList();
     _controller.isConversationsLoading = false;
     if (_controller.conversations.length <= 1) {
       IsmChatProperties.conversationProperties.conversationListEmptyOrNot
@@ -418,8 +420,10 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   /// `conversation`: The conversation model to update.
   Future<void> updateLocalConversation(
       IsmChatConversationModel conversation) async {
-    _controller.currentConversation = conversation;
-    _controller.currentConversationId = conversation.conversationId ?? '';
+    final normalizedConversation = conversation.normalizeOpponentDetails();
+    _controller.currentConversation = normalizedConversation;
+    _controller.currentConversationId =
+        normalizedConversation.conversationId ?? '';
 
     // The chat page controller is often reused (especially on web). Point it
     // at the newly selected conversation *immediately* so any in-flight
@@ -428,7 +432,7 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     if (IsmChatUtility.chatPageControllerRegistered) {
       final chatPage = IsmChatUtility.chatPageController;
       chatPage
-        ..conversation = conversation
+        ..conversation = normalizedConversation
         ..isActionAllowed = false
         ..isCoverationApiDetails = true
         ..canCallCurrentApi = false
@@ -436,7 +440,9 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     }
 
     // Save conversation to database to persist metadata and other changes
-    await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
+    await IsmChatConfig.dbWrapper?.saveConversation(
+      conversation: normalizedConversation,
+    );
   }
 
   /// Updates a conversation's metadata on the server.
