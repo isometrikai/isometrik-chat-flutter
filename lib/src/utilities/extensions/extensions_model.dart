@@ -36,6 +36,65 @@ extension BlockStatus on IsmChatConversationModel {
     return null;
   }
 
+  /// The other participant in a 1:1 chat — used for online / last-seen display.
+  ///
+  /// Conversation APIs sometimes put the signed-in user in [opponentDetails] or
+  /// attach the current user's activity to that field. When [members] is
+  /// available, prefer the non-self member for presence.
+  UserDetails? get resolvedOpponentDetails {
+    if (isGroup == true) return opponentDetails;
+
+    final currentUserId =
+        IsmChatConfig.communicationConfig.userConfig.userId.trim();
+    if (currentUserId.isEmpty) return opponentDetails;
+
+    UserDetails? otherMember;
+    for (final member in members ?? const <UserDetails>[]) {
+      final memberId = member.userId.trim();
+      if (memberId.isNotEmpty && memberId != currentUserId) {
+        otherMember = member;
+        break;
+      }
+    }
+
+    final opponentId = (opponentDetails?.userId ?? '').trim();
+    final opponentPointsToSelf =
+        opponentId.isNotEmpty && opponentId == currentUserId;
+
+    if (opponentPointsToSelf || opponentId.isEmpty) {
+      return otherMember ?? opponentDetails;
+    }
+
+    // opponentDetails identifies the other user — merge fresher presence from members.
+    if (otherMember != null && otherMember.userId.trim() == opponentId) {
+      final opponent = opponentDetails!;
+      return opponent.copyWith(
+        online: otherMember.online ?? opponent.online,
+        lastSeen: _preferPresenceTimestamp(
+          otherMember.lastSeen,
+          opponent.lastSeen,
+        ),
+      );
+    }
+
+    return opponentDetails;
+  }
+
+  /// Returns a copy with [opponentDetails] corrected for 1:1 presence display.
+  ///
+  /// Call after conversation-details / list API responses before persisting.
+  IsmChatConversationModel normalizeOpponentDetails() {
+    if (isGroup == true) return this;
+    final resolved = resolvedOpponentDetails;
+    if (resolved == null) return this;
+    if (resolved.userId == opponentDetails?.userId &&
+        resolved.online == opponentDetails?.online &&
+        resolved.lastSeen == opponentDetails?.lastSeen) {
+      return this;
+    }
+    return copyWith(opponentDetails: resolved);
+  }
+
   /// Whether the current user should receive push for this conversation.
   ///
   /// Prefers per-member `pushNotification` from conversations / details APIs.
@@ -95,6 +154,14 @@ extension BlockStatus on IsmChatConversationModel {
     var blockedList = controller.blockUsers.map((e) => e.userId);
     return blockedList.contains(opponentDetails?.userId);
   }
+}
+
+int? _preferPresenceTimestamp(int? primary, int? fallback) {
+  final primaryValue = primary ?? 0;
+  final fallbackValue = fallback ?? 0;
+  if (primaryValue > 0) return primaryValue;
+  if (fallbackValue > 0) return fallbackValue;
+  return null;
 }
 
 /// Extension for IsmChatConversationModel to get typing users and message status.

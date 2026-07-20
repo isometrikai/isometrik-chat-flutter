@@ -142,7 +142,6 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
       // Fetch all messages for the conversation (with large limit)
       final allMessages = await chatPageViewModel.getChatMessages(
         conversationId: widget.conversationId,
-        lastMessageTimestamp: 0,
         limit: 1000, // Large limit to get all messages
         skip: 0,
         isLoading: false,

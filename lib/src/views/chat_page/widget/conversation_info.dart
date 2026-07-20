@@ -392,7 +392,7 @@ class _IsmChatConverstaionInfoViewState
                                             ?.call(
                                                 context,
                                                 controller.conversation
-                                                    ?.opponentDetails) ??
+                                                    ?.resolvedOpponentDetails) ??
                                         '',
                                   ),
                                 ],

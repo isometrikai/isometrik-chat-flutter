@@ -166,6 +166,62 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       t == IsmChatCustomMessageType.videoCall ||
       t == IsmChatCustomMessageType.groupCall;
 
+  /// Count of real chat rows (excludes UI-only date / conversation-created rows).
+  int _realMessageCount(List<IsmChatMessageModel> messages) => messages
+      .where(
+        (message) =>
+            message.customType != IsmChatCustomMessageType.date &&
+            message.customType != IsmChatCustomMessageType.conversationCreated,
+      )
+      .length;
+
+  /// Newest real message [sentAt] (list is sorted oldest → newest).
+  int? _newestRealMessageTimestamp(List<IsmChatMessageModel> messages) {
+    for (var i = messages.length - 1; i >= 0; i--) {
+      final message = messages[i];
+      if (message.customType == IsmChatCustomMessageType.date ||
+          message.customType == IsmChatCustomMessageType.conversationCreated) {
+        continue;
+      }
+      return message.sentAt;
+    }
+    return null;
+  }
+
+  /// Resolves API `skip` + optional `lastMessageTimestamp`.
+  ///
+  /// | Case | skip | lastMessageTimestamp |
+  /// |------|------|----------------------|
+  /// | Scroll-up pagination | loaded count (20, 40, …) | omitted |
+  /// | Empty DB / no real msgs | 0 | omitted |
+  /// | Has DB messages (sync latest) | 0 | newest sentAt |
+  ({int skip, int? lastMessageTimestamp}) _resolveMessagesApiPaging({
+    required bool forPagination,
+    required List<IsmChatMessageModel> messages,
+    int? lastMessageTimestamp,
+  }) {
+    final realCount = _realMessageCount(messages);
+
+    // Scroll up → older history via skip only (no timestamp).
+    if (forPagination) {
+      return (skip: realCount, lastMessageTimestamp: null);
+    }
+
+    // Explicit caller timestamp (e.g. after group update).
+    if (lastMessageTimestamp != null && lastMessageTimestamp > 0) {
+      return (skip: 0, lastMessageTimestamp: lastMessageTimestamp);
+    }
+
+    // No local history yet → first page only.
+    final newest = _newestRealMessageTimestamp(messages);
+    if (newest == null) {
+      return (skip: 0, lastMessageTimestamp: null);
+    }
+
+    // Has DB messages → fetch anything newer than what we already have.
+    return (skip: 0, lastMessageTimestamp: newest);
+  }
+
   Future<void> getMessagesFromAPI({
     bool forPagination = false,
     int? lastMessageTimestamp,
@@ -182,22 +238,17 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = true;
       }
-      final timeStamp = lastMessageTimestamp ??
-          (_controller.messages.isEmpty
-              ? 0
-              : (_controller.messages.last.customType ==
-                      IsmChatCustomMessageType.conversationCreated
-                  ? 0
-                  : _controller.messages.last.sentAt + 7000));
-      final messagesList = (List<IsmChatMessageModel>.from(
-          _controller.messages))
-        ..removeWhere(
-            (element) => element.customType == IsmChatCustomMessageType.date);
+      final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
+      final paging = _resolveMessagesApiPaging(
+        forPagination: forPagination,
+        messages: messagesList,
+        lastMessageTimestamp: lastMessageTimestamp,
+      );
 
       final data = await _controller.viewModel.getChatMessages(
-        skip: forPagination ? messagesList.length.pagination() : 0,
+        skip: paging.skip,
         conversationId: conversationID,
-        lastMessageTimestamp: timeStamp,
+        lastMessageTimestamp: paging.lastMessageTimestamp,
         isBroadcast: isBroadcast,
       );
       // Guard against race conditions: do not apply API results if active chat
@@ -252,22 +303,20 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (_controller.messages.isEmpty) {
         _controller.isMessagesLoading = true;
       }
-      final timeStamp = lastMessageTimestamp ??
-          (_controller.messages.isEmpty
-              ? 0
-              : _controller.messages.last.sentAt + 7000);
-      final messagesList = (List<IsmChatMessageModel>.from(
-          _controller.messages))
-        ..removeWhere(
-            (element) => element.customType == IsmChatCustomMessageType.date);
+      final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
+      final paging = _resolveMessagesApiPaging(
+        forPagination: forPagination,
+        messages: messagesList,
+        lastMessageTimestamp: lastMessageTimestamp,
+      );
       final groupcastID = groupcastId.isNotEmpty
           ? groupcastId
           : _controller.conversation?.conversationId ?? '';
       final requestedConversationId = groupcastID;
       final data = await _controller.viewModel.getBroadcastMessages(
-        skip: forPagination ? messagesList.length.pagination() : 0,
+        skip: paging.skip,
         groupcastId: groupcastID,
-        lastMessageTimestamp: timeStamp,
+        lastMessageTimestamp: paging.lastMessageTimestamp,
         isBroadcast: isBroadcast,
       );
       // Same chat-isolation guard for broadcast messages.
@@ -295,7 +344,6 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     final messages = await _controller.viewModel.getChatMessages(
       skip: !fromScrolling ? 0 : _controller.searchMessages.length.pagination(),
       conversationId: _controller.conversation?.conversationId ?? '',
-      lastMessageTimestamp: 0,
       searchText: query,
       isLoading: true,
     );
@@ -448,14 +496,16 @@ mixin IsmChatPageGetMessageMixin on GetxController {
                 ? responeData.members
                 : (_controller.conversation?.members ?? cached?.members);
 
-        _controller.conversation = responeData.copyWith(
-          conversationId: conversationId,
-          messagingDisabled: messagingDisabled,
-          members: resolvedMembers,
-          metaData: responeData.metaData?.copyWith(blockedMessage: null),
-          outSideMessage: _controller.conversation?.outSideMessage,
-          messages: messageMap,
-        );
+        _controller.conversation = responeData
+            .copyWith(
+              conversationId: conversationId,
+              messagingDisabled: messagingDisabled,
+              members: resolvedMembers,
+              metaData: responeData.metaData?.copyWith(blockedMessage: null),
+              outSideMessage: _controller.conversation?.outSideMessage,
+              messages: messageMap,
+            )
+            .normalizeOpponentDetails();
         IsmChatProperties.chatPageProperties.onCoverstaionStatus?.call(
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             _controller.conversation);

@@ -281,7 +281,7 @@ class IsmChatCommonRepository {
 
   Future<List<IsmChatMessageModel>?> getChatMessages({
     required String conversationId,
-    int lastMessageTimestamp = 0,
+    int? lastMessageTimestamp,
     int limit = 20,
     int skip = 0,
     String? searchText,
@@ -293,8 +293,11 @@ class IsmChatCommonRepository {
         url =
             '${IsmChatAPI.chatMessages}?conversationId=$conversationId&searchTag=$searchText&sort=-1&limit=$limit&skip=$skip';
       } else {
+        final timestampQuery = lastMessageTimestamp != null && lastMessageTimestamp > 0
+            ? '&lastMessageTimestamp=$lastMessageTimestamp'
+            : '';
         url =
-            '${IsmChatAPI.chatMessages}?conversationId=$conversationId&limit=$limit&skip=$skip&lastMessageTimestamp=$lastMessageTimestamp';
+            '${IsmChatAPI.chatMessages}?conversationId=$conversationId&limit=$limit&skip=$skip$timestampQuery';
       }
       var response = await _apiWrapper.get(url,
           headers: IsmChatUtility.tokenCommonHeader(), showLoader: isLoading);

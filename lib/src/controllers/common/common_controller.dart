@@ -291,7 +291,7 @@ class IsmChatCommonController extends GetxController {
   /// Returns a future that resolves to a list of IsmChatMessageModel instances.
   Future<List<IsmChatMessageModel>> getChatMessages({
     required String conversationId,
-    required int lastMessageTimestamp,
+    int? lastMessageTimestamp,
     int limit = 20,
     int skip = 0,
     String? searchText,
