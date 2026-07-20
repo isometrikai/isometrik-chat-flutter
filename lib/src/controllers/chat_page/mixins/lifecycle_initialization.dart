@@ -11,9 +11,9 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Defer initialization to allow UI to render first
-    // This improves perceived performance by showing the screen immediately
-    Future.microtask(_controller.startInit);
+    // Message/conversation loading is triggered from [IsmChatPageView.initState]
+    // (mobile route push) and [goToChatPage] (web). The GetX controller survives
+    // pop/push, so onInit alone only runs once and is not enough on re-open.
   }
 
   @override
@@ -40,6 +40,7 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   void startInit({
     bool isBroadcasts = false,
   }) async {
+    final generation = ++_controller.chatOpenGeneration;
     _controller
       ..chatInputController.clear()
       ..recordVoice = AudioRecorder()
@@ -52,13 +53,30 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
     if (_controller.conversationController.currentConversation != null) {
       _controller
         .._currentUser()
-        ..conversation = _controller.conversationController.currentConversation;
+        // Always take the *latest* selection from the conversations controller.
+        // A late details-API response for an exited group must not leave the
+        // chat page stuck on that old conversationId.
+        ..conversation = _controller.conversationController.currentConversation
+        ..isActionAllowed = false
+        ..isCoverationApiDetails = true
+        ..canCallCurrentApi = false
+        ..isMessagesLoading = true;
       // Reset previous chat data before loading another conversation to avoid
       // cross-chat message leakage when controller is reused (e.g. web/tab).
       // Without this, old messages can flash/show in a newly opened chat.
       _controller.messages.clear();
       // Allow UI to render before heavy operations
       await Future.delayed(Duration.zero);
+      if (generation != _controller.chatOpenGeneration) return;
+      // Re-sync after the yield — another async path may have updated the
+      // selected conversation while we were waiting.
+      final selected =
+          _controller.conversationController.currentConversation;
+      if (selected != null &&
+          selected.conversationId !=
+              _controller.conversation?.conversationId) {
+        _controller.conversation = selected;
+      }
       try {
         final arguments = Get.arguments as Map<String, dynamic>? ?? {};
         _controller.isBroadcast =
@@ -77,10 +95,12 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
       if (_controller.conversation?.conversationId?.isNotEmpty == true) {
         await _controller.callFunctionsWithConversationId(
           _controller.conversation?.conversationId ?? '',
+          openGeneration: generation,
         );
       } else {
         await _controller.callFunctions();
       }
+      if (generation != _controller.chatOpenGeneration) return;
       // Attempt to flush any pending (clock) messages whenever a chat opens.
       // Previously this only happened on connectivity change; with stable network
       // a stuck pending message would never retry.
@@ -160,13 +180,30 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   }
 
   /// Calls initialization functions when conversation ID is available.
-  Future<void> callFunctionsWithConversationId(String conversationId) async {
+  Future<void> callFunctionsWithConversationId(
+    String conversationId, {
+    int? openGeneration,
+  }) async {
     _controller._getBackGroundAsset();
     if (!_controller.isBroadcast) {
       await _controller.getMessagesFromDB(conversationId);
-      await _controller.getConverstaionDetails();
+      if (openGeneration != null &&
+          openGeneration != _controller.chatOpenGeneration) {
+        return;
+      }
+      // Do not block message sync on conversation-details. After leaving one
+      // group and opening another, a slow/stale details request used to
+      // delay `getMessagesFromAPI`, and a stuck `canCallCurrentApi` from the
+      // previous chat could skip the fetch entirely — empty screen until re-open.
+      await Future.wait([
+        _controller.getConverstaionDetails(),
+        _controller.getMessagesFromAPI(),
+      ]);
+      if (openGeneration != null &&
+          openGeneration != _controller.chatOpenGeneration) {
+        return;
+      }
       await _controller.getMessageForStatus();
-      await _controller.getMessagesFromAPI();
       await _controller.readAllMessages();
       _controller.checkUserStatus();
     } else {

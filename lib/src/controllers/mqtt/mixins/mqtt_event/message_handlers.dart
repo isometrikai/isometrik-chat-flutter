@@ -52,6 +52,10 @@ mixin IsmChatMqttEventMessageHandlersMixin {
     if (conversation == null) return;
     if (conversation.lastMessageDetails?.messageId == message.messageId) return;
 
+    // Never apply an incoming message to the wrong group when multiple groups
+    // share the same members/name but have different conversationIds.
+    if (conversation.conversationId != message.conversationId) return;
+
     if (!hideMemberLeave) {
       // To handle and show last message & unread count in conversation list
       conversation = conversation.copyWith(

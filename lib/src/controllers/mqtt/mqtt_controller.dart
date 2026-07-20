@@ -658,9 +658,15 @@ class IsmChatMqttController extends GetxController
     if (conversationId.isEmpty) {
       final conversations = await getAllConversationFromDB();
       if (conversations != null || conversations?.isNotEmpty == true) {
+        // Match 1:1 chats only — groups must be deleted by explicit
+        // conversationId to avoid removing the wrong group when several
+        // groups share the same member.
         var conversation = conversations?.firstWhere(
-                (element) => element.opponentDetails?.userId == isometrickChatId,
-            orElse: IsmChatConversationModel.new);
+          (element) =>
+              element.isGroup != true &&
+              element.opponentDetails?.userId == isometrickChatId,
+          orElse: IsmChatConversationModel.new,
+        );
 
         if (conversation?.conversationId != null) {
           await IsmChatConfig.dbWrapper

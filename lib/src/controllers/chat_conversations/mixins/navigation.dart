@@ -16,7 +16,6 @@ mixin IsmChatConversationsNavigationMixin on GetxController {
     )) {
       if (!IsmChatUtility.chatPageControllerRegistered) {
         IsmChatPageBinding().dependencies();
-        return;
       }
       _controller.isRenderChatPageaScreen = IsRenderChatPageScreen.none;
       final chatPagecontroller = IsmChatUtility.chatPageController
@@ -27,9 +26,13 @@ mixin IsmChatConversationsNavigationMixin on GetxController {
       // Defer initialization to allow UI to render first
       unawaited(Future.microtask(chatPagecontroller.startInit));
     } else {
+      if (!IsmChatUtility.chatPageControllerRegistered) {
+        IsmChatPageBinding().dependencies();
+      }
       await IsmChatRoute.goToRoute(IsmChatPageView(
         viewTag: IsmChat.i.chatPageTag,
       ));
+      // Message load is kicked off from [IsmChatPageView.initState].
     }
   }
 
