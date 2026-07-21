@@ -111,6 +111,9 @@ mixin IsmChatMqttEventMessageHandlersMixin {
       return;
     }
     unawaited(chatController.getMessagesFromDB(message.conversationId ?? ''));
+    // Opponent replied / messaged — refresh our sent-message ticks from server
+    // in case the read MQTT event was dropped (e.g. shared debouncer race).
+    unawaited(chatController.getMessageForStatus());
     await Future.delayed(const Duration(milliseconds: 50));
     final self2 = this;
     if (self2 is IsmChatMqttEventVariablesMixin) {
