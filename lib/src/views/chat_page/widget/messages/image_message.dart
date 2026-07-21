@@ -84,6 +84,8 @@ class _IsmChatImageMessageState extends State<IsmChatImageMessage> {
                       message: message,
                       isSticker: isSticker,
                       isGif: isGif,
+                      maxWidth: maxWidth,
+                      maxHeight: maxHeight,
                     ),
                   ),
                 ),
@@ -195,11 +197,59 @@ class _MessageMediaImage extends StatelessWidget {
     required this.message,
     required this.isSticker,
     required this.isGif,
+    required this.maxWidth,
+    required this.maxHeight,
   });
 
   final IsmChatMessageModel message;
   final bool isSticker;
   final bool isGif;
+  final double maxWidth;
+  final double maxHeight;
+
+  /// GIFs decode at full intrinsic size unless boxed — reserve space up front.
+  static Size _gifDisplaySize(double maxWidth, double maxHeight) {
+    var width = maxWidth;
+    const aspectRatio = 1.0;
+    var height = width / aspectRatio;
+    if (height > maxHeight) {
+      height = maxHeight;
+      width = height * aspectRatio;
+    }
+    return Size(width, height);
+  }
+
+  static Widget _loadingPlaceholder(Size size) => SizedBox(
+        width: size.width,
+        height: size.height,
+        child: const Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+          ),
+        ),
+      );
+
+  static Widget _placeholderImage({
+    required Size size,
+    required String? imageUrl,
+    required BoxFit fit,
+  }) {
+    if (imageUrl == null || !imageUrl.isValidUrl) {
+      return _loadingPlaceholder(size);
+    }
+    return SizedBox(
+      width: size.width,
+      height: size.height,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        fit: fit,
+        placeholder: (_, __) => _loadingPlaceholder(size),
+        errorWidget: (_, __, ___) => _loadingPlaceholder(size),
+      ),
+    );
+  }
 
   static bool hasDisplayableMedia(IsmChatMessageModel message) {
     final attachment = message.attachments?.firstOrNull;
@@ -233,44 +283,80 @@ class _MessageMediaImage extends StatelessWidget {
         !hasNetworkUrl &&
         mediaUrl.isNotEmpty &&
         File(mediaUrl).existsSync();
-    final fit = isSticker ? BoxFit.contain : BoxFit.cover;
+    final fit = isSticker || isGif ? BoxFit.contain : BoxFit.cover;
     final borderRadius = isSticker
         ? BorderRadius.zero
         : BorderRadius.circular(IsmChatDimens.eight);
+    final gifSize = isGif ? _gifDisplaySize(maxWidth, maxHeight) : null;
+    final placeholderUrl = isGif
+        ? _gifPlaceholderUrl(attachment)
+        : null;
 
     Widget child;
     if (hasNetworkUrl) {
       child = CachedNetworkImage(
         imageUrl: mediaUrl,
         fit: fit,
-        placeholder: (_, __) => const Center(
-          child: SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-          ),
+        width: gifSize?.width,
+        height: gifSize?.height,
+        placeholder: (_, __) => _placeholderImage(
+          size: gifSize ?? Size(maxWidth, maxHeight),
+          imageUrl: placeholderUrl,
+          fit: fit,
         ),
-        errorWidget: (_, __, ___) => _mediaError(),
+        errorWidget: (_, __, ___) => _mediaError(gifSize),
       );
     } else if (hasBytes) {
-      child = Image.memory(bytes, fit: fit);
+      child = Image.memory(
+        bytes,
+        fit: fit,
+        width: gifSize?.width,
+        height: gifSize?.height,
+      );
     } else if (hasLocalFile) {
-      child = Image.file(File(mediaUrl), fit: fit);
+      child = Image.file(
+        File(mediaUrl),
+        fit: fit,
+        width: gifSize?.width,
+        height: gifSize?.height,
+      );
     } else if (IsmChatResponsive.isWeb(context) && mediaUrl.isNotEmpty) {
       final webBytes = mediaUrl.strigToUnit8List;
-      child =
-          webBytes.isEmpty ? _mediaError() : Image.memory(webBytes, fit: fit);
+      child = webBytes.isEmpty
+          ? _mediaError(gifSize)
+          : Image.memory(
+              webBytes,
+              fit: fit,
+              width: gifSize?.width,
+              height: gifSize?.height,
+            );
     } else {
-      child = _mediaError();
+      child = _mediaError(gifSize);
     }
+
+    final media = gifSize != null
+        ? SizedBox(width: gifSize.width, height: gifSize.height, child: child)
+        : child;
 
     return ClipRRect(
       borderRadius: borderRadius,
-      child: child,
+      child: media,
     );
   }
 
-  Widget _mediaError() => Container(
+  /// Prefer still frame while the animated GIF loads (Giphy sends this).
+  static String? _gifPlaceholderUrl(AttachmentModel? attachment) {
+    if (attachment == null) return null;
+    final still = attachment.stillUrl ?? '';
+    if (still.isValidUrl) return still;
+    final thumb = attachment.thumbnailUrl ?? '';
+    if (thumb.isValidUrl) return thumb;
+    return null;
+  }
+
+  Widget _mediaError(Size? gifSize) => Container(
+        width: gifSize?.width,
+        height: gifSize?.height,
         alignment: Alignment.center,
         color: IsmChatColors.greyColor.applyIsmOpacity(0.15),
         child: const Icon(Icons.broken_image_outlined),

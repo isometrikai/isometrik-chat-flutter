@@ -28,8 +28,11 @@ mixin IsmChatMqttEventVariablesMixin {
   /// List of actions related to message read status.
   List<IsmChatMqttActionModel> readActions = [];
 
-  /// Debouncer for handling rapid MQTT actions.
-  final ismChatActionDebounce = IsmChatActionDebounce();
+  /// Debouncer for delivery status MQTT actions.
+  final ismChatDeliveredDebounce = IsmChatActionDebounce();
+
+  /// Debouncer for read status MQTT actions (separate so delivery cannot cancel read).
+  final ismChatReadDebounce = IsmChatActionDebounce();
 
   /// Stream controller for broadcasting MQTT events.
   var eventStreamController = StreamController<EventModel>.broadcast();

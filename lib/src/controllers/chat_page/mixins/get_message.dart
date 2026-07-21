@@ -98,6 +98,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         .sortMessages(filterMessages(localMessages));
     _controller.isMessagesLoading = false;
     _controller._generateIndexedMessageList();
+    update();
   }
 
   List<IsmChatMessageModel> insertEndtoEndMessage(

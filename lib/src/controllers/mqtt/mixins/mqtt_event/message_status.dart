@@ -24,7 +24,7 @@ mixin IsmChatMqttEventMessageStatusMixin {
       vars.deliverdActions.add(actionModel);
       final actionsData =
           List<IsmChatMqttActionModel>.from(vars.deliverdActions);
-      vars.ismChatActionDebounce.run(() async {
+      vars.ismChatDeliveredDebounce.run(() async {
         for (final action in actionsData) {
           var conversation = await IsmChatConfig.dbWrapper
               ?.getConversation(action.conversationId ?? '');
@@ -37,7 +37,7 @@ mixin IsmChatMqttEventMessageStatusMixin {
           if (message != null) {
             final isDelivered = message.deliveredTo
                 ?.any((e) => e.userId == action.userDetails?.userId);
-            if (isDelivered == false) {
+            if (isDelivered != true) {
               message.deliveredTo?.add(
                 MessageStatus(
                   userId: action.userDetails?.userId ?? '',
@@ -59,6 +59,7 @@ mixin IsmChatMqttEventMessageStatusMixin {
             if (IsmChatUtility.chatPageControllerRegistered) {
               await IsmChatUtility.chatPageController
                   .getMessagesFromDB(action.conversationId ?? '');
+              IsmChatUtility.chatPageController.update();
             }
             if (IsmChatUtility.conversationControllerRegistered) {
               unawaited(IsmChatUtility.conversationController
@@ -84,7 +85,7 @@ mixin IsmChatMqttEventMessageStatusMixin {
       final vars = self as IsmChatMqttEventVariablesMixin;
       if (utils.isSenderMe(actionModel.userDetails?.userId)) return;
       vars.readActions.add(actionModel);
-      vars.ismChatActionDebounce.run(() async {
+      vars.ismChatReadDebounce.run(() async {
         final actionsData = List<IsmChatMqttActionModel>.from(vars.readActions);
         for (var action in actionsData) {
           var conversation = await IsmChatConfig.dbWrapper
@@ -98,7 +99,17 @@ mixin IsmChatMqttEventMessageStatusMixin {
           if (message != null) {
             final isRead = message.readBy
                 ?.any((e) => e.userId == action.userDetails?.userId);
-            if (isRead == false) {
+            final isDelivered = message.deliveredTo
+                ?.any((e) => e.userId == action.userDetails?.userId);
+            if (isDelivered != true) {
+              message.deliveredTo?.add(
+                MessageStatus(
+                  userId: action.userDetails?.userId ?? '',
+                  timestamp: action.sentAt,
+                ),
+              );
+            }
+            if (isRead != true) {
               message.readBy?.add(
                 MessageStatus(
                   userId: action.userDetails?.userId ?? '',
@@ -112,6 +123,9 @@ mixin IsmChatMqttEventMessageStatusMixin {
             // (you can't read a message that hasn't been delivered)
             if (message.readByAll == true) {
               message.deliveredToAll = true;
+            } else {
+              message.deliveredToAll =
+                  message.deliveredTo?.length == _othersToAckCount(conversation);
             }
             conversation?.messages?[message.key] = message;
             conversation = conversation?.copyWith(
@@ -125,6 +139,7 @@ mixin IsmChatMqttEventMessageStatusMixin {
             if (IsmChatUtility.chatPageControllerRegistered) {
               await IsmChatUtility.chatPageController
                   .getMessagesFromDB(action.conversationId ?? '');
+              IsmChatUtility.chatPageController.update();
             }
             if (IsmChatUtility.conversationControllerRegistered) {
               unawaited(IsmChatUtility.conversationController
@@ -220,6 +235,7 @@ mixin IsmChatMqttEventMessageStatusMixin {
         if (controller.conversation?.conversationId ==
             actionModel.conversationId) {
           await controller.getMessagesFromDB(actionModel.conversationId ?? '');
+          controller.update();
         }
       }
       if (IsmChatUtility.conversationControllerRegistered) {
