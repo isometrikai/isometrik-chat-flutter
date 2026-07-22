@@ -9,7 +9,8 @@ import 'package:isometrik_chat_flutter/src/models/meta_data_model.dart';
 /// Expected formats (asterisk count matches hidden length):
 /// - `nilpatel@gmail.com` → `********@gmail.com`
 /// - `9876543210` → `******3210`
-/// - `+91 9876543210` → `+91 ******3210`
+/// - `+91 9876543210` (space) → `+91 ******3210` (last 4 of national number)
+/// - `+919876543210` (no space) → `+9198******10` (first 4 + last 2 digits)
 /// - `instagram.com/nilpatel` → `instagram.com/********`
 /// - `facebook.com/nilpatel` → `facebook.com/********`
 /// - `x.com/nilpatel` → `x.com/********`
@@ -37,9 +38,14 @@ class IsmChatSensitiveContentMasker {
     caseSensitive: false,
   );
 
-  /// Country-code phones must start with `+` (e.g. `+91 9876543210`).
-  static final RegExp _phoneWithCodeRegExp = RegExp(
-    r'(\+\d{1,3})([\s\-]?)(\d{9,13})\b',
+  /// `+91 9876543210` / `+91-9876543210` — space or hyphen between code and number.
+  static final RegExp _phonePlusWithSeparatorRegExp = RegExp(
+    r'(\+\d{1,3})([\s\-]+)(\d{9,13})\b',
+  );
+
+  /// `+919876543210` — `+` with digits and no separator.
+  static final RegExp _phonePlusContinuousRegExp = RegExp(
+    r'\+(\d{10,15})\b',
   );
 
   /// Bare national / long numbers (9–13 digits).
@@ -77,13 +83,20 @@ class IsmChatSensitiveContentMasker {
       return '${'*' * local.length}@$domain';
     });
 
-    result = result.replaceAllMapped(_phoneWithCodeRegExp, (match) {
+    // Spaced / hyphenated country code: keep code + separator, mask national (last 4).
+    result = result.replaceAllMapped(_phonePlusWithSeparatorRegExp, (match) {
       final code = match.group(1) ?? '';
       final sep = match.group(2) ?? ' ';
       final number = match.group(3) ?? '';
       if (number.isEmpty) return match.group(0) ?? '';
-      final spacer = sep.isEmpty ? ' ' : sep;
-      return '$code$spacer${_maskPhoneKeepLast4(number)}';
+      return '$code$sep${_maskPhoneKeepLast4(number)}';
+    });
+
+    // Continuous `+9198…`: show first 4 digits + last 2 digits.
+    result = result.replaceAllMapped(_phonePlusContinuousRegExp, (match) {
+      final digits = match.group(1) ?? '';
+      if (digits.isEmpty) return match.group(0) ?? '';
+      return '+${_maskPhoneKeepFirst4Last2(digits)}';
     });
 
     result = result.replaceAllMapped(_phonePlainRegExp, (match) {
@@ -94,9 +107,27 @@ class IsmChatSensitiveContentMasker {
     return result;
   }
 
+  /// `9876543210` → `******3210` (hide all but last 4).
   static String _maskPhoneKeepLast4(String digits) {
     if (digits.length <= 4) return '*' * digits.length;
     return '${'*' * (digits.length - 4)}${digits.substring(digits.length - 4)}';
+  }
+
+  /// `919876543210` → `9198******10` (keep first 4 + last 2).
+  static String _maskPhoneKeepFirst4Last2(String digits) {
+    if (digits.length <= 6) {
+      // Too short to split meaningfully — still hide the middle when possible.
+      if (digits.length <= 2) return '*' * digits.length;
+      final last2 = digits.substring(digits.length - 2);
+      final headLen = digits.length > 4 ? 4 : digits.length - 2;
+      final head = digits.substring(0, headLen);
+      final middleLen = digits.length - headLen - 2;
+      return '$head${'*' * (middleLen > 0 ? middleLen : 0)}$last2';
+    }
+    final head = digits.substring(0, 4);
+    final tail = digits.substring(digits.length - 2);
+    final middleLen = digits.length - 6;
+    return '$head${'*' * middleLen}$tail';
   }
 
   /// Body to send to the backend: prefer local unmasked original when present.
