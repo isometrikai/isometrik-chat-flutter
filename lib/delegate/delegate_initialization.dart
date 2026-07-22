@@ -25,6 +25,7 @@ mixin IsmChatDelegateInitializationMixin {
     IsmMqttProperties? mqttProperties,
     bool? isMonthFirst,
     bool messageEncrypted = false,
+    bool maskSensitiveContent = false,
     NotificationBodyCallback? notificationBody,
   }) async {
     final initTimer = IsmChatInitTimer(
@@ -33,6 +34,7 @@ mixin IsmChatDelegateInitializationMixin {
     );
     IsmChatConfig.kNavigatorKey = kNavigatorKey;
     IsmChatConfig.messageEncrypted = messageEncrypted;
+    IsmChatConfig.maskSensitiveContent = maskSensitiveContent;
     IsmChatConfig.notificationBody = notificationBody;
     IsmChatConfig.dbName = databaseName;
     IsmChatConfig.useDatabase = !kIsWeb && useDatabase;

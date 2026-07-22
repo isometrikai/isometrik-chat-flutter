@@ -65,6 +65,9 @@ mixin IsmChatInitializationMixin {
   /// - `mqttProperties`: MQTT-specific properties (optional).
   /// - `isMonthFirst`: Date format preference (optional).
   /// - `messageEncrypted`: Whether messages are encrypted. Defaults to `false`.
+  /// - `maskSensitiveContent`: When `true`, mask email/phone/social URLs in
+  ///   local UI/DB on send, but still POST the original body to the API.
+  ///   Defaults to `false` (no masking).
   /// - `notificationBody`: Callback for custom notification body (optional).
   ///
   /// **Throws:**
@@ -104,6 +107,7 @@ mixin IsmChatInitializationMixin {
     IsmMqttProperties? mqttProperties,
     bool? isMonthFirst,
     bool messageEncrypted = false,
+    bool maskSensitiveContent = false,
     NotificationBodyCallback? notificationBody,
   }) async {
     if (sendPaidWalletMessage != null) {
@@ -142,6 +146,7 @@ mixin IsmChatInitializationMixin {
       mqttProperties: mqttProperties,
       isMonthFirst: isMonthFirst,
       messageEncrypted: messageEncrypted,
+      maskSensitiveContent: maskSensitiveContent,
       notificationBody: notificationBody,
     );
     // Set static field - IsmChat is defined in the same library (part of)

@@ -119,6 +119,21 @@ class IsmChatConfig {
   static bool? isMonthFirst;
   static ConversationVoidCallback? onConversationCreated;
   static bool? messageEncrypted;
+
+  /// When `true`, outgoing text is masked in local UI/DB (email, phone, social
+  /// URLs) while the **original** body is still sent to the backend.
+  ///
+  /// Default / unset = off — existing projects keep current behavior.
+  /// Enable only for apps that need this privacy rule:
+  /// ```dart
+  /// await IsmChat.i.initialize(
+  ///   maskSensitiveContent: true,
+  ///   // ...
+  /// );
+  /// ```
+  /// See [IsmChatSensitiveContentMasker] for formats and pending-retry handling.
+  static bool maskSensitiveContent = false;
+
   static NotificationBodyCallback? notificationBody;
 }
 

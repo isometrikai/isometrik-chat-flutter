@@ -86,7 +86,9 @@ class IsmChatCommonRepository {
         'conversationId': conversationId,
         'body': body,
         'parentMessageId': parentMessageId,
-        'metaData': metaData?.toMap(),
+        'metaData': IsmChatSensitiveContentMasker.stripLocalUnmaskedFromMeta(
+          metaData,
+        )?.toMap(),
         'events': events,
         'customType': customType,
         'attachments': attachments,
