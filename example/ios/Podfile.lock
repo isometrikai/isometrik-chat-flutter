@@ -2,11 +2,6 @@ PODS:
   - Flutter (1.0.0)
   - flutter_contacts (0.0.1):
     - Flutter
-  - flutter_image_compress_common (1.0.0):
-    - Flutter
-    - Mantle
-    - SDWebImage
-    - SDWebImageWebPCoder
   - flutter_native_video_trimmer (1.0.0):
     - Flutter
   - flutter_video_thumbnail_plus (0.0.1):
@@ -40,26 +35,16 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - Mantle (2.2.0):
-    - Mantle/extobjc (= 2.2.0)
-  - Mantle/extobjc (2.2.0)
   - open_filex (0.0.2):
     - Flutter
   - pdfx (1.0.0):
     - Flutter
-  - SDWebImage (5.21.7):
-    - SDWebImage/Core (= 5.21.7)
-  - SDWebImage/Core (5.21.7)
-  - SDWebImageWebPCoder (0.15.0):
-    - libwebp (~> 1.0)
-    - SDWebImage/Core (~> 5.17)
   - video_compress (0.3.0):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_contacts (from `.symlinks/plugins/flutter_contacts/ios`)
-  - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - flutter_native_video_trimmer (from `.symlinks/plugins/flutter_native_video_trimmer/ios`)
   - flutter_video_thumbnail_plus (from `.symlinks/plugins/flutter_video_thumbnail_plus/ios`)
   - get_thumbnail_video (from `.symlinks/plugins/get_thumbnail_video/ios`)
@@ -74,17 +59,12 @@ SPEC REPOS:
     - Google-Maps-iOS-Utils
     - GoogleMaps
     - libwebp
-    - Mantle
-    - SDWebImage
-    - SDWebImageWebPCoder
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
   flutter_contacts:
     :path: ".symlinks/plugins/flutter_contacts/ios"
-  flutter_image_compress_common:
-    :path: ".symlinks/plugins/flutter_image_compress_common/ios"
   flutter_native_video_trimmer:
     :path: ".symlinks/plugins/flutter_native_video_trimmer/ios"
   flutter_video_thumbnail_plus:
@@ -105,7 +85,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_contacts: 5383945387e7ca37cf963d4be57c21f2fc15ca9f
-  flutter_image_compress_common: 1697a328fd72bfb335507c6bca1a65fa5ad87df1
   flutter_native_video_trimmer: 11f6c679971dc3844519b485b9c878df8675ae3a
   flutter_video_thumbnail_plus: 11624c05e788b4dac5d434e605f68762e44dd23d
   get_thumbnail_video: 1a754d46b860dffefcc57b7290a43089cd5d7e58
@@ -114,11 +93,8 @@ SPEC CHECKSUMS:
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
   isometrik_chat_flutter: f565d4582181d18c004da6567c71ccf295228a20
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   open_filex: 432f3cd11432da3e39f47fcc0df2b1603854eff1
   pdfx: 77f4dddc48361fbb01486fa2bdee4532cbb97ef3
-  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
-  SDWebImageWebPCoder: 0e06e365080397465cc73a7a9b472d8a3bd0f377
   video_compress: f2133a07762889d67f0711ac831faa26f956980e
 
 PODFILE CHECKSUM: 227211d0756f4d212c40003f514d635c08706847

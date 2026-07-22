@@ -58,8 +58,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     if (!kIsWeb) {
       final notificationService = PushNotificationService();
-      notificationService.requestNotificationService();
-      notificationService.initialize();
+      unawaited(notificationService.initialize());
     }
   }
 
@@ -147,7 +146,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 class PushNotificationService {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  void requestNotificationService() async {
+  /// Latest FCM token — useful when testing Firebase Console → Send test message.
+  static String? fcmToken;
+
+  Future<void> requestNotificationService() async {
     final settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
@@ -159,47 +161,63 @@ class PushNotificationService {
     );
     if (![AuthorizationStatus.authorized, AuthorizationStatus.provisional]
         .contains(settings.authorizationStatus)) {
+      IsmChatLog.error(
+        'FCM permission denied: ${settings.authorizationStatus}',
+      );
       AppSettings.openAppSettings();
     }
   }
 
   Future<void> initialize() async {
-    // Handle foreground messages
+    await requestNotificationService();
+
+    // Required on iOS before getToken() returns a value.
+    if (!kIsWeb && GetPlatform.isIOS) {
+      final apnsToken = await messaging.getAPNSToken();
+      IsmChatLog.success('APNS token: $apnsToken');
+    }
+
+    fcmToken = await messaging.getToken();
+    IsmChatLog.success('FCM token: $fcmToken');
+
+    messaging.onTokenRefresh.listen((token) {
+      fcmToken = token;
+      IsmChatLog.success('FCM token refreshed: $token');
+    });
+
+    // Handle foreground messages (logs only — no local notification overlay).
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      IsmChatLog.success('Got a message whilst in the foreground!');
-      IsmChatLog.success('Message data: ${message.data}');
+      IsmChatLog.success('FCM foreground message received');
+      IsmChatLog.success('FCM data: ${message.data}');
 
       if (message.notification != null) {
         IsmChatLog.success(
-            'Message also contained a notification: ${message.notification}');
+          'FCM notification: title=${message.notification?.title} '
+          'body=${message.notification?.body}',
+        );
       }
     });
 
     // Handle notification tap when app is opened from notification
-    // This is called when user taps a notification and the app opens
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      IsmChatLog.success('Notification tapped! Opening conversation...');
-      IsmChatLog.success('Message data: ${message.data}');
-
-      // Handle notification payload and navigate to conversation
+      IsmChatLog.success('FCM notification tapped (background)');
+      IsmChatLog.success('FCM data: ${message.data}');
       IsmChat.i.handleNotificationPayload(message.data);
     });
 
-    // Handle notification tap when app is opened from terminated state
-    // Check if app was opened from a notification
+    // App opened from terminated state via notification
     final initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
-      IsmChatLog.success('App opened from terminated state via notification');
-      IsmChatLog.success('Message data: ${initialMessage.data}');
-
-      // Handle notification payload and navigate to conversation
+      IsmChatLog.success('FCM opened app from terminated state');
+      IsmChatLog.success('FCM data: ${initialMessage.data}');
       IsmChat.i.handleNotificationPayload(initialMessage.data);
     }
   }
 
+  /// Re-fetch token (e.g. after login). Prefer [PushNotificationService.fcmToken].
   Future<String?> getToken() async {
-    String? token = await messaging.getToken();
-    IsmChatLog.success('Token: $token');
-    return token;
+    fcmToken = await messaging.getToken();
+    IsmChatLog.success('FCM token: $fcmToken');
+    return fcmToken;
   }
 }

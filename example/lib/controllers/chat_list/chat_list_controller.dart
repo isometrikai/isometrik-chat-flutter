@@ -131,8 +131,15 @@ class ChatListController extends GetxController {
   }
 
   subscribeToTopic() async {
-    await FirebaseMessaging.instance
-        .subscribeToTopic('chat-${userDetails.userId}');
+    try {
+      await FirebaseMessaging.instance
+          .subscribeToTopic('chat-${userDetails.userId}');
+      IsmChatLog.success(
+        'Subscribed to FCM topic: chat-${userDetails.userId}',
+      );
+    } catch (e, st) {
+      IsmChatLog.error('FCM topic subscribe failed: $e', st);
+    }
   }
 
   Future<void> unSubscribeToTopic() async {
