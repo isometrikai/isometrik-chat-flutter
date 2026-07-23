@@ -76,6 +76,7 @@ mixin IsmChatShowDialogMixin on GetxController {
     }
     await _showThemedAlertDialog(
       title: request.title,
+      content: request.body == null ? null : Text(request.body!),
       actionLabels: request.actions.isEmpty
           ? null
           : request.actions.map((a) => a.label).toList(),
@@ -485,29 +486,44 @@ mixin IsmChatShowDialogMixin on GetxController {
     var isUserAdmin = _controller.groupMembers.any((e) =>
         e.userId == IsmChatConfig.communicationConfig.userConfig.userId &&
         e.isAdmin);
+    final conversation = _controller.conversation;
     if (adminCount == 1 && !askToLeave && isUserAdmin) {
-      await _showThemedAlertDialog(
-        title: IsmChatStrings.areYouSure,
-        content: const Text(IsmChatStrings.youAreOnlyAdmin),
-        actionLabels: const [IsmChatStrings.exit],
-        callbackActions: [
-          () => showDialogExitButton(true),
-        ],
-        cancelLabel: IsmChatStrings.assignAdmin,
+      // Only-admin warning — host can customize via chatConfirmationPresenter.
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.exitGroupOnlyAdmin,
+          title: IsmChatStrings.areYouSure,
+          body: IsmChatStrings.youAreOnlyAdmin,
+          conversation: conversation,
+          cancelLabel: IsmChatStrings.assignAdmin,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.exitGroup,
+              label: IsmChatStrings.exit,
+              onPressed: () => showDialogExitButton(true),
+            ),
+          ],
+        ),
       );
     } else {
-      await _showThemedAlertDialog(
-        title: 'Exit ${_controller.conversation?.chatName ?? ''}?',
-        content: const Text(
-          'Only group admins will be notified that you left the group',
-        ),
-        actionLabels: const ['Exit'],
-        callbackActions: [
-          () async => await _controller.leaveGroup(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.exitGroup,
+          title: 'Exit ${conversation?.chatName ?? ''}?',
+          body:
+              'Only group admins will be notified that you left the group',
+          conversation: conversation,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.exitGroup,
+              label: IsmChatStrings.exitGroup,
+              onPressed: () async => await _controller.leaveGroup(
                 adminCount: adminCount,
                 isUserAdmin: isUserAdmin,
-              )
-        ],
+              ),
+            ),
+          ],
+        ),
       );
     }
   }

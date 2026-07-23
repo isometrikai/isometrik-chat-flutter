@@ -40,6 +40,12 @@ enum IsmChatConfirmationType {
   /// Delete a 1-1 (or non-group) chat from list or conversation info.
   deleteChat,
 
+  /// Leave / exit a group (Group Info or conversation list).
+  exitGroup,
+
+  /// Only-admin warning before exiting a group (assign admin or exit anyway).
+  exitGroupOnlyAdmin,
+
   /// User tapped a reaction they already added to a message.
   alreadyAddedReaction,
 }
@@ -53,6 +59,7 @@ enum IsmChatConfirmationActionId {
   clearChat,
   deleteGroup,
   deleteChat,
+  exitGroup,
   dismiss,
   cannotBlockWhenTheyBlockedMe,
 }
@@ -76,6 +83,7 @@ class IsmChatConfirmationRequest {
     required this.type,
     required this.title,
     required this.actions,
+    this.body,
     this.cancelLabel,
     this.onCancel,
     this.conversation,
@@ -86,6 +94,11 @@ class IsmChatConfirmationRequest {
 
   final IsmChatConfirmationType type;
   final String title;
+
+  /// Optional message under [title] (e.g. exit-group explanation).
+  /// Host custom UI can show this; SDK default renders it as dialog content.
+  final String? body;
+
   final List<IsmChatConfirmationAction> actions;
   final String? cancelLabel;
   final VoidCallback? onCancel;

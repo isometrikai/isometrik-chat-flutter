@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
 /// Presents block/delete/clear/delete-chat confirmations via
@@ -32,6 +33,7 @@ class IsmChatConfirmationHelper {
     await IsmChatContextWidget.showDialogContext(
       content: IsmChatAlertDialogBox(
         title: request.title,
+        content: request.body == null ? null : Text(request.body!),
         actionLabels: labels.isEmpty ? null : labels,
         callbackActions: callbacks.isEmpty ? null : callbacks,
         cancelLabel: request.cancelLabel ?? IsmChatStrings.cancel,
