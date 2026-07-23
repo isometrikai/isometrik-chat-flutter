@@ -299,13 +299,15 @@ class _IsmChatConverstaionInfoViewState
                               ),
                             ),
                             if (controller.conversation?.isGroup ?? false)
-                              CircleAvatar(
-                                radius: IsmChatDimens.forteen,
-                                child: Icon(
-                                  Icons.edit_outlined,
-                                  size: IsmChatDimens.eighteen,
-                                ),
-                              )
+                              IsmChatProperties.chatPageProperties
+                                      .groupProfileEditIcon ??
+                                  CircleAvatar(
+                                    radius: IsmChatDimens.forteen,
+                                    child: Icon(
+                                      Icons.edit_outlined,
+                                      size: IsmChatDimens.eighteen,
+                                    ),
+                                  )
                           ],
                         ),
                       ),
@@ -431,9 +433,12 @@ class _IsmChatConverstaionInfoViewState
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  SvgPicture.asset(
-                                    IsmChatAssets.gallarySvg,
-                                  ),
+                                  // App override: IsmChatPageProperties.conversationMediaIcon
+                                  IsmChatProperties.chatPageProperties
+                                          .conversationMediaIcon ??
+                                      SvgPicture.asset(
+                                        IsmChatAssets.gallarySvg,
+                                      ),
                                   IsmChatDimens.boxWidth12,
                                   Text(
                                     isDocumentAllowed
@@ -671,11 +676,12 @@ class _IsmChatConverstaionInfoViewState
                                             color: groupTheme.menuIconColor,
                                           )
                                         : null,
-                                title: Text(IsmChatConfig.communicationConfig
-                                            .userConfig.userId ==
-                                        member.userId
-                                    ? IsmChatStrings.you
-                                    : _memberDisplayName(member),
+                                title: Text(
+                                    IsmChatConfig.communicationConfig.userConfig
+                                                .userId ==
+                                            member.userId
+                                        ? IsmChatStrings.you
+                                        : _memberDisplayName(member),
                                     style: groupTheme.listTileTitleTextStyle),
                                 subtitle: Text(
                                   member.userName,
@@ -721,8 +727,8 @@ class _IsmChatConverstaionInfoViewState
                               IsmChatDimens.boxHeight10,
                               Divider(
                                 thickness: 1,
-                                color: groupTheme.dividerColor
-                                    .applyIsmOpacity(.3),
+                                color:
+                                    groupTheme.dividerColor.applyIsmOpacity(.3),
                               ),
                               IsmChatDimens.boxHeight5,
                               TextButton.icon(
@@ -792,8 +798,8 @@ class _IsmChatConverstaionInfoViewState
                               Divider(
                                 height: 0,
                                 thickness: 1,
-                                color: groupTheme.dividerColor
-                                    .applyIsmOpacity(.3),
+                                color:
+                                    groupTheme.dividerColor.applyIsmOpacity(.3),
                               ),
                               TextButton.icon(
                                 onPressed: () async {

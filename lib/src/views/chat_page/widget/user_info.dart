@@ -280,9 +280,11 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           );
                         }
                       },
-                      leading: SvgPicture.asset(
-                        IsmChatAssets.gallarySvg,
-                      ),
+                      leading: IsmChatProperties
+                              .chatPageProperties.conversationMediaIcon ??
+                          SvgPicture.asset(
+                            IsmChatAssets.gallarySvg,
+                          ),
                       title: Text(
                         isDocumentAllowed
                             ? IsmChatStrings.mediaLinksAndDocs
