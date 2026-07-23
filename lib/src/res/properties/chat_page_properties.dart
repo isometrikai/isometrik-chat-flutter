@@ -58,8 +58,6 @@ class IsmChatPageProperties {
     this.voiceMessageProgressOverlayColorOpponent,
     this.onUserConversationInfoTap,
     this.giphyApiKey,
-    this.groupProfileEditIcon,
-    this.conversationMediaIcon,
   });
 
   final Widget? placeholder;
@@ -342,38 +340,4 @@ class IsmChatPageProperties {
   /// Get a free key at https://developers.giphy.com/
   /// Requires [IsmChatFeature.giphyPicker] in [features].
   final String? giphyApiKey;
-
-  /// Edit badge icon on the group profile photo in [IsmChatConverstaionInfoView].
-  ///
-  /// Shown as the child of the small [CircleAvatar] overlay on the group image.
-  /// Reuse this when the host app wants a custom edit/camera asset instead of
-  /// the SDK default `Icons.edit_outlined`.
-  ///
-  /// Example:
-  /// ```dart
-  /// IsmChatPageProperties(
-  ///   groupProfileEditIcon: Icon(Icons.camera_alt_outlined, size: 18),
-  ///   // or: SvgPicture.asset('assets/icons/edit.svg', width: 18, height: 18),
-  /// )
-  /// ```
-  ///
-  /// If null, SDK uses `Icons.edit_outlined`.
-  final Widget? groupProfileEditIcon;
-
-  /// Leading icon for the Media / Links / Docs row in conversation info screens.
-  ///
-  /// Reused by:
-  /// - [IsmChatConverstaionInfoView] (group / chat info)
-  /// - [IsmChatUserInfo] (1:1 profile info)
-  ///
-  /// Example:
-  /// ```dart
-  /// IsmChatPageProperties(
-  ///   conversationMediaIcon: SvgPicture.asset('assets/icons/gallery.svg'),
-  ///   // or: Icon(Icons.photo_library_outlined),
-  /// )
-  /// ```
-  ///
-  /// If null, SDK uses [IsmChatAssets.gallarySvg].
-  final Widget? conversationMediaIcon;
 }

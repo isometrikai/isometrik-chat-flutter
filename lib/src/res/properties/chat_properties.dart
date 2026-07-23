@@ -6,6 +6,12 @@ class IsmChatProperties {
   static IsmChatConversationProperties conversationProperties =
       IsmChatConversationProperties();
   static IsmChatPageProperties chatPageProperties = IsmChatPageProperties();
+
+  /// Icons / widgets for Group Info and 1:1 conversation info screens.
+  /// Prefer this over stuffing icon overrides into [chatPageProperties].
+  static IsmChatConversationInfoAssets conversationInfoAssets =
+      IsmChatConversationInfoAssets();
+
   static bool isUserApiCall = false;
   static Widget? loadingDialog;
   static Widget? noChatSelectedPlaceholder;

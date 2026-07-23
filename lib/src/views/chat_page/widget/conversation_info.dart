@@ -119,6 +119,23 @@ class _IsmChatConverstaionInfoViewState
     }
   }
 
+  /// Flat action-row style for Clear chat / Exit group / Delete / Block.
+  ///
+  /// Host apps often set [ThemeData.textButtonTheme] with a filled
+  /// `backgroundColor` (seen as a tan/orange pill). Force transparent so
+  /// Group Info actions stay text-only. Reuse this for any similar action
+  /// rows on this page instead of leaving TextButton unstyled.
+  static final ButtonStyle _flatActionButtonStyle = TextButton.styleFrom(
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    shadowColor: Colors.transparent,
+    surfaceTintColor: Colors.transparent,
+    // Keep left-aligned icon+label flush with the card padding.
+    alignment: Alignment.centerLeft,
+    padding: EdgeInsets.zero,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  );
+
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
@@ -204,10 +221,12 @@ class _IsmChatConverstaionInfoViewState
                           value: 1,
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.edit,
-                                color: groupTheme.menuIconColor,
-                              ),
+                              IsmChatProperties.conversationInfoAssets
+                                      .changeGroupTitleIcon ??
+                                  Icon(
+                                    Icons.edit,
+                                    color: groupTheme.menuIconColor,
+                                  ),
                               IsmChatDimens.boxWidth8,
                               const Text(IsmChatStrings.changeGroupTitle)
                             ],
@@ -217,10 +236,12 @@ class _IsmChatConverstaionInfoViewState
                           value: 2,
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.photo,
-                                color: groupTheme.menuIconColor,
-                              ),
+                              IsmChatProperties.conversationInfoAssets
+                                      .changeGroupImageIcon ??
+                                  Icon(
+                                    Icons.photo,
+                                    color: groupTheme.menuIconColor,
+                                  ),
                               IsmChatDimens.boxWidth8,
                               const Text(IsmChatStrings.changeGroupPhoto)
                             ],
@@ -333,7 +354,8 @@ class _IsmChatConverstaionInfoViewState
                                 ),
                               ),
                               if (controller.conversation?.isGroup ?? false)
-                                IsmChatProperties.chatPageProperties
+                                // App override: IsmChatConversationInfoProperties.groupProfileEditIcon
+                                IsmChatProperties.conversationInfoAssets
                                         .groupProfileEditIcon ??
                                     CircleAvatar(
                                       radius: IsmChatDimens.forteen,
@@ -469,8 +491,8 @@ class _IsmChatConverstaionInfoViewState
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    // App override: IsmChatPageProperties.conversationMediaIcon
-                                    IsmChatProperties.chatPageProperties
+                                    // App override: IsmChatConversationInfoProperties.conversationMediaIcon
+                                    IsmChatProperties.conversationInfoAssets
                                             .conversationMediaIcon ??
                                         SvgPicture.asset(
                                           IsmChatAssets.gallarySvg,
@@ -741,7 +763,7 @@ class _IsmChatConverstaionInfoViewState
                           ),
                           IsmChatDimens.boxHeight20,
                           Container(
-                            padding: IsmChatDimens.edgeInsets16,
+                            padding: IsmChatDimens.edgeInsets10,
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(IsmChatDimens.sixteen),
@@ -751,14 +773,18 @@ class _IsmChatConverstaionInfoViewState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextButton.icon(
+                                  style: _flatActionButtonStyle,
                                   onPressed: () async {
                                     controller
                                         .showDialogForClearChatAndDeleteGroup();
                                   },
-                                  icon: Icon(
-                                    Icons.clear_all_rounded,
-                                    color: groupTheme.menuIconColor,
-                                  ),
+                                  // App override: IsmChatConversationInfoProperties.clearChatIcon
+                                  icon: IsmChatProperties.conversationInfoAssets
+                                          .clearChatIcon ??
+                                      Icon(
+                                        Icons.clear_all_rounded,
+                                        color: groupTheme.menuIconColor,
+                                      ),
                                   label: Text(
                                     IsmChatStrings.clearChat,
                                     style: groupTheme.bodyTextStyle.copyWith(
@@ -766,25 +792,29 @@ class _IsmChatConverstaionInfoViewState
                                     ),
                                   ),
                                 ),
-                                IsmChatDimens.boxHeight10,
+                                // IsmChatDimens.boxHeight10,
                                 Divider(
                                   thickness: 1,
                                   color: groupTheme.dividerColor
                                       .applyIsmOpacity(.3),
                                 ),
-                                IsmChatDimens.boxHeight5,
+                                // IsmChatDimens.boxHeight5,
                                 TextButton.icon(
+                                  style: _flatActionButtonStyle,
                                   onPressed: controller.showDialogExitButton,
-                                  icon: const Icon(
-                                    Icons.logout_rounded,
-                                    color: IsmChatColors.redColor,
-                                  ),
+                                  // App override: IsmChatConversationInfoProperties.exitGroupIcon
+                                  icon: IsmChatProperties.conversationInfoAssets
+                                          .exitGroupIcon ??
+                                      const Icon(
+                                        Icons.logout_rounded,
+                                        color: IsmChatColors.redColor,
+                                      ),
                                   label: Text(
                                     IsmChatStrings.exitGroup,
                                     style: IsmChatStyles.w600red16,
                                   ),
                                 ),
-                                IsmChatDimens.boxHeight5,
+                                // IsmChatDimens.boxHeight5,
                               ],
                             ),
                           ),
@@ -801,6 +831,7 @@ class _IsmChatConverstaionInfoViewState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextButton.icon(
+                                  style: _flatActionButtonStyle,
                                   onPressed: () async {
                                     final conv = controller.conversation;
                                     await IsmChatConfirmationHelper.present(
@@ -828,10 +859,13 @@ class _IsmChatConverstaionInfoViewState
                                     );
                                     IsmChatRoute.goBack();
                                   },
-                                  icon: const Icon(
-                                    Icons.clear_all_outlined,
-                                    color: IsmChatColors.redColor,
-                                  ),
+                                  // App override: IsmChatConversationInfoProperties.clearChatIcon
+                                  icon: IsmChatProperties.conversationInfoAssets
+                                          .clearChatIcon ??
+                                      const Icon(
+                                        Icons.clear_all_outlined,
+                                        color: IsmChatColors.redColor,
+                                      ),
                                   label: Text(
                                     IsmChatStrings.clearChat,
                                     style: IsmChatStyles.w600red16,
@@ -844,6 +878,7 @@ class _IsmChatConverstaionInfoViewState
                                       .applyIsmOpacity(.3),
                                 ),
                                 TextButton.icon(
+                                  style: _flatActionButtonStyle,
                                   onPressed: () async {
                                     final conv = controller.conversation;
                                     await IsmChatConfirmationHelper.present(
@@ -869,10 +904,13 @@ class _IsmChatConverstaionInfoViewState
                                     IsmChatRoute.goBack();
                                     IsmChatRoute.goBack();
                                   },
-                                  icon: const Icon(
-                                    Icons.delete_forever_outlined,
-                                    color: IsmChatColors.redColor,
-                                  ),
+                                  // App override: IsmChatConversationInfoProperties.deleteChatIcon
+                                  icon: IsmChatProperties.conversationInfoAssets
+                                          .deleteChatIcon ??
+                                      const Icon(
+                                        Icons.delete_forever_outlined,
+                                        color: IsmChatColors.redColor,
+                                      ),
                                   label: Text(
                                     IsmChatStrings.deleteChat,
                                     style: IsmChatStyles.w600red16,
@@ -888,13 +926,17 @@ class _IsmChatConverstaionInfoViewState
                                         .applyIsmOpacity(.3),
                                   ),
                                   TextButton.icon(
+                                    style: _flatActionButtonStyle,
                                     onPressed: () async {
                                       await controller.handleBlockUnblock(true);
                                     },
-                                    icon: const Icon(
-                                      Icons.block_outlined,
-                                      color: IsmChatColors.redColor,
-                                    ),
+                                    icon: IsmChatProperties
+                                            .conversationInfoAssets
+                                            .blockUserIcon ??
+                                        const Icon(
+                                          Icons.block_outlined,
+                                          color: IsmChatColors.redColor,
+                                        ),
                                     label: Text(
                                       '${controller.conversation?.isBlockedByMe == true ? IsmChatStrings.unblock : IsmChatStrings.block} ${controller.conversation?.chatName ?? ''}',
                                       style: IsmChatStyles.w600red16,
