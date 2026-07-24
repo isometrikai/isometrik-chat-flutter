@@ -34,87 +34,93 @@ class EmojiBoard extends StatelessWidget {
           final isDark =
               IsmChatThemeResolver.brightness(context) == Brightness.dark;
           final showGiphy = _showGiphyPicker;
+          // Keep panel content above Android/iOS system navigation bar.
+          // Background still fills edge-to-edge via [ColoredBox].
+          final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
 
           return ColoredBox(
             color: panelColor,
-            child: SizedBox(
-              height: IsmChatDimens.twoHundredFifty,
-              child: Column(
-                children: [
-                  if (showGiphy) ...[
-                    Obx(
-                      () => Row(
-                        children: [
-                          _PanelTab(
-                            label: 'Emoji',
-                            selected: controller.emojiBoardTab ==
-                                IsmChatEmojiBoardTab.emoji,
-                            onTap: () => controller.emojiBoardTab =
-                                IsmChatEmojiBoardTab.emoji,
-                            primaryColor: primaryColor,
-                            textStyle: textFieldTheme.inputTextStyle,
-                          ),
-                          _PanelTab(
-                            label: IsmChatStrings.gif,
-                            selected: controller.emojiBoardTab ==
-                                IsmChatEmojiBoardTab.gif,
-                            onTap: () => controller.emojiBoardTab =
-                                IsmChatEmojiBoardTab.gif,
-                            primaryColor: primaryColor,
-                            textStyle: textFieldTheme.inputTextStyle,
-                          ),
-                          _PanelTab(
-                            label: IsmChatStrings.sticker,
-                            selected: controller.emojiBoardTab ==
-                                IsmChatEmojiBoardTab.sticker,
-                            onTap: () => controller.emojiBoardTab =
-                                IsmChatEmojiBoardTab.sticker,
-                            primaryColor: primaryColor,
-                            textStyle: textFieldTheme.inputTextStyle,
-                          ),
-                        ],
+            child: Padding(
+              padding: EdgeInsets.only(bottom: bottomInset),
+              child: SizedBox(
+                height: IsmChatDimens.twoHundredFifty,
+                child: Column(
+                  children: [
+                    if (showGiphy) ...[
+                      Obx(
+                        () => Row(
+                          children: [
+                            _PanelTab(
+                              label: 'Emoji',
+                              selected: controller.emojiBoardTab ==
+                                  IsmChatEmojiBoardTab.emoji,
+                              onTap: () => controller.emojiBoardTab =
+                                  IsmChatEmojiBoardTab.emoji,
+                              primaryColor: primaryColor,
+                              textStyle: textFieldTheme.inputTextStyle,
+                            ),
+                            _PanelTab(
+                              label: IsmChatStrings.gif,
+                              selected: controller.emojiBoardTab ==
+                                  IsmChatEmojiBoardTab.gif,
+                              onTap: () => controller.emojiBoardTab =
+                                  IsmChatEmojiBoardTab.gif,
+                              primaryColor: primaryColor,
+                              textStyle: textFieldTheme.inputTextStyle,
+                            ),
+                            _PanelTab(
+                              label: IsmChatStrings.sticker,
+                              selected: controller.emojiBoardTab ==
+                                  IsmChatEmojiBoardTab.sticker,
+                              onTap: () => controller.emojiBoardTab =
+                                  IsmChatEmojiBoardTab.sticker,
+                              primaryColor: primaryColor,
+                              textStyle: textFieldTheme.inputTextStyle,
+                            ),
+                          ],
+                        ),
                       ),
+                      const Divider(height: 1),
+                    ],
+                    Expanded(
+                      child: showGiphy
+                          ? Obx(() {
+                              switch (controller.emojiBoardTab) {
+                                case IsmChatEmojiBoardTab.gif:
+                                  return const GiphyPickerPanel(
+                                    key: ValueKey('ism_giphy_gif_panel'),
+                                    stickers: false,
+                                  );
+                                case IsmChatEmojiBoardTab.sticker:
+                                  return const GiphyPickerPanel(
+                                    key: ValueKey('ism_giphy_sticker_panel'),
+                                    stickers: true,
+                                  );
+                                case IsmChatEmojiBoardTab.emoji:
+                                  return _EmojiPickerView(
+                                    key: const ValueKey('ism_emoji_panel'),
+                                    controller: controller,
+                                    panelColor: panelColor,
+                                    categoryIconColor: categoryIconColor,
+                                    actionIconColor: actionIconColor,
+                                    primaryColor: primaryColor,
+                                    isDark: isDark,
+                                    textFieldTheme: textFieldTheme,
+                                  );
+                              }
+                            })
+                          : _EmojiPickerView(
+                              controller: controller,
+                              panelColor: panelColor,
+                              categoryIconColor: categoryIconColor,
+                              actionIconColor: actionIconColor,
+                              primaryColor: primaryColor,
+                              isDark: isDark,
+                              textFieldTheme: textFieldTheme,
+                            ),
                     ),
-                    const Divider(height: 1),
                   ],
-                  Expanded(
-                    child: showGiphy
-                        ? Obx(() {
-                            switch (controller.emojiBoardTab) {
-                              case IsmChatEmojiBoardTab.gif:
-                                return const GiphyPickerPanel(
-                                  key: ValueKey('ism_giphy_gif_panel'),
-                                  stickers: false,
-                                );
-                              case IsmChatEmojiBoardTab.sticker:
-                                return const GiphyPickerPanel(
-                                  key: ValueKey('ism_giphy_sticker_panel'),
-                                  stickers: true,
-                                );
-                              case IsmChatEmojiBoardTab.emoji:
-                                return _EmojiPickerView(
-                                  key: const ValueKey('ism_emoji_panel'),
-                                  controller: controller,
-                                  panelColor: panelColor,
-                                  categoryIconColor: categoryIconColor,
-                                  actionIconColor: actionIconColor,
-                                  primaryColor: primaryColor,
-                                  isDark: isDark,
-                                  textFieldTheme: textFieldTheme,
-                                );
-                            }
-                          })
-                        : _EmojiPickerView(
-                            controller: controller,
-                            panelColor: panelColor,
-                            categoryIconColor: categoryIconColor,
-                            actionIconColor: actionIconColor,
-                            primaryColor: primaryColor,
-                            isDark: isDark,
-                            textFieldTheme: textFieldTheme,
-                          ),
-                  ),
-                ],
+                ),
               ),
             ),
           );
@@ -204,9 +210,8 @@ class _EmojiPickerView extends StatelessWidget {
             iconColor: categoryIconColor,
             iconColorSelected: textFieldTheme.emojiColor ?? primaryColor,
             backspaceColor: primaryColor,
-            dividerColor: isDark
-                ? IsmChatColors.greyColor
-                : IsmChatColors.greyColorLight,
+            dividerColor:
+                isDark ? IsmChatColors.greyColor : IsmChatColors.greyColorLight,
           ),
           searchViewConfig: SearchViewConfig(
             backgroundColor: panelColor,
