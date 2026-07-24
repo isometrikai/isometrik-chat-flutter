@@ -39,7 +39,6 @@ class IsmChatPageHeaderProperties {
     this.searchMessageIcon,
     this.changeWallpaperIcon,
     this.blockUserIcon,
-    this.unblockUserIcon,
     this.clearChatIcon,
     this.deleteGroupIcon,
   });
@@ -92,11 +91,6 @@ class IsmChatPageHeaderProperties {
   ///
   /// Pair with [unblockUserIcon]. If null, SDK uses `Icons.block`.
   final Widget? blockUserIcon;
-
-  /// Unblock user item when the opponent is blocked.
-  ///
-  /// If null, falls back to [blockUserIcon], then SDK `Icons.block`.
-  final Widget? unblockUserIcon;
 
   /// Clear chat item in the header popup menu.
   ///

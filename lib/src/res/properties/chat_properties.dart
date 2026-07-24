@@ -12,6 +12,11 @@ class IsmChatProperties {
   static IsmChatConversationInfoAssets conversationInfoAssets =
       IsmChatConversationInfoAssets();
 
+  /// Active SDK UI locale (`en` / `fr` / `pt`). Prefer [IsmChatL10n.setLocale]
+  /// or [IsmChat.i.setLocale] when the host app language changes.
+  static Locale get locale => IsmChatL10n.locale;
+  static set locale(Locale value) => IsmChatL10n.setLocale(value);
+
   static bool isUserApiCall = false;
   static Widget? loadingDialog;
   static Widget? noChatSelectedPlaceholder;

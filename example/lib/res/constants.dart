@@ -50,6 +50,10 @@ class Constants {
       'wss://connections.isometrik.ai:2096/mqtt';
   static const int portForWeb = 2096;
 
+  /// Demo UI language for the example app + chat SDK (`en` / `fr` / `pt`).
+  /// Used by [AppConfig.appLocale]; change there or here for quick testing.
+  static const String languageCode = 'en';
+
   // static const String hostname = 'connections.isometrik.io';
   // static const int port = 2052;
 

@@ -57,7 +57,7 @@ class _IsmChatGlobalSearchViewState extends State<IsmChatGlobalSearchView>
                       height: IsmChatDimens.fifty,
                       child: TabBar(
                         controller: _tabController,
-                        tabs: const [
+                        tabs: [
                           Text(IsmChatStrings.conversation),
                           Text(IsmChatStrings.messages),
                           Text(IsmChatStrings.people)

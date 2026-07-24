@@ -35,7 +35,7 @@ class IsmChatConversationList extends StatelessWidget {
               },
               child: Center(
                 child: IsmChatProperties.conversationProperties.placeholder ??
-                    const IsmChatEmptyView(
+                    IsmChatEmptyView(
                       icon: Icon(Icons.chat_outlined),
                       text: IsmChatStrings.noConversation,
                     ),
@@ -218,7 +218,7 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                           flex: 1,
                           backgroundColor: IsmChatColors.redColor,
                           foregroundColor: IsmChatColors.whiteColor,
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.delete_rounded,
                             color: IsmChatColors.whiteColor,
                           ).icon,

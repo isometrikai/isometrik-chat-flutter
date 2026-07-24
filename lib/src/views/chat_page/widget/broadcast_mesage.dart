@@ -311,7 +311,7 @@ class _BroadCastMessageState extends State<_BroadCastMessage> {
                               ),
                             )
                           : IsmChatProperties.chatPageProperties.placeholder ??
-                              const IsmChatEmptyView(
+                              IsmChatEmptyView(
                                 icon: Icon(
                                   Icons.chat_outlined,
                                 ),

@@ -65,7 +65,7 @@ mixin IsmChatPageSendMessageDocumentMixin {
         : await IsmChatUtility.fileToSize(File(file.path ?? ''));
     if (!sizeMedia.size()) {
       await IsmChatContextWidget.showDialogContext(
-        content: const IsmChatAlertDialogBox(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.youCanNotSend,
           cancelLabel: IsmChatStrings.okay,
         ),

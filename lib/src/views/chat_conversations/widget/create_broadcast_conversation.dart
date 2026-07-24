@@ -353,7 +353,7 @@ class IsmChatCreateBroadCastView extends StatelessWidget {
                     controller.selectedUserList, '');
               } else {
                 await IsmChatContextWidget.showDialogContext(
-                  content: const IsmChatAlertDialogBox(
+                  content: IsmChatAlertDialogBox(
                     title: IsmChatStrings.broadcastAlert,
                     cancelLabel: 'Okay',
                   ),

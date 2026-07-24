@@ -280,8 +280,8 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                           );
                         }
                       },
-                      leading: IsmChatProperties.conversationInfoProperties
-                              .conversationMediaIcon ??
+                      leading: IsmChatProperties
+                              .conversationInfoAssets.conversationMediaIcon ??
                           SvgPicture.asset(
                             IsmChatAssets.gallarySvg,
                           ),

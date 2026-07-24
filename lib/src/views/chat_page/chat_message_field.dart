@@ -545,7 +545,7 @@ class _MicOrSendButton extends StatelessWidget {
                         ..seconds = 0;
                     } else {
                       await Get.dialog(
-                        const IsmChatAlertDialogBox(
+                        IsmChatAlertDialogBox(
                           title: IsmChatStrings.youCanNotSend,
                           cancelLabel: IsmChatStrings.okay,
                         ),
@@ -596,7 +596,7 @@ class _MicOrSendButton extends StatelessWidget {
                   final state = await IsmChatBlob.checkPermission('microphone');
                   if (state == 'prompt') {
                     unawaited(Get.dialog(
-                      const IsmChatAlertDialogBox(
+                      IsmChatAlertDialogBox(
                         title: IsmChatStrings.micePermission,
                         cancelLabel: IsmChatStrings.okay,
                       ),
@@ -605,7 +605,7 @@ class _MicOrSendButton extends StatelessWidget {
                     return;
                   } else if (state == 'denied') {
                     await Get.dialog(
-                      const IsmChatAlertDialogBox(
+                      IsmChatAlertDialogBox(
                         title: IsmChatStrings.micePermissionBlock,
                         cancelLabel: IsmChatStrings.okay,
                       ),

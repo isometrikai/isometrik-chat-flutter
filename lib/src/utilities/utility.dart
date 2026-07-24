@@ -75,7 +75,7 @@ class IsmChatUtility {
       return;
     }
     await IsmChatContextWidget.showDialogContext(
-      content: const IsmChatAlertDialogBox(
+      content: IsmChatAlertDialogBox(
         title: IsmChatStrings.micePermissionBlock,
         cancelLabel: IsmChatStrings.okay,
       ),
@@ -435,7 +435,7 @@ class IsmChatUtility {
         content: Text(message),
         contentTextStyle: IsmChatStyles.w400Grey14,
         cancelLabel: IsmChatStrings.cancel,
-        actionLabels: const [IsmChatStrings.openSettings],
+        actionLabels: [IsmChatStrings.openSettings],
         callbackActions: [
           () async {
             await openAppSettings();

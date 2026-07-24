@@ -149,7 +149,7 @@ class IsmChatMessageInfo extends StatelessWidget {
                                   title: IsmChatStrings.deliveredTo,
                                 ),
                               ] else ...[
-                                const MessageReadDelivered(
+                                MessageReadDelivered(
                                   title: IsmChatStrings.deliveredTo,
                                 )
                               ],

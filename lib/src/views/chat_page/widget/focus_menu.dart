@@ -143,21 +143,25 @@ class IsmChatFocusMenu extends StatelessWidget {
                                         color: itemStyle.backgroundColor,
                                       ),
                                       child: Row(
-                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(
-                                            item.toString(),
-                                            style: IsmChatStyles.w400Black12
-                                                .copyWith(
-                                              fontSize: IsmChatConfig
-                                                  .chatTheme
-                                                  .chatPageTheme
-                                                  ?.messgaeFocusedTheme
-                                                  ?.fontSize,
-                                              color: itemStyle.labelColor,
+                                          Expanded(
+                                            child: Text(
+                                              item.label,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: false,
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize: IsmChatConfig
+                                                    .chatTheme
+                                                    .chatPageTheme
+                                                    ?.messgaeFocusedTheme
+                                                    ?.fontSize,
+                                                color: itemStyle.labelColor,
+                                              ),
                                             ),
                                           ),
-                                          const Spacer(),
+                                          IsmChatDimens.boxWidth8,
                                           Icon(
                                             item.icon,
                                             color: itemStyle.iconColor,
@@ -241,7 +245,8 @@ class IsmChatFocusMenu extends StatelessWidget {
                             child: Container(
                               width: IsmChatDimens.oneHundredSeventy,
                               decoration: BoxDecoration(
-                                color: IsmChatConfig.chatTheme
+                                color: IsmChatConfig
+                                        .chatTheme
                                         .chatPageHeaderTheme
                                         ?.popupBackgroundColor ??
                                     (IsmChatThemeResolver.brightness(context) ==
@@ -261,15 +266,14 @@ class IsmChatFocusMenu extends StatelessWidget {
                                         itemBuilder: (_, index) {
                                           var item =
                                               message.focusMenuList[index];
-                                          final itemStyle =
-                                              _focusMenuItemStyle(
-                                                  context, item);
+                                          final itemStyle = _focusMenuItemStyle(
+                                              context, item);
                                           return IsmChatTapHandler(
                                             onTap: () async {
                                               Navigator.of(context).pop();
                                               controller.closeOverlay();
-                                              await WidgetsBinding.instance
-                                                  .endOfFrame;
+                                              await WidgetsBinding
+                                                  .instance.endOfFrame;
                                               if (!context.mounted) return;
                                               await controller
                                                   .onMenuItemSelected(
@@ -283,20 +287,27 @@ class IsmChatFocusMenu extends StatelessWidget {
                                               padding:
                                                   IsmChatDimens.edgeInsets16_0,
                                               decoration: BoxDecoration(
-                                                color: itemStyle.backgroundColor,
+                                                color:
+                                                    itemStyle.backgroundColor,
                                               ),
                                               child: Row(
                                                 children: [
-                                                  Text(
-                                                    item.toString(),
-                                                    style: IsmChatStyles
-                                                        .w400Black12
-                                                        .copyWith(
-                                                      color:
-                                                          itemStyle.labelColor,
+                                                  Expanded(
+                                                    child: Text(
+                                                      item.label,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                      style: IsmChatStyles
+                                                          .w400Black12
+                                                          .copyWith(
+                                                        color: itemStyle
+                                                            .labelColor,
+                                                      ),
                                                     ),
                                                   ),
-                                                  const Spacer(),
+                                                  IsmChatDimens.boxWidth8,
                                                   Icon(
                                                     item.icon,
                                                     color: itemStyle.iconColor,

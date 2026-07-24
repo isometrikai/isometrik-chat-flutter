@@ -94,9 +94,9 @@ class IsmChatEligibleMembersView extends StatelessWidget {
             ],
           ),
           body: controller.isApiCall
-              ? const IsmChatLoadingDialog()
+              ? IsmChatLoadingDialog()
               : controller.eligibleMembers.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: IsmIconAndText(
                         icon: Icons.supervised_user_circle_rounded,
                         text: IsmChatStrings.boradcastNotFound,

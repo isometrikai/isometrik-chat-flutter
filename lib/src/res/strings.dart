@@ -1,3 +1,14 @@
+import 'package:isometrik_chat_flutter/src/res/l10n/chat_l10n.dart';
+
+/// SDK UI copy. Localized via [IsmChatL10n] (`en` / `fr` / `pt`).
+///
+/// Internal / protocol keys stay as English constants and are not translated.
+/// Chat message bodies are never translated here.
+///
+/// Switch language from the host app:
+/// ```dart
+/// IsmChat.i.setLocale(const Locale('fr'));
+/// ```
 class IsmChatStrings {
   const IsmChatStrings._();
 
@@ -6,253 +17,202 @@ class IsmChatStrings {
   static const String userData = 'userData';
 
   /// Key used to store last active user id in local DB.
-  ///
-  /// This prevents chat history leaking across accounts on the same device when
-  /// apps switch users without clearing the SDK cache.
   static const String activeUserIdKey = 'activeUserId';
   static const String user = 'user';
-
   static const String controllerTag = 'ism-chat-page';
 
-  static const String chats = 'Chats';
-
-  static const String you = 'You';
-
-  static const String all = 'All';
-
-  static const String noConversation =
-      "You don't seem to have talked to anyone, so let your buddies know you're thinking about them.";
-  static const String noMatch = 'Oops! No Chat Conversation Found';
-
-  static const String noMessages =
-      'This is the beginning of your chat history. Start a conversation by typing a message below.';
-
-  static const String noInternet =
-      "Oops! It looks like your internet connection is not working at the moment. Please check your network settings and make sure you're connected to a Wi-Fi network or cellular data.";
-
-  static const String errorLoadingPreview = 'Error loading link preview';
-
-  static const String fetchingPreview = 'Fetching link preview';
-
-  static const String errorLoadingImage = 'Error loading image';
-
-  static const String typing = 'Typing...';
-  static const String online = 'Online';
-
-  static const String lastSeen = 'Last seen';
-  static const String today = 'Today';
-  static const String yestarday = 'Yesterday';
-  static const String at = 'at';
-  static const String on = 'on';
-  static const String okay = 'Okay';
-  static const String change = 'Change';
-  static const String blockUser = 'Block User';
-  static const String unBlockUser = 'Unblock User';
-  static const String blockedUsers = 'Blocked Users';
-  static const String broadcastList = 'Broadcast List';
-  static const String broadcastinfo = 'Broadcast info';
-  static const String eligibleMembers = 'Eligible members';
-
-  static const String observer = 'Observers';
-
-  static const String boradcastMessge = 'Broadcast Messages';
-  static const String newBroadCast = 'New Broadcast';
-
-  static const String clearChat = 'Clear chat';
-  static const String clearAllMessages = 'Clear all messages?';
-  static const String chatClearedSuccessfully = 'Chat cleared successfully!';
-  static const String wallpaper = 'Wallpaper';
-  static const String hintText = 'Type your message...';
-
-  static const String search = 'Search';
-  static const String newGroup = 'New Group';
-  static const String publicConversation = 'Public Conversation';
-  static const String openConversation = 'Open Conversation';
-  static const String groupConversation = 'Group Conversation';
-  static const String otherConversation = 'Other Conversation';
-
-  static const String conversation = 'Conversation';
-  static const String newCommunity = 'New Community';
-
-  static const String logout = 'Logout';
-  static const String startConversation = 'Start Conversation';
-
-  static const String changeGroupTitle = 'Change group title';
-  static const String changeGroupPhoto = 'Change group photo';
-  static const String deleteAllMessage = 'Delete All Messages?';
-  static const String deleteThiGroup = 'Delete this group?';
-
-  static const String enterNewGroupTitle = 'Enter new group title';
-  static const String chooseNewGroupProfile = 'Choose new group profile';
-  static const String cancel = 'Cancel';
-  static const String doWantBlckUser = 'Do you want to Block this User?';
-  static const String doWantUnBlckUser = 'Do you want to Unblock this User?';
-  static const String youBlockUser = 'You blocked this user.';
-  static const String youareBlocked = 'You are blocked.';
-  static const String cannotBlock =
-      'Action not allowed, the user has already blocked you';
-  static const String cannotBlockWhenAlreadyBlocked =
-      "You're already blocked, you cannot block this user.";
-  static const String broadcastAlert = 'Select atleast two people';
-  static const String micePermission =
-      'Please provide microphone access in order to send audio.';
-  static const String micePermissionBlock =
-      'The browser has disabled microphone access; please allow it to send audio.';
-  static const String cameraPermissionBlock =
-      'The browser has disabled camera access; please allow it to send photo and video.';
-  static const String contactsPermissionBlockedTitle = 'Contacts permission';
-  static const String contactsPermissionBlockedMessage =
-      'Contacts access is disabled. Please allow Contacts permission from Settings to share a contact.';
-  static const String openSettings = 'Open Settings';
-  static const String block = 'Block';
-
-  static const String unblock = 'Unblock';
-  static const String blocked = 'Blocked';
-  static const String unBlockedSuccessfully = 'User Unblocked Successfully.';
-  static const String blockedSuccessfully = 'User Blocked Successfully.';
-  static const String noBlockedUsers = 'No blocked users.';
-  static const String boradcastNotFound = 'Broadcast not found !!';
-
-  static const String deleteMessage = 'Delete message?';
-  static const String deleteMessages = 'Delete messages?';
-  static const String deleteForEvery = 'Delete for everyone';
-  static const String deleteForMe = 'Delete for me';
-  static const String deleteFromUser = 'Delete message from';
-  static const String delete = 'Delete';
-  static const String details = 'User details';
-  static const String save = 'Save';
-  static const String share = 'Share';
-
-  static const String more = 'More';
-  static const String archive = 'Archive';
-  static const String deleteChat = 'Delete chat';
-  static const String deleteGroup = 'Delete group';
-
-  static const String createGroupAlert =
-      'Select at least one user, add group name and choose one photo';
-  static const String youCreatedGroup = 'You created group';
-  static const String admin = 'Admin';
-  static const String add = 'Add';
-  static const String contactAppear =
-      'The selected contacts will appear hare..';
-
-  static const String participants = 'participants';
-  static const String exitGroup = 'Exit group';
-  static const String createdOn = 'Created on';
-  static const String by = 'by';
-  static const String noMedia = 'No Media';
-  static const String noDocs = 'No Docs';
-  static const String noLinks = 'No Links';
-  static const String media = 'Media';
-  static const String addParticioants = 'Add participants';
-  static const String addDescription = 'Add group description';
-  static const String groupInfo = 'Group Info';
-  static const String profileInfo = 'Profile Info';
-  static const String muteNotifications = 'Mute notifications';
-  static const String edit = 'Edit';
-
-  static const String areYouSure = 'Are you sure?';
-  static const String assignAdmin = 'Assign group admin';
-  static const String exit = 'Exit anyway';
-  static const String tapInfo = 'Tap to more info';
-  static const String removeReaction = 'Tap to remove reaction';
-  static const String alreadyAddedReaction = 'You have already added reaction';
-  static const String remove = 'Remove';
-
-  static const String youAreOnlyAdmin =
-      "You're the only admin of the group, make a group admin or a random person will be assigned as group admin";
-  static const String contactInfo = 'Contact Info';
-  static const String userInfo = 'User Info';
-
-  static const String loremIpsum =
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod';
-  static const String demoDate = '25 Dec 2016';
-  static const String mediaLinks = 'Media and Links ';
-  static const String mediaLinksAndDocs = 'Media, Links and Docs';
-  static const String links = 'Links';
-  static const String docs = 'Docs';
-  static const String readby = 'Read by';
-  static const String playedby = 'Played by';
-  static const String deliveredTo = 'Delivered to';
-  static const String deletedMessage = 'You deleted this message';
-  static const String wasDeletedMessage = 'This message was deleted';
-  static const String noDataFound = 'No data found';
-  static const String noUserFound = 'No user found';
-  static const String noMessageFound = 'No Messages found';
-  static const String noSearch = 'You haven\'t searched anything yet';
-
-  static const String noConversationFound = 'No conversation found';
-
-  static const String forwarded = 'Forwarded';
-
-  static const String logoutMessage = 'Are you sure you want to logout';
-
-  static const String removeGroupMessage =
-      'You have been removed out of the group...!';
-
-  /// Shown after the current user voluntarily leaves a group.
-  static const String leftGroupMessage =
-      'You have left this group. You can view old messages but can no longer send messages.';
-
-  static const String userDeleteMessage =
-      'This user is currently unavailable for messaging...!';
-
-  static const String gallery = 'Gallery';
-  static const String camera = 'Camera';
-  static const String message = 'Message';
-  static const String signOut = 'Sign out';
-  static const String searchUser = 'Search user...';
-  static const String searchChat = 'Search chats...';
-  static const String globalSearch = 'Search conversation, messages people..';
-
-  static const String messages = 'Messages';
-
-  static const String people = 'People';
-  static const String newString = 'New';
+  /// Protocol / sentinel values — always English (not UI copy).
   static const String broadcast = 'broadcast';
-  static const String newConversation = 'New Conversation';
-  static const String newContact = 'New Contact';
-  static const String photos = 'Photos';
-  static const String colors = 'Colors';
-  static const String removeWallpaper = 'Remove custom wallpaper';
-  static const String myPhotos = 'My Photos';
-  static const String addYourName = 'Add your name...';
-  static const String addYourEmail = 'Add your email...';
-  static const String dial = 'Dial';
-  static const String addToContact = 'Add to contacts';
-  static const String noContact = 'No contact found...!';
-
-  static const String downloadingMedia = 'Downloading media...';
-
-  static const String thisPhoneNumberNotonChat =
-      'This phone number is not on chat';
-
-  static const String location = 'Location';
-  static const String image = 'Image';
-  static const String audio = 'Audio';
-  static const String video = 'Video';
-  static const String document = 'Document';
-  static const String contact = 'Contact';
-  static const String addCaption = 'Add a caption...';
-  static const String sentContact = 'Sent you a Contact';
-  static const String sentLocation = 'Sent you a Location';
-  static const String sentImage = 'Sent you an Image';
-  static const String sentGif = 'Sent you a GIF';
-  static const String sentSticker = 'Sent you a Sticker';
+  static const String defaultString = 'Default';
   static const String gif = 'GIF';
   static const String sticker = 'Sticker';
-  static const String searchGifs = 'Search GIFs';
-  static const String searchStickers = 'Search stickers';
-  static const String giphyAttribution = 'Powered by GIPHY';
-  static const String sentVideo = 'Sent you an Video';
-  static const String sentDoc = 'Sent you an Document';
-  static const String sentAudio = 'Sent you a Audio';
-  static const String messageInfo = 'Message Info';
-  static const String inviteToChat = 'Invite to';
-  static const String youCanNotSend = 'You can not send media more than 20 MB.';
-  static const String aboutMe = 'About';
-  static const String defaultString = 'Default';
-  static const String recipients = 'Recipients :';
-  static const String addrecipient = 'Add recipient';
-  static const String deletedUser = 'Deleted User';
+  static const String contact = 'Contact';
+
+
+  static String get chats => IsmChatL10n.get('chats');
+  static String get you => IsmChatL10n.get('you');
+  static String get all => IsmChatL10n.get('all');
+  static String get noConversation => IsmChatL10n.get('noConversation');
+  static String get noMatch => IsmChatL10n.get('noMatch');
+  static String get noMessages => IsmChatL10n.get('noMessages');
+  static String get noInternet => IsmChatL10n.get('noInternet');
+  static String get errorLoadingPreview => IsmChatL10n.get('errorLoadingPreview');
+  static String get fetchingPreview => IsmChatL10n.get('fetchingPreview');
+  static String get errorLoadingImage => IsmChatL10n.get('errorLoadingImage');
+  static String get typing => IsmChatL10n.get('typing');
+  static String get online => IsmChatL10n.get('online');
+  static String get lastSeen => IsmChatL10n.get('lastSeen');
+  static String get today => IsmChatL10n.get('today');
+  static String get yestarday => IsmChatL10n.get('yestarday');
+  static String get at => IsmChatL10n.get('at');
+  static String get on => IsmChatL10n.get('on');
+  static String get okay => IsmChatL10n.get('okay');
+  static String get change => IsmChatL10n.get('change');
+  static String get blockUser => IsmChatL10n.get('blockUser');
+  static String get unBlockUser => IsmChatL10n.get('unBlockUser');
+  static String get blockedUsers => IsmChatL10n.get('blockedUsers');
+  static String get broadcastList => IsmChatL10n.get('broadcastList');
+  static String get broadcastinfo => IsmChatL10n.get('broadcastinfo');
+  static String get eligibleMembers => IsmChatL10n.get('eligibleMembers');
+  static String get observer => IsmChatL10n.get('observer');
+  static String get boradcastMessge => IsmChatL10n.get('boradcastMessge');
+  static String get newBroadCast => IsmChatL10n.get('newBroadCast');
+  static String get clearChat => IsmChatL10n.get('clearChat');
+  static String get clearAllMessages => IsmChatL10n.get('clearAllMessages');
+  static String get chatClearedSuccessfully => IsmChatL10n.get('chatClearedSuccessfully');
+  static String get wallpaper => IsmChatL10n.get('wallpaper');
+  static String get hintText => IsmChatL10n.get('hintText');
+  static String get search => IsmChatL10n.get('search');
+  static String get newGroup => IsmChatL10n.get('newGroup');
+  static String get publicConversation => IsmChatL10n.get('publicConversation');
+  static String get openConversation => IsmChatL10n.get('openConversation');
+  static String get groupConversation => IsmChatL10n.get('groupConversation');
+  static String get otherConversation => IsmChatL10n.get('otherConversation');
+  static String get conversation => IsmChatL10n.get('conversation');
+  static String get newCommunity => IsmChatL10n.get('newCommunity');
+  static String get logout => IsmChatL10n.get('logout');
+  static String get startConversation => IsmChatL10n.get('startConversation');
+  static String get changeGroupTitle => IsmChatL10n.get('changeGroupTitle');
+  static String get changeGroupPhoto => IsmChatL10n.get('changeGroupPhoto');
+  static String get deleteAllMessage => IsmChatL10n.get('deleteAllMessage');
+  static String get deleteThiGroup => IsmChatL10n.get('deleteThiGroup');
+  static String get enterNewGroupTitle => IsmChatL10n.get('enterNewGroupTitle');
+  static String get chooseNewGroupProfile => IsmChatL10n.get('chooseNewGroupProfile');
+  static String get cancel => IsmChatL10n.get('cancel');
+  static String get doWantBlckUser => IsmChatL10n.get('doWantBlckUser');
+  static String get doWantUnBlckUser => IsmChatL10n.get('doWantUnBlckUser');
+  static String get youBlockUser => IsmChatL10n.get('youBlockUser');
+  static String get youareBlocked => IsmChatL10n.get('youareBlocked');
+  static String get cannotBlock => IsmChatL10n.get('cannotBlock');
+  static String get cannotBlockWhenAlreadyBlocked => IsmChatL10n.get('cannotBlockWhenAlreadyBlocked');
+  static String get broadcastAlert => IsmChatL10n.get('broadcastAlert');
+  static String get micePermission => IsmChatL10n.get('micePermission');
+  static String get micePermissionBlock => IsmChatL10n.get('micePermissionBlock');
+  static String get cameraPermissionBlock => IsmChatL10n.get('cameraPermissionBlock');
+  static String get contactsPermissionBlockedTitle => IsmChatL10n.get('contactsPermissionBlockedTitle');
+  static String get contactsPermissionBlockedMessage => IsmChatL10n.get('contactsPermissionBlockedMessage');
+  static String get openSettings => IsmChatL10n.get('openSettings');
+  static String get block => IsmChatL10n.get('block');
+  static String get unblock => IsmChatL10n.get('unblock');
+  static String get blocked => IsmChatL10n.get('blocked');
+  static String get unBlockedSuccessfully => IsmChatL10n.get('unBlockedSuccessfully');
+  static String get blockedSuccessfully => IsmChatL10n.get('blockedSuccessfully');
+  static String get noBlockedUsers => IsmChatL10n.get('noBlockedUsers');
+  static String get boradcastNotFound => IsmChatL10n.get('boradcastNotFound');
+  static String get deleteMessage => IsmChatL10n.get('deleteMessage');
+  static String get deleteMessages => IsmChatL10n.get('deleteMessages');
+  static String get deleteForEvery => IsmChatL10n.get('deleteForEvery');
+  static String get deleteForMe => IsmChatL10n.get('deleteForMe');
+  static String get deleteFromUser => IsmChatL10n.get('deleteFromUser');
+  static String get delete => IsmChatL10n.get('delete');
+  static String get details => IsmChatL10n.get('details');
+  static String get save => IsmChatL10n.get('save');
+  static String get share => IsmChatL10n.get('share');
+  static String get more => IsmChatL10n.get('more');
+  static String get archive => IsmChatL10n.get('archive');
+  static String get deleteChat => IsmChatL10n.get('deleteChat');
+  static String get deleteGroup => IsmChatL10n.get('deleteGroup');
+  static String get createGroupAlert => IsmChatL10n.get('createGroupAlert');
+  static String get youCreatedGroup => IsmChatL10n.get('youCreatedGroup');
+  static String get admin => IsmChatL10n.get('admin');
+  static String get add => IsmChatL10n.get('add');
+  static String get contactAppear => IsmChatL10n.get('contactAppear');
+  static String get participants => IsmChatL10n.get('participants');
+  static String get exitGroup => IsmChatL10n.get('exitGroup');
+  static String get createdOn => IsmChatL10n.get('createdOn');
+  static String get by => IsmChatL10n.get('by');
+  static String get noMedia => IsmChatL10n.get('noMedia');
+  static String get noDocs => IsmChatL10n.get('noDocs');
+  static String get noLinks => IsmChatL10n.get('noLinks');
+  static String get media => IsmChatL10n.get('media');
+  static String get addParticioants => IsmChatL10n.get('addParticioants');
+  static String get addDescription => IsmChatL10n.get('addDescription');
+  static String get groupInfo => IsmChatL10n.get('groupInfo');
+  static String get profileInfo => IsmChatL10n.get('profileInfo');
+  static String get muteNotifications => IsmChatL10n.get('muteNotifications');
+  static String get edit => IsmChatL10n.get('edit');
+  static String get areYouSure => IsmChatL10n.get('areYouSure');
+  static String get assignAdmin => IsmChatL10n.get('assignAdmin');
+  static String get exit => IsmChatL10n.get('exit');
+  static String get tapInfo => IsmChatL10n.get('tapInfo');
+  static String get removeReaction => IsmChatL10n.get('removeReaction');
+  static String get alreadyAddedReaction => IsmChatL10n.get('alreadyAddedReaction');
+  static String get remove => IsmChatL10n.get('remove');
+  static String get youAreOnlyAdmin => IsmChatL10n.get('youAreOnlyAdmin');
+  static String get contactInfo => IsmChatL10n.get('contactInfo');
+  static String get userInfo => IsmChatL10n.get('userInfo');
+  static String get loremIpsum => IsmChatL10n.get('loremIpsum');
+  static String get demoDate => IsmChatL10n.get('demoDate');
+  static String get mediaLinks => IsmChatL10n.get('mediaLinks');
+  static String get mediaLinksAndDocs => IsmChatL10n.get('mediaLinksAndDocs');
+  static String get links => IsmChatL10n.get('links');
+  static String get docs => IsmChatL10n.get('docs');
+  static String get readby => IsmChatL10n.get('readby');
+  static String get playedby => IsmChatL10n.get('playedby');
+  static String get deliveredTo => IsmChatL10n.get('deliveredTo');
+  static String get deletedMessage => IsmChatL10n.get('deletedMessage');
+  static String get wasDeletedMessage => IsmChatL10n.get('wasDeletedMessage');
+  static String get noDataFound => IsmChatL10n.get('noDataFound');
+  static String get noUserFound => IsmChatL10n.get('noUserFound');
+  static String get noMessageFound => IsmChatL10n.get('noMessageFound');
+  static String get noSearch => IsmChatL10n.get('noSearch');
+  static String get noConversationFound => IsmChatL10n.get('noConversationFound');
+  static String get forwarded => IsmChatL10n.get('forwarded');
+  static String get logoutMessage => IsmChatL10n.get('logoutMessage');
+  static String get removeGroupMessage => IsmChatL10n.get('removeGroupMessage');
+  static String get leftGroupMessage => IsmChatL10n.get('leftGroupMessage');
+  static String get userDeleteMessage => IsmChatL10n.get('userDeleteMessage');
+  static String get gallery => IsmChatL10n.get('gallery');
+  static String get camera => IsmChatL10n.get('camera');
+  static String get message => IsmChatL10n.get('message');
+  static String get signOut => IsmChatL10n.get('signOut');
+  static String get searchUser => IsmChatL10n.get('searchUser');
+  static String get searchChat => IsmChatL10n.get('searchChat');
+  static String get globalSearch => IsmChatL10n.get('globalSearch');
+  static String get messages => IsmChatL10n.get('messages');
+  static String get people => IsmChatL10n.get('people');
+  static String get newString => IsmChatL10n.get('newString');
+  static String get newConversation => IsmChatL10n.get('newConversation');
+  static String get newContact => IsmChatL10n.get('newContact');
+  static String get photos => IsmChatL10n.get('photos');
+  static String get colors => IsmChatL10n.get('colors');
+  static String get removeWallpaper => IsmChatL10n.get('removeWallpaper');
+  static String get myPhotos => IsmChatL10n.get('myPhotos');
+  static String get addYourName => IsmChatL10n.get('addYourName');
+  static String get addYourEmail => IsmChatL10n.get('addYourEmail');
+  static String get dial => IsmChatL10n.get('dial');
+  static String get addToContact => IsmChatL10n.get('addToContact');
+  static String get noContact => IsmChatL10n.get('noContact');
+  static String get downloadingMedia => IsmChatL10n.get('downloadingMedia');
+  static String get thisPhoneNumberNotonChat => IsmChatL10n.get('thisPhoneNumberNotonChat');
+  static String get location => IsmChatL10n.get('location');
+  static String get image => IsmChatL10n.get('image');
+  static String get audio => IsmChatL10n.get('audio');
+  static String get video => IsmChatL10n.get('video');
+  static String get document => IsmChatL10n.get('document');
+  static String get addCaption => IsmChatL10n.get('addCaption');
+  static String get sentContact => IsmChatL10n.get('sentContact');
+  static String get sentLocation => IsmChatL10n.get('sentLocation');
+  static String get sentImage => IsmChatL10n.get('sentImage');
+  static String get sentGif => IsmChatL10n.get('sentGif');
+  static String get sentSticker => IsmChatL10n.get('sentSticker');
+  static String get searchGifs => IsmChatL10n.get('searchGifs');
+  static String get searchStickers => IsmChatL10n.get('searchStickers');
+  static String get giphyAttribution => IsmChatL10n.get('giphyAttribution');
+  static String get sentVideo => IsmChatL10n.get('sentVideo');
+  static String get sentDoc => IsmChatL10n.get('sentDoc');
+  static String get sentAudio => IsmChatL10n.get('sentAudio');
+  static String get messageInfo => IsmChatL10n.get('messageInfo');
+  static String get inviteToChat => IsmChatL10n.get('inviteToChat');
+  static String get youCanNotSend => IsmChatL10n.get('youCanNotSend');
+  static String get aboutMe => IsmChatL10n.get('aboutMe');
+  static String get recipients => IsmChatL10n.get('recipients');
+  static String get addrecipient => IsmChatL10n.get('addrecipient');
+  static String get deletedUser => IsmChatL10n.get('deletedUser');
+  static String get exitGroupBody => IsmChatL10n.get('exitGroupBody');
+  static String get focusMenuInfo => IsmChatL10n.get('focusMenuInfo');
+  static String get focusMenuCopy => IsmChatL10n.get('focusMenuCopy');
+  static String get focusMenuSelectMessage => IsmChatL10n.get('focusMenuSelectMessage');
+  static String get focusMenuReply => IsmChatL10n.get('focusMenuReply');
+  static String get focusMenuForward => IsmChatL10n.get('focusMenuForward');
 }

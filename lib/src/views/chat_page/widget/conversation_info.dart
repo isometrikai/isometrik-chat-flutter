@@ -229,7 +229,7 @@ class _IsmChatConverstaionInfoViewState
                                     color: groupTheme.menuIconColor,
                                   ),
                               IsmChatDimens.boxWidth8,
-                              const Text(IsmChatStrings.changeGroupTitle)
+                              Text(IsmChatStrings.changeGroupTitle)
                             ],
                           ),
                         ),
@@ -244,7 +244,7 @@ class _IsmChatConverstaionInfoViewState
                                     color: groupTheme.menuIconColor,
                                   ),
                               IsmChatDimens.boxWidth8,
-                              const Text(IsmChatStrings.changeGroupPhoto)
+                              Text(IsmChatStrings.changeGroupPhoto)
                             ],
                           ),
                         ),
@@ -764,7 +764,9 @@ class _IsmChatConverstaionInfoViewState
                           ),
                           IsmChatDimens.boxHeight20,
                           Container(
-                            padding: IsmChatDimens.edgeInsets10,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: IsmChatDimens.twenty,
+                                vertical: IsmChatDimens.ten),
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(IsmChatDimens.sixteen),
@@ -822,7 +824,12 @@ class _IsmChatConverstaionInfoViewState
                           IsmChatDimens.boxHeight32,
                         ] else ...[
                           IsmChatDimens.boxHeight32,
-                          DecoratedBox(
+                          // Same card padding / divider style as group Clear chat / Exit group.
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: IsmChatDimens.twenty,
+                              vertical: IsmChatDimens.ten,
+                            ),
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(IsmChatDimens.sixteen),
@@ -873,7 +880,6 @@ class _IsmChatConverstaionInfoViewState
                                   ),
                                 ),
                                 Divider(
-                                  height: 0,
                                   thickness: 1,
                                   color: groupTheme.dividerColor
                                       .applyIsmOpacity(.3),
@@ -921,7 +927,6 @@ class _IsmChatConverstaionInfoViewState
                                         .conversation?.isOpponentDetailsEmpty ==
                                     false) ...[
                                   Divider(
-                                    height: 0,
                                     thickness: 1,
                                     color: groupTheme.dividerColor
                                         .applyIsmOpacity(.3),
@@ -942,12 +947,12 @@ class _IsmChatConverstaionInfoViewState
                                       '${controller.conversation?.isBlockedByMe == true ? IsmChatStrings.unblock : IsmChatStrings.block} ${controller.conversation?.chatName ?? ''}',
                                       style: IsmChatStyles.w600red16,
                                     ),
-                                  )
-                                ]
+                                  ),
+                                ],
                               ],
                             ),
                           ),
-                          IsmChatDimens.boxHeight10,
+                          IsmChatDimens.boxHeight32,
                         ],
                       ],
                     ),

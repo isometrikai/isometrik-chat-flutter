@@ -37,7 +37,7 @@ class IsmChatBroadCastView extends StatelessWidget {
                       await controller.getBroadCast(isShowLoader: false);
                       controller.refreshController.refreshCompleted();
                     },
-                    child: const Center(
+                    child: Center(
                       child: IsmIconAndText(
                         icon: Icons.supervised_user_circle_rounded,
                         text: IsmChatStrings.boradcastNotFound,
@@ -148,7 +148,7 @@ class IsmChatBroadCastView extends StatelessWidget {
                                   color: IsmChatConfig.chatTheme.primaryColor
                                       ?.applyIsmOpacity(.1),
                                 ),
-                                child: const Icon(Icons.campaign_rounded),
+                                child: Icon(Icons.campaign_rounded),
                               ),
                               title: Text(
                                 broadcast.groupcastTitle ==

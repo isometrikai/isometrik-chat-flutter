@@ -616,7 +616,7 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       IsmChatConfirmationRequest(
         type: IsmChatConfirmationType.exitGroup,
         title: 'Exit ${conversation.chatName}?',
-        body: 'Only group admins will be notified that you left the group',
+        body: IsmChatStrings.exitGroupBody,
         conversation: conversation,
         actions: [
           IsmChatConfirmationAction(

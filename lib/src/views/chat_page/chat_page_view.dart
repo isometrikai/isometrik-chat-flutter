@@ -386,8 +386,8 @@ class _IsmChatPageView extends StatelessWidget {
                                                     : IsmChatProperties
                                                             .chatPageProperties
                                                             .placeholder ??
-                                                        const IsmChatEmptyView(
-                                                          icon: Icon(
+                                                        IsmChatEmptyView(
+                                                          icon: const Icon(
                                                             Icons.chat_outlined,
                                                           ),
                                                           text: IsmChatStrings
@@ -466,7 +466,7 @@ class _IsmChatPageView extends StatelessWidget {
                                   )
                                 ] else if (controller.conversation?.isOpponentDetailsEmpty == true) ...[
                                   // Opponent user has been deleted
-                                  const _MessageNotAllowedWidget(
+                                  _MessageNotAllowedWidget(
                                     showMessage:
                                         IsmChatStrings.userDeleteMessage,
                                   )

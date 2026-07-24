@@ -24,7 +24,7 @@ mixin IsmChatShowDialogMixin on GetxController {
     required String title,
     List<String>? actionLabels,
     List<VoidCallback>? callbackActions,
-    String cancelLabel = IsmChatStrings.cancel,
+    String? cancelLabel,
     VoidCallback? onCancel,
     Widget? content,
     bool barrierDismissible = true,
@@ -34,7 +34,7 @@ mixin IsmChatShowDialogMixin on GetxController {
         title: title,
         actionLabels: actionLabels,
         callbackActions: callbackActions,
-        cancelLabel: cancelLabel,
+        cancelLabel: cancelLabel ?? IsmChatStrings.cancel,
         onCancel: onCancel,
         content: content,
         barrierDismissible: barrierDismissible,
@@ -158,7 +158,7 @@ mixin IsmChatShowDialogMixin on GetxController {
     await _showThemedAlertDialog(
       title: IsmChatStrings.enterNewGroupTitle,
       content: _themedDialogInput(_controller.groupTitleController),
-      actionLabels: const [IsmChatStrings.okay],
+      actionLabels: [IsmChatStrings.okay],
       callbackActions: [
         () => _controller.changeGroupTitle(
             conversationTitle: _controller.groupTitleController.text,
@@ -232,7 +232,7 @@ mixin IsmChatShowDialogMixin on GetxController {
       );
     } else {
       await _presentChatConfirmation(
-        const IsmChatConfirmationRequest(
+        IsmChatConfirmationRequest(
           type: IsmChatConfirmationType.cannotBlockOpponent,
           title: IsmChatStrings.cannotBlock,
           cancelLabel: IsmChatStrings.okay,
@@ -453,7 +453,7 @@ mixin IsmChatShowDialogMixin on GetxController {
     // In that state the user can't block back.
     if (!(_controller.conversation?.isChattingAllowed ?? true)) {
       await _presentChatConfirmation(
-        const IsmChatConfirmationRequest(
+        IsmChatConfirmationRequest(
           type: IsmChatConfirmationType.cannotBlockWhenTheyBlockedMe,
           title: IsmChatStrings.cannotBlockWhenAlreadyBlocked,
           cancelLabel: IsmChatStrings.okay,
@@ -510,8 +510,7 @@ mixin IsmChatShowDialogMixin on GetxController {
         IsmChatConfirmationRequest(
           type: IsmChatConfirmationType.exitGroup,
           title: 'Exit ${conversation?.chatName ?? ''}?',
-          body:
-              'Only group admins will be notified that you left the group',
+          body: IsmChatStrings.exitGroupBody,
           conversation: conversation,
           actions: [
             IsmChatConfirmationAction(

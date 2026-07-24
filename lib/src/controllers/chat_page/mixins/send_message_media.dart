@@ -31,7 +31,7 @@ mixin IsmChatPageSendMessageMediaMixin {
       sendPhotoAndVideo();
     } else {
       await IsmChatContextWidget.showDialogContext(
-        content: const IsmChatAlertDialogBox(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.youCanNotSend,
           cancelLabel: IsmChatStrings.okay,
         ),
@@ -59,7 +59,7 @@ mixin IsmChatPageSendMessageMediaMixin {
     } else {
       IsmChatUtility.closeLoader();
       await IsmChatContextWidget.showDialogContext(
-        content: const IsmChatAlertDialogBox(
+        content: IsmChatAlertDialogBox(
           title: IsmChatStrings.youCanNotSend,
           cancelLabel: IsmChatStrings.okay,
         ),
