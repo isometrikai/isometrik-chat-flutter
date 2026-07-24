@@ -76,7 +76,8 @@ mixin IsmChatShowDialogMixin on GetxController {
     }
     await _showThemedAlertDialog(
       title: request.title,
-      content: request.body == null ? null : Text(request.body!),
+      content: request.content ??
+          (request.body == null ? null : Text(request.body!)),
       actionLabels: request.actions.isEmpty
           ? null
           : request.actions.map((a) => a.label).toList(),
@@ -155,16 +156,27 @@ mixin IsmChatShowDialogMixin on GetxController {
   void showDialogForChangeGroupTitle() async {
     _controller.groupTitleController.text =
         _controller.conversation?.chatName ?? '';
-    await _showThemedAlertDialog(
-      title: IsmChatStrings.enterNewGroupTitle,
-      content: _themedDialogInput(_controller.groupTitleController),
-      actionLabels: [IsmChatStrings.okay],
-      callbackActions: [
-        () => _controller.changeGroupTitle(
-            conversationTitle: _controller.groupTitleController.text,
-            conversationId: _controller.conversation?.conversationId ?? '',
-            isLoading: true),
-      ],
+    // Host can customize via chatConfirmationPresenter
+    // ([IsmChatConfirmationType.changeGroupTitle]).
+    await _presentChatConfirmation(
+      IsmChatConfirmationRequest(
+        type: IsmChatConfirmationType.changeGroupTitle,
+        title: IsmChatStrings.enterNewGroupTitle,
+        conversation: _controller.conversation,
+        textController: _controller.groupTitleController,
+        content: _themedDialogInput(_controller.groupTitleController),
+        actions: [
+          IsmChatConfirmationAction(
+            id: IsmChatConfirmationActionId.changeGroupTitle,
+            label: IsmChatStrings.okay,
+            onPressed: () => _controller.changeGroupTitle(
+              conversationTitle: _controller.groupTitleController.text,
+              conversationId: _controller.conversation?.conversationId ?? '',
+              isLoading: true,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

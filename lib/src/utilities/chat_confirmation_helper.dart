@@ -33,7 +33,8 @@ class IsmChatConfirmationHelper {
     await IsmChatContextWidget.showDialogContext(
       content: IsmChatAlertDialogBox(
         title: request.title,
-        content: request.body == null ? null : Text(request.body!),
+        content: request.content ??
+            (request.body == null ? null : Text(request.body!)),
         actionLabels: labels.isEmpty ? null : labels,
         callbackActions: callbacks.isEmpty ? null : callbacks,
         cancelLabel: request.cancelLabel ?? IsmChatStrings.cancel,

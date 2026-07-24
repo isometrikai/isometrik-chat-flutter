@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:isometrik_chat_flutter/src/models/chat_conversation_model.dart';
 import 'package:isometrik_chat_flutter/src/models/chat_message_model.dart';
 
@@ -46,6 +46,13 @@ enum IsmChatConfirmationType {
   /// Only-admin warning before exiting a group (assign admin or exit anyway).
   exitGroupOnlyAdmin,
 
+  /// Edit / rename group title (Group Info).
+  ///
+  /// Host UI should bind a text field to [IsmChatConfirmationRequest.textController]
+  /// (pre-filled with the current title). On confirm, call the
+  /// [IsmChatConfirmationActionId.changeGroupTitle] action.
+  changeGroupTitle,
+
   /// User tapped a reaction they already added to a message.
   alreadyAddedReaction,
 }
@@ -60,6 +67,7 @@ enum IsmChatConfirmationActionId {
   deleteGroup,
   deleteChat,
   exitGroup,
+  changeGroupTitle,
   dismiss,
   cannotBlockWhenTheyBlockedMe,
 }
@@ -84,6 +92,8 @@ class IsmChatConfirmationRequest {
     required this.title,
     required this.actions,
     this.body,
+    this.content,
+    this.textController,
     this.cancelLabel,
     this.onCancel,
     this.conversation,
@@ -96,8 +106,18 @@ class IsmChatConfirmationRequest {
   final String title;
 
   /// Optional message under [title] (e.g. exit-group explanation).
-  /// Host custom UI can show this; SDK default renders it as dialog content.
+  /// Host custom UI can show this; SDK default renders it as dialog content
+  /// when [content] is null.
   final String? body;
+
+  /// Optional custom dialog body (e.g. text field for [changeGroupTitle]).
+  /// Takes precedence over [body] in the SDK default dialog.
+  final Widget? content;
+
+  /// Pre-filled input for dialogs that need text (e.g. change group title).
+  /// Host custom UI should bind a [TextField] to this controller; the confirm
+  /// [IsmChatConfirmationAction.onPressed] reads the final value from it.
+  final TextEditingController? textController;
 
   final List<IsmChatConfirmationAction> actions;
   final String? cancelLabel;

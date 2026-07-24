@@ -175,8 +175,9 @@ class IsmChatPageProperties {
   final BlockUnblockSuccessCallback? onBlockUnblockSuccess;
 
   /// Custom UI for confirmations before destructive actions (block, delete message,
-  /// clear chat, delete chat/group, exit group from list or Group Info) and
-  /// duplicate reaction alerts ([IsmChatConfirmationType.alreadyAddedReaction]).
+  /// clear chat, delete chat/group, exit group from list or Group Info),
+  /// change group title, and duplicate reaction alerts
+  /// ([IsmChatConfirmationType.alreadyAddedReaction]).
   ///
   /// Return `true` when your UI handled the request. Return `false` for types
   /// that should use the SDK default [IsmChatAlertDialogBox]. Branch on
@@ -185,6 +186,10 @@ class IsmChatPageProperties {
   /// Exit group types:
   /// - [IsmChatConfirmationType.exitGroup] — confirm leave
   /// - [IsmChatConfirmationType.exitGroupOnlyAdmin] — only-admin warning first
+  ///
+  /// Change group title ([IsmChatConfirmationType.changeGroupTitle]):
+  /// bind a text field to [IsmChatConfirmationRequest.textController], then on
+  /// confirm call [IsmChatConfirmationActionId.changeGroupTitle].
   ///
   /// On confirm, pop your route then call [IsmChatConfirmationAction.onPressed].
   final ChatConfirmationPresenter? chatConfirmationPresenter;
