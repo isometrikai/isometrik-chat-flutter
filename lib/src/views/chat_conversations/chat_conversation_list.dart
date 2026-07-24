@@ -219,10 +219,15 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                           backgroundColor: IsmChatColors.redColor,
                           foregroundColor: IsmChatColors.whiteColor,
                           icon: Icon(
-                            Icons.delete_rounded,
+                            widget.conversation.isGroup == true
+                                ? Icons.logout_rounded
+                                : Icons.delete_rounded,
                             color: IsmChatColors.whiteColor,
                           ).icon,
-                          label: IsmChatStrings.delete,
+                          // Groups: swipe shows Exit Group; 1:1 keeps Delete.
+                          label: widget.conversation.isGroup == true
+                              ? IsmChatStrings.exitGroup
+                              : IsmChatStrings.delete,
                         ),
                     ],
                   ),
