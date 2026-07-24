@@ -403,15 +403,21 @@ class _PopupMenuWidget extends StatelessWidget {
 
   final IsmChatPageController controller;
 
+  /// Host-app header overrides (`IsmChatPageProperties.header`).
+  IsmChatPageHeaderProperties? get _header =>
+      IsmChatProperties.chatPageProperties.header;
+
   @override
   Widget build(BuildContext context) => PopupMenuButton<int>(
         color:
             IsmChatConfig.chatTheme.chatPageHeaderTheme?.popupBackgroundColor,
-        icon: Icon(
-          Icons.more_vert,
-          color: IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??
-              IsmChatColors.whiteColor,
-        ),
+        // App override: IsmChatPageHeaderProperties.moreMenuIcon
+        icon: _header?.moreMenuIcon ??
+            Icon(
+              Icons.more_vert,
+              color: IsmChatConfig.chatTheme.chatPageHeaderTheme?.iconColor ??
+                  IsmChatColors.whiteColor,
+            ),
         shape: IsmChatConfig.chatTheme.chatPageHeaderTheme?.popupShape,
         shadowColor:
             IsmChatConfig.chatTheme.chatPageHeaderTheme?.popupshadowColor,
@@ -422,12 +428,14 @@ class _PopupMenuWidget extends StatelessWidget {
               value: 1,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.search_rounded,
-                    color: IsmChatConfig
-                            .chatTheme.chatPageHeaderTheme?.iconColor ??
-                        IsmChatConfig.chatTheme.primaryColor,
-                  ),
+                  // App override: IsmChatPageHeaderProperties.searchMessageIcon
+                  _header?.searchMessageIcon ??
+                      Icon(
+                        Icons.search_rounded,
+                        color: IsmChatConfig
+                                .chatTheme.chatPageHeaderTheme?.iconColor ??
+                            IsmChatConfig.chatTheme.primaryColor,
+                      ),
                   IsmChatDimens.boxWidth8,
                   Text(
                     IsmChatStrings.search,
@@ -444,12 +452,14 @@ class _PopupMenuWidget extends StatelessWidget {
               value: 2,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.wallpaper_rounded,
-                    color: IsmChatConfig
-                            .chatTheme.chatPageHeaderTheme?.iconColor ??
-                        IsmChatConfig.chatTheme.primaryColor,
-                  ),
+                  // App override: IsmChatPageHeaderProperties.changeWallpaperIcon
+                  _header?.changeWallpaperIcon ??
+                      Icon(
+                        Icons.wallpaper_rounded,
+                        color: IsmChatConfig
+                                .chatTheme.chatPageHeaderTheme?.iconColor ??
+                            IsmChatConfig.chatTheme.primaryColor,
+                      ),
                   IsmChatDimens.boxWidth8,
                   Text(
                     IsmChatStrings.wallpaper,
@@ -467,12 +477,14 @@ class _PopupMenuWidget extends StatelessWidget {
               value: 3,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.block,
-                    color: IsmChatConfig
-                            .chatTheme.chatPageHeaderTheme?.iconColor ??
-                        IsmChatColors.redColor,
-                  ),
+                  // App override: blockUserIcon / unblockUserIcon
+                  _header?.blockUserIcon ??
+                      Icon(
+                        Icons.block,
+                        color: IsmChatConfig
+                                .chatTheme.chatPageHeaderTheme?.iconColor ??
+                            IsmChatColors.redColor,
+                      ),
                   IsmChatDimens.boxWidth8,
                   Text(
                     controller.conversation?.isBlockedByMe == true
@@ -490,12 +502,14 @@ class _PopupMenuWidget extends StatelessWidget {
               value: 4,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.delete,
-                    color: IsmChatConfig
-                            .chatTheme.chatPageHeaderTheme?.iconColor ??
-                        IsmChatColors.blackColor,
-                  ),
+                  // App override: IsmChatPageHeaderProperties.clearChatIcon
+                  _header?.clearChatIcon ??
+                      Icon(
+                        Icons.delete,
+                        color: IsmChatConfig
+                                .chatTheme.chatPageHeaderTheme?.iconColor ??
+                            IsmChatColors.blackColor,
+                      ),
                   IsmChatDimens.boxWidth8,
                   Text(
                     IsmChatStrings.clearChat,
@@ -515,12 +529,14 @@ class _PopupMenuWidget extends StatelessWidget {
               value: 5,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.group_off_rounded,
-                    color: IsmChatConfig
-                            .chatTheme.chatPageHeaderTheme?.iconColor ??
-                        IsmChatColors.redColor,
-                  ),
+                  // App override: IsmChatPageHeaderProperties.deleteGroupIcon
+                  _header?.deleteGroupIcon ??
+                      Icon(
+                        Icons.group_off_rounded,
+                        color: IsmChatConfig
+                                .chatTheme.chatPageHeaderTheme?.iconColor ??
+                            IsmChatColors.redColor,
+                      ),
                   IsmChatDimens.boxWidth8,
                   Text(
                     IsmChatStrings.deleteGroup,
