@@ -210,6 +210,7 @@ class _IsmChatConverstaionInfoViewState
                     padding: EdgeInsets.only(
                         right: IsmChatDimens.five, top: IsmChatDimens.two),
                     child: PopupMenuButton(
+                      color: IsmChatColors.whiteColor,
                       icon: Icon(
                         Icons.more_vert,
                         color: IsmChatConfig
