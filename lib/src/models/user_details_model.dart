@@ -15,9 +15,8 @@ class UserDetails {
         online: map['online'] as bool? ?? false,
         memberName: map['memberName'] as String? ?? '',
         memberId: map['memberId'] as String? ?? '',
-        metaData: map['metaData'] == null
-            ? IsmChatMetaData()
-            : IsmChatMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        // Same as MQTT user parsing: nested metaData or top-level firstName/lastName.
+        metaData: IsmChatMqttUserModel.metaDataFromMap(map) ?? IsmChatMetaData(),
         lastSeen: map['lastSeen'] as int? ?? 0,
         timestamp: map['timestamp'] as int? ?? 0,
         visibility: map['visibility'] as bool? ?? false,
@@ -73,6 +72,23 @@ class UserDetails {
   /// Per-member mute/unmute flag from conversations / conversation details APIs.
   /// `false` means notifications are muted for this member.
   final bool pushNotification;
+
+  /// Prefer "First Last" from [metaData]; fallback to [userName].
+  /// Same rule as [IsmChatMqttUserModel.displayName] and chat UI headers.
+  String get displayName {
+    final fullName =
+        '${metaData?.firstName ?? ''} ${metaData?.lastName ?? ''}'.trim();
+    if (fullName.isNotEmpty) return fullName;
+    final custom = metaData?.customMetaData;
+    if (custom != null) {
+      final customFull =
+          '${custom['firstName'] ?? ''} ${custom['lastName'] ?? ''}'.trim();
+      if (customFull.isNotEmpty) return customFull;
+    }
+    final member = memberName?.trim() ?? '';
+    if (member.isNotEmpty) return member;
+    return userName;
+  }
 
   String get profileUrl {
     if (metaData == null || metaData?.profilePic.isNullOrEmpty == true) {
