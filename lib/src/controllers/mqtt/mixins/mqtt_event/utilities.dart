@@ -57,15 +57,28 @@ String resolveMessageNotificationTitle(IsmChatMessageModel message) {
   );
   if (conversationTitle.isNotEmpty) return conversationTitle;
 
-  final senderFullName =
-      '${message.senderInfo?.metaData?.firstName ?? ''} ${message.senderInfo?.metaData?.lastName ?? ''}'
-          .trim();
-  if (senderFullName.isNotEmpty) return senderFullName;
+  final senderDisplayName = message.senderInfo?.displayName.trim() ?? '';
+  if (senderDisplayName.isNotEmpty &&
+      senderDisplayName != (message.senderInfo?.userName ?? '').trim()) {
+    return senderDisplayName;
+  }
+
+  final cachedConversation = message.conversationId != null &&
+          message.conversationId!.isNotEmpty &&
+          IsmChatUtility.conversationControllerRegistered
+      ? IsmChatUtility.conversationController
+          .getConversation(message.conversationId ?? '')
+      : null;
+  final cachedOpponentName =
+      cachedConversation?.opponentDetails?.displayName.trim() ?? '';
+  if (cachedOpponentName.isNotEmpty) return cachedOpponentName;
+
   final notificationTitle = message.notificationTitle?.trim();
   if (notificationTitle != null && notificationTitle.isNotEmpty) {
     return notificationTitle;
   }
-  return message.senderInfo?.userName ?? '';
+  final fallback = message.senderInfo?.userName ?? '';
+  return fallback;
 }
 
 String resolveCreateConversationNotificationTitle(

@@ -134,17 +134,25 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
     _controller.ifTimerMounted();
   }
 
-  /// Sets up the current user details from configuration.
+  /// Sets up the current user details from configuration / loaded profile.
   void _currentUser() {
+    final details = _controller.conversationController.userDetails;
     _controller.currentUser = UserDetails(
-      userProfileImageUrl:
-          IsmChatConfig.communicationConfig.userConfig.userProfile ?? '',
-      userName: IsmChatConfig.communicationConfig.userConfig.userName ?? '',
-      userIdentifier:
-          IsmChatConfig.communicationConfig.userConfig.userEmail ?? '',
-      userId: IsmChatConfig.communicationConfig.userConfig.userId,
+      userProfileImageUrl: (details?.userProfileImageUrl.isNotEmpty ?? false)
+          ? details!.userProfileImageUrl
+          : IsmChatConfig.communicationConfig.userConfig.userProfile ?? '',
+      userName: (details?.userName.isNotEmpty ?? false)
+          ? details!.userName
+          : IsmChatConfig.communicationConfig.userConfig.userName ?? '',
+      userIdentifier: (details?.userIdentifier.isNotEmpty ?? false)
+          ? details!.userIdentifier
+          : IsmChatConfig.communicationConfig.userConfig.userEmail ?? '',
+      userId: (details?.userId.isNotEmpty ?? false)
+          ? details!.userId
+          : IsmChatConfig.communicationConfig.userConfig.userId,
       online: false,
       lastSeen: 0,
+      metaData: details?.metaData,
     );
   }
 

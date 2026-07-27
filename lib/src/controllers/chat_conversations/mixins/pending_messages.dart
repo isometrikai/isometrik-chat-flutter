@@ -39,6 +39,7 @@ mixin IsmChatConversationsPendingMessagesMixin on GetxController {
       final notificationTitle = IsmChatUtility.resolveSendNotificationTitle(
         conversation: conversation,
         conversationId: x.conversationId,
+        senderDetails: _controller.userDetails,
         senderUserName: senderUserName,
       );
       List<Map<String, dynamic>>? attachments;

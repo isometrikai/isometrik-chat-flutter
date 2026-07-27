@@ -202,11 +202,14 @@ class IsmChatUtility {
 
   /// FCM / push notification title for outgoing messages.
   ///
-  /// Same rule as local MQTT notifications: prefer conversationTitle when
-  /// present (group chats). Fall back to [senderUserName] for 1:1.
+  /// Same rule as local MQTT notifications ([resolveMessageNotificationTitle]):
+  /// 1. Prefer conversationTitle when present (group chats)
+  /// 2. Prefer sender full name (first + last) for 1:1
+  /// 3. Fall back to [senderUserName]
   static String resolveSendNotificationTitle({
     IsmChatConversationModel? conversation,
     String? conversationId,
+    UserDetails? senderDetails,
     required String senderUserName,
   }) {
     final title = conversation?.conversationTitle?.trim() ?? '';
@@ -218,6 +221,39 @@ class IsmChatUtility {
           conversationController.getConversation(id)?.conversationTitle?.trim();
       if (cached != null && cached.isNotEmpty) return cached;
     }
+
+    final details = senderDetails ??
+        (conversationControllerRegistered
+            ? conversationController.userDetails
+            : null);
+    if (details != null) {
+      final fullName =
+          '${details.metaData?.firstName ?? ''} ${details.metaData?.lastName ?? ''}'
+              .trim();
+      if (fullName.isNotEmpty) return fullName;
+      final custom = details.metaData?.customMetaData;
+      if (custom != null) {
+        final customFull =
+            '${custom['firstName'] ?? ''} ${custom['lastName'] ?? ''}'.trim();
+        if (customFull.isNotEmpty) return customFull;
+      }
+    }
+
+    // Members list often has richer metaData for the logged-in user.
+    final userId = IsmChatConfig.communicationConfig.userConfig.userId;
+    final members = conversation?.members;
+    if (members != null && userId.isNotEmpty) {
+      for (final member in members) {
+        if (member.userId == userId) {
+          final fullName =
+              '${member.metaData?.firstName ?? ''} ${member.metaData?.lastName ?? ''}'
+                  .trim();
+          if (fullName.isNotEmpty) return fullName;
+          break;
+        }
+      }
+    }
+
     return senderUserName;
   }
 

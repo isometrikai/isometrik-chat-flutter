@@ -521,7 +521,7 @@ class IsmChatPageRepository {
   }) async {
     try {
       var response = await _apiWrapper.delete(
-        '${IsmChatAPI.deleteMessages}?conversationId=$conversationId&messageIds=$messages',
+        '${IsmChatAPI.deleteMessages}?conversationId=$conversationId&messageIds=$messages&sendNotification=false',
         payload: null,
         headers: IsmChatUtility.tokenCommonHeader(),
       );

@@ -57,10 +57,12 @@ mixin IsmChatPageSendMessageCoreMixin {
     bool encrypted = false,
     List<String>? searchableTags,
   }) async {
-    // Same as local MQTT notifications: prefer conversationTitle when present.
+    // Same as local MQTT notifications: conversationTitle, else full name.
     notificationTitle = IsmChatUtility.resolveSendNotificationTitle(
       conversation: _controller.conversation,
       conversationId: conversationId,
+      senderDetails: _controller.conversationController.userDetails ??
+          _controller.currentUser,
       senderUserName: notificationTitle,
     );
     // Backend uses notificationBody for FCM — never send ciphertext.
