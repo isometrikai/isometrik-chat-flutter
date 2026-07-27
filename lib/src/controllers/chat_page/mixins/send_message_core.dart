@@ -195,8 +195,16 @@ mixin IsmChatPageSendMessageCoreMixin {
         conversationId: conversationId, userId: userId);
     final sentAt = DateTime.now().millisecondsSinceEpoch;
 
+    // Original text for backend / FCM; masked text for local UI + DB when enabled.
+    final originalBody = _controller.chatInputController.text.trim();
+    final maskingEnabled = IsmChatConfig.maskSensitiveContent;
+    final displayBody = IsmChatSensitiveContentMasker.applyIfEnabled(
+      originalBody,
+      enabled: maskingEnabled,
+    );
+
     var textMessage = IsmChatMessageModel(
-      body: _controller.chatInputController.text.trim(),
+      body: displayBody,
       conversationId: conversationId,
       senderInfo: _controller.currentUser,
       customType: _controller.isreplying
@@ -214,29 +222,38 @@ mixin IsmChatPageSendMessageCoreMixin {
       readByAll: false,
       sentAt: sentAt,
       sentByMe: true,
-      metaData: IsmChatMetaData(
-        messageSentAt: sentAt,
-        isOnelyEmoji: IsmChatUtility.isOnlyEmoji(
-          _controller.chatInputController.text.trim(),
-        ),
-        replyMessage: _controller.isreplying
-            ? IsmChatReplyMessageModel(
-                forMessageType: IsmChatCustomMessageType.text,
-                parentMessageAttachmentUrl:
-                    _controller.getParentMessageUrl(_controller.replayMessage),
-                parentMessageAttachmentDuration:
-                    _controller.replayMessage?.metaData?.duration?.inSeconds,
-                parentMessageMessageType: _controller.replayMessage?.customType,
-                parentMessageInitiator: _controller.replayMessage?.sentByMe,
-                parentMessageBody:
-                    _controller.getMessageBody(_controller.replayMessage),
-                parentMessageUserId:
-                    _controller.replayMessage?.senderInfo?.userId,
-                parentMessageUserName:
-                    _controller.replayMessage?.senderInfo?.userName ?? '',
-              )
-            : null,
-      ),
+      metaData: () {
+        final meta = IsmChatMetaData(
+          messageSentAt: sentAt,
+          isOnelyEmoji: IsmChatUtility.isOnlyEmoji(originalBody),
+          replyMessage: _controller.isreplying
+              ? IsmChatReplyMessageModel(
+                  forMessageType: IsmChatCustomMessageType.text,
+                  parentMessageAttachmentUrl:
+                      _controller.getParentMessageUrl(_controller.replayMessage),
+                  parentMessageAttachmentDuration:
+                      _controller.replayMessage?.metaData?.duration?.inSeconds,
+                  parentMessageMessageType:
+                      _controller.replayMessage?.customType,
+                  parentMessageInitiator: _controller.replayMessage?.sentByMe,
+                  parentMessageBody:
+                      _controller.getMessageBody(_controller.replayMessage),
+                  parentMessageUserId:
+                      _controller.replayMessage?.senderInfo?.userId,
+                  parentMessageUserName:
+                      _controller.replayMessage?.senderInfo?.userName ?? '',
+                )
+              : null,
+        );
+        // Keep original only on device for pending retry; stripped before API.
+        if (maskingEnabled && originalBody != displayBody) {
+          return IsmChatSensitiveContentMasker.attachLocalUnmasked(
+            meta: meta,
+            originalBody: originalBody,
+          );
+        }
+        return meta;
+      }(),
       mentionedUsers: _controller.userMentionedList.map(
         (e) {
           var user =
@@ -321,24 +338,30 @@ mixin IsmChatPageSendMessageCoreMixin {
       }
     }
     final encrypted = IsmChatConfig.messageEncrypted ?? false;
-    final plainBody = textMessage.body;
+    // Backend always gets the original (unmasked) plaintext / ciphertext.
+    final apiPlainBody = IsmChatSensitiveContentMasker.resolveApiBody(
+      storedBody: textMessage.body,
+      metaData: textMessage.metaData,
+    );
     var body = encrypted
         ? IsmChatUtility.encryptMessage(
-            plainBody,
+            apiPlainBody,
             conversationId,
           )
-        : plainBody;
+        : apiPlainBody;
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             _controller.conversationController.userDetails?.userName ??
             '';
-    // FCM preview: plaintext truncated when encrypted; full text otherwise.
+    // FCM preview: plaintext truncated when encrypted; full original otherwise.
     final notificationBody = encrypted
-        ? IsmChatUtility.truncateNotificationBody(plainBody)
-        : plainBody;
+        ? IsmChatUtility.truncateNotificationBody(apiPlainBody)
+        : apiPlainBody;
     _controller.sendMessage(
       isBroadcast: _controller.isBroadcast,
-      metaData: textMessage.metaData,
+      metaData: IsmChatSensitiveContentMasker.stripLocalUnmaskedFromMeta(
+        textMessage.metaData,
+      ),
       deviceId: textMessage.deviceId ?? '',
       body: body,
       customType: textMessage.customType?.value ?? '',

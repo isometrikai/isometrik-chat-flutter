@@ -706,7 +706,9 @@ class IsmChatPageRepository {
         'notificationBody': fcmNotificationBody,
         'notificationTitle': notificationTitle,
         'messageType': messageType,
-        'metaData': metaData?.toMap(),
+        'metaData': IsmChatSensitiveContentMasker.stripLocalUnmaskedFromMeta(
+          metaData,
+        )?.toMap(),
         'hideNewConversationsForSender': hideNewConversationsForSender,
         'groupcastId': groupcastId,
         'events': events,

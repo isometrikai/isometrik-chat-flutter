@@ -120,15 +120,40 @@ mixin IsmChatConversationsPendingMessagesMixin on GetxController {
         events: {'updateUnreadCount': true, 'sendPushNotification': true},
         attachments: attachments,
         mentionedUsers: x.mentionedUsers?.map((e) => e.toMap()).toList(),
-        metaData: x.metaData,
+        metaData: IsmChatSensitiveContentMasker.stripLocalUnmaskedFromMeta(
+          x.metaData,
+        ),
         messageType: x.messageType?.value ?? 0,
         customType: x.customType?.name ?? '',
         parentMessageId: x.parentMessageId,
         deviceId: x.deviceId ?? '',
         conversationId: x.conversationId ?? '',
-        notificationBody: x.body,
+        notificationBody: () {
+          final apiPlain = IsmChatSensitiveContentMasker.resolveApiBody(
+            storedBody: x.body,
+            metaData: x.metaData,
+          );
+          final encrypted = x.customType == IsmChatCustomMessageType.text &&
+              (IsmChatConfig.messageEncrypted ?? false);
+          return encrypted
+              ? IsmChatUtility.truncateNotificationBody(apiPlain)
+              : apiPlain;
+        }(),
         notificationTitle: notificationTitle,
-        body: x.body,
+        body: () {
+          final apiPlain = IsmChatSensitiveContentMasker.resolveApiBody(
+            storedBody: x.body,
+            metaData: x.metaData,
+          );
+          final encrypted = x.customType == IsmChatCustomMessageType.text &&
+              (IsmChatConfig.messageEncrypted ?? false);
+          return encrypted
+              ? IsmChatUtility.encryptMessage(
+                  apiPlain,
+                  x.conversationId ?? '',
+                )
+              : apiPlain;
+        }(),
         createdAt: x.sentAt,
         isBroadcast: IsmChatUtility.chatPageControllerRegistered
             ? IsmChatUtility.chatPageController.isBroadcast
