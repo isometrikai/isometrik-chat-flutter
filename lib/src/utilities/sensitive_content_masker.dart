@@ -49,8 +49,11 @@ class IsmChatSensitiveContentMasker {
   );
 
   /// Bare national / long numbers (9–13 digits).
-  static final RegExp _phonePlainRegExp = RegExp(r'(?<![\d+])(\d{9,13})\b');
-
+  /// Skips ID-style tokens like `MID-0000079377` / `SID-…` / `PKID-…`
+  /// (letter(s) + hyphen immediately before the digits).
+  static final RegExp _phonePlainRegExp = RegExp(
+    r'(?<![A-Za-z]-)(?<![\d+])(\d{9,13})\b',
+  );
   /// Applies masking when [enabled] is true; otherwise returns [input] unchanged.
   static String applyIfEnabled(String input, {required bool enabled}) {
     if (!enabled || input.isEmpty) return input;
