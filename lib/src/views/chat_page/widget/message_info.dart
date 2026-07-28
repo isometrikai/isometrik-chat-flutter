@@ -55,245 +55,256 @@ class IsmChatMessageInfo extends StatelessWidget {
                         IsmChatStyles.w600White18),
             centerTitle: true,
           ),
-          body: SingleChildScrollView(
-            child: Container(
-              margin: IsmChatDimens.edgeInsets16,
-              height: IsmChatDimens.percentHeight(1),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: IsmChatConfig.chatTheme.chatPageTheme
-                                ?.centerMessageTheme?.backgroundColor ??
-                            IsmChatConfig.chatTheme.backgroundColor,
-                        borderRadius:
-                            BorderRadius.circular(IsmChatDimens.eight),
-                      ),
-                      padding: IsmChatDimens.edgeInsets8_4,
-                      child: Text(
-                        message.sentAt.toMessageDateString(),
-                        style: IsmChatConfig.chatTheme.chatPageTheme
-                                ?.centerMessageTheme?.textStyle ??
-                            IsmChatStyles.w500Black12.copyWith(
-                              color: IsmChatConfig.chatTheme.primaryColor,
-                            ),
+          // Bottom inset for Android/iOS system nav bar (edge-to-edge).
+          body: SafeArea(
+            top: false,
+            maintainBottomViewPadding: true,
+            child: SingleChildScrollView(
+              child: Container(
+                margin: IsmChatDimens.edgeInsets16,
+                height: IsmChatDimens.percentHeight(1),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: IsmChatConfig.chatTheme.chatPageTheme
+                                  ?.centerMessageTheme?.backgroundColor ??
+                              IsmChatConfig.chatTheme.backgroundColor,
+                          borderRadius:
+                              BorderRadius.circular(IsmChatDimens.eight),
+                        ),
+                        padding: IsmChatDimens.edgeInsets8_4,
+                        child: Text(
+                          message.sentAt.toMessageDateString(),
+                          style: IsmChatConfig.chatTheme.chatPageTheme
+                                  ?.centerMessageTheme?.textStyle ??
+                              IsmChatStyles.w500Black12.copyWith(
+                                color: IsmChatConfig.chatTheme.primaryColor,
+                              ),
+                        ),
                       ),
                     ),
-                  ),
-                  IsmChatDimens.boxHeight16,
-                  Obx(
-                    () {
-                      final deliveredCount =
-                          chatController.deliverdMessageMembers.length;
-                      final readCount =
-                          chatController.readMessageMembers.length;
-                      final membersCount =
-                          chatController.conversation?.membersCount ?? 0;
-                      final expectedRecipients = isGroup
-                          ? (membersCount > 0 ? membersCount - 1 : 0)
-                          : 1;
+                    IsmChatDimens.boxHeight16,
+                    Obx(
+                      () {
+                        final deliveredCount =
+                            chatController.deliverdMessageMembers.length;
+                        final readCount =
+                            chatController.readMessageMembers.length;
+                        final membersCount =
+                            chatController.conversation?.membersCount ?? 0;
+                        final expectedRecipients = isGroup
+                            ? (membersCount > 0 ? membersCount - 1 : 0)
+                            : 1;
 
-                      var deliveredToAll = message.deliveredToAll ?? false;
-                      var readByAll = message.readByAll ?? false;
+                        var deliveredToAll = message.deliveredToAll ?? false;
+                        var readByAll = message.readByAll ?? false;
 
-                      if (isGroup) {
-                        if (expectedRecipients > 0 && deliveredCount > 0) {
-                          deliveredToAll =
-                              deliveredCount >= expectedRecipients;
-                        }
-                        if (expectedRecipients > 0 && readCount > 0) {
-                          readByAll = readCount >= expectedRecipients;
-                          if (readByAll) {
+                        if (isGroup) {
+                          if (expectedRecipients > 0 && deliveredCount > 0) {
+                            deliveredToAll =
+                                deliveredCount >= expectedRecipients;
+                          }
+                          if (expectedRecipients > 0 && readCount > 0) {
+                            readByAll = readCount >= expectedRecipients;
+                            if (readByAll) {
+                              deliveredToAll = true;
+                            }
+                          }
+                        } else {
+                          if (deliveredCount > 0) {
+                            deliveredToAll = true;
+                          }
+                          if (readCount > 0) {
+                            readByAll = true;
                             deliveredToAll = true;
                           }
                         }
-                      } else {
-                        if (deliveredCount > 0) {
-                          deliveredToAll = true;
-                        }
-                        if (readCount > 0) {
-                          readByAll = true;
-                          deliveredToAll = true;
-                        }
-                      }
 
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: message.sentByMe
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          MessageBubble(
-                            message: message.copyWith(
-                              deliveredToAll: deliveredToAll,
-                              readByAll: readByAll,
-                            ),
-                            showMessageInCenter: false,
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                  IsmChatDimens.boxHeight16,
-                  isGroup
-                      ? Obx(
-                          () => Column(
-                            children: [
-                              if (chatController
-                                  .deliverdMessageMembers.isNotEmpty) ...[
-                                _UserInfo(
-                                  userList:
-                                      chatController.deliverdMessageMembers,
-                                  title: IsmChatStrings.deliveredTo,
-                                ),
-                              ] else ...[
-                                MessageReadDelivered(
-                                  title: IsmChatStrings.deliveredTo,
-                                )
-                              ],
-                              IsmChatDimens.boxHeight10,
-                              if (chatController
-                                  .readMessageMembers.isNotEmpty) ...[
-                                _UserInfo(
-                                  userList: chatController.readMessageMembers,
-                                  title: (message.customType ==
-                                              IsmChatCustomMessageType.audio ||
-                                          message.customType ==
-                                              IsmChatCustomMessageType.video)
-                                      ? IsmChatStrings.playedby
-                                      : IsmChatStrings.readby,
-                                  isRead: true,
-                                ),
-                              ] else ...[
-                                MessageReadDelivered(
-                                  title: (message.customType ==
-                                              IsmChatCustomMessageType.audio ||
-                                          message.customType ==
-                                              IsmChatCustomMessageType.video)
-                                      ? IsmChatStrings.playedby
-                                      : IsmChatStrings.readby,
-                                )
-                              ],
-                            ],
-                          ),
-                        )
-                      : Obx(
-                          () => Card(
-                            elevation: 1,
-                            child: Padding(
-                              padding: IsmChatDimens.edgeInsets10,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            Icons.done_all,
-                                            color: Colors.grey,
-                                            size: IsmChatDimens.twenty,
-                                          ),
-                                          IsmChatDimens.boxWidth8,
-                                          Text(
-                                            'Delivered',
-                                            style: IsmChatStyles.w400Black12
-                                                .copyWith(
-                                              fontSize: message.style.fontSize,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      chatController
-                                              .deliverdMessageMembers.isEmpty
-                                          ? Icon(
-                                              Icons.remove,
-                                              size: IsmChatDimens.twenty,
-                                            )
-                                          : Text(
-                                              chatController
-                                                      .deliverdMessageMembers
-                                                      .first
-                                                      .timestamp
-                                                      ?.deliverTime ??
-                                                  '',
-                                              style: IsmChatStyles.w400Black12
-                                                  .copyWith(
-                                                fontSize:
-                                                    message.style.fontSize,
-                                              ),
-                                            )
-                                    ],
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: message.sentByMe
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            MessageBubble(
+                              message: message.copyWith(
+                                deliveredToAll: deliveredToAll,
+                                readByAll: readByAll,
+                              ),
+                              showMessageInCenter: false,
+                            )
+                          ],
+                        );
+                      },
+                    ),
+                    IsmChatDimens.boxHeight16,
+                    isGroup
+                        ? Obx(
+                            () => Column(
+                              children: [
+                                if (chatController
+                                    .deliverdMessageMembers.isNotEmpty) ...[
+                                  _UserInfo(
+                                    userList:
+                                        chatController.deliverdMessageMembers,
+                                    title: IsmChatStrings.deliveredTo,
                                   ),
-                                  IsmChatDimens.boxHeight8,
-                                  const Divider(
-                                    thickness: 0.1,
-                                    color: Colors.grey,
-                                  ),
-                                  IsmChatDimens.boxHeight8,
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            Icons.done_all,
-                                            color: Colors.blue,
-                                            size: IsmChatDimens.twenty,
-                                          ),
-                                          IsmChatDimens.boxWidth14,
-                                          Text(
-                                              (message.customType ==
-                                                          IsmChatCustomMessageType
-                                                              .audio ||
-                                                      message.customType ==
-                                                          IsmChatCustomMessageType
-                                                              .video)
-                                                  ? 'Played'
-                                                  : 'Read',
-                                              style: IsmChatStyles.w400Black12
-                                                  .copyWith(
-                                                fontSize:
-                                                    message.style.fontSize,
-                                              ))
-                                        ],
-                                      ),
-                                      chatController.readMessageMembers.isEmpty
-                                          ? Icon(
-                                              Icons.remove,
-                                              size: IsmChatDimens.twenty,
-                                            )
-                                          : Text(
-                                              chatController
-                                                      .readMessageMembers
-                                                      .first
-                                                      .timestamp
-                                                      ?.deliverTime ??
-                                                  '',
-                                              style: IsmChatStyles.w400Black12
-                                                  .copyWith(
-                                                fontSize:
-                                                    message.style.fontSize,
-                                              ),
-                                            ),
-                                    ],
-                                  ),
+                                ] else ...[
+                                  MessageReadDelivered(
+                                    title: IsmChatStrings.deliveredTo,
+                                  )
                                 ],
+                                IsmChatDimens.boxHeight10,
+                                if (chatController
+                                    .readMessageMembers.isNotEmpty) ...[
+                                  _UserInfo(
+                                    userList: chatController.readMessageMembers,
+                                    title: (message.customType ==
+                                                IsmChatCustomMessageType
+                                                    .audio ||
+                                            message.customType ==
+                                                IsmChatCustomMessageType.video)
+                                        ? IsmChatStrings.playedby
+                                        : IsmChatStrings.readby,
+                                    isRead: true,
+                                  ),
+                                ] else ...[
+                                  MessageReadDelivered(
+                                    title: (message.customType ==
+                                                IsmChatCustomMessageType
+                                                    .audio ||
+                                            message.customType ==
+                                                IsmChatCustomMessageType.video)
+                                        ? IsmChatStrings.playedby
+                                        : IsmChatStrings.readby,
+                                  )
+                                ],
+                              ],
+                            ),
+                          )
+                        : Obx(
+                            () => Card(
+                              elevation: 1,
+                              child: Padding(
+                                padding: IsmChatDimens.edgeInsets10,
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.done_all,
+                                              color: Colors.grey,
+                                              size: IsmChatDimens.twenty,
+                                            ),
+                                            IsmChatDimens.boxWidth8,
+                                            Text(
+                                              'Delivered',
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize:
+                                                    message.style.fontSize,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        chatController
+                                                .deliverdMessageMembers.isEmpty
+                                            ? Icon(
+                                                Icons.remove,
+                                                size: IsmChatDimens.twenty,
+                                              )
+                                            : Text(
+                                                chatController
+                                                        .deliverdMessageMembers
+                                                        .first
+                                                        .timestamp
+                                                        ?.deliverTime ??
+                                                    '',
+                                                style: IsmChatStyles.w400Black12
+                                                    .copyWith(
+                                                  fontSize:
+                                                      message.style.fontSize,
+                                                ),
+                                              )
+                                      ],
+                                    ),
+                                    IsmChatDimens.boxHeight8,
+                                    const Divider(
+                                      thickness: 0.1,
+                                      color: Colors.grey,
+                                    ),
+                                    IsmChatDimens.boxHeight8,
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.done_all,
+                                              color: Colors.blue,
+                                              size: IsmChatDimens.twenty,
+                                            ),
+                                            IsmChatDimens.boxWidth14,
+                                            Text(
+                                                (message.customType ==
+                                                            IsmChatCustomMessageType
+                                                                .audio ||
+                                                        message.customType ==
+                                                            IsmChatCustomMessageType
+                                                                .video)
+                                                    ? 'Played'
+                                                    : 'Read',
+                                                style: IsmChatStyles.w400Black12
+                                                    .copyWith(
+                                                  fontSize:
+                                                      message.style.fontSize,
+                                                ))
+                                          ],
+                                        ),
+                                        chatController
+                                                .readMessageMembers.isEmpty
+                                            ? Icon(
+                                                Icons.remove,
+                                                size: IsmChatDimens.twenty,
+                                              )
+                                            : Text(
+                                                chatController
+                                                        .readMessageMembers
+                                                        .first
+                                                        .timestamp
+                                                        ?.deliverTime ??
+                                                    '',
+                                                style: IsmChatStyles.w400Black12
+                                                    .copyWith(
+                                                  fontSize:
+                                                      message.style.fontSize,
+                                                ),
+                                              ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                ],
+                          )
+                  ],
+                ),
               ),
             ),
           ),
