@@ -361,18 +361,18 @@ class IsmChatForwardView extends StatelessWidget {
                                 }
 
                                 if (await IsmChatProperties.chatPageProperties
-                                        .messageAllowedConfig?.isMessgeAllowed
-                                        ?.call(
-                                            IsmChatConfig.kNavigatorKey
-                                                    .currentContext ??
-                                                IsmChatConfig.context,
-                                            IsmChatUtility.chatPageController
-                                                .conversation!,
-                                            IsmChatCustomMessageType.forward,
-                                            IsmChatUtility.chatPageController
-                                                .chatInputController.text
-                                                .trim()) ??
-                                    true) {
+                                    .messageAllowedConfig
+                                    .shouldAllowOutboundSend(
+                                  context: IsmChatConfig
+                                          .kNavigatorKey.currentContext ??
+                                      IsmChatConfig.context,
+                                  conversation: IsmChatUtility
+                                      .chatPageController.conversation!,
+                                  customType: IsmChatCustomMessageType.forward,
+                                  messageText: IsmChatUtility.chatPageController
+                                      .chatInputController.text
+                                      .trim(),
+                                )) {
                                   await controller.sendForwardMessage(
                                     customType: message.customType?.name ?? '',
                                     userIds: controller.selectedUserList

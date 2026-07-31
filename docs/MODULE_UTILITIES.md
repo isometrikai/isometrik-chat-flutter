@@ -80,6 +80,8 @@ debouncer.run(() => performSearch());
 **Key Typedefs**:
 - `NotificaitonCallback` - Notification callback
 - `SendMessageCallback` - Send message callback
+- `IsmChatBeforeSendMessageCallback` / `IsmChatMessageSendDecision` - Pre-send allow/block/keepLocal gate (see `MessageAllowedConfig`)
+- `IsmChatMessageSendBlockedCallback` - Host logging when send is blocked or kept local-only
 - `ResponseCallback` - API response callback
 - `ConversationVoidCallback` - Conversation callback
 

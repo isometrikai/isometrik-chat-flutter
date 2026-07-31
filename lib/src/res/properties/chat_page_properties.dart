@@ -120,7 +120,11 @@ class IsmChatPageProperties {
 
   final IsmChatPageHeaderProperties? header;
 
-  /// It is an optional parameter you can use for meessage send allow or not
+  /// Pre-send allow / block / keep-local gate (phishing safety, host policy).
+  ///
+  /// Prefer [MessageAllowedConfig.onBeforeSendMessage] +
+  /// [MessageAllowedConfig.onMessageSendBlocked] for Hookup-style local
+  /// filters — see docs on [MessageAllowedConfig].
   final MessageAllowedConfig? messageAllowedConfig;
 
   /// It is an optional parameter you can use for attachments configuration

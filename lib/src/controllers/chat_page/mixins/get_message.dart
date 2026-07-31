@@ -640,6 +640,8 @@ mixin IsmChatPageGetMessageMixin on GetxController {
             members:
                 message.members?.map((e) => e.memberName ?? '').toList() ?? [],
             action: '',
+            // Propagate local-only / failed sends so conversation list shows error.
+            isInvalidMessage: message.isInvalidMessage,
           ),
           unreadMessagesCount: 0,
         );
