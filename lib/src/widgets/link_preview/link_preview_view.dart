@@ -1,14 +1,38 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_link_previewer/flutter_link_previewer.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
+import 'package:flutter_link_previewer/flutter_link_previewer.dart'
+    show getPreviewData;
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Link preview for chat messages using `flutter_link_previewer`.
+/// In-memory preview cache shared by chat bubbles and the long-press focus menu.
 ///
-/// Layout: square image → title → description → URL.
+/// Reuse this whenever the same URL is rendered in more than one place (list
+/// bubble → focus overlay Hero) so metadata is not re-fetched and the UI does
+/// not jump from "link text only" → "image + title".
+///
+/// Clear via [clear] only if you need to force a refresh (e.g. logout).
+class IsmChatLinkPreviewCache {
+  IsmChatLinkPreviewCache._();
+
+  static final Map<String, PreviewData> _cache = <String, PreviewData>{};
+
+  static PreviewData? get(String url) => _cache[url];
+
+  static void set(String url, PreviewData data) => _cache[url] = data;
+
+  static void clear() => _cache.clear();
+}
+
+/// Link preview for chat messages.
+///
+/// Layout: square image (or placeholder) → title → description → URL.
+/// A fixed-size image slot is reserved while metadata / the image loads so
+/// long-press focus menus do not resize and push Delete under the system nav bar.
+///
 /// When [embedded] is true, the message text is shown by the parent bubble and
-/// only the preview card is rendered here (same card as URL-only messages).
+/// only the preview card is rendered here.
 class LinkPreviewView extends StatefulWidget {
   const LinkPreviewView({
     super.key,
@@ -32,7 +56,51 @@ class LinkPreviewView extends StatefulWidget {
 }
 
 class _LinkPreviewViewState extends State<LinkPreviewView> {
-  dynamic _previewData;
+  PreviewData? _previewData;
+  bool _isLoading = true;
+
+  String get _cacheKey => widget.url.convertToValidUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _bootstrapPreview();
+  }
+
+  @override
+  void didUpdateWidget(covariant LinkPreviewView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) {
+      _bootstrapPreview();
+    }
+  }
+
+  void _bootstrapPreview() {
+    final cached = IsmChatLinkPreviewCache.get(_cacheKey);
+    if (cached != null) {
+      _previewData = cached;
+      _isLoading = false;
+      return;
+    }
+    _previewData = null;
+    _isLoading = true;
+    _fetchPreview();
+  }
+
+  Future<void> _fetchPreview() async {
+    try {
+      final data = await getPreviewData(_cacheKey);
+      IsmChatLinkPreviewCache.set(_cacheKey, data);
+      if (!mounted) return;
+      setState(() {
+        _previewData = data;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
+  }
 
   Color _getLinkPreviewColor() {
     final theme = IsmChatConfig.chatTheme.chatPageTheme;
@@ -83,16 +151,53 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
         color: linkColor,
       );
 
+  /// Fixed square slot used for the real OG image or a loading placeholder.
+  /// Keeping this size stable avoids focus-menu flicker / overflow on Android.
+  Widget _buildImageSlot({
+    required double previewWidth,
+    String? imageUrl,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(IsmChatDimens.eight),
+      child: SizedBox(
+        width: previewWidth,
+        height: previewWidth,
+        child: imageUrl != null && imageUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: imageUrl,
+                width: previewWidth,
+                height: previewWidth,
+                fit: BoxFit.cover,
+                // Keep the same footprint while the network image decodes.
+                placeholder: (_, __) => _LinkPreviewImagePlaceholder(
+                  size: previewWidth,
+                ),
+                errorWidget: (_, __, ___) => ColoredBox(
+                  color: IsmChatColors.greyColor.applyIsmOpacity(0.15),
+                  child: const Center(
+                    child: Icon(Icons.image_not_supported_outlined),
+                  ),
+                ),
+              )
+            : _LinkPreviewImagePlaceholder(size: previewWidth),
+      ),
+    );
+  }
+
   Widget _buildPreviewCard(
     BuildContext context,
-    dynamic data,
     double previewWidth,
     Color linkColor,
   ) {
-    final imageUrl = data.image?.url as String?;
-    final link = (data.link as String?) ?? widget.url.convertToValidUrl;
-    final title = data.title as String?;
-    final description = data.description as String?;
+    final data = _previewData;
+    final imageUrl = data?.image?.url;
+    final link = (data?.link as String?) ?? widget.url.convertToValidUrl;
+    final title = data?.title;
+    final description = data?.description;
+
+    // Show image slot while loading, or when we know an image exists.
+    // After a successful fetch with no image, drop the slot to avoid a blank box.
+    final showImageSlot = _isLoading || (imageUrl != null && imageUrl.isNotEmpty);
 
     return IsmChatTapHandler(
       onTap: () => _openLink(link),
@@ -106,25 +211,25 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (imageUrl != null && imageUrl.isNotEmpty) ...[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(IsmChatDimens.eight),
-                  child: SizedBox(
-                    width: previewWidth,
-                    height: previewWidth,
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      width: previewWidth,
-                      height: previewWidth,
-                      fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => ColoredBox(
-                        color: IsmChatColors.greyColor.applyIsmOpacity(0.15),
-                        child: const Center(
-                          child: Icon(Icons.image_not_supported_outlined),
-                        ),
-                      ),
-                    ),
+              if (!widget.embedded) ...[
+                Text(
+                  widget.message.body.trim().isNotEmpty
+                      ? widget.message.body
+                      : widget.url,
+                  style: widget.message.style.copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: linkColor,
+                    color: linkColor,
                   ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                IsmChatDimens.boxHeight8,
+              ],
+              if (showImageSlot) ...[
+                _buildImageSlot(
+                  previewWidth: previewWidth,
+                  imageUrl: imageUrl,
                 ),
                 IsmChatDimens.boxHeight10,
               ],
@@ -161,36 +266,32 @@ class _LinkPreviewViewState extends State<LinkPreviewView> {
 
   @override
   Widget build(BuildContext context) {
-    final messageText = widget.message.body.trim().isNotEmpty
-        ? widget.message.body
-        : widget.url;
     final linkColor = _getLinkPreviewColor();
     final previewWidth = _resolvePreviewWidth(context);
+    return _buildPreviewCard(context, previewWidth, linkColor);
+  }
+}
 
-    return LinkPreview(
-      enableAnimation: true,
-      text: messageText,
-      width: previewWidth,
-      previewData: _previewData,
-      onPreviewDataFetched: (data) {
-        if (mounted) {
-          setState(() => _previewData = data);
-        }
-      },
-      textWidget: widget.embedded ? const SizedBox.shrink() : null,
-      previewBuilder: (context, data) => _buildPreviewCard(
-        context,
-        data,
-        previewWidth,
-        linkColor,
+/// Neutral square placeholder reused for metadata fetch and image decode.
+///
+/// Prefer this over collapsing the image slot so list + focus-menu heights stay
+/// aligned while previews load.
+class _LinkPreviewImagePlaceholder extends StatelessWidget {
+  const _LinkPreviewImagePlaceholder({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: IsmChatColors.greyColor.applyIsmOpacity(0.15),
+      child: Center(
+        child: Icon(
+          Icons.language_outlined,
+          size: size * 0.22,
+          color: IsmChatColors.greyColor.applyIsmOpacity(0.7),
+        ),
       ),
-      textStyle: widget.message.style,
-      linkStyle: widget.message.style.copyWith(
-        decoration: TextDecoration.underline,
-        decorationColor: linkColor,
-        color: linkColor,
-      ),
-      padding: widget.embedded ? EdgeInsets.zero : IsmChatDimens.edgeInsets10_0,
     );
   }
 }

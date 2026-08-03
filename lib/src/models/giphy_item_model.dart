@@ -21,8 +21,9 @@ class IsmGiphyItem {
       previewUrl: preview['url'] as String? ?? sendUrl,
       sendUrl: sendUrl,
       extension: extension,
-      width: int.tryParse(preview['width'] as String? ?? ''),
-      height: int.tryParse(preview['height'] as String? ?? ''),
+      // Prefer send-rendition size; falls back to preview for layout reservation.
+      width: _parseDimension(send['width'] ?? preview['width']),
+      height: _parseDimension(send['height'] ?? preview['height']),
     );
   }
 
@@ -32,6 +33,17 @@ class IsmGiphyItem {
   final String extension;
   final int? width;
   final int? height;
+
+  static int? _parseDimension(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value > 0 ? value : null;
+    if (value is double) return value > 0 ? value.round() : null;
+    if (value is String) {
+      final parsed = int.tryParse(value);
+      return parsed != null && parsed > 0 ? parsed : null;
+    }
+    return null;
+  }
 
   static Map<String, dynamic> _pickImageMap(
     Map<String, dynamic> images, {

@@ -20,6 +20,8 @@ class AttachmentModel {
     this.attachmentType,
     this.bytes,
     this.stillUrl,
+    this.mediaWidth,
+    this.mediaHeight,
   });
 
   factory AttachmentModel.fromMap(Map<String, dynamic> map) => AttachmentModel(
@@ -39,6 +41,9 @@ class AttachmentModel {
         title: map['title'] as String? ?? '',
         address: map['address'] as String? ?? '',
         stillUrl: map['stillUrl'] as String? ?? '',
+        // Pixel size used to reserve GIF/sticker layout before decode.
+        mediaWidth: _parseDimension(map['mediaWidth'] ?? map['width']),
+        mediaHeight: _parseDimension(map['mediaHeight'] ?? map['height']),
         bytes: map['bytes'].runtimeType is String && map['bytes'] != 'null'
             ? (map['bytes'] as String? ?? '[]').strigToUnit8List
             : Uint8List(0),
@@ -62,7 +67,31 @@ class AttachmentModel {
   String? address;
   Uint8List? bytes;
   String? stillUrl;
+  /// Intrinsic width in pixels (e.g. from Giphy). Used for stable GIF layout.
+  int? mediaWidth;
+  /// Intrinsic height in pixels (e.g. from Giphy). Used for stable GIF layout.
+  int? mediaHeight;
   final IsmChatMediaType? attachmentType;
+
+  /// Parses width/height that may arrive as int, double, or string.
+  static int? _parseDimension(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value > 0 ? value : null;
+    if (value is double) return value > 0 ? value.round() : null;
+    if (value is String) {
+      final parsed = int.tryParse(value);
+      return parsed != null && parsed > 0 ? parsed : null;
+    }
+    return null;
+  }
+
+  /// Aspect ratio for layout; null when dimensions are unknown.
+  double? get mediaAspectRatio {
+    final w = mediaWidth;
+    final h = mediaHeight;
+    if (w == null || h == null || w <= 0 || h <= 0) return null;
+    return w / h;
+  }
 
   AttachmentModel copyWith({
     String? thumbnailUrl,
@@ -79,6 +108,8 @@ class AttachmentModel {
     Uint8List? bytes,
     IsmChatMediaType? attachmentType,
     String? stillUrl,
+    int? mediaWidth,
+    int? mediaHeight,
   }) =>
       AttachmentModel(
         thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
@@ -95,6 +126,8 @@ class AttachmentModel {
         attachmentType: attachmentType ?? this.attachmentType,
         bytes: bytes ?? this.bytes,
         stillUrl: stillUrl ?? this.stillUrl,
+        mediaWidth: mediaWidth ?? this.mediaWidth,
+        mediaHeight: mediaHeight ?? this.mediaHeight,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -110,6 +143,8 @@ class AttachmentModel {
         'title': title,
         'address': address,
         'stillUrl': stillUrl,
+        'mediaWidth': mediaWidth,
+        'mediaHeight': mediaHeight,
         'bytes': bytes.isNullOrEmpty == true ? '' : bytes.toString(),
         'attachmentType': attachmentType?.value,
       }.removeNullValues();
@@ -134,6 +169,9 @@ class AttachmentModel {
         'attachmentType': type.value,
         'name': name ?? '',
         'attachmentMessageType': type.gifStickerMessageType,
+        // Optional — helps receivers reserve the same layout size.
+        if (mediaWidth != null) 'mediaWidth': mediaWidth,
+        if (mediaHeight != null) 'mediaHeight': mediaHeight,
       };
     }
 
@@ -146,7 +184,7 @@ class AttachmentModel {
 
   @override
   String toString() =>
-      'AttachmentModel(thumbnailUrl: $thumbnailUrl, size: $size, name: $name, mimeType: $mimeType, mediaUrl: $mediaUrl, mediaId: $mediaId, extension: $extension, latitude: $latitude, longitude: $longitude, title: $title, address: $address, attachmentType: $attachmentType, stillUrl: $stillUrl, bytes: $bytes)';
+      'AttachmentModel(thumbnailUrl: $thumbnailUrl, size: $size, name: $name, mimeType: $mimeType, mediaUrl: $mediaUrl, mediaId: $mediaId, extension: $extension, latitude: $latitude, longitude: $longitude, title: $title, address: $address, attachmentType: $attachmentType, stillUrl: $stillUrl, mediaWidth: $mediaWidth, mediaHeight: $mediaHeight, bytes: $bytes)';
 
   @override
   bool operator ==(covariant AttachmentModel other) {
@@ -164,6 +202,8 @@ class AttachmentModel {
         other.title == title &&
         other.address == address &&
         other.stillUrl == stillUrl &&
+        other.mediaWidth == mediaWidth &&
+        other.mediaHeight == mediaHeight &&
         other.bytes == bytes &&
         other.attachmentType == attachmentType;
   }
@@ -182,6 +222,8 @@ class AttachmentModel {
       title.hashCode ^
       address.hashCode ^
       stillUrl.hashCode ^
+      mediaWidth.hashCode ^
+      mediaHeight.hashCode ^
       bytes.hashCode ^
       attachmentType.hashCode;
 }

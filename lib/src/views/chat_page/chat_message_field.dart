@@ -205,6 +205,28 @@ class IsmChatMessageField extends StatelessWidget {
                                           // The message composer should support paste by default across platforms,
                                           // so we keep this enabled here.
                                           true,
+                                      // Android soft keyboards (Gboard / OxygenOS GIF tray) insert
+                                      // GIFs via IME commitContent. Without this config the OS
+                                      // shows "This app does not support GIFs here".
+                                      // Reuse: point onContentInserted at
+                                      // IsmChatPageController.sendKeyboardInsertedContent.
+                                      contentInsertionConfiguration:
+                                          ContentInsertionConfiguration(
+                                        allowedMimeTypes: const [
+                                          'image/gif',
+                                          'image/png',
+                                          'image/jpeg',
+                                          'image/webp',
+                                        ],
+                                        onContentInserted: (content) {
+                                          unawaited(
+                                            controller
+                                                .sendKeyboardInsertedContent(
+                                              content,
+                                            ),
+                                          );
+                                        },
+                                      ),
                                       contextMenuBuilder:
                                           (context, editableTextState) {
                                         final builder = IsmChatProperties

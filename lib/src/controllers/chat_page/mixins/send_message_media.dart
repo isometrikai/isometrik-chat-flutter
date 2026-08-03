@@ -573,6 +573,10 @@ mixin IsmChatPageSendMessageMediaMixin {
   }
 
   /// Sends a message with a remote media URL (image, GIF, sticker).
+  ///
+  /// Pass [mediaWidth]/[mediaHeight] when known (e.g. Giphy) so the chat
+  /// bubble can reserve the correct aspect ratio before the GIF finishes
+  /// decoding — avoids expand-then-shrink on Android.
   Future<void> sendMessageWithMediaUrl({
     required String conversationId,
     required String userId,
@@ -586,6 +590,8 @@ mixin IsmChatPageSendMessageMediaMixin {
     String? extension,
     String? stillUrl,
     int? size,
+    int? mediaWidth,
+    int? mediaHeight,
     bool sendPushNotification = true,
     List<String>? searchableTags,
   }) async {
@@ -633,6 +639,8 @@ mixin IsmChatPageSendMessageMediaMixin {
           mediaId: mediaId,
           extension: resolvedExtension,
           stillUrl: stillUrl ?? mediaUrl,
+          mediaWidth: mediaWidth,
+          mediaHeight: mediaHeight,
         )
       ],
       deliveredToAll: false,
@@ -1021,6 +1029,126 @@ mixin IsmChatPageSendMessageMediaMixin {
         deferUpload: deferUpload,
       );
 
+  /// Handles GIFs / images inserted from the soft keyboard (Gboard, OEM GIF
+  /// tray, etc.) via Android's commitContent / IME rich-content API.
+  ///
+  /// Reuse this from any composer [TextField]/[TextFormField] by wiring
+  /// [ContentInsertionConfiguration.onContentInserted] to this method. Without
+  /// that configuration Android shows "This app does not support GIFs here".
+  Future<void> sendKeyboardInsertedContent(
+    KeyboardInsertedContent content,
+  ) async {
+    if (!(_controller.conversation?.isChattingAllowed == true)) {
+      _controller.showDialogCheckBlockUnBlock();
+      return;
+    }
+
+    final chatContext =
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
+    if (!(await IsmChatProperties.chatPageProperties.isSendMediaAllowed
+            ?.call(chatContext, _controller.conversation) ??
+        true)) {
+      return;
+    }
+
+    final bytes = content.data;
+    if (bytes == null || bytes.isEmpty) {
+      IsmChatLog.error(
+        'Keyboard inserted content had no bytes '
+        '(mimeType=${content.mimeType}, uri=${content.uri})',
+      );
+      IsmChatUtility.showToast('Unable to send media');
+      return;
+    }
+
+    final extension = _extensionFromMimeType(content.mimeType);
+    final isGif = _isGifExtension(extension);
+    // Resolve context again after awaits — navigator key may have changed.
+    final allowedContext =
+        IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
+    final allowed = await IsmChatProperties
+            .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
+            ?.call(
+          allowedContext,
+          _controller.conversation,
+          IsmChatCustomMessageType.image,
+          '',
+        ) ??
+        true;
+    if (!allowed) {
+      return;
+    }
+
+    final dataSize = IsmChatUtility.formatBytes(bytes.length);
+    if (!dataSize.size()) {
+      await IsmChatContextWidget.showDialogContext(
+        content: IsmChatAlertDialogBox(
+          title: IsmChatStrings.youCanNotSend,
+          cancelLabel: IsmChatStrings.okay,
+        ),
+      );
+      return;
+    }
+
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final nameWithExtension = 'keyboard_$timestamp.$extension';
+    final webMediaModel = WebMediaModel(
+      isVideo: false,
+      dataSize: dataSize,
+      platformFile: IsmchPlatformFile(
+        name: nameWithExtension,
+        size: bytes.length,
+        bytes: bytes,
+        extension: extension,
+      ),
+    );
+
+    try {
+      final conversationId = _controller.conversation?.conversationId ?? '';
+      final userId = _controller.conversation?.opponentDetails?.userId ?? '';
+      if (isGif) {
+        await sendGif(
+          conversationId: conversationId,
+          userId: userId,
+          webMediaModel: webMediaModel,
+        );
+      } else {
+        await sendImage(
+          conversationId: conversationId,
+          userId: userId,
+          webMediaModel: webMediaModel,
+        );
+      }
+    } catch (e, st) {
+      IsmChatLog.error(e, st);
+      IsmChatUtility.showToast('Unable to send media');
+    }
+  }
+
+  /// Maps common keyboard MIME types to a file extension.
+  /// Keep in sync with [kDefaultContentInsertionMimeTypes] plus image/webp.
+  String _extensionFromMimeType(String mimeType) {
+    final normalized = mimeType.toLowerCase().trim();
+    switch (normalized) {
+      case 'image/gif':
+        return 'gif';
+      case 'image/png':
+        return 'png';
+      case 'image/webp':
+        return 'webp';
+      case 'image/jpeg':
+      case 'image/jpg':
+        return 'jpg';
+      default:
+        // Fall back to subtype when present (e.g. image/heic -> heic).
+        final slash = normalized.indexOf('/');
+        if (slash != -1 && slash < normalized.length - 1) {
+          return normalized.substring(slash + 1);
+        }
+        return 'png';
+    }
+  }
+
   /// Sends a sticker picked from Giphy or another source.
   Future<void> sendSticker({
     required String conversationId,
@@ -1082,6 +1210,9 @@ mixin IsmChatPageSendMessageMediaMixin {
         nameWithExtension: displayName,
         mediaId: item.id,
         extension: extension,
+        // Reserve correct bubble size before the animated GIF finishes loading.
+        mediaWidth: item.width,
+        mediaHeight: item.height,
         searchableTags: [
           isSticker ? '/@sticker' : '/@gif',
           displayName,

@@ -207,21 +207,32 @@ class _MessageMediaImage extends StatelessWidget {
   final double maxWidth;
   final double maxHeight;
 
-  /// GIFs decode at full intrinsic size unless boxed — reserve space up front.
-  static Size _gifDisplaySize(double maxWidth, double maxHeight) {
+  /// GIF frame size from aspect ratio only — no fixed height.
+  ///
+  /// Fits within [maxWidth]/[maxHeight] using attachment mediaWidth/mediaHeight
+  /// when present (Giphy). Falls back to 1:1 if ratio is unknown so layout is
+  /// still reserved before decode (avoids Android expand-then-shrink).
+  ///
+  /// Reuse this helper for any future GIF/sticker surface that needs the
+  /// same reserved-size behavior.
+  static Size _gifDisplaySize(
+    double maxWidth,
+    double maxHeight, {
+    double? aspectRatio,
+  }) {
+    final ar = (aspectRatio != null && aspectRatio > 0) ? aspectRatio : 1.0;
+    // Size from ratio only: fill max width, then clamp height if needed.
     var width = maxWidth;
-    const aspectRatio = 1.0;
-    var height = width / aspectRatio;
+    var height = width / ar;
     if (height > maxHeight) {
       height = maxHeight;
-      width = height * aspectRatio;
+      width = height * ar;
     }
     return Size(width, height);
   }
 
-  static Widget _loadingPlaceholder(Size size) => SizedBox(
-        width: size.width,
-        height: size.height,
+  static Widget _loadingPlaceholder(Size size) => ColoredBox(
+        color: IsmChatColors.greyColor.applyIsmOpacity(0.12),
         child: const Center(
           child: SizedBox(
             width: 24,
@@ -239,15 +250,18 @@ class _MessageMediaImage extends StatelessWidget {
     if (imageUrl == null || !imageUrl.isValidUrl) {
       return _loadingPlaceholder(size);
     }
-    return SizedBox(
+    // Fill the reserved frame so still → animated swap never changes layout.
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: fit,
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       width: size.width,
       height: size.height,
-      child: CachedNetworkImage(
-        imageUrl: imageUrl,
-        fit: fit,
-        placeholder: (_, __) => _loadingPlaceholder(size),
-        errorWidget: (_, __, ___) => _loadingPlaceholder(size),
-      ),
+      memCacheWidth: size.width.round(),
+      memCacheHeight: size.height.round(),
+      placeholder: (_, __) => _loadingPlaceholder(size),
+      errorWidget: (_, __, ___) => _loadingPlaceholder(size),
     );
   }
 
@@ -287,18 +301,27 @@ class _MessageMediaImage extends StatelessWidget {
     final borderRadius = isSticker
         ? BorderRadius.zero
         : BorderRadius.circular(IsmChatDimens.eight);
-    final gifSize = isGif ? _gifDisplaySize(maxWidth, maxHeight) : null;
-    final placeholderUrl = isGif
-        ? _gifPlaceholderUrl(attachment)
+    final gifSize = isGif
+        ? _gifDisplaySize(
+            maxWidth,
+            maxHeight,
+            aspectRatio: attachment?.mediaAspectRatio,
+          )
         : null;
+    final placeholderUrl = isGif ? _gifPlaceholderUrl(attachment) : null;
 
     Widget child;
     if (hasNetworkUrl) {
       child = CachedNetworkImage(
         imageUrl: mediaUrl,
         fit: fit,
+        // Zero fade avoids a brief dual-layout during placeholder → image.
+        fadeInDuration: Duration.zero,
+        fadeOutDuration: Duration.zero,
         width: gifSize?.width,
         height: gifSize?.height,
+        memCacheWidth: gifSize?.width.round(),
+        memCacheHeight: gifSize?.height.round(),
         placeholder: (_, __) => _placeholderImage(
           size: gifSize ?? Size(maxWidth, maxHeight),
           imageUrl: placeholderUrl,
@@ -312,6 +335,7 @@ class _MessageMediaImage extends StatelessWidget {
         fit: fit,
         width: gifSize?.width,
         height: gifSize?.height,
+        gaplessPlayback: true,
       );
     } else if (hasLocalFile) {
       child = Image.file(
@@ -319,6 +343,7 @@ class _MessageMediaImage extends StatelessWidget {
         fit: fit,
         width: gifSize?.width,
         height: gifSize?.height,
+        gaplessPlayback: true,
       );
     } else if (IsmChatResponsive.isWeb(context) && mediaUrl.isNotEmpty) {
       final webBytes = mediaUrl.strigToUnit8List;
@@ -329,13 +354,23 @@ class _MessageMediaImage extends StatelessWidget {
               fit: fit,
               width: gifSize?.width,
               height: gifSize?.height,
+              gaplessPlayback: true,
             );
     } else {
       child = _mediaError(gifSize);
     }
 
+    // Hard-lock the frame: StackFit.expand forces the image to the reserved
+    // size so Android GIF decode cannot expand intrinsic layout.
     final media = gifSize != null
-        ? SizedBox(width: gifSize.width, height: gifSize.height, child: child)
+        ? SizedBox(
+            width: gifSize.width,
+            height: gifSize.height,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [child],
+            ),
+          )
         : child;
 
     return ClipRRect(
