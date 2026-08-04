@@ -177,18 +177,18 @@ class WebMediaPreview extends StatelessWidget {
                                 onKeyEvent: (event) async {
                                   if (event.logicalKey ==
                                       LogicalKeyboardKey.enter) {
-                                    if (await IsmChatProperties
-                                            .chatPageProperties
-                                            .messageAllowedConfig
-                                            ?.isMessgeAllowed
-                                            ?.call(
-                                                context,
-                                                controller.conversation,
-                                                IsmChatCustomMessageType
-                                                    .image,
-                                                controller.chatInputController.text
-                                                    .trim()) ??
-                                        true) {
+                                    final allowed = await IsmChatProperties
+                                        .chatPageProperties
+                                        .messageAllowedConfig
+                                        .shouldAllowOutboundSend(
+                                      context: context,
+                                      conversation: controller.conversation,
+                                      customType: IsmChatCustomMessageType.image,
+                                      messageText: controller
+                                          .chatInputController.text
+                                          .trim(),
+                                    );
+                                    if (allowed) {
                                       controller.sendMediaWeb();
                                     }
                                   }
@@ -226,13 +226,17 @@ class WebMediaPreview extends StatelessWidget {
                             IsmChatDimens.boxWidth20,
                             IsmChatStartChatFAB(
                               onTap: () async {
-                                if (await IsmChatProperties.chatPageProperties
-                                        .messageAllowedConfig?.isMessgeAllowed
-                                        ?.call(context, controller.conversation,
-                                            IsmChatCustomMessageType.image,
-                                            controller.chatInputController.text
-                                                .trim()) ??
-                                    true) {
+                                final allowed = await IsmChatProperties
+                                    .chatPageProperties.messageAllowedConfig
+                                    .shouldAllowOutboundSend(
+                                  context: context,
+                                  conversation: controller.conversation,
+                                  customType: IsmChatCustomMessageType.image,
+                                  messageText: controller
+                                      .chatInputController.text
+                                      .trim(),
+                                );
+                                if (allowed) {
                                   controller.sendMediaWeb();
                                 }
                               },

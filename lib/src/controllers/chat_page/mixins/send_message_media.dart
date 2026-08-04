@@ -170,18 +170,18 @@ mixin IsmChatPageSendMessageMediaMixin {
     for (var i = 0; i < mediaList.length; i++) {
       final media = mediaList[i];
       final sentAt = batchSentAts[i];
+      final mediaType = media.isVideo
+          ? IsmChatCustomMessageType.video
+          : IsmChatCustomMessageType.image;
       final isAllowed = await IsmChatProperties
-              .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-              ?.call(
-                IsmChatConfig.kNavigatorKey.currentContext ??
-                    IsmChatConfig.context,
-                IsmChatUtility.chatPageController.conversation!,
-                media.isVideo
-                    ? IsmChatCustomMessageType.video
-                    : IsmChatCustomMessageType.image,
-                _controller.chatInputController.text.trim(),
-              ) ??
-          true;
+          .chatPageProperties.messageAllowedConfig
+          .shouldAllowOutboundSend(
+        context: IsmChatConfig.kNavigatorKey.currentContext ??
+            IsmChatConfig.context,
+        conversation: IsmChatUtility.chatPageController.conversation!,
+        customType: mediaType,
+        messageText: _controller.chatInputController.text.trim(),
+      );
       if (!isAllowed) {
         continue;
       }
@@ -1048,14 +1048,14 @@ mixin IsmChatPageSendMessageMediaMixin {
       return;
     }
     final allowed = await IsmChatProperties
-            .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-            ?.call(
+        .chatPageProperties.messageAllowedConfig
+        .shouldAllowOutboundSend(
+      context:
           IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
-          _controller.conversation,
-          IsmChatCustomMessageType.image,
-          '',
-        ) ??
-        true;
+      conversation: _controller.conversation,
+      customType: IsmChatCustomMessageType.image,
+      messageText: '',
+    );
     if (!allowed) {
       return;
     }

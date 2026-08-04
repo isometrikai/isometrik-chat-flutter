@@ -22,15 +22,16 @@ mixin IsmChatPageSendMessageDocumentMixin {
     required String conversationId,
     required String userId,
   }) async {
-    if (await IsmChatProperties
-            .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-            ?.call(
-                IsmChatConfig.kNavigatorKey.currentContext ??
-                    IsmChatConfig.context,
-                IsmChatUtility.chatPageController.conversation!,
-                IsmChatCustomMessageType.file,
-                _controller.chatInputController.text.trim()) ??
-        true) {
+    final allowed = await IsmChatProperties
+        .chatPageProperties.messageAllowedConfig
+        .shouldAllowOutboundSend(
+      context:
+          IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+      conversation: IsmChatUtility.chatPageController.conversation!,
+      customType: IsmChatCustomMessageType.file,
+      messageText: _controller.chatInputController.text.trim(),
+    );
+    if (allowed) {
       final result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
         type: FileType.custom,

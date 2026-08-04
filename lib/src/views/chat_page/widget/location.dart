@@ -259,18 +259,19 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
 
                                   IsmChatUtility.closeLoader();
                                   IsmChatRoute.goBack<void>();
-                                  if (await IsmChatProperties.chatPageProperties
-                                          .messageAllowedConfig?.isMessgeAllowed
-                                          ?.call(
-                                              IsmChatConfig.kNavigatorKey
-                                                      .currentContext ??
-                                                  IsmChatConfig.context,
-                                              controller.conversation,
-                                              IsmChatCustomMessageType
-                                                  .location,
-                                              controller.chatInputController.text
-                                                  .trim()) ??
-                                      true) {}
+                                  await IsmChatProperties.chatPageProperties
+                                      .messageAllowedConfig
+                                      .shouldAllowOutboundSend(
+                                    context: IsmChatConfig
+                                            .kNavigatorKey.currentContext ??
+                                        IsmChatConfig.context,
+                                    conversation: controller.conversation,
+                                    customType:
+                                        IsmChatCustomMessageType.location,
+                                    messageText: controller
+                                        .chatInputController.text
+                                        .trim(),
+                                  );
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,18 +316,20 @@ class _IsmLocationWidgetViewState extends State<IsmChatLocationWidget> {
                               return IsmChatTapHandler(
                                 onTap: () async {
                                   IsmChatRoute.goBack<void>();
-                                  if (await IsmChatProperties.chatPageProperties
-                                          .messageAllowedConfig?.isMessgeAllowed
-                                          ?.call(
-                                              IsmChatConfig.kNavigatorKey
-                                                      .currentContext ??
-                                                  IsmChatConfig.context,
-                                              controller.conversation,
-                                              IsmChatCustomMessageType
-                                                  .location,
-                                              controller.chatInputController.text
-                                                  .trim()) ??
-                                      true) {
+                                  final allowed = await IsmChatProperties
+                                      .chatPageProperties.messageAllowedConfig
+                                      .shouldAllowOutboundSend(
+                                    context: IsmChatConfig
+                                            .kNavigatorKey.currentContext ??
+                                        IsmChatConfig.context,
+                                    conversation: controller.conversation,
+                                    customType:
+                                        IsmChatCustomMessageType.location,
+                                    messageText: controller
+                                        .chatInputController.text
+                                        .trim(),
+                                  );
+                                  if (allowed) {
                                     controller.sendLocation(
                                         conversationId: controller
                                                 .conversation?.conversationId ??

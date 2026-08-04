@@ -16,6 +16,60 @@ class SendMessageIntent extends Intent {
   const SendMessageIntent();
 }
 
+/// Runs the pre-send allow-check, then either sends, keeps local-only, or blocks.
+///
+/// Shared by Enter-key and send-button paths so Hookup safety filters behave
+/// the same everywhere text is submitted.
+Future<void> _handleOutboundTextSend(IsmChatPageController controller) async {
+  final text = controller.chatInputController.text.trim();
+  final customType = controller.isreplying
+      ? IsmChatCustomMessageType.reply
+      : IsmChatCustomMessageType.text;
+  final allowedConfig =
+      IsmChatProperties.chatPageProperties.messageAllowedConfig;
+  final decision = await allowedConfig.resolveOutboundSendDecision(
+    context: IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+    conversation: controller.conversation,
+    customType: customType,
+    messageText: text,
+  );
+
+  if (decision.shouldBlock) {
+    allowedConfig?.notifyMessageSendBlocked(
+      decision: decision,
+      body: text,
+      conversation: controller.conversation,
+      customType: customType,
+    );
+    return;
+  }
+
+  if (decision.shouldKeepLocal) {
+    await controller.getMentionedUserList(text);
+    if (text.isNotEmpty && controller.isMessageSent == false) {
+      controller
+        ..isMessageSent = true
+        ..sendTextMessage(
+          conversationId: controller.conversation?.conversationId ?? '',
+          userId: controller.conversation?.opponentDetails?.userId ?? '',
+          keepLocalOnly: true,
+          localBlockReason: decision.reason,
+        );
+    }
+    return;
+  }
+
+  await controller.getMentionedUserList(text);
+  if (text.isNotEmpty && controller.isMessageSent == false) {
+    controller
+      ..isMessageSent = true
+      ..sendTextMessage(
+        conversationId: controller.conversation?.conversationId ?? '',
+        userId: controller.conversation?.opponentDetails?.userId ?? '',
+      );
+  }
+}
+
 class IsmChatMessageField extends StatelessWidget {
   const IsmChatMessageField({
     super.key,
@@ -130,37 +184,7 @@ class IsmChatMessageField extends StatelessWidget {
                                 true)) {
                               controller.showDialogCheckBlockUnBlock();
                             } else {
-                              if (await IsmChatProperties.chatPageProperties
-                                      .messageAllowedConfig?.isMessgeAllowed
-                                      ?.call(
-                                          IsmChatConfig.kNavigatorKey
-                                                  .currentContext ??
-                                              IsmChatConfig.context,
-                                          controller.conversation,
-                                          controller.isreplying
-                                              ? IsmChatCustomMessageType.reply
-                                              : IsmChatCustomMessageType.text,
-                                          controller.chatInputController.text
-                                              .trim()) ??
-                                  true) {
-                                await controller.getMentionedUserList(
-                                    controller.chatInputController.text.trim());
-                                if (controller.chatInputController.text
-                                        .trim()
-                                        .isNotEmpty &&
-                                    controller.isMessageSent == false) {
-                                  controller
-                                    ..isMessageSent = true
-                                    ..sendTextMessage(
-                                      conversationId: controller
-                                              .conversation?.conversationId ??
-                                          '',
-                                      userId: controller.conversation
-                                              ?.opponentDetails?.userId ??
-                                          '',
-                                    );
-                                }
-                              }
+                              await _handleOutboundTextSend(controller);
                             }
                           }
                           return null;
@@ -497,15 +521,16 @@ class _MicOrSendButton extends StatelessWidget {
                     ..isEnableRecordingAudio = false;
                   String? sizeMedia;
                   WebMediaModel? webMediaModel;
-                  if (await IsmChatProperties.chatPageProperties
-                          .messageAllowedConfig?.isMessgeAllowed
-                          ?.call(
-                              IsmChatConfig.kNavigatorKey.currentContext ??
-                                  IsmChatConfig.context,
-                              controller.conversation,
-                              IsmChatCustomMessageType.audio,
-                              controller.chatInputController.text.trim()) ??
-                      true) {
+                  final audioAllowed = await IsmChatProperties
+                      .chatPageProperties.messageAllowedConfig
+                      .shouldAllowOutboundSend(
+                    context: IsmChatConfig.kNavigatorKey.currentContext ??
+                        IsmChatConfig.context,
+                    conversation: controller.conversation,
+                    customType: IsmChatCustomMessageType.audio,
+                    messageText: controller.chatInputController.text.trim(),
+                  );
+                  if (audioAllowed) {
                     if (kIsWeb) {
                       var bytes =
                           await IsmChatUtility.fetchBytesFromBlobUrl(audioPath);
@@ -553,32 +578,7 @@ class _MicOrSendButton extends StatelessWidget {
                     }
                   }
                 } else {
-                  if (await IsmChatProperties.chatPageProperties
-                          .messageAllowedConfig?.isMessgeAllowed
-                          ?.call(
-                              IsmChatConfig.kNavigatorKey.currentContext ??
-                                  IsmChatConfig.context,
-                              controller.conversation,
-                              controller.isreplying
-                                  ? IsmChatCustomMessageType.reply
-                                  : IsmChatCustomMessageType.text,
-                              controller.chatInputController.text.trim()) ??
-                      true) {
-                    await controller.getMentionedUserList(
-                        controller.chatInputController.text.trim());
-                    if (controller.chatInputController.text.trim().isNotEmpty &&
-                        controller.isMessageSent == false) {
-                      controller
-                        ..isMessageSent = true
-                        ..sendTextMessage(
-                          conversationId:
-                              controller.conversation?.conversationId ?? '',
-                          userId: controller
-                                  .conversation?.opponentDetails?.userId ??
-                              '',
-                        );
-                    }
-                  }
+                  await _handleOutboundTextSend(controller);
                 }
               } else if (IsmChatProperties.chatPageProperties.features
                   .contains(IsmChatFeature.audioMessage)) {
