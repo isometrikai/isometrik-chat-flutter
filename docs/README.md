@@ -66,6 +66,13 @@ This directory contains comprehensive documentation for the Isometrik Chat Flutt
   - API endpoints
   - Data flow
 
+### Host app integration
+
+- **[HOST_CUSTOM_COMPOSER.md](./HOST_CUSTOM_COMPOSER.md)** - Replace the chat typing bar
+  - `chatPageProperties.messageFieldBuilder`
+  - `IsmChat.i` send / attach / typing / reply APIs
+  - Minimum host-app sample
+
 ### Feature & Issue Tracking
 
 - **[FEATURES.md](./FEATURES.md)** - Feature list and status

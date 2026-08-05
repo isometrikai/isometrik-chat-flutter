@@ -20,6 +20,7 @@ class IsmChatPageProperties {
     this.onAddGroupMembersTap,
     this.emojiIcon,
     this.meessageFieldFocusNode,
+    this.messageFieldBuilder,
     this.messageFieldSuffix,
     this.onCallBlockUnblock,
     this.onBlockUnblockSuccess,
@@ -66,6 +67,42 @@ class IsmChatPageProperties {
 
   /// Provide this widget show emoji icon in message type input filed
   final Widget? emojiIcon;
+
+  /// Replaces the **entire chat composer** (typing / message input area).
+  ///
+  /// Return a widget to render your own bottom bar. Return `null` (or omit)
+  /// to keep the SDK default [IsmChatMessageField] — production UI unchanged.
+  ///
+  /// Restriction states still apply first (left/removed from group, deleted
+  /// opponent, [messageAllowedConfig]). Drive actions via `IsmChat.i`
+  /// (`sendComposerText`, `openComposerAttachments`, `onComposerTextChanged`,
+  /// `chatInputController`, etc.).
+  ///
+  /// Example:
+  /// ```dart
+  /// messageFieldBuilder: (context, conversation) {
+  ///   return Row(
+  ///     children: [
+  ///       IconButton(
+  ///         icon: const Icon(Icons.add),
+  ///         onPressed: () => IsmChat.i.openComposerAttachments(context),
+  ///       ),
+  ///       Expanded(
+  ///         child: TextField(
+  ///           controller: IsmChat.i.chatInputController,
+  ///           onChanged: IsmChat.i.onComposerTextChanged,
+  ///           decoration: const InputDecoration(hintText: 'Message'),
+  ///         ),
+  ///       ),
+  ///       IconButton(
+  ///         icon: const Icon(Icons.send),
+  ///         onPressed: () => IsmChat.i.sendComposerText(),
+  ///       ),
+  ///     ],
+  ///   );
+  /// },
+  /// ```
+  final WidgetCallback? messageFieldBuilder;
 
   /// It is an optional parameter you can provide any widget
   /// You can pass tap handler on this widget for any uses

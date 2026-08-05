@@ -471,23 +471,28 @@ class _IsmChatPageView extends StatelessWidget {
                                         IsmChatStrings.userDeleteMessage,
                                   )
                                 ] else ...[
-                                  // Normal message input field
-                                  Container(
-                                    padding: IsmChatConfig
-                                        .chatTheme
-                                        .chatPageTheme
-                                        ?.textFiledTheme
-                                        ?.textfieldInsets,
-                                    decoration: IsmChatConfig
-                                        .chatTheme
-                                        .chatPageTheme
-                                        ?.textFiledTheme
-                                        ?.decoration,
-                                    child: SafeArea(
-                                      bottom: !controller.showEmojiBoard,
-                                      child: const IsmChatMessageField(),
-                                    ),
-                                  ),
+                                  IsmChatProperties.chatPageProperties
+                                          .messageFieldBuilder
+                                          ?.call(
+                                        context,
+                                        controller.conversation,
+                                      ) ??
+                                      Container(
+                                        padding: IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.textFiledTheme
+                                            ?.textfieldInsets,
+                                        decoration: IsmChatConfig
+                                            .chatTheme
+                                            .chatPageTheme
+                                            ?.textFiledTheme
+                                            ?.decoration,
+                                        child: SafeArea(
+                                          bottom: !controller.showEmojiBoard,
+                                          child: const IsmChatMessageField(),
+                                        ),
+                                      ),
                                 ],
                                 // Emoji board (hidden when not shown)
                                 Offstage(

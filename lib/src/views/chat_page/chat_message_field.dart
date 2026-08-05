@@ -126,42 +126,7 @@ class IsmChatMessageField extends StatelessWidget {
                         SendMessageIntent: CallbackAction<SendMessageIntent>(
                             onInvoke: (SendMessageIntent intent) async {
                           if (controller.showSendButton) {
-                            if (!(controller.conversation?.isChattingAllowed ==
-                                true)) {
-                              controller.showDialogCheckBlockUnBlock();
-                            } else {
-                              if (await IsmChatProperties.chatPageProperties
-                                      .messageAllowedConfig?.isMessgeAllowed
-                                      ?.call(
-                                          IsmChatConfig.kNavigatorKey
-                                                  .currentContext ??
-                                              IsmChatConfig.context,
-                                          controller.conversation,
-                                          controller.isreplying
-                                              ? IsmChatCustomMessageType.reply
-                                              : IsmChatCustomMessageType.text,
-                                          controller.chatInputController.text
-                                              .trim()) ??
-                                  true) {
-                                await controller.getMentionedUserList(
-                                    controller.chatInputController.text.trim());
-                                if (controller.chatInputController.text
-                                        .trim()
-                                        .isNotEmpty &&
-                                    controller.isMessageSent == false) {
-                                  controller
-                                    ..isMessageSent = true
-                                    ..sendTextMessage(
-                                      conversationId: controller
-                                              .conversation?.conversationId ??
-                                          '',
-                                      userId: controller.conversation
-                                              ?.opponentDetails?.userId ??
-                                          '',
-                                    );
-                                }
-                              }
-                            }
+                            await controller.trySendTextFromComposer();
                           }
                           return null;
                         }),
@@ -298,25 +263,8 @@ class IsmChatMessageField extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      onChanged: (_) {
-                                        if ((controller
-                                                    .conversation
-                                                    ?.conversationId
-                                                    ?.isNotEmpty ??
-                                                false) &&
-                                            controller
-                                                    .conversation?.customType !=
-                                                IsmChatStrings.broadcast) {
-                                          controller.notifyTyping();
-                                          if (IsmChatProperties
-                                              .chatPageProperties.features
-                                              .contains(
-                                            IsmChatFeature.mentionMember,
-                                          )) {
-                                            controller.showMentionsUserList(_);
-                                          }
-                                        }
-                                      },
+                                      onChanged:
+                                          controller.handleComposerTextChanged,
                                     ),
                                   ),
                                   if (IsmChatProperties.chatPageProperties
@@ -553,32 +501,7 @@ class _MicOrSendButton extends StatelessWidget {
                     }
                   }
                 } else {
-                  if (await IsmChatProperties.chatPageProperties
-                          .messageAllowedConfig?.isMessgeAllowed
-                          ?.call(
-                              IsmChatConfig.kNavigatorKey.currentContext ??
-                                  IsmChatConfig.context,
-                              controller.conversation,
-                              controller.isreplying
-                                  ? IsmChatCustomMessageType.reply
-                                  : IsmChatCustomMessageType.text,
-                              controller.chatInputController.text.trim()) ??
-                      true) {
-                    await controller.getMentionedUserList(
-                        controller.chatInputController.text.trim());
-                    if (controller.chatInputController.text.trim().isNotEmpty &&
-                        controller.isMessageSent == false) {
-                      controller
-                        ..isMessageSent = true
-                        ..sendTextMessage(
-                          conversationId:
-                              controller.conversation?.conversationId ?? '',
-                          userId: controller
-                                  .conversation?.opponentDetails?.userId ??
-                              '',
-                        );
-                    }
-                  }
+                  await controller.trySendTextFromComposer();
                 }
               } else if (IsmChatProperties.chatPageProperties.features
                   .contains(IsmChatFeature.audioMessage)) {
@@ -908,43 +831,7 @@ class _AttachmentIcon extends GetView<IsmChatPageController> {
                 IsmChatDimens.box0
           ],
           IconButton(
-            onPressed: () async {
-              if (!(controller.conversation?.isChattingAllowed == true)) {
-                controller.showDialogCheckBlockUnBlock();
-              } else {
-                if (await IsmChatProperties
-                        .chatPageProperties.isSendMediaAllowed
-                        ?.call(context, controller.conversation) ??
-                    true) {
-                  if (context.mounted) {
-                    final attachmentCardTheme =
-                        IsmChatThemeResolver.attachmentCardFromConfig(context);
-                    // The sheet returns the tapped attachment type instead of
-                    // triggering the action itself. We wait for this future to
-                    // resolve (i.e. the sheet is fully dismissed) before
-                    // launching the corresponding action. Doing so prevents the
-                    // iOS flicker caused by presenting a native picker while the
-                    // bottom sheet is still animating out.
-                    final selectedAttachment =
-                        await showModalBottomSheet<IsmChatAttachmentType>(
-                      context: context,
-                      builder: (context) => const IsmChatAttachmentCard(),
-                      elevation: 0,
-                      clipBehavior: Clip.antiAlias,
-                      backgroundColor: attachmentCardTheme.backgroundColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(IsmChatDimens.twentyFour),
-                        ),
-                      ),
-                    );
-                    if (selectedAttachment != null) {
-                      controller.onBottomAttachmentTapped(selectedAttachment);
-                    }
-                  }
-                }
-              }
-            },
+            onPressed: () => controller.openAttachmentPicker(context),
             color: IsmChatConfig
                     .chatTheme.chatPageTheme?.textFiledTheme?.attchmentColor ??
                 IsmChatConfig.chatTheme.primaryColor,
