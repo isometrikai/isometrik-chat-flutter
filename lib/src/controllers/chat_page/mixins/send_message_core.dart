@@ -180,6 +180,52 @@ mixin IsmChatPageSendMessageCoreMixin {
     }
   }
 
+  /// Shared text-send path used by the default composer and host-app UI.
+  ///
+  /// Optional [text] is written into `chatInputController` first. Returns
+  /// `false` when blocked, empty, already sending, or disallowed.
+  Future<bool> trySendTextFromComposer({String? text}) async {
+    if (text != null) {
+      _controller.chatInputController.text = text;
+    }
+    if (!(_controller.conversation?.isChattingAllowed == true) ||
+        _controller.conversation?.isBlockedByMe == true) {
+      _controller.showDialogCheckBlockUnBlock();
+      return false;
+    }
+    final body = _controller.chatInputController.text.trim();
+    if (body.isEmpty || _controller.isMessageSent) {
+      return false;
+    }
+    final allowed = await IsmChatProperties.chatPageProperties
+            .messageAllowedConfig?.isMessgeAllowed
+            ?.call(
+              IsmChatConfig.kNavigatorKey.currentContext ??
+                  IsmChatConfig.context,
+              _controller.conversation,
+              _controller.isreplying
+                  ? IsmChatCustomMessageType.reply
+                  : IsmChatCustomMessageType.text,
+              body,
+            ) ??
+        true;
+    if (!allowed) {
+      return false;
+    }
+    await _controller.getMentionedUserList(body);
+    if (_controller.chatInputController.text.trim().isEmpty ||
+        _controller.isMessageSent) {
+      return false;
+    }
+    _controller
+      ..isMessageSent = true
+      ..sendTextMessage(
+        conversationId: _controller.conversation?.conversationId ?? '',
+        userId: _controller.conversation?.opponentDetails?.userId ?? '',
+      );
+    return true;
+  }
+
   /// Sends a text message.
   ///
   /// [conversationId] - ID of the conversation
