@@ -3,6 +3,7 @@ export 'config/config.dart';
 export 'constants.dart';
 export 'dimens.dart';
 export 'exceptions.dart';
+export 'l10n/chat_l10n.dart';
 export 'navigator.dart';
 export 'properties/properties.dart';
 export 'strings.dart';

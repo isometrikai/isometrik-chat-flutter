@@ -7,7 +7,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
     this.title = 'Are you sure?',
     this.actionLabels,
     this.callbackActions,
-    this.cancelLabel = IsmChatStrings.cancel,
+    this.cancelLabel,
     this.onCancel,
     this.content,
     this.contentPadding,
@@ -24,7 +24,9 @@ class IsmChatAlertDialogBox extends StatelessWidget {
   final String title;
   final List<String>? actionLabels;
   final List<VoidCallback>? callbackActions;
-  final String cancelLabel;
+
+  /// Defaults to [IsmChatStrings.cancel] when null (resolved at build time for l10n).
+  final String? cancelLabel;
   final VoidCallback? onCancel;
   final Widget? content;
   final TextStyle? contentTextStyle;
@@ -40,6 +42,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dialogTheme = IsmChatThemeResolver.dialogFromConfig(context);
+    final resolvedCancelLabel = cancelLabel ?? IsmChatStrings.cancel;
     final resolvedContentStyle =
         contentTextStyle ?? dialogTheme.contentTextStyle;
     final resolvedShape = shape ?? dialogTheme.shape;
@@ -74,7 +77,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                     onCancel != null ? onCancel!() : IsmChatRoute.goBack();
                   },
                   child: Text(
-                    cancelLabel,
+                    resolvedCancelLabel,
                     style: dialogTheme.actionTextStyle,
                   ),
                 ),
@@ -137,7 +140,7 @@ class IsmChatAlertDialogBox extends StatelessWidget {
                               : IsmChatRoute.goBack();
                         },
                         child: Text(
-                          cancelLabel,
+                          resolvedCancelLabel,
                           style: dialogTheme.actionTextStyle,
                         ),
                       ),

@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -36,6 +37,8 @@ Future<void> initialize() async {
   dbWrapper = await DBWrapper.create();
   Get.put(DeviceConfig()).init();
   await AppConfig.getUserData();
+  // Apply demo language (English via Constants.languageCode) to the chat SDK.
+  AppConfig.applyLocale();
   await LocalNoticeService().setup();
 }
 
@@ -117,12 +120,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         child: MaterialApp.router(
           key: const Key('ChatApp'),
           title: 'Isomterik flutter web chat',
-          locale: const Locale('en', 'US'),
-          // localizationsDelegates:  [
-          //   ...GlobalMaterialLocalizations.delegates,
-          //   GlobalWidgetsLocalizations.delegate,
-          // ],
-          supportedLocales: const [Locale('en', 'US')],
+          locale: AppConfig.appLocale,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('fr'),
+            Locale('pt'),
+          ],
           theme: ThemeData.light(useMaterial3: true).copyWith(
             primaryColor: AppColors.whiteColor,
             extensions: [],

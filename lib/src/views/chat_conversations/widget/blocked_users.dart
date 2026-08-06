@@ -28,7 +28,7 @@ class IsmChatBlockedUsersView extends StatelessWidget {
               ),
             ),
             body: controller.blockUsers.isEmpty
-                ? const Center(
+                ? Center(
                     child: IsmIconAndText(
                       icon: Icons.supervised_user_circle_rounded,
                       text: IsmChatStrings.noBlockedUsers,
@@ -58,7 +58,7 @@ class IsmChatBlockedUsersView extends StatelessWidget {
                               IsmChatRoute.goBack();
                             }
                           },
-                          child: const Text(
+                          child: Text(
                             IsmChatStrings.unblock,
                           ),
                         ),

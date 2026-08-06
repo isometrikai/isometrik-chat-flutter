@@ -267,7 +267,7 @@ class IsmChatCreateConversationView extends StatelessWidget {
                                     controller
                                         .addGrouNameController.text.isEmpty) {
                                   await IsmChatContextWidget.showDialogContext(
-                                    content: const IsmChatAlertDialogBox(
+                                    content: IsmChatAlertDialogBox(
                                       cancelLabel: IsmChatStrings.okay,
                                       title: IsmChatStrings.createGroupAlert,
                                     ),
@@ -645,9 +645,9 @@ class ChatModes extends StatelessWidget {
                 alignment: Alignment.center,
                 height: 60,
                 width: 60,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                     shape: BoxShape.circle, color: Color(0xFFF3F3F9)),
-                child: const Icon(Icons.group),
+                child: Icon(Icons.group),
               ),
             ),
           // ListTile(
@@ -663,9 +663,9 @@ class ChatModes extends StatelessWidget {
           //     alignment: Alignment.center,
           //     height: 60,
           //     width: 60,
-          //     decoration: const BoxDecoration(
+          //     decoration: BoxDecoration(
           //         shape: BoxShape.circle, color: Color(0xFFF3F3F9)),
-          //     child: const Icon(Icons.person_add),
+          //     child: Icon(Icons.person_add),
           //   ),
           // ),
           // ListTile(
@@ -690,7 +690,7 @@ class ChatModes extends StatelessWidget {
             onTap: () async {
               IsmChatRoute.goBack();
               await Future.delayed(Durations.extralong1);
-              await IsmChatRoute.goToRoute(const IsmChatCreateBroadCastView());
+              await IsmChatRoute.goToRoute(IsmChatCreateBroadCastView());
             },
             contentPadding: IsmChatDimens.edgeInsets10,
             horizontalTitleGap: IsmChatDimens.ten,
