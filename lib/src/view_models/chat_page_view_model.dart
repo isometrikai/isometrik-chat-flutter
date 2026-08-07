@@ -72,6 +72,7 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.reactionRemove.name,
           IsmChatActionEvents.conversationDetailsUpdated.name,
           IsmChatActionEvents.messageDetailsUpdated.name,
+          IsmChatActionEvents.memberPushNotificationUpdated.name,
         ].contains(e.action));
     // Block/unblock banners are managed locally (Option A), not merged from API.
     messages.removeWhere(IsmChatBlockUnblockCoordinator.isBannerMessage);
@@ -151,6 +152,7 @@ class IsmChatPageViewModel {
           IsmChatActionEvents.reactionAdd.name,
           IsmChatActionEvents.reactionRemove.name,
           IsmChatActionEvents.conversationDetailsUpdated.name,
+          IsmChatActionEvents.memberPushNotificationUpdated.name,
         ].contains(e.action));
     if (searchText == null || searchText.isEmpty) {
       final controller = IsmChatUtility.chatPageController;

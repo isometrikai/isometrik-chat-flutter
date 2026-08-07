@@ -465,6 +465,7 @@ class IsmChatCommonViewModel {
           IsmChatActionEvents.reactionAdd.name,
           IsmChatActionEvents.reactionRemove.name,
           IsmChatActionEvents.conversationDetailsUpdated.name,
+          IsmChatActionEvents.memberPushNotificationUpdated.name,
         ].contains(e.action));
     messages = sortMessages(messages);
     return messages;

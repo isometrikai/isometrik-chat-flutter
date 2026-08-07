@@ -294,6 +294,9 @@ enum IsmChatCustomMessageType {
         return IsmChatCustomMessageType.observerJoin;
       case IsmChatActionEvents.observerLeave:
         return IsmChatCustomMessageType.observerLeave;
+      // Same as reaction / clearConversation: system noise, not a chat bubble.
+      case IsmChatActionEvents.memberPushNotificationUpdated:
+        return null;
       default:
         return IsmChatCustomMessageType.text;
     }
@@ -578,7 +581,9 @@ enum IsmChatActionEvents {
   meetingEndedByHost,
   meetingCreated,
   meetingEndedDueToRejectionByAll,
-  messageDetailsUpdated;
+  messageDetailsUpdated,
+  /// Mute / unmute push prefs for a group member — no chat UI, do not persist.
+  memberPushNotificationUpdated;
 
   factory IsmChatActionEvents.fromName(String name) {
     switch (name) {
@@ -644,6 +649,8 @@ enum IsmChatActionEvents {
         return IsmChatActionEvents.meetingEndedDueToRejectionByAll;
       case 'messageDetailsUpdated':
         return IsmChatActionEvents.messageDetailsUpdated;
+      case 'memberPushNotificationUpdated':
+        return IsmChatActionEvents.memberPushNotificationUpdated;
       default:
         return IsmChatActionEvents.typingEvent;
     }
@@ -714,6 +721,8 @@ enum IsmChatActionEvents {
         return 'meetingEndedDueToRejectionByAll';
       case IsmChatActionEvents.messageDetailsUpdated:
         return 'messageDetailsUpdated';
+      case IsmChatActionEvents.memberPushNotificationUpdated:
+        return 'memberPushNotificationUpdated';
     }
   }
 }

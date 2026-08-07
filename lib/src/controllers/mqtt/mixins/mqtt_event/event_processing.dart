@@ -219,6 +219,8 @@ mixin IsmChatMqttEventProcessingMixin {
         break;
       case IsmChatActionEvents.userUpdate:
       case IsmChatActionEvents.messageDetailsUpdated:
+      // Mute/unmute push for a member — ignore; also filtered from local message saves.
+      case IsmChatActionEvents.memberPushNotificationUpdated:
         break;
       case IsmChatActionEvents.meetingCreated:
       case IsmChatActionEvents.meetingEndedByHost:
