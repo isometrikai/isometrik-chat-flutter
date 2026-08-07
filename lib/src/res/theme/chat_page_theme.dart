@@ -30,6 +30,8 @@ class IsmChatPageTheme {
     this.messageSelectionColor,
     this.selfMessageTheme,
     this.opponentMessageTheme,
+    this.messageBubblePadding,
+    this.contactMessagePadding,
     this.pageDecoration,
     this.backgroundColor,
     this.sendButtonTheme,
@@ -57,6 +59,28 @@ class IsmChatPageTheme {
   final Color? messageSelectionColor;
   final IsmChatMessageTheme? selfMessageTheme;
   final IsmChatMessageTheme? opponentMessageTheme;
+
+  /// Single knob for inner bubble content padding.
+  ///
+  /// Applies to **every** bubble message type because they all render inside
+  /// `MessageBubble` → `IsmChatMessageWrapper` (text, audio, image, video,
+  /// location, contact, file, reply, forward, link, deleted, social, call, …).
+  /// Center/system messages (date, join/leave, admin, …) are unchanged.
+  ///
+  /// Null keeps the SDK default
+  /// (`EdgeInsets.only(left: 5, top: 5, right: 5, bottom: 20)` when
+  /// time/status is shown inside the bubble).
+  ///
+  /// Example for design 10×13 with inner time/status:
+  /// `EdgeInsets.fromLTRB(10, 13, 10, 20)`.
+  ///
+  /// Prefer [resolveBubblePadding] when reading this value in SDK code.
+  final EdgeInsets? messageBubblePadding;
+
+  /// Padding inside the contact message **card** (nested UI), not the bubble
+  /// chrome. Null → `EdgeInsets.all(10)`. Bubble inset still comes from
+  /// [messageBubblePadding].
+  final EdgeInsets? contactMessagePadding;
 
   final Decoration? pageDecoration;
   final Color? backgroundColor;
@@ -88,4 +112,32 @@ class IsmChatPageTheme {
 
   /// Group / conversation info ([IsmChatConverstaionInfoView]). Null → SDK default.
   final IsmChatGroupInfoTheme? groupInfoTheme;
+
+  /// Resolves bubble content padding for all bubble message types.
+  ///
+  /// Pass [custom] from [messageBubblePadding] (or null for SDK defaults).
+  /// Media grids keep a minimum bottom inset so time/status stay visible.
+  static EdgeInsets resolveBubblePadding({
+    EdgeInsets? custom,
+    bool isMediaGrid = false,
+    bool gridHasCaption = false,
+    bool showTimeStatusInner = true,
+  }) {
+    if (!showTimeStatusInner) {
+      return custom ?? const EdgeInsets.all(5);
+    }
+    if (isMediaGrid) {
+      final minBottom = gridHasCaption ? 25.0 : 20.0;
+      return EdgeInsets.only(
+        top: custom?.top ?? 5,
+        left: custom?.left ?? 5,
+        right: custom?.right ?? 5,
+        bottom: custom != null && custom.bottom > minBottom
+            ? custom.bottom
+            : minBottom,
+      );
+    }
+    return custom ??
+        const EdgeInsets.only(left: 5, top: 5, right: 5, bottom: 20);
+  }
 }

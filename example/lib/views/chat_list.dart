@@ -39,6 +39,10 @@ class ChatList extends StatelessWidget {
                 chatPageTheme: IsmChatPageTheme(
                   centerMessageTheme:
                       const IsmChatCenterMessageTheme(textColor: Colors.white),
+                  // Bubble padding for all message types (text, audio, media,
+                  // location, contact, …). Bottom ≥ 20 leaves room for time/status.
+                  messageBubblePadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  // contactMessagePadding: const EdgeInsets.all(10),
                   // backgroundColor: const Color(0xFF292030),
                   selfMessageTheme: IsmChatMessageTheme(
                       borderColor: Colors.grey, linkPreviewColor: Colors.white
