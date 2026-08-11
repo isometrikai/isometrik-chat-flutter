@@ -162,6 +162,42 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
 class _IsmChatPageView extends StatelessWidget {
   const _IsmChatPageView();
 
+  Widget _defaultComposer(IsmChatPageController controller) => Container(
+        padding: IsmChatConfig
+            .chatTheme.chatPageTheme?.textFiledTheme?.textfieldInsets,
+        decoration:
+            IsmChatConfig.chatTheme.chatPageTheme?.textFiledTheme?.decoration,
+        child: SafeArea(
+          bottom: !controller.showEmojiBoard,
+          child: const IsmChatMessageField(),
+        ),
+      );
+
+  /// Resolves host input area: [chatInputAreaBuilder] >
+  /// deprecated [messageFieldBuilder] > SDK default composer.
+  Widget _buildChatInputArea(
+    BuildContext context,
+    IsmChatPageController controller,
+  ) {
+    final defaultComposer = _defaultComposer(controller);
+    final areaBuilder =
+        IsmChatProperties.chatPageProperties.chatInputAreaBuilder;
+    if (areaBuilder != null) {
+      return areaBuilder(
+        context,
+        controller.conversation,
+        defaultComposer,
+      );
+    }
+    // ignore: deprecated_member_use_from_same_package
+    final legacyField =
+        IsmChatProperties.chatPageProperties.messageFieldBuilder?.call(
+      context,
+      controller.conversation,
+    );
+    return legacyField ?? defaultComposer;
+  }
+
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
@@ -471,28 +507,10 @@ class _IsmChatPageView extends StatelessWidget {
                                         IsmChatStrings.userDeleteMessage,
                                   )
                                 ] else ...[
-                                  IsmChatProperties.chatPageProperties
-                                          .messageFieldBuilder
-                                          ?.call(
-                                        context,
-                                        controller.conversation,
-                                      ) ??
-                                      Container(
-                                        padding: IsmChatConfig
-                                            .chatTheme
-                                            .chatPageTheme
-                                            ?.textFiledTheme
-                                            ?.textfieldInsets,
-                                        decoration: IsmChatConfig
-                                            .chatTheme
-                                            .chatPageTheme
-                                            ?.textFiledTheme
-                                            ?.decoration,
-                                        child: SafeArea(
-                                          bottom: !controller.showEmojiBoard,
-                                          child: const IsmChatMessageField(),
-                                        ),
-                                      ),
+                                  _buildChatInputArea(
+                                    context,
+                                    controller,
+                                  ),
                                 ],
                                 // Emoji board (hidden when not shown)
                                 Offstage(

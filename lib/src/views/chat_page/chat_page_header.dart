@@ -85,113 +85,124 @@ class IsmChatPageHeader extends StatelessWidget implements PreferredSizeWidget {
                       IsmChatColors.primaryColorLight,
                 ),
                 child: SafeArea(
+                  bottom: false,
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Container(
-                        height: IsmChatDimens.appBarHeight,
-                        color: IsmChatConfig.chatTheme.chatPageHeaderTheme
-                                ?.backgroundColor ??
-                            IsmChatConfig.chatTheme.primaryColor,
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            if (!IsmChatResponsive.isWeb(context)) ...[
-                              IconButton(
-                                onPressed: () async {
-                                  var updateLastMessage = false;
-                                  controller.closeOverlay();
-                                  if (IsmChat.i.chatPageTag == null) {
-                                    IsmChatRoute.goBack<void>();
-                                    updateLastMessage =
-                                        await controller.updateLastMessage();
-                                  }
-                                  IsmChatProperties
-                                      .chatPageProperties.header?.onBackTap
-                                      ?.call(updateLastMessage);
-                                },
-                                icon: Icon(
-                                  Icons.arrow_back_rounded,
-                                  // IsmChat.i.chatPageTag == null
-                                  //     ? Icons.arrow_back_rounded
-                                  //     : Icons.close_rounded,
-                                  color: IsmChatConfig.chatTheme
-                                          .chatPageHeaderTheme?.iconColor ??
-                                      IsmChatColors.whiteColor,
-                                ),
-                              )
-                            ] else ...[
-                              IsmChatDimens.boxWidth16,
-                            ],
-                            IsmChatTapHandler(
-                              onTap: onTap,
-                              child: IsmChatProperties.chatPageProperties.header
-                                      ?.profileImageBuilder
-                                      ?.call(
-                                          context,
-                                          controller.conversation,
-                                          controller.conversation?.profileUrl ??
-                                              '') ??
-                                  IsmChatImage.profile(
-                                    IsmChatProperties.chatPageProperties.header
-                                            ?.profileImageUrl
-                                            ?.call(
-                                                context,
-                                                controller.conversation,
-                                                controller.conversation
-                                                        ?.profileUrl ??
-                                                    '') ??
-                                        controller.conversation?.profileUrl ??
-                                        '',
-                                    name: IsmChatProperties
-                                            .chatPageProperties.header?.title
-                                            ?.call(
-                                                context,
-                                                controller.conversation,
-                                                controller.conversation
-                                                        ?.chatName ??
-                                                    '') ??
-                                        controller.conversation?.chatName,
-                                    dimensions: IsmChatDimens.fifty,
-                                    isNetworkImage: (IsmChatProperties
-                                                .chatPageProperties
-                                                .header
-                                                ?.profileImageUrl
-                                                ?.call(
-                                                    context,
-                                                    controller.conversation,
-                                                    controller.conversation
-                                                            ?.profileUrl ??
-                                                        '') ??
-                                            controller
-                                                .conversation?.profileUrl ??
-                                            '')
-                                        .isValidUrl,
+                      // Flexible toolbar so [header.bottom] does not overflow
+                      // when preferred height is slightly tight.
+                      Expanded(
+                        child: Container(
+                          color: IsmChatConfig.chatTheme.chatPageHeaderTheme
+                                  ?.backgroundColor ??
+                              IsmChatConfig.chatTheme.primaryColor,
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              if (!IsmChatResponsive.isWeb(context)) ...[
+                                IconButton(
+                                  onPressed: () async {
+                                    var updateLastMessage = false;
+                                    controller.closeOverlay();
+                                    if (IsmChat.i.chatPageTag == null) {
+                                      IsmChatRoute.goBack<void>();
+                                      updateLastMessage =
+                                          await controller.updateLastMessage();
+                                    }
+                                    IsmChatProperties
+                                        .chatPageProperties.header?.onBackTap
+                                        ?.call(updateLastMessage);
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_back_rounded,
+                                    // IsmChat.i.chatPageTag == null
+                                    //     ? Icons.arrow_back_rounded
+                                    //     : Icons.close_rounded,
+                                    color: IsmChatConfig.chatTheme
+                                            .chatPageHeaderTheme?.iconColor ??
+                                        IsmChatColors.whiteColor,
                                   ),
-                            ),
-                            IsmChatDimens.boxWidth8,
-                            Expanded(
-                              child: _TitleSubTitleWidget(
+                                )
+                              ] else ...[
+                                IsmChatDimens.boxWidth16,
+                              ],
+                              IsmChatTapHandler(
                                 onTap: onTap,
+                                child: IsmChatProperties
+                                        .chatPageProperties.header
+                                        ?.profileImageBuilder
+                                        ?.call(
+                                            context,
+                                            controller.conversation,
+                                            controller.conversation
+                                                    ?.profileUrl ??
+                                                '') ??
+                                    IsmChatImage.profile(
+                                      IsmChatProperties
+                                              .chatPageProperties
+                                              .header
+                                              ?.profileImageUrl
+                                              ?.call(
+                                                  context,
+                                                  controller.conversation,
+                                                  controller.conversation
+                                                          ?.profileUrl ??
+                                                      '') ??
+                                          controller
+                                              .conversation?.profileUrl ??
+                                          '',
+                                      name: IsmChatProperties
+                                              .chatPageProperties
+                                              .header
+                                              ?.title
+                                              ?.call(
+                                                  context,
+                                                  controller.conversation,
+                                                  controller.conversation
+                                                          ?.chatName ??
+                                                      '') ??
+                                          controller.conversation?.chatName,
+                                      dimensions: IsmChatDimens.fifty,
+                                      isNetworkImage: (IsmChatProperties
+                                                  .chatPageProperties
+                                                  .header
+                                                  ?.profileImageUrl
+                                                  ?.call(
+                                                      context,
+                                                      controller.conversation,
+                                                      controller.conversation
+                                                              ?.profileUrl ??
+                                                          '') ??
+                                              controller.conversation
+                                                  ?.profileUrl ??
+                                              '')
+                                          .isValidUrl,
+                                    ),
+                              ),
+                              IsmChatDimens.boxWidth8,
+                              Expanded(
+                                child: _TitleSubTitleWidget(
+                                  onTap: onTap,
+                                  controller: controller,
+                                ),
+                              ),
+                              if (IsmChatProperties.chatPageProperties.header
+                                      ?.actionBuilder !=
+                                  null) ...[
+                                IsmChatProperties.chatPageProperties.header
+                                        ?.actionBuilder
+                                        ?.call(
+                                      context,
+                                      controller.conversation,
+                                    ) ??
+                                    const SizedBox.square()
+                              ],
+                              _PopupMenuWidget(
                                 controller: controller,
                               ),
-                            ),
-                            if (IsmChatProperties
-                                    .chatPageProperties.header?.actionBuilder !=
-                                null) ...[
-                              IsmChatProperties
-                                      .chatPageProperties.header?.actionBuilder
-                                      ?.call(
-                                    context,
-                                    controller.conversation,
-                                  ) ??
-                                  const SizedBox.square()
                             ],
-                            _PopupMenuWidget(
-                              controller: controller,
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                       IsmChatProperties.chatPageProperties.header?.bottom?.call(

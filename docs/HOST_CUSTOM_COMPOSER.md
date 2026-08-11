@@ -1,135 +1,272 @@
-# Custom chat composer (host app)
+# Custom chat input area (host app)
 
 **For:** host-app developers  
-**Opt-in:** omit `messageFieldBuilder` → SDK default bar is unchanged
+**Opt-in:** omit `chatInputAreaBuilder` → SDK default composer is unchanged
 
-Use this when the host app wants its own typing / bottom bar (layout, `+`, capsule field, send button, etc.). The SDK still sends messages, attachments, typing, and replies.
+Use this when the host wants anything **below the message list**: Common Questions, Share carousel, custom composer, or a combination. The sticky banner under the header uses existing `header.bottom` (see below).
+
+> **Migration:** `messageFieldBuilder` is **deprecated**. Prefer `chatInputAreaBuilder`. Old apps that only set `messageFieldBuilder` still work until you migrate.
 
 ---
 
-## 1. Set `chatPageProperties`
-
-Pass `messageFieldBuilder` on `IsmChatPageProperties` (same place as other chat-page options):
+## 1. Wire `chatPageProperties`
 
 ```dart
 IsmChatApp(
+  context: context,
   chatPageProperties: IsmChatPageProperties(
-    messageFieldBuilder: (context, conversation) {
-      return YourComposer(); // your UI
+    header: IsmChatPageHeaderProperties(
+      // Must cover toolbar + banner (use IsmChatDimens.appBarHeight, not kToolbarHeight).
+      height: (context, conversation) =>
+          IsmChatDimens.appBarHeight + StickyChatBanner.height,
+      bottom: (context, conversation) => const StickyChatBanner(),
+    ),
+    chatInputAreaBuilder: (context, conversation, defaultComposer) {
+      return ChatInputArea(
+        conversation: conversation,
+        defaultComposer: defaultComposer,
+      );
     },
   ),
 );
 ```
 
-Return `null` from the builder (or don’t set it) to keep the SDK composer.
+| Want | Return from `chatInputAreaBuilder` |
+|---|---|
+| Strip + SDK composer | `Column(strip, defaultComposer)` |
+| Strip + custom composer | `Column(strip, YourComposer())` |
+| Custom composer only | `YourComposer()` |
+| Strip only (no input) | just the strip |
+| Default only | omit builder |
 
-SDK still hides the bar first when the user left / was removed from a group, the opponent is deleted, or `messageAllowedConfig` blocks input.
+SDK adds **no** divider/padding. Put separators in your widget if needed.  
+When `chatInputAreaBuilder` is set, it **wins** over `messageFieldBuilder`.
+
+Restriction states still hide the whole input area first (left/removed from group, deleted opponent, `messageAllowedConfig`).
 
 ---
 
-## 2. Minimum composer
+## 2. Full copy/paste sample
 
-Bind the SDK controller and call `IsmChat.i` for actions:
+### Sticky banner (`header.bottom`)
 
 ```dart
-class YourComposer extends StatelessWidget {
+class StickyChatBanner extends StatelessWidget {
+  const StickyChatBanner({super.key});
+
+  static const double height = 40;
+
   @override
   Widget build(BuildContext context) {
-    final input = IsmChat.i.chatInputController;
-    if (input == null) return const SizedBox.shrink();
-
-    return SafeArea(
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => IsmChat.i.openComposerAttachments(context),
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: ColoredBox(
+        color: const Color(0xFFE8F5E9),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              Icon(Icons.check_circle, size: 18, color: Colors.green.shade700),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'You both earn 5% cash back on anything shared here',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.green.shade800,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: TextField(
-              controller: input,
-              focusNode: IsmChat.i.chatInputFocusNode,
-              onChanged: IsmChat.i.onComposerTextChanged,
-              decoration: const InputDecoration(hintText: 'Message'),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: () => IsmChat.i.sendComposerText(),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 ```
 
-Or send without binding the controller:
+### Below messages: Common Questions + composer
+
+Same slot works for a Share carousel — swap the strip widget; keep `defaultComposer` or your own field.
 
 ```dart
-await IsmChat.i.sendComposerText(text: 'Hello');
+class ChatInputArea extends StatelessWidget {
+  const ChatInputArea({
+    super.key,
+    required this.conversation,
+    required this.defaultComposer,
+    this.useCustomComposer = false,
+  });
+
+  final IsmChatConversationModel? conversation;
+  final Widget defaultComposer;
+
+  /// `false` → SDK composer; `true` → [HostComposer].
+  final bool useCustomComposer;
+
+  static const _questions = [
+    'Is this safe around pets?',
+    'How many loads per bottle?',
+    'Where is my refill?',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Material(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'COMMON QUESTIONS',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (var i = 0; i < _questions.length; i++) ...[
+                        if (i > 0) const SizedBox(width: 8),
+                        ActionChip(
+                          label: Text(_questions[i]),
+                          onPressed: () =>
+                              IsmChat.i.sendComposerText(text: _questions[i]),
+                          backgroundColor: Colors.white,
+                          side: BorderSide(color: Colors.grey.shade300),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (useCustomComposer) const HostComposer() else defaultComposer,
+      ],
+    );
+  }
+}
+```
+
+### Optional custom composer
+
+```dart
+class HostComposer extends StatelessWidget {
+  const HostComposer({super.key});
+
+  static const _navy = Color(0xFF1B3A6B);
+
+  @override
+  Widget build(BuildContext context) {
+    return GetX<IsmChatPageController>(
+      tag: IsmChat.i.chatPageTag,
+      builder: (controller) {
+        final input = controller.chatInputController;
+
+        return Material(
+          color: Colors.white,
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (controller.isreplying) ...[
+                    // show reply preview; close → IsmChat.i.cancelComposerReply()
+                    const SizedBox(height: 8),
+                  ],
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: _navy,
+                          shape: const CircleBorder(),
+                        ),
+                        onPressed: () =>
+                            IsmChat.i.openComposerAttachments(context),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          controller: input,
+                          focusNode: IsmChat.i.chatInputFocusNode,
+                          minLines: 1,
+                          maxLines: 4,
+                          onChanged: IsmChat.i.onComposerTextChanged,
+                          decoration: InputDecoration(
+                            hintText: 'Message',
+                            filled: true,
+                            fillColor: const Color(0xFFF0F0F0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.send_rounded, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: _navy,
+                          shape: const CircleBorder(),
+                        ),
+                        onPressed: () => IsmChat.i.sendComposerText(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
 ```
 
 ---
 
-## 3. Action APIs (`IsmChat.i`)
+## 3. Composer actions (`IsmChat.i`)
 
-Call these only while the chat page is open. If it isn’t, methods no-op / return `false` / `null`.
+Call these while the chat page is open (when using a custom composer instead of `defaultComposer`):
 
-### Methods
-
-| Method | What it does |
+| Method / getter | What it does |
 |---|---|
-| `sendComposerText({String? text})` | Sends text (same path as SDK send: block check, `isMessgeAllowed`, mentions, reply). Uses `chatInputController` if `text` is omitted. Returns `true` if send started. |
-| `openComposerAttachments([BuildContext? context])` | Opens the SDK attachment sheet (camera, gallery, document, location, contact). |
-| `selectComposerAttachment(IsmChatAttachmentType type, {BuildContext? context})` | Skips the sheet and runs one type, e.g. `IsmChatAttachmentType.gallery`. |
-| `onComposerTextChanged(String text)` | Call from `TextField.onChanged`. Typing indicator + @mentions. Syncs text into the SDK controller if you use your own. |
-| `notifyComposerTyping()` | Typing indicator only (no mention handling). |
-| `cancelComposerReply()` | Clears reply state / preview. |
-| `toggleComposerEmojiBoard([bool? show])` | Shows / hides the SDK emoji board under the composer. |
-| `showComposerBlockDialog()` | Shows block / unblock dialog when chatting is not allowed. |
-
-### Getters
-
-| Getter | Type | What it is |
-|---|---|---|
-| `chatInputController` | `TextEditingController?` | Bind your `TextField` to this. |
-| `chatInputFocusNode` | `FocusNode?` | Optional focus node for the field. |
-| `currentChatConversation` | `IsmChatConversationModel?` | Open conversation. |
-| `isChattingAllowed` | `bool` | Whether the user may send. If `false`, call `showComposerBlockDialog()`. |
-| `isChatReplying` | `bool` | Reply is active. |
-| `chatReplyMessage` | `IsmChatMessageModel?` | Message being replied to (show preview + close → `cancelComposerReply()`). |
+| `sendComposerText({String? text})` | Send text |
+| `openComposerAttachments([context])` | Attachment sheet |
+| `selectComposerAttachment(type)` | One attachment type |
+| `onComposerTextChanged(text)` | Typing + mentions |
+| `chatInputController` / `chatInputFocusNode` | Bind your `TextField` |
+| `cancelComposerReply()` / `isChatReplying` / `chatReplyMessage` | Reply UI |
+| `isChattingAllowed` / `showComposerBlockDialog()` | Blocked state |
 
 ---
 
-## 4. Other useful calls
+## 4. Notes
 
-```dart
-// Attach without the sheet
-await IsmChat.i.selectComposerAttachment(IsmChatAttachmentType.camera);
-
-// Reply UI
-if (IsmChat.i.isChatReplying) {
-  // show IsmChat.i.chatReplyMessage?.body
-  // close → IsmChat.i.cancelComposerReply();
-}
-
-// Blocked / not allowed
-if (!IsmChat.i.isChattingAllowed) {
-  IsmChat.i.showComposerBlockDialog();
-  return;
-}
-
-// Emoji board (SDK panel below your bar)
-IsmChat.i.toggleComposerEmojiBoard();
-```
-
-For live reply updates, rebuild when `IsmChatPageController.isreplying` changes (e.g. `GetX<IsmChatPageController>(tag: IsmChat.i.chatPageTag, ...)`).
-
----
-
-## 5. Notes
-
-- Do **not** call `IsmChatPageController.sendTextMessage` from the host app. Use `IsmChat.i.sendComposerText`.
-- `attachments` / `features` / `messageAllowedConfig` on `chatPageProperties` still apply.
-- Working sample: `example/lib/views/chat_list.dart` → `_ExampleHostComposer`.
+- Sticky banner = `header.bottom` + `header.height` = `IsmChatDimens.appBarHeight + bannerHeight`
+- Below messages = `chatInputAreaBuilder` only (one common callback)
+- In-thread product cards / quick replies stay host `messageBuilder` — no extra SDK slot
+- Do **not** call `IsmChatPageController.sendTextMessage` from the host; use `IsmChat.i.sendComposerText`

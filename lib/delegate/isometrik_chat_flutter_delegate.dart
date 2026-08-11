@@ -14,6 +14,7 @@ part of '../isometrik_chat_flutter.dart';
 /// - [IsmChatDelegateNotificationMixin]: Push notification handling
 /// - [IsmChatDelegatePaidMediaMixin]: Paid media handling for external processing
 /// - [IsmChatDelegateComposerMixin]: Host-app custom composer actions
+/// - [IsmChatDelegateChatListMixin]: Host-app custom chat-list screen actions
 class IsmChatDelegate
     with
         IsmChatDelegateInitializationMixin,
@@ -26,7 +27,8 @@ class IsmChatDelegate
         IsmChatDelegateNavigationMixin,
         IsmChatDelegateNotificationMixin,
         IsmChatDelegatePaidMediaMixin,
-        IsmChatDelegateComposerMixin {
+        IsmChatDelegateComposerMixin,
+        IsmChatDelegateChatListMixin {
   IsmChatDelegate();
 
   // Configuration & State Management

@@ -41,7 +41,6 @@ class ChatList extends StatelessWidget {
                       const IsmChatCenterMessageTheme(textColor: Colors.white),
                   // Bubble padding for all message types (text, audio, media,
                   // location, contact, …). Bottom ≥ 20 leaves room for time/status.
-                  messageBubblePadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                   // contactMessagePadding: const EdgeInsets.all(10),
                   // backgroundColor: const Color(0xFF292030),
                   selfMessageTheme: IsmChatMessageTheme(
@@ -82,8 +81,12 @@ class ChatList extends StatelessWidget {
                   );
                 },
                 // Host-app custom composer. Comment out to restore SDK default.
-                // messageFieldBuilder: (context, conversation) {
-                //   return const _ExampleHostComposer();
+                // Host chat input area — see docs/HOST_CUSTOM_COMPOSER.md
+                // chatInputAreaBuilder: (context, conversation, defaultComposer) {
+                //   return Column(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [YourStrip(...), defaultComposer],
+                //   );
                 // },
                 // backgroundImageUrl: AssetConstants.background,
                 // isShowMessageBlur: (p0, p1) => true,
@@ -103,13 +106,11 @@ class ChatList extends StatelessWidget {
                 // },
 
                 header: IsmChatPageHeaderProperties(
-
-                    // height: (p0, p1) => 200,
-                    // bottom: (p0, p1) {
-                    //   return Container(
-                    //       alignment: Alignment.center,
-                    //       width: double.infinity,
-                    //       child: const Text('Rahul Saryam'));
+                    // Sticky banner under AppBar — see docs/HOST_CUSTOM_COMPOSER.md
+                    // height: (context, conversation) =>
+                    //     IsmChatDimens.appBarHeight + 40,
+                    // bottom: (context, conversation) {
+                    //   return YourStickyBanner();
                     // },
                     ),
                 // meessageFieldFocusNode: (_, coverstaion, value) {
@@ -240,9 +241,9 @@ class ChatList extends StatelessWidget {
       );
 }
 
-/// Example host composer: `+` | capsule field | send.
-///
-/// Actions go through `IsmChat.i` (same paths as the SDK bar).
+/// Example host composer (optional). Prefer `chatInputAreaBuilder` —
+/// see docs/HOST_CUSTOM_COMPOSER.md.
+// ignore: unused_element
 class _ExampleHostComposer extends StatelessWidget {
   const _ExampleHostComposer();
 

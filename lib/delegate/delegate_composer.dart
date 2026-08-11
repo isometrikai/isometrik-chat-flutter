@@ -2,7 +2,8 @@ part of '../isometrik_chat_flutter.dart';
 
 /// Composer actions for a host-app custom chat input bar.
 ///
-/// Used when [IsmChatPageProperties.messageFieldBuilder] replaces the default
+/// Used when [IsmChatPageProperties.chatInputAreaBuilder] (or deprecated
+/// [IsmChatPageProperties.messageFieldBuilder]) replaces the default
 /// typing area. No-ops if the chat page is not open.
 mixin IsmChatDelegateComposerMixin {
   IsmChatPageController? get _page {

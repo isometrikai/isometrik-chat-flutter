@@ -2,8 +2,9 @@ part of '../isometrik_chat_flutter.dart';
 
 /// Public composer actions for host-app custom bottom UI.
 ///
-/// Pair with [IsmChatPageProperties.messageFieldBuilder]. Default chat UI is
-/// unchanged when that builder is omitted.
+/// Pair with [IsmChatPageProperties.chatInputAreaBuilder] (or deprecated
+/// [IsmChatPageProperties.messageFieldBuilder]). Default chat UI is
+/// unchanged when those builders are omitted.
 mixin IsmChatComposerOperationsMixin {
   IsmChatDelegate get _delegate =>
       (this as dynamic)._delegate as IsmChatDelegate;

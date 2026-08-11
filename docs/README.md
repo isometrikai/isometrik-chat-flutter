@@ -68,9 +68,14 @@ This directory contains comprehensive documentation for the Isometrik Chat Flutt
 
 ### Host app integration
 
-- **[HOST_CUSTOM_COMPOSER.md](./HOST_CUSTOM_COMPOSER.md)** - Replace the chat typing bar
-  - `chatPageProperties.messageFieldBuilder`
+- **[HOST_CUSTOM_COMPOSER.md](./HOST_CUSTOM_COMPOSER.md)** - Chat input area + sticky header banner
+  - `chatPageProperties.chatInputAreaBuilder` (wins over deprecated `messageFieldBuilder`)
+  - `header.bottom` for sticky strip under AppBar
   - `IsmChat.i` send / attach / typing / reply APIs
+
+- **[HOST_CUSTOM_CHAT_LIST.md](./HOST_CUSTOM_CHAT_LIST.md)** - Replace the entire Messages / chat-list screen
+  - `conversationProperties.conversationScreenBuilder`
+  - `IsmChat.i` refresh / search / openConversation APIs
   - Minimum host-app sample
 
 ### Feature & Issue Tracking
