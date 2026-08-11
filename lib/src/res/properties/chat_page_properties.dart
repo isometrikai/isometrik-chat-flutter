@@ -20,6 +20,8 @@ class IsmChatPageProperties {
     this.onAddGroupMembersTap,
     this.emojiIcon,
     this.meessageFieldFocusNode,
+    this.chatInputAreaBuilder,
+    @Deprecated('Use chatInputAreaBuilder instead')
     this.messageFieldBuilder,
     this.messageFieldSuffix,
     this.onCallBlockUnblock,
@@ -68,7 +70,34 @@ class IsmChatPageProperties {
   /// Provide this widget show emoji icon in message type input filed
   final Widget? emojiIcon;
 
+  /// Host-owned area below the message list (strip + composer).
+  ///
+  /// Use this for Share carousel, Common Questions, custom composer, or any
+  /// combination. SDK adds **no** divider/padding — include chrome in your
+  /// widget. Pass [defaultComposer] through to keep the SDK input bar.
+  ///
+  /// When set, this **wins** over [messageFieldBuilder]. Omit both → SDK
+  /// default composer only (production UI unchanged).
+  ///
+  /// Example:
+  /// ```dart
+  /// chatInputAreaBuilder: (context, conversation, defaultComposer) {
+  ///   return Column(
+  ///     mainAxisSize: MainAxisSize.min,
+  ///     children: [
+  ///       YourStrip(conversation: conversation),
+  ///       defaultComposer, // or YourComposer()
+  ///     ],
+  ///   );
+  /// },
+  /// ```
+  final ChatInputAreaBuilder? chatInputAreaBuilder;
+
   /// Replaces the **entire chat composer** (typing / message input area).
+  ///
+  /// **Deprecated:** use [chatInputAreaBuilder] instead (pass your bar, or
+  /// `defaultComposer`, in that builder). Still honored when
+  /// [chatInputAreaBuilder] is omitted.
   ///
   /// Return a widget to render your own bottom bar. Return `null` (or omit)
   /// to keep the SDK default [IsmChatMessageField] — production UI unchanged.
@@ -77,31 +106,7 @@ class IsmChatPageProperties {
   /// opponent, [messageAllowedConfig]). Drive actions via `IsmChat.i`
   /// (`sendComposerText`, `openComposerAttachments`, `onComposerTextChanged`,
   /// `chatInputController`, etc.).
-  ///
-  /// Example:
-  /// ```dart
-  /// messageFieldBuilder: (context, conversation) {
-  ///   return Row(
-  ///     children: [
-  ///       IconButton(
-  ///         icon: const Icon(Icons.add),
-  ///         onPressed: () => IsmChat.i.openComposerAttachments(context),
-  ///       ),
-  ///       Expanded(
-  ///         child: TextField(
-  ///           controller: IsmChat.i.chatInputController,
-  ///           onChanged: IsmChat.i.onComposerTextChanged,
-  ///           decoration: const InputDecoration(hintText: 'Message'),
-  ///         ),
-  ///       ),
-  ///       IconButton(
-  ///         icon: const Icon(Icons.send),
-  ///         onPressed: () => IsmChat.i.sendComposerText(),
-  ///       ),
-  ///     ],
-  ///   );
-  /// },
-  /// ```
+  @Deprecated('Use chatInputAreaBuilder instead')
   final WidgetCallback? messageFieldBuilder;
 
   /// It is an optional parameter you can provide any widget
