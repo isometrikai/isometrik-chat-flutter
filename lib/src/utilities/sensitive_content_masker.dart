@@ -8,7 +8,9 @@ import 'package:isometrik_chat_flutter/src/models/meta_data_model.dart';
 ///
 /// Expected formats (asterisk count matches hidden length):
 /// - `nilpatel@gmail.com` → `********@gmail.com`
-/// - `9876543210` → `******3210`
+/// - Plain digits: only length **9–13** are masked (keep last 4).
+///   Shorter than 9 or longer than 13 are left unchanged.
+///   e.g. `9876543210` → `******3210`; `12345678` / `12345678901234` → unchanged
 /// - `+91 9876543210` (space) → `+91 ******3210` (last 4 of national number)
 /// - `+919876543210` (no space) → `+9198******10` (first 4 + last 2 digits)
 /// - `instagram.com/nilpatel` → `instagram.com/********`
@@ -48,12 +50,14 @@ class IsmChatSensitiveContentMasker {
     r'\+(\d{10,15})\b',
   );
 
-  /// Bare national / long numbers (9–13 digits).
+  /// Bare national numbers: digit length must be 9–13 inclusive to mask.
+  /// < 9 or > 13 → no match (not masked). Masked form keeps last 4 digits.
   /// Skips ID-style tokens like `MID-0000079377` / `SID-…` / `PKID-…`
   /// (letter(s) + hyphen immediately before the digits).
   static final RegExp _phonePlainRegExp = RegExp(
     r'(?<![A-Za-z]-)(?<![\d+])(\d{9,13})\b',
   );
+
   /// Applies masking when [enabled] is true; otherwise returns [input] unchanged.
   static String applyIfEnabled(String input, {required bool enabled}) {
     if (!enabled || input.isEmpty) return input;
@@ -102,8 +106,12 @@ class IsmChatSensitiveContentMasker {
       return '+${_maskPhoneKeepFirst4Last2(digits)}';
     });
 
+    // Plain digits: mask only when length is 9–13; keep last 4 visible.
     result = result.replaceAllMapped(_phonePlainRegExp, (match) {
       final number = match.group(1) ?? '';
+      // Defense in depth — regex already enforces 9–13.
+      if (number.length < 9 || number.length > 13)
+        return match.group(0) ?? number;
       return _maskPhoneKeepLast4(number);
     });
 
