@@ -335,8 +335,7 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     // when multiple groups contain the same person.
     final conversation = _controller.conversations.firstWhere(
       (element) =>
-          element.isGroup != true &&
-          element.opponentDetails?.userId == userId,
+          element.isGroup != true && element.opponentDetails?.userId == userId,
       orElse: IsmChatConversationModel.new,
     );
 
@@ -418,12 +417,23 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   /// Updates the current conversation with new details.
   ///
   /// `conversation`: The conversation model to update.
+  ///
+  /// Reusability note:
+  /// - Used both when **switching** chats and when **patching** the open chat
+  ///   (e.g. unblock clears `messagingDisabled`).
+  /// - Only clear the in-memory message list when the conversation id changes.
+  ///   Clearing on same-id metadata updates caused a brief empty-state flash
+  ///   ("This is the beginning of your chat history...") after unblock.
   Future<void> updateLocalConversation(
       IsmChatConversationModel conversation) async {
     final normalizedConversation = conversation.normalizeOpponentDetails();
+    final previousConversationId = _controller.currentConversationId;
+    final nextConversationId = normalizedConversation.conversationId ?? '';
+    final isSwitchingConversation =
+        previousConversationId != nextConversationId;
+
     _controller.currentConversation = normalizedConversation;
-    _controller.currentConversationId =
-        normalizedConversation.conversationId ?? '';
+    _controller.currentConversationId = nextConversationId;
 
     // The chat page controller is often reused (especially on web). Point it
     // at the newly selected conversation *immediately* so any in-flight
@@ -431,17 +441,36 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     // race and keep using the old conversationId.
     if (IsmChatUtility.chatPageControllerRegistered) {
       final chatPage = IsmChatUtility.chatPageController;
-      chatPage
-        ..conversation = normalizedConversation
-        ..isActionAllowed = false
-        ..isCoverationApiDetails = true
-        ..canCallCurrentApi = false
-        ..messages.clear();
+      if (isSwitchingConversation) {
+        chatPage
+          ..conversation = normalizedConversation
+          ..isActionAllowed = false
+          ..isCoverationApiDetails = true
+          ..canCallCurrentApi = false
+          ..messages.clear();
+      } else {
+        // Same open chat: keep the visible message list; only refresh metadata.
+        chatPage.conversation = normalizedConversation.copyWith(
+          messages: normalizedConversation.messages ??
+              chatPage.conversation?.messages,
+        );
+      }
     }
 
-    // Save conversation to database to persist metadata and other changes
+    // Persist metadata, but never wipe Hive messages on a metadata-only update
+    // that omitted the messages map (common for unblock / list-driven patches).
+    var toSave = normalizedConversation;
+    if (!isSwitchingConversation &&
+        (toSave.messages == null || toSave.messages!.isEmpty) &&
+        nextConversationId.isNotEmpty) {
+      final existing =
+          await IsmChatConfig.dbWrapper?.getConversation(nextConversationId);
+      if (existing?.messages?.isNotEmpty == true) {
+        toSave = toSave.copyWith(messages: existing!.messages);
+      }
+    }
     await IsmChatConfig.dbWrapper?.saveConversation(
-      conversation: normalizedConversation,
+      conversation: toSave,
     );
   }
 
@@ -492,7 +521,8 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     required bool pushNotification,
     bool isLoading = false,
   }) async {
-    final response = await _controller.viewModel.updateConversationNotifications(
+    final response =
+        await _controller.viewModel.updateConversationNotifications(
       conversationId: conversationId,
       pushNotification: pushNotification,
       isLoading: isLoading,
@@ -550,7 +580,8 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     final index = _controller.conversations
         .indexWhere((e) => e.conversationId == conversationId);
     if (index != -1) {
-      final list = List<IsmChatConversationModel>.from(_controller.conversations);
+      final list =
+          List<IsmChatConversationModel>.from(_controller.conversations);
       list[index] = updated;
       _controller.conversations = list;
     }
