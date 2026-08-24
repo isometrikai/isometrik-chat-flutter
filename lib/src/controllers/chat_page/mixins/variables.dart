@@ -29,6 +29,15 @@ mixin IsmChatPageVariablesMixin on GetxController {
 
   var searchMessageScrollController = ScrollController();
 
+  /// Guard against re-attaching the same listeners on every [startInit].
+  ///
+  /// The chat page controller is reused across reopen flows, so repeated
+  /// initialization without this can register duplicate scroll listeners.
+  var hasAttachedMessagesScrollListener = false;
+
+  /// Same guard as [hasAttachedMessagesScrollListener] for search results.
+  var hasAttachedSearchScrollListener = false;
+
   final textEditingController = TextEditingController();
 
   final participnatsEditingController = TextEditingController();

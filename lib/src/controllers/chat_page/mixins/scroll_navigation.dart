@@ -8,48 +8,71 @@ mixin IsmChatPageScrollNavigationMixin on GetxController {
   /// Gets the controller instance.
   IsmChatPageController get _controller => this as IsmChatPageController;
 
+  ScrollPosition? get _messagesScrollPosition {
+    final positions = _controller.messagesScrollController.positions;
+    if (positions.isEmpty) return null;
+    return positions.last;
+  }
+
+  ScrollPosition? get _searchScrollPosition {
+    final positions = _controller.searchMessageScrollController.positions;
+    if (positions.isEmpty) return null;
+    return positions.last;
+  }
+
   /// Sets up scroll listeners for messages and search.
   void _scrollListener() async {
-    _controller.messagesScrollController.addListener(
-      () async {
-        if (_controller.holdController?.isCompleted == true &&
-            _controller.messageHoldOverlayEntry != null) {
-          _controller.closeOverlay();
-        }
-        if (_controller.showAttachment) {
-          await _controller.fabAnimationController?.reverse();
-          if (_controller.fabAnimationController?.isDismissed == true) {
-            _controller.attchmentOverlayEntry?.remove();
-            // attchmentOverlayEntry = null;
+    if (!_controller.hasAttachedMessagesScrollListener) {
+      _controller.hasAttachedMessagesScrollListener = true;
+      _controller.messagesScrollController.addListener(
+        () async {
+          if (_controller.holdController?.isCompleted == true &&
+              _controller.messageHoldOverlayEntry != null) {
+            _controller.closeOverlay();
           }
-          _controller.showAttachment = false;
-        }
-        if (_controller.messagesScrollController.position.pixels.toInt() ==
-            _controller.messagesScrollController.position.maxScrollExtent.toInt()) {
-          _controller.canCallCurrentApi = false;
-          await _controller.getMessagesFromAPI(forPagination: true);
-        }
-        // Keep keyboard focus while scrolling/sending; only collapse emoji panel.
-        if (_controller.showEmojiBoard) {
-          _controller.showEmojiBoard = false;
-        }
-        if (IsmChatDimens.percentHeight(1) * 0.3 <
-            (_controller.messagesScrollController.offset)) {
-          _controller.showDownSideButton = true;
-        } else {
-          _controller.showDownSideButton = false;
-        }
-      },
-    );
+          if (_controller.showAttachment) {
+            await _controller.fabAnimationController?.reverse();
+            if (_controller.fabAnimationController?.isDismissed == true) {
+              _controller.attchmentOverlayEntry?.remove();
+              // attchmentOverlayEntry = null;
+            }
+            _controller.showAttachment = false;
+          }
 
-    _controller.searchMessageScrollController.addListener(
-      () {
-        if (_controller.searchMessageScrollController.position.pixels.toInt() ==
-            _controller.searchMessageScrollController.position.maxScrollExtent.toInt()) {
-          _controller.searchedMessages(_controller.textEditingController.text, fromScrolling: true);
-        }
-      },
-    );
+          final position = _messagesScrollPosition;
+          if (position != null &&
+              position.pixels.toInt() == position.maxScrollExtent.toInt()) {
+            _controller.canCallCurrentApi = false;
+            await _controller.getMessagesFromAPI(forPagination: true);
+          }
+
+          // Keep keyboard focus while scrolling/sending; only collapse emoji panel.
+          if (_controller.showEmojiBoard) {
+            _controller.showEmojiBoard = false;
+          }
+
+          final offset = position?.pixels ?? 0;
+          _controller.showDownSideButton =
+              IsmChatDimens.percentHeight(1) * 0.3 < offset;
+        },
+      );
+    }
+
+    if (!_controller.hasAttachedSearchScrollListener) {
+      _controller.hasAttachedSearchScrollListener = true;
+      _controller.searchMessageScrollController.addListener(
+        () {
+          final position = _searchScrollPosition;
+          if (position != null &&
+              position.pixels.toInt() == position.maxScrollExtent.toInt()) {
+            _controller.searchedMessages(
+              _controller.textEditingController.text,
+              fromScrolling: true,
+            );
+          }
+        },
+      );
+    }
   }
 
   /// Sets up input controllers and focus node listeners.

@@ -308,13 +308,27 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                     ListTile(
                       onTap: () async {
                         IsmChatUtility.showLoader();
-                        IsmChatConversationModel? conversationModel;
-                        final conversation = await IsmChatConfig.dbWrapper
-                            ?.getConversation(widget.user?.userId ?? '');
-                        if (conversation != null) {
-                          conversationModel = conversation;
-                        } else {
-                          conversationModel = IsmChatConversationModel(
+                        final chatController = IsmChatUtility.chatPageController;
+                        final targetConversationId = widget.conversationId.isNotEmpty
+                            ? widget.conversationId
+                            : conversationController.getConversationId(
+                                widget.user?.userId ?? '',
+                              );
+                        final currentConversationId =
+                            chatController.conversation?.conversationId ?? '';
+
+                        // Reuse the current chat route when possible:
+                        // - If this is the same conversation, just return to it.
+                        // - If switching to another conversation from profile, resolve
+                        //   the cached conversation by conversationId (not userId) and
+                        //   let chat-page [startInit] handle the reload. Clearing the
+                        //   visible list here caused the revealed stacked chat route to
+                        //   flash / appear blank before the async reload completed.
+                        if (targetConversationId != currentConversationId) {
+                          IsmChatConversationModel? conversationModel =
+                              await IsmChatConfig.dbWrapper
+                                  ?.getConversation(targetConversationId);
+                          conversationModel ??= IsmChatConversationModel(
                             messagingDisabled: false,
                             isGroup: false,
                             opponentDetails: widget.user,
@@ -322,16 +336,13 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
                             lastMessageDetails: null,
                             lastMessageSentAt: 0,
                             membersCount: 1,
-                            conversationId:
-                                conversationController.getConversationId(
-                              widget.user?.userId ?? '',
-                            ),
+                            conversationId: targetConversationId,
                           );
-                        }
 
-                        await conversationController
-                            .updateLocalConversation(conversationModel);
-                        controller.messages.clear();
+                          await conversationController
+                              .updateLocalConversation(conversationModel);
+                          chatController.isMessagesLoading = true;
+                        }
                         if (widget.fromMessagePage) {
                           IsmChatRoute.goBack();
                         } else {
