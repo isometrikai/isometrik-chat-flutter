@@ -17,6 +17,10 @@ import 'package:isometrik_chat_flutter/src/models/meta_data_model.dart';
 /// - `facebook.com/nilpatel` → `facebook.com/********`
 /// - `x.com/nilpatel` → `x.com/********`
 /// - `linkedin.com/in/nilpatel` → `linkedin.com/in/********`
+///
+/// **Not masked:** http(s) URLs (store/product ObjectIds often contain 9–13
+/// consecutive digits, e.g. `…/69fd8e641d45da0605683369`). Digit runs that sit
+/// inside a larger alphanumeric token are also left unchanged.
 class IsmChatSensitiveContentMasker {
   IsmChatSensitiveContentMasker._();
 
@@ -50,12 +54,23 @@ class IsmChatSensitiveContentMasker {
     r'\+(\d{10,15})\b',
   );
 
+  /// HTTP(S) URLs — phone masking must not run inside these.
+  ///
+  /// Reuse: product / store / Mongo ObjectId paths often contain 9–13 digit
+  /// runs (e.g. `…/69fd8e641d45da0605683369` has `0605683369`) which would
+  /// otherwise be treated as a phone number and break the link.
+  static final RegExp _httpUrlRegExp = RegExp(
+    r'https?:\/\/[^\s<>]+',
+    caseSensitive: false,
+  );
+
   /// Bare national numbers: digit length must be 9–13 inclusive to mask.
   /// < 9 or > 13 → no match (not masked). Masked form keeps last 4 digits.
-  /// Skips ID-style tokens like `MID-0000079377` / `SID-…` / `PKID-…`
-  /// (letter(s) + hyphen immediately before the digits).
+  /// Skips:
+  /// - ID-style tokens like `MID-0000079377` (`letter(s)-` immediately before)
+  /// - Digits inside alphanumeric tokens (hex ObjectIds, SKUs, path IDs)
   static final RegExp _phonePlainRegExp = RegExp(
-    r'(?<![A-Za-z]-)(?<![\d+])(\d{9,13})\b',
+    r'(?<![A-Za-z]-)(?<![A-Za-z0-9+])(\d{9,13})(?![A-Za-z0-9])',
   );
 
   /// Applies masking when [enabled] is true; otherwise returns [input] unchanged.
@@ -107,15 +122,38 @@ class IsmChatSensitiveContentMasker {
     });
 
     // Plain digits: mask only when length is 9–13; keep last 4 visible.
-    result = result.replaceAllMapped(_phonePlainRegExp, (match) {
-      final number = match.group(1) ?? '';
-      // Defense in depth — regex already enforces 9–13.
-      if (number.length < 9 || number.length > 13)
-        return match.group(0) ?? number;
-      return _maskPhoneKeepLast4(number);
+    // Do not mask digit runs that live inside http(s) URLs (store/product IDs).
+    result = _replaceOutsideHttpUrls(result, (chunk) {
+      return chunk.replaceAllMapped(_phonePlainRegExp, (match) {
+        final number = match.group(1) ?? '';
+        if (number.length < 9 || number.length > 13) {
+          return match.group(0) ?? number;
+        }
+        return _maskPhoneKeepLast4(number);
+      });
     });
 
     return result;
+  }
+
+  /// Runs [replace] on text *outside* http(s) URLs; URL substrings are kept as-is.
+  static String _replaceOutsideHttpUrls(
+    String input,
+    String Function(String chunk) replace,
+  ) {
+    final buffer = StringBuffer();
+    var last = 0;
+    for (final match in _httpUrlRegExp.allMatches(input)) {
+      if (match.start > last) {
+        buffer.write(replace(input.substring(last, match.start)));
+      }
+      buffer.write(match.group(0));
+      last = match.end;
+    }
+    if (last < input.length) {
+      buffer.write(replace(input.substring(last)));
+    }
+    return buffer.toString();
   }
 
   /// `9876543210` → `******3210` (hide all but last 4).
