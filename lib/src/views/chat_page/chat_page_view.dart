@@ -28,6 +28,12 @@ class IsmChatPageView extends StatefulWidget {
 
 class _IsmChatPageViewState extends State<IsmChatPageView>
     with WidgetsBindingObserver {
+  /// Conversation this route was opened for. Used when returning from a stacked
+  /// chat page so the shared GetX controller can rebind to this chat.
+  String _openedConversationId = '';
+
+  bool _wasCurrentRoute = true;
+
   @override
   void initState() {
     super.initState();
@@ -36,13 +42,76 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     if (!IsmChatUtility.chatPageControllerRegistered) {
       IsmChatPageBinding().dependencies();
     }
+    if (IsmChatUtility.conversationControllerRegistered) {
+      _openedConversationId =
+          IsmChatUtility.conversationController.currentConversationId;
+    }
     // The GetX chat controller outlives this route (pop/push reuse). Reload
     // messages every time the chat page is opened — not only on first onInit.
-    Future.microtask(() {
-      if (IsmChatUtility.chatPageControllerRegistered) {
-        IsmChatUtility.chatPageController.startInit();
-      }
-    });
+    unawaited(_bootstrapChatPage());
+  }
+
+  Future<void> _bootstrapChatPage() async {
+    if (!IsmChatUtility.chatPageControllerRegistered) return;
+    final controller = IsmChatUtility.chatPageController;
+    await controller.startInit();
+    if (!mounted) return;
+    final loadedId = controller.conversation?.conversationId ??
+        (IsmChatUtility.conversationControllerRegistered
+            ? IsmChatUtility.conversationController.currentConversationId
+            : '');
+    if (loadedId.isNotEmpty) {
+      _openedConversationId = loadedId;
+    }
+  }
+
+  /// When a stacked route above this chat is popped, re-attach state for this
+  /// page: unlock pagination and restore this route's conversation if another
+  /// chat overwrote the shared controller.
+  void _handleRouteVisibility(bool isCurrentRoute) {
+    if (isCurrentRoute && !_wasCurrentRoute) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        unawaited(_restoreChatAfterReturningToStack());
+      });
+    }
+    _wasCurrentRoute = isCurrentRoute;
+  }
+
+  Future<void> _restoreChatAfterReturningToStack() async {
+    if (!IsmChatUtility.chatPageControllerRegistered) return;
+    final controller = IsmChatUtility.chatPageController;
+
+    // Profile "Message" may intentionally rebind this same page to another chat.
+    final rebindId = controller.consumeRebindConversationId();
+    if (rebindId != null && rebindId.isNotEmpty) {
+      _openedConversationId = rebindId;
+    }
+
+    // Stacked chats can leave this flag stuck mid-request; unlock scroll-up loads.
+    controller.canCallCurrentApi = false;
+
+    final openedId = _openedConversationId;
+    if (openedId.isEmpty) return;
+
+    final currentId = controller.conversation?.conversationId ?? '';
+    if (currentId == openedId) {
+      // Same conversation: refresh list so pagination skip matches local history.
+      await controller.getMessagesFromDB(openedId);
+      controller.isMessagesLoading = false;
+      return;
+    }
+
+    final cached = await IsmChatConfig.dbWrapper?.getConversation(openedId);
+    if (!mounted || !IsmChatUtility.chatPageControllerRegistered) return;
+
+    if (cached != null && IsmChatUtility.conversationControllerRegistered) {
+      await IsmChatUtility.conversationController
+          .updateLocalConversation(cached);
+    }
+    if (!mounted || !IsmChatUtility.chatPageControllerRegistered) return;
+    await controller.getMessagesFromDB(openedId);
+    controller.isMessagesLoading = false;
   }
 
   @override
@@ -135,19 +204,25 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   }
 
   @override
-  Widget build(BuildContext context) => CustomWillPopScope(
-        onWillPop: () async {
-          if (!GetPlatform.isAndroid) return false;
-          return IsmChat.i.chatPageTag == null ? await navigateBack() : false;
-        },
-        child: GetPlatform.isIOS
-            ? _SwipeGestureDetector(
-                onSwipeRight:
-                    IsmChat.i.chatPageTag == null ? navigateBack : null,
-                child: const _IsmChatPageView(),
-              )
-            : const _IsmChatPageView(),
-      );
+  Widget build(BuildContext context) {
+    // Rebuild when this route becomes current again after a stacked push/pop.
+    final isCurrentRoute = ModalRoute.of(context)?.isCurrent ?? true;
+    _handleRouteVisibility(isCurrentRoute);
+
+    return CustomWillPopScope(
+      onWillPop: () async {
+        if (!GetPlatform.isAndroid) return false;
+        return IsmChat.i.chatPageTag == null ? await navigateBack() : false;
+      },
+      child: GetPlatform.isIOS
+          ? _SwipeGestureDetector(
+              onSwipeRight:
+                  IsmChat.i.chatPageTag == null ? navigateBack : null,
+              child: _IsmChatPageView(isCurrentRoute: isCurrentRoute),
+            )
+          : _IsmChatPageView(isCurrentRoute: isCurrentRoute),
+    );
+  }
 }
 
 /// Internal widget that builds the actual chat page UI.
@@ -160,7 +235,12 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
 /// - Emoji board
 /// - Scroll-to-bottom button
 class _IsmChatPageView extends StatelessWidget {
-  const _IsmChatPageView();
+  const _IsmChatPageView({required this.isCurrentRoute});
+
+  /// Only the top-most chat route should own the shared [messagesScrollController].
+  /// Off-stage stacked pages pass `false` so the controller is not attached to
+  /// multiple scroll views (breaks scroll + older-message pagination).
+  final bool isCurrentRoute;
 
   Widget _defaultComposer(IsmChatPageController controller) => Container(
         padding: IsmChatConfig
@@ -387,36 +467,51 @@ class _IsmChatPageView extends StatelessWidget {
                                                     ? Align(
                                                         alignment:
                                                             Alignment.topCenter,
-                                                        child: ListView.builder(
-                                                          physics:
-                                                              const ClampingScrollPhysics(),
-                                                          controller: controller
-                                                              .messagesScrollController,
-                                                          scrollDirection:
-                                                              Axis.vertical,
-                                                          shrinkWrap: true,
-                                                          keyboardDismissBehavior:
-                                                              ScrollViewKeyboardDismissBehavior
-                                                                  .onDrag,
-                                                          padding: IsmChatDimens
-                                                              .edgeInsets4_8,
-                                                          reverse: true,
-                                                          addAutomaticKeepAlives:
-                                                              true,
-                                                          itemCount: controller
-                                                              .messages.length,
-                                                          itemBuilder: (_,
-                                                                  index) =>
+                                                        child:
+                                                            NotificationListener<
+                                                                ScrollNotification>(
+                                                          onNotification:
                                                               controller
-                                                                      .controllerIsRegister
-                                                                  ? IsmChatMessage(
-                                                                      index,
-                                                                      controller
-                                                                              .messages[
-                                                                          index],
-                                                                    )
-                                                                  : IsmChatDimens
-                                                                      .box0,
+                                                                  .handleMessagesScrollNotification,
+                                                          child:
+                                                              ListView.builder(
+                                                            physics:
+                                                                const ClampingScrollPhysics(),
+                                                            // Shared controller must only attach to the
+                                                            // current (top) chat route. Stacked pages
+                                                            // underneath keep `null` so scroll/pagination
+                                                            // keep working after popping back.
+                                                            controller: isCurrentRoute
+                                                                ? controller
+                                                                    .messagesScrollController
+                                                                : null,
+                                                            scrollDirection:
+                                                                Axis.vertical,
+                                                            shrinkWrap: true,
+                                                            keyboardDismissBehavior:
+                                                                ScrollViewKeyboardDismissBehavior
+                                                                    .onDrag,
+                                                            padding: IsmChatDimens
+                                                                .edgeInsets4_8,
+                                                            reverse: true,
+                                                            addAutomaticKeepAlives:
+                                                                true,
+                                                            itemCount: controller
+                                                                .messages
+                                                                .length,
+                                                            itemBuilder: (_,
+                                                                    index) =>
+                                                                controller
+                                                                        .controllerIsRegister
+                                                                    ? IsmChatMessage(
+                                                                        index,
+                                                                        controller
+                                                                                .messages[
+                                                                            index],
+                                                                      )
+                                                                    : IsmChatDimens
+                                                                        .box0,
+                                                          ),
                                                         ),
                                                       )
                                                     : IsmChatProperties
