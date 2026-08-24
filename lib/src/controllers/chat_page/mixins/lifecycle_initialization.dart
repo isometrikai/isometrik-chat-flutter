@@ -37,7 +37,7 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   /// - Animations
   /// - Scroll listeners
   /// - Conversation data
-  void startInit({
+  Future<void> startInit({
     bool isBroadcasts = false,
   }) async {
     final generation = ++_controller.chatOpenGeneration;

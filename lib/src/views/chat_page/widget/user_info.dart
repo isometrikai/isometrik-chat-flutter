@@ -341,6 +341,10 @@ class _IsmChatUserInfoState extends State<IsmChatUserInfo> {
 
                           await conversationController
                               .updateLocalConversation(conversationModel);
+                          // Same chat route is being rebound — tell the page not to
+                          // restore the previous conversation id on become-current.
+                          chatController
+                              .setRebindConversationId(targetConversationId);
                           chatController.isMessagesLoading = true;
                         }
                         if (widget.fromMessagePage) {

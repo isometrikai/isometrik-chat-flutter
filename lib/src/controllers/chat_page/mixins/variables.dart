@@ -270,6 +270,23 @@ mixin IsmChatPageVariablesMixin on GetxController {
   bool get canCallCurrentApi => _canCallCurrentApi.value;
   set canCallCurrentApi(bool value) => _canCallCurrentApi.value = value;
 
+  /// One-shot rebind when the same chat route switches conversation
+  /// (e.g. profile → Message another user) without pushing a new chat page.
+  ///
+  /// Consumed by [IsmChatPageView] on stack-return so it does not restore the
+  /// previous conversation id over the intentional switch.
+  String? _rebindConversationId;
+
+  void setRebindConversationId(String conversationId) {
+    _rebindConversationId = conversationId;
+  }
+
+  String? consumeRebindConversationId() {
+    final id = _rebindConversationId;
+    _rebindConversationId = null;
+    return id;
+  }
+
   /// Incremented on every chat open so overlapping [startInit] runs from an
   /// older navigation can bail out instead of clearing/loading wrong data.
   int chatOpenGeneration = 0;
