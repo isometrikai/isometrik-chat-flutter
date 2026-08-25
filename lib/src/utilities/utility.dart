@@ -10,6 +10,7 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -44,6 +45,37 @@ class IsmChatUtility {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       work?.call();
     });
+  }
+
+  /// Whether Flutter is currently building widgets.
+  ///
+  /// Writing GetX Rx values in this phase makes every [GetX] that read that
+  /// Rx call `setState` — illegal, and the usual crash when a chat page is
+  /// still in the Navigator stack (shared [IsmChatPageController]).
+  static bool get isFrameBuilding {
+    final phase = SchedulerBinding.instance.schedulerPhase;
+    return phase == SchedulerPhase.persistentCallbacks ||
+        phase == SchedulerPhase.midFrameMicrotasks;
+  }
+
+  /// Completes after the current frame so Rx writes are safe for stacked GetX.
+  static Future<void> waitForNextFrame() {
+    final completer = Completer<void>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    });
+    return completer.future;
+  }
+
+  /// Runs [update] now, or after the frame if a build is in progress.
+  static void notifyRxSafely(VoidCallback update) {
+    if (isFrameBuilding) {
+      doLater(update);
+    } else {
+      update();
+    }
   }
 
   /// Show loader
