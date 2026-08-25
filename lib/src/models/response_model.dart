@@ -34,6 +34,57 @@ class IsmChatResponseModel {
   final bool hasError;
   final int errorCode;
 
+  /// Prefer the server error text over a static fallback.
+  ///
+  /// Tries common Isometrik / HTTP body keys (`error`, `message`,
+  /// `errorMessage`, nested `data`), then [fallback] only if none are present.
+  /// Reuse this for any dialog/toast that used to hard-code API failures
+  /// (send message, create conversation, etc.).
+  String apiErrorMessage({String fallback = 'Something went wrong'}) {
+    final body = data.trim();
+    if (body.isEmpty) {
+      return fallback;
+    }
+    try {
+      final decoded = jsonDecode(body);
+      final fromMap = _apiErrorFromDecoded(decoded);
+      if (fromMap != null && fromMap.isNotEmpty) {
+        return fromMap;
+      }
+    } catch (_) {
+      // Non-JSON body — show raw text when it looks user-facing.
+      if (body.length < 280 && !body.startsWith('<')) {
+        return body;
+      }
+    }
+    return fallback;
+  }
+
+  static String? _apiErrorFromDecoded(dynamic decoded) {
+    if (decoded is! Map) {
+      return decoded is String ? decoded.trim() : null;
+    }
+    final map = Map<String, dynamic>.from(decoded);
+    for (final key in const ['error', 'message', 'errorMessage', 'detail']) {
+      final value = map[key];
+      if (value is String && value.trim().isNotEmpty) {
+        return value.trim();
+      }
+      // Some APIs return `{ "error": { "message": "..." } }`.
+      if (value is Map) {
+        final nested = _apiErrorFromDecoded(value);
+        if (nested != null && nested.isNotEmpty) {
+          return nested;
+        }
+      }
+    }
+    final data = map['data'];
+    if (data != null) {
+      return _apiErrorFromDecoded(data);
+    }
+    return null;
+  }
+
   IsmChatResponseModel copyWith({
     String? data,
     bool? hasError,

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -247,25 +246,14 @@ class IsmChatCommonViewModel {
             await dbBox?.saveConversation(conversation: conversationModel);
           }
 
-          // Best-effort: show a human readable error.
-          try {
-            final raw = response.respone.data;
-            var message = 'Message not sent';
-            final decoded = jsonDecode(raw);
-            if (decoded is Map && decoded['message'] is String) {
-              message = decoded['message'] as String;
-            }
-            if ([400].contains(response.respone.errorCode)) {
-              message = decoded['error'] as String;
-              message = message.isNotEmpty ? message : 'Message not sent';
-            }
-            // Provide a clearer hint for common "long text" failures.
-            if ([413, 422].contains(response.respone.errorCode)) {
-              message =
-                  message.isNotEmpty ? message : 'Message is too long to send.';
-            }
-            unawaited(IsmChatUtility.showErrorDialog(message));
-          } catch (_) {}
+          // Show the API error text (not a static "Message not sent").
+          // [IsmChatResponseModel.apiErrorMessage] also covers nested keys.
+          final message = response.respone.apiErrorMessage(
+            fallback: [413, 422].contains(response.respone.errorCode)
+                ? 'Message is too long to send.'
+                : 'Message not sent',
+          );
+          unawaited(IsmChatUtility.showErrorDialog(message));
 
           return false;
         }

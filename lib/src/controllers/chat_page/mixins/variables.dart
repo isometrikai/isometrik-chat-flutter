@@ -80,7 +80,22 @@ mixin IsmChatPageVariablesMixin on GetxController {
 
   final RxBool _isMessagesLoading = true.obs;
   bool get isMessagesLoading => _isMessagesLoading.value;
-  set isMessagesLoading(bool value) => _isMessagesLoading.value = value;
+
+  /// Skip no-op writes and defer during build. Stacked [IsmChatPageView]
+  /// routes share this controller; a GetX listener calling `setState` while
+  /// Navigator is inflating the new route throws
+  /// `setState() or markNeedsBuild() called during build`.
+  set isMessagesLoading(bool value) {
+    if (_isMessagesLoading.value == value) {
+      return;
+    }
+    IsmChatUtility.notifyRxSafely(() {
+      if (_isMessagesLoading.value == value) {
+        return;
+      }
+      _isMessagesLoading.value = value;
+    });
+  }
 
   final _messages = <IsmChatMessageModel>[].obs;
   List<IsmChatMessageModel> get messages => _messages;

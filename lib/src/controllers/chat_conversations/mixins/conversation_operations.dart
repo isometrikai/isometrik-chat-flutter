@@ -235,7 +235,9 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   /// `skip`: Number of conversations to skip.
   /// `origin`: The origin of the API call (e.g., refresh, load more).
   /// `searchTag`: Optional search term for filtering conversations.
-  Future<void> getChatConversations({
+  /// Returns the page fetched from the server (used by [IsmChatPullToRefresh]
+  /// to decide load-complete vs no-more-data).
+  Future<List<IsmChatConversationModel>> getChatConversations({
     int skip = 0,
     ApiCallOrigin? origin,
     String? searchTag,
@@ -293,6 +295,7 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     if (_controller.conversations.isEmpty) {
       _controller.isConversationsLoading = false;
     }
+    return chats;
   }
 
   /// Fetches search results for chat conversations.
@@ -300,7 +303,9 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
   /// `skip`: Number of conversations to skip.
   /// `origin`: The origin of the API call (e.g., refresh, load more).
   /// `chatLimit`: Maximum number of chat results to return.
-  Future<void> getChatSearchConversations({
+  /// Returns the search page fetched from the server (used by
+  /// [IsmChatPullToRefresh] to decide load-complete vs no-more-data).
+  Future<List<IsmChatConversationModel>> getChatSearchConversations({
     int skip = 0,
     ApiCallOrigin? origin,
     int chatLimit = 20,
@@ -324,6 +329,7 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       _controller.searchConversationrefreshController.loadComplete();
     }
     _controller.isConversationsLoading = false;
+    return response;
   }
 
   /// Retrieves the conversation ID for a given user ID.

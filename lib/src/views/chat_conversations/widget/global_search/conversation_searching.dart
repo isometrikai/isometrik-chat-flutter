@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class IsmChatConversationSearchView extends StatelessWidget {
   const IsmChatConversationSearchView({super.key});
+
+  Future<void> _onRefresh() async {
+    if (!IsmChatUtility.conversationControllerRegistered) {
+      return;
+    }
+    final controller = IsmChatUtility.conversationController;
+    // Refresh should reset the search state so the UI doesn't show
+    // a stale query while the list updates.
+    FocusManager.instance.primaryFocus?.unfocus();
+    controller.globalSearchController.clear();
+    await controller.getChatSearchConversations(
+      skip: 0,
+      origin: ApiCallOrigin.referesh,
+    );
+  }
+
+  Future<bool> _onLoading() async {
+    if (!IsmChatUtility.conversationControllerRegistered) {
+      return true;
+    }
+    final controller = IsmChatUtility.conversationController;
+    final chats = await controller.getChatSearchConversations(
+      skip: controller.searchConversationList.length.pagination(),
+      origin: ApiCallOrigin.loadMore,
+    );
+    return chats.isEmpty;
+  }
 
   @override
   Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
@@ -19,31 +45,12 @@ class IsmChatConversationSearchView extends StatelessWidget {
           backgroundColor:
               IsmChatConfig.chatTheme.chatPageTheme?.backgroundColor ??
                   IsmChatColors.whiteColor,
-          body: controller.isConversationsLoading
-              ? const IsmChatLoadingDialog()
-              : SmartRefresher(
-                  physics: const ClampingScrollPhysics(),
-                  controller: controller.searchConversationrefreshController,
-                  enablePullDown: true,
-                  enablePullUp: true,
-                  onRefresh: () {
-                    // Refresh should reset the search state so the UI doesn't show
-                    // a stale query while the list updates.
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    controller.globalSearchController.clear();
-                    controller.getChatSearchConversations(
-                      skip: 0,
-                      origin: ApiCallOrigin.referesh,
-                    );
-                  },
-                  onLoading: () {
-                    controller.getChatSearchConversations(
-                      skip:
-                          controller.searchConversationList.length.pagination(),
-                      origin: ApiCallOrigin.loadMore,
-                    );
-                  },
-                  child: SizedBox(
+          body: IsmChatPullToRefresh(
+            onRefresh: _onRefresh,
+            onLoading: _onLoading,
+            child: controller.isConversationsLoading
+                ? const IsmChatLoadingDialog()
+                : SizedBox(
                     height: IsmChatProperties.conversationProperties.height ??
                         IsmChatDimens.percentHeight(1),
                     child: ListView.builder(

@@ -482,7 +482,10 @@ class _IsmChatTabView extends StatelessWidget {
             (index) {
               var data = IsmChatProperties
                   .conversationProperties.allowedConversations[index];
-              return data.conversationWidget;
+              return KeyedSubtree(
+                key: ValueKey('ism_chat_conversation_tab_$index'),
+                child: data.conversationWidget,
+              );
             },
           ),
         ),
