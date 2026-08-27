@@ -103,183 +103,279 @@ class _IsmChatConversationsState extends State<IsmChatConversations>
         tag: IsmChat.i.chatListPageTag,
         builder: (controller) {
           controller.context = context;
-          return Scaffold(
-            backgroundColor:
-                IsmChatConfig.chatTheme.chatListTheme?.backGroundColor,
-            drawerScrimColor: Colors.transparent,
-            appBar: (IsmChatProperties.conversationProperties.shouldShowAppBar
-                ? PreferredSize(
-                    preferredSize: Size(
-                      IsmChatDimens.percentWidth(1),
-                      IsmChatProperties.conversationProperties.headerHeight ??
-                          IsmChatDimens.sixty,
-                    ),
-                    child: IsmChatProperties.conversationProperties.header ??
-                        IsmChatDimens.box0,
-                  )
-                : null),
-            body: SafeArea(
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
+          final hostScreenBuilder = IsmChatProperties
+              .conversationProperties.conversationScreenBuilder;
+          if (hostScreenBuilder != null) {
+            return _buildHostConversationScreen(
+              context,
+              controller,
+              hostScreenBuilder,
+            );
+          }
+          return _buildDefaultConversationScreen(context, controller);
+        },
+      );
+
+  /// Host-owned Messages UI. Lifecycle / controllers still come from this State.
+  ///
+  /// On web, keep the split pane so `IsmChat.i.openConversation` can show the
+  /// chat page on the right without the host reimplementing layout.
+  Widget _buildHostConversationScreen(
+    BuildContext context,
+    IsmChatConversationsController controller,
+    ConversationScreenBuilder hostScreenBuilder,
+  ) {
+    final hostScreen = hostScreenBuilder(context);
+    if (!IsmChatResponsive.isWeb(context)) {
+      return hostScreen;
+    }
+    return Scaffold(
+      backgroundColor: IsmChatConfig.chatTheme.chatListTheme?.backGroundColor,
+      drawerScrimColor: Colors.transparent,
+      body: SafeArea(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  right: BorderSide(
+                    color: IsmChatConfig.chatTheme.dividerColor ??
+                        IsmChatColors.whiteColor,
+                  ),
+                ),
+              ),
+              width: IsmChatProperties.sideWidgetWidth ??
+                  IsmChatDimens.percentWidth(.3),
+              child: hostScreen,
+            ),
+            Expanded(
+              child: Stack(
                 children: [
-                  IsmChatResponsive.isWeb(context)
-                      ? Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              right: BorderSide(
-                                color: IsmChatConfig.chatTheme.dividerColor ??
-                                    IsmChatColors.whiteColor,
-                              ),
-                            ),
-                          ),
-                          width: IsmChatProperties.sideWidgetWidth ??
-                              IsmChatDimens.percentWidth(.3),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              if (!IsmChatProperties.conversationProperties
-                                      .shouldShowAppBar &&
-                                  IsmChatProperties
-                                          .conversationProperties.header !=
-                                      null) ...[
-                                IsmChatProperties
-                                        .conversationProperties.header ??
-                                    IsmChatDimens.box0,
-                              ],
-                              if (IsmChatProperties.conversationProperties
-                                          .allowedConversations.length !=
-                                      1 &&
-                                  IsmChatProperties.conversationProperties
-                                          .conversationPosition ==
-                                      IsmChatConversationPosition.tabBar) ...[
-                                _IsmchatTabBar(),
-                                _IsmChatTabView()
-                              ] else ...[
-                                Obx(
-                                  () => Expanded(
-                                    child: controller.conversationView[
-                                        controller.currentConversationIndex],
-                                  ),
-                                )
-                              ]
-                            ],
-                          ),
-                        )
-                      : Expanded(
-                          // ignore: avoid_unnecessary_containers
-                          child: Container(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                if (!IsmChatProperties.conversationProperties
-                                        .shouldShowAppBar &&
-                                    IsmChatProperties
-                                            .conversationProperties.header !=
-                                        null) ...[
-                                  IsmChatProperties
-                                          .conversationProperties.header ??
-                                      IsmChatDimens.box0,
-                                ],
-                                if (IsmChatProperties.conversationProperties
-                                            .allowedConversations.length !=
-                                        1 &&
-                                    IsmChatProperties.conversationProperties
-                                            .conversationPosition ==
-                                        IsmChatConversationPosition.tabBar) ...[
-                                  _IsmchatTabBar(),
-                                  _IsmChatTabView()
-                                ] else ...[
-                                  Obx(
-                                    () => Expanded(
-                                      child: controller.conversationView[
-                                          controller.currentConversationIndex],
-                                    ),
-                                  )
-                                ]
-                              ],
-                            ),
-                          ),
-                        ),
-                  if (IsmChatResponsive.isWeb(context)) ...[
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Obx(() => _buildChatContent(controller)),
-                          if (IsmChatResponsive.isTablet(context)) ...[
-                            Obx(
-                              () => controller.isRenderChatPageaScreen !=
-                                      IsRenderChatPageScreen.none
-                                  ? controller.isRenderChatScreenWidget()
-                                  : IsmChatDimens.box0,
-                            )
-                          ]
-                        ],
-                      ),
-                    ),
-                    if (IsmChatResponsive.isWeb(context)) ...[
-                      Obx(
-                        () => ![
-                          IsRenderChatPageScreen.none,
-                          IsRenderChatPageScreen.boradcastChatMessagePage,
-                          IsRenderChatPageScreen.openChatMessagePage
-                        ].contains(controller.isRenderChatPageaScreen)
-                            ? Container(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    left: BorderSide(
-                                      color: IsmChatConfig
-                                              .chatTheme.dividerColor ??
-                                          IsmChatColors.whiteColor,
-                                    ),
-                                  ),
-                                ),
-                                width: IsmChatProperties.sideWidgetWidth ??
-                                    IsmChatDimens.percentWidth(.3),
-                                child: controller.isRenderChatScreenWidget(),
-                              )
-                            : IsmChatDimens.box0,
-                      )
-                    ]
+                  Obx(() => _buildChatContent(controller)),
+                  if (IsmChatResponsive.isTablet(context)) ...[
+                    Obx(
+                      () => controller.isRenderChatPageaScreen !=
+                              IsRenderChatPageScreen.none
+                          ? controller.isRenderChatScreenWidget()
+                          : IsmChatDimens.box0,
+                    )
                   ]
                 ],
               ),
             ),
-            floatingActionButton: IsmChatProperties
-                        .conversationProperties.showCreateChatIcon &&
-                    !IsmChatResponsive.isWeb(context)
-                ? IsmChatStartChatFAB(
-                    icon:
-                        IsmChatProperties.conversationProperties.createChatIcon,
-                    onTap: () {
-                      if (IsmChatProperties
-                          .conversationProperties.enableGroupChat) {
-                        IsmChatContextWidget.showBottomsheetContext(
-                          content: const _CreateChatBottomSheet(),
-                          backgroundColor: IsmChatColors.transparent,
-                          isDismissible: true,
-                          elevation: 0,
-                        );
-                      } else {
-                        IsmChatProperties.conversationProperties.onCreateTap
-                            ?.call();
-                        IsmChatRoute.goToRoute(IsmChatCreateConversationView(
-                          isGroupConversation: false,
-                          conversationType: IsmChatConversationType.private,
-                        ));
-                      }
-                    },
-                  )
-                : null,
-            drawer: IsmChatResponsive.isWeb(context)
-                ? Obx(
-                    () => SizedBox(
-                      width: IsmChatDimens.percentWidth(.299),
-                      child: controller.isRenderScreenWidget(),
+            Obx(
+              () => ![
+                IsRenderChatPageScreen.none,
+                IsRenderChatPageScreen.boradcastChatMessagePage,
+                IsRenderChatPageScreen.openChatMessagePage
+              ].contains(controller.isRenderChatPageaScreen)
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          left: BorderSide(
+                            color: IsmChatConfig.chatTheme.dividerColor ??
+                                IsmChatColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                      width: IsmChatProperties.sideWidgetWidth ??
+                          IsmChatDimens.percentWidth(.3),
+                      child: controller.isRenderChatScreenWidget(),
+                    )
+                  : IsmChatDimens.box0,
+            ),
+          ],
+        ),
+      ),
+      drawer: Obx(
+        () => SizedBox(
+          width: IsmChatDimens.percentWidth(.299),
+          child: controller.isRenderScreenWidget(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDefaultConversationScreen(
+    BuildContext context,
+    IsmChatConversationsController controller,
+  ) =>
+      Scaffold(
+        backgroundColor:
+            IsmChatConfig.chatTheme.chatListTheme?.backGroundColor,
+        drawerScrimColor: Colors.transparent,
+        appBar: (IsmChatProperties.conversationProperties.shouldShowAppBar
+            ? PreferredSize(
+                preferredSize: Size(
+                  IsmChatDimens.percentWidth(1),
+                  IsmChatProperties.conversationProperties.headerHeight ??
+                      IsmChatDimens.sixty,
+                ),
+                child: IsmChatProperties.conversationProperties.header ??
+                    IsmChatDimens.box0,
+              )
+            : null),
+        body: SafeArea(
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              IsmChatResponsive.isWeb(context)
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          right: BorderSide(
+                            color: IsmChatConfig.chatTheme.dividerColor ??
+                                IsmChatColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                      width: IsmChatProperties.sideWidgetWidth ??
+                          IsmChatDimens.percentWidth(.3),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          if (!IsmChatProperties.conversationProperties
+                                  .shouldShowAppBar &&
+                              IsmChatProperties
+                                      .conversationProperties.header !=
+                                  null) ...[
+                            IsmChatProperties
+                                    .conversationProperties.header ??
+                                IsmChatDimens.box0,
+                          ],
+                          if (IsmChatProperties.conversationProperties
+                                      .allowedConversations.length !=
+                                  1 &&
+                              IsmChatProperties.conversationProperties
+                                      .conversationPosition ==
+                                  IsmChatConversationPosition.tabBar) ...[
+                            _IsmchatTabBar(),
+                            _IsmChatTabView()
+                          ] else ...[
+                            Obx(
+                              () => Expanded(
+                                child: controller.conversationView[
+                                    controller.currentConversationIndex],
+                              ),
+                            )
+                          ]
+                        ],
+                      ),
+                    )
+                  : Expanded(
+                      // ignore: avoid_unnecessary_containers
+                      child: Container(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            if (!IsmChatProperties.conversationProperties
+                                    .shouldShowAppBar &&
+                                IsmChatProperties
+                                        .conversationProperties.header !=
+                                    null) ...[
+                              IsmChatProperties
+                                      .conversationProperties.header ??
+                                  IsmChatDimens.box0,
+                            ],
+                            if (IsmChatProperties.conversationProperties
+                                        .allowedConversations.length !=
+                                    1 &&
+                                IsmChatProperties.conversationProperties
+                                        .conversationPosition ==
+                                    IsmChatConversationPosition.tabBar) ...[
+                              _IsmchatTabBar(),
+                              _IsmChatTabView()
+                            ] else ...[
+                              Obx(
+                                () => Expanded(
+                                  child: controller.conversationView[
+                                      controller.currentConversationIndex],
+                                ),
+                              )
+                            ]
+                          ],
+                        ),
+                      ),
                     ),
+              if (IsmChatResponsive.isWeb(context)) ...[
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Obx(() => _buildChatContent(controller)),
+                      if (IsmChatResponsive.isTablet(context)) ...[
+                        Obx(
+                          () => controller.isRenderChatPageaScreen !=
+                                  IsRenderChatPageScreen.none
+                              ? controller.isRenderChatScreenWidget()
+                              : IsmChatDimens.box0,
+                        )
+                      ]
+                    ],
+                  ),
+                ),
+                if (IsmChatResponsive.isWeb(context)) ...[
+                  Obx(
+                    () => ![
+                      IsRenderChatPageScreen.none,
+                      IsRenderChatPageScreen.boradcastChatMessagePage,
+                      IsRenderChatPageScreen.openChatMessagePage
+                    ].contains(controller.isRenderChatPageaScreen)
+                        ? Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                  color: IsmChatConfig
+                                          .chatTheme.dividerColor ??
+                                      IsmChatColors.whiteColor,
+                                ),
+                              ),
+                            ),
+                            width: IsmChatProperties.sideWidgetWidth ??
+                                IsmChatDimens.percentWidth(.3),
+                            child: controller.isRenderChatScreenWidget(),
+                          )
+                        : IsmChatDimens.box0,
                   )
-                : null,
-          );
-        },
+                ]
+              ]
+            ],
+          ),
+        ),
+        floatingActionButton: IsmChatProperties
+                    .conversationProperties.showCreateChatIcon &&
+                !IsmChatResponsive.isWeb(context)
+            ? IsmChatStartChatFAB(
+                icon:
+                    IsmChatProperties.conversationProperties.createChatIcon,
+                onTap: () {
+                  if (IsmChatProperties
+                      .conversationProperties.enableGroupChat) {
+                    IsmChatContextWidget.showBottomsheetContext(
+                      content: const _CreateChatBottomSheet(),
+                      backgroundColor: IsmChatColors.transparent,
+                      isDismissible: true,
+                      elevation: 0,
+                    );
+                  } else {
+                    IsmChatProperties.conversationProperties.onCreateTap
+                        ?.call();
+                    IsmChatRoute.goToRoute(IsmChatCreateConversationView(
+                      isGroupConversation: false,
+                      conversationType: IsmChatConversationType.private,
+                    ));
+                  }
+                },
+              )
+            : null,
+        drawer: IsmChatResponsive.isWeb(context)
+            ? Obx(
+                () => SizedBox(
+                  width: IsmChatDimens.percentWidth(.299),
+                  child: controller.isRenderScreenWidget(),
+                ),
+              )
+            : null,
       );
 
   Widget _buildChatContent(IsmChatConversationsController controller) {
@@ -386,7 +482,10 @@ class _IsmChatTabView extends StatelessWidget {
             (index) {
               var data = IsmChatProperties
                   .conversationProperties.allowedConversations[index];
-              return data.conversationWidget;
+              return KeyedSubtree(
+                key: ValueKey('ism_chat_conversation_tab_$index'),
+                child: data.conversationWidget,
+              );
             },
           ),
         ),

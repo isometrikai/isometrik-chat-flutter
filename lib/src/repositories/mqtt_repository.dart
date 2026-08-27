@@ -28,8 +28,10 @@ class IsmChatMqttRepository {
     bool isLoading = false,
   }) async {
     try {
+      // Always exclude conversation status messages from the unread badge count
+      // (block/unblock, member join/leave, etc.) so it matches message-only unread.
       var response = await _apiWrapper.get(
-        IsmChatAPI.conversationUnreadCount,
+        '${IsmChatAPI.conversationUnreadCount}?includeConversationStatusMessagesInUnreadMessagesCount=false',
         headers: IsmChatUtility.tokenCommonHeader(),
         showLoader: isLoading,
       );

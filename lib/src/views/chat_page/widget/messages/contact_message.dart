@@ -42,7 +42,9 @@ class IsmChatContactMessage extends StatelessWidget {
             color: message.backgroundColor?.applyIsmOpacity(.5),
             borderRadius: BorderRadius.circular(IsmChatDimens.eight),
           ),
-          padding: IsmChatDimens.edgeInsets10,
+          padding: IsmChatConfig.chatTheme.chatPageTheme
+                  ?.contactMessagePadding ??
+              IsmChatDimens.edgeInsets10,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

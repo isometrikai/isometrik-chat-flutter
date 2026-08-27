@@ -521,7 +521,7 @@ class IsmChatPageRepository {
   }) async {
     try {
       var response = await _apiWrapper.delete(
-        '${IsmChatAPI.deleteMessages}?conversationId=$conversationId&messageIds=$messages',
+        '${IsmChatAPI.deleteMessages}?conversationId=$conversationId&messageIds=$messages&sendNotification=false',
         payload: null,
         headers: IsmChatUtility.tokenCommonHeader(),
       );
@@ -706,7 +706,9 @@ class IsmChatPageRepository {
         'notificationBody': fcmNotificationBody,
         'notificationTitle': notificationTitle,
         'messageType': messageType,
-        'metaData': metaData?.toMap(),
+        'metaData': IsmChatSensitiveContentMasker.stripLocalUnmaskedFromMeta(
+          metaData,
+        )?.toMap(),
         'hideNewConversationsForSender': hideNewConversationsForSender,
         'groupcastId': groupcastId,
         'events': events,

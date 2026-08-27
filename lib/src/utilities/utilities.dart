@@ -6,6 +6,7 @@ export 'config/config.dart';
 export 'debouncer.dart';
 export 'enums.dart';
 export 'extensions/extensions.dart';
+export 'sensitive_content_masker.dart';
 export 'show_context.dart';
 export 'typedef.dart';
 export 'utility.dart';

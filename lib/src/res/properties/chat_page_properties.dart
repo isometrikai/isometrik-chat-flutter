@@ -20,6 +20,9 @@ class IsmChatPageProperties {
     this.onAddGroupMembersTap,
     this.emojiIcon,
     this.meessageFieldFocusNode,
+    this.chatInputAreaBuilder,
+    @Deprecated('Use chatInputAreaBuilder instead')
+    this.messageFieldBuilder,
     this.messageFieldSuffix,
     this.onCallBlockUnblock,
     this.onBlockUnblockSuccess,
@@ -66,6 +69,45 @@ class IsmChatPageProperties {
 
   /// Provide this widget show emoji icon in message type input filed
   final Widget? emojiIcon;
+
+  /// Host-owned area below the message list (strip + composer).
+  ///
+  /// Use this for Share carousel, Common Questions, custom composer, or any
+  /// combination. SDK adds **no** divider/padding — include chrome in your
+  /// widget. Pass [defaultComposer] through to keep the SDK input bar.
+  ///
+  /// When set, this **wins** over [messageFieldBuilder]. Omit both → SDK
+  /// default composer only (production UI unchanged).
+  ///
+  /// Example:
+  /// ```dart
+  /// chatInputAreaBuilder: (context, conversation, defaultComposer) {
+  ///   return Column(
+  ///     mainAxisSize: MainAxisSize.min,
+  ///     children: [
+  ///       YourStrip(conversation: conversation),
+  ///       defaultComposer, // or YourComposer()
+  ///     ],
+  ///   );
+  /// },
+  /// ```
+  final ChatInputAreaBuilder? chatInputAreaBuilder;
+
+  /// Replaces the **entire chat composer** (typing / message input area).
+  ///
+  /// **Deprecated:** use [chatInputAreaBuilder] instead (pass your bar, or
+  /// `defaultComposer`, in that builder). Still honored when
+  /// [chatInputAreaBuilder] is omitted.
+  ///
+  /// Return a widget to render your own bottom bar. Return `null` (or omit)
+  /// to keep the SDK default [IsmChatMessageField] — production UI unchanged.
+  ///
+  /// Restriction states still apply first (left/removed from group, deleted
+  /// opponent, [messageAllowedConfig]). Drive actions via `IsmChat.i`
+  /// (`sendComposerText`, `openComposerAttachments`, `onComposerTextChanged`,
+  /// `chatInputController`, etc.).
+  @Deprecated('Use chatInputAreaBuilder instead')
+  final WidgetCallback? messageFieldBuilder;
 
   /// It is an optional parameter you can provide any widget
   /// You can pass tap handler on this widget for any uses

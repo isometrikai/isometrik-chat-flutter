@@ -43,23 +43,36 @@ mixin IsmChatConversationsUserOperationsMixin on GetxController {
     }
     if (conversationId.isEmpty) return;
 
+    // Persists messagingDisabled=false and removes banner rows in Hive.
     await IsmChatBlockUnblockCoordinator.applyUnblock(
       conversationId: conversationId,
       syncServerMetadataClear: true,
     );
 
+    // Patch in-memory conversation only — do not call [updateLocalConversation]
+    // here. That path is for switching chats and used to clear messages /
+    // re-save the conversation, which briefly showed the empty chat placeholder
+    // after unblock before messages reloaded from DB/API.
     if (_controller.currentConversationId == conversationId &&
         _controller.currentConversation != null) {
-      await _controller.updateLocalConversation(
-        _controller.currentConversation!.copyWith(
-          messagingDisabled: false,
-          metaData: _controller.currentConversation!.metaData
-              ?.copyWith(blockedMessage: null),
-        ),
+      final updated = _controller.currentConversation!.copyWith(
+        messagingDisabled: false,
+        metaData: _controller.currentConversation!.metaData
+            ?.copyWith(blockedMessage: null),
       );
-    } else {
-      _controller.update();
+      _controller.currentConversation = updated;
+      if (IsmChatUtility.chatPageControllerRegistered) {
+        final chatPage = IsmChatUtility.chatPageController;
+        if (chatPage.conversation?.conversationId == conversationId) {
+          chatPage.conversation = chatPage.conversation?.copyWith(
+            messagingDisabled: false,
+            metaData: chatPage.conversation?.metaData
+                ?.copyWith(blockedMessage: null),
+          );
+        }
+      }
     }
+    _controller.update();
 
     await IsmChatBlockUnblockCoordinator.refreshChatPageIfOpen(conversationId);
   }

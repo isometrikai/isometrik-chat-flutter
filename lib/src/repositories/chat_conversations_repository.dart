@@ -430,7 +430,9 @@ class IsmChatConversationsRepository {
         'encrypted': encrypted,
         'deviceId': deviceId,
         'body': body,
-        'metaData': metaData?.toMap(),
+        'metaData': IsmChatSensitiveContentMasker.stripLocalUnmaskedFromMeta(
+          metaData,
+        )?.toMap(),
         'events': events,
         'customType': customType,
         'attachments': attachments,

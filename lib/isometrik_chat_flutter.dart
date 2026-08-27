@@ -36,6 +36,8 @@ part 'delegate/delegate_mqtt.dart';
 part 'delegate/delegate_navigation.dart';
 part 'delegate/delegate_notification.dart';
 part 'delegate/delegate_paid_media.dart';
+part 'delegate/delegate_composer.dart';
+part 'delegate/delegate_chat_list.dart';
 part 'delegate/delegate_ui.dart';
 part 'delegate/delegate_user.dart';
 
@@ -49,6 +51,8 @@ part 'mixins/message_operations.dart';
 part 'mixins/navigation_operations.dart';
 part 'mixins/notification_operations.dart';
 part 'mixins/paid_media_operations.dart';
+part 'mixins/composer_operations.dart';
+part 'mixins/chat_list_operations.dart';
 part 'mixins/cleanup_operations.dart';
 part 'mixins/update_operations.dart';
 
@@ -86,6 +90,9 @@ part 'mixins/update_operations.dart';
 /// - [IsmChatMessageOperationsMixin] - Message operations
 /// - [IsmChatNavigationOperationsMixin] - External navigation
 /// - [IsmChatNotificationOperationsMixin] - Push notifications
+/// - [IsmChatPaidMediaOperationsMixin] - Paid media callback
+/// - [IsmChatComposerOperationsMixin] - Custom composer actions
+/// - [IsmChatChatListOperationsMixin] - Custom chat-list screen actions
 /// - [IsmChatCleanupOperationsMixin] - Resource cleanup
 /// - [IsmChatUpdateOperationsMixin] - Chat page updates
 ///
@@ -102,6 +109,8 @@ class IsmChat
         IsmChatNavigationOperationsMixin,
         IsmChatNotificationOperationsMixin,
         IsmChatPaidMediaOperationsMixin,
+        IsmChatComposerOperationsMixin,
+        IsmChatChatListOperationsMixin,
         IsmChatCleanupOperationsMixin,
         IsmChatUpdateOperationsMixin {
   /// Factory constructor for creating a new instance of [IsmChat].

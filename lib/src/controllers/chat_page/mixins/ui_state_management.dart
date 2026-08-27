@@ -181,6 +181,57 @@ mixin IsmChatPageUiStateManagementMixin on GetxController {
     }
   }
 
+  /// Opens the same attachment sheet as the default composer paperclip.
+  Future<void> openAttachmentPicker(BuildContext context) async {
+    if (!(_controller.conversation?.isChattingAllowed == true)) {
+      _controller.showDialogCheckBlockUnBlock();
+      return;
+    }
+    if (!(await IsmChatProperties.chatPageProperties.isSendMediaAllowed
+            ?.call(context, _controller.conversation) ??
+        true)) {
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    final attachmentCardTheme =
+        IsmChatThemeResolver.attachmentCardFromConfig(context);
+    final selectedAttachment = await showModalBottomSheet<IsmChatAttachmentType>(
+      context: context,
+      builder: (context) => const IsmChatAttachmentCard(),
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: attachmentCardTheme.backgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(IsmChatDimens.twentyFour),
+        ),
+      ),
+    );
+    if (selectedAttachment != null) {
+      _controller.onBottomAttachmentTapped(selectedAttachment);
+    }
+  }
+
+  /// Typing + mention handling used by the default field and host composers.
+  void handleComposerTextChanged(String text) {
+    if (_controller.chatInputController.text != text) {
+      _controller.chatInputController.value = TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    }
+    if ((_controller.conversation?.conversationId?.isNotEmpty ?? false) &&
+        _controller.conversation?.customType != IsmChatStrings.broadcast) {
+      _controller.notifyTyping();
+      if (IsmChatProperties.chatPageProperties.features
+          .contains(IsmChatFeature.mentionMember)) {
+        _controller.showMentionsUserList(text);
+      }
+    }
+  }
+
   /// Shows or hides loader for mobile platforms.
   void showCloseLoaderForMoble({bool showLoader = true}) {
     final isMobile = !IsmChatResponsive.isMobile(

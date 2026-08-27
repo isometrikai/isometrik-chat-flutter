@@ -22,7 +22,13 @@ mixin IsmChatConversationsLifecycleInitializationMixin on GetxController {
         .get(IsmChatStrings.userData);
     if (users != null) {
       _controller.userDetails = UserDetails.fromJson(users);
-    } else {
+    }
+    // Refresh from API when cache is missing or has no first/last name —
+    // needed so FCM notificationTitle can use full name for 1:1 chats.
+    final cachedFullName =
+        '${_controller.userDetails?.metaData?.firstName ?? ''} ${_controller.userDetails?.metaData?.lastName ?? ''}'
+            .trim();
+    if (users == null || cachedFullName.isEmpty) {
       await _controller.getUserData();
     }
     await _controller.getChatConversations();

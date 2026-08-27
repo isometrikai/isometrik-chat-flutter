@@ -10,6 +10,7 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -44,6 +45,37 @@ class IsmChatUtility {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       work?.call();
     });
+  }
+
+  /// Whether Flutter is currently building widgets.
+  ///
+  /// Writing GetX Rx values in this phase makes every [GetX] that read that
+  /// Rx call `setState` — illegal, and the usual crash when a chat page is
+  /// still in the Navigator stack (shared [IsmChatPageController]).
+  static bool get isFrameBuilding {
+    final phase = SchedulerBinding.instance.schedulerPhase;
+    return phase == SchedulerPhase.persistentCallbacks ||
+        phase == SchedulerPhase.midFrameMicrotasks;
+  }
+
+  /// Completes after the current frame so Rx writes are safe for stacked GetX.
+  static Future<void> waitForNextFrame() {
+    final completer = Completer<void>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    });
+    return completer.future;
+  }
+
+  /// Runs [update] now, or after the frame if a build is in progress.
+  static void notifyRxSafely(VoidCallback update) {
+    if (isFrameBuilding) {
+      doLater(update);
+    } else {
+      update();
+    }
   }
 
   /// Show loader
@@ -202,11 +234,14 @@ class IsmChatUtility {
 
   /// FCM / push notification title for outgoing messages.
   ///
-  /// Same rule as local MQTT notifications: prefer conversationTitle when
-  /// present (group chats). Fall back to [senderUserName] for 1:1.
+  /// Same rule as local MQTT notifications ([resolveMessageNotificationTitle]):
+  /// 1. Prefer conversationTitle when present (group chats)
+  /// 2. Prefer sender full name (first + last) for 1:1
+  /// 3. Fall back to [senderUserName]
   static String resolveSendNotificationTitle({
     IsmChatConversationModel? conversation,
     String? conversationId,
+    UserDetails? senderDetails,
     required String senderUserName,
   }) {
     final title = conversation?.conversationTitle?.trim() ?? '';
@@ -218,6 +253,39 @@ class IsmChatUtility {
           conversationController.getConversation(id)?.conversationTitle?.trim();
       if (cached != null && cached.isNotEmpty) return cached;
     }
+
+    final details = senderDetails ??
+        (conversationControllerRegistered
+            ? conversationController.userDetails
+            : null);
+    if (details != null) {
+      final fullName =
+          '${details.metaData?.firstName ?? ''} ${details.metaData?.lastName ?? ''}'
+              .trim();
+      if (fullName.isNotEmpty) return fullName;
+      final custom = details.metaData?.customMetaData;
+      if (custom != null) {
+        final customFull =
+            '${custom['firstName'] ?? ''} ${custom['lastName'] ?? ''}'.trim();
+        if (customFull.isNotEmpty) return customFull;
+      }
+    }
+
+    // Members list often has richer metaData for the logged-in user.
+    final userId = IsmChatConfig.communicationConfig.userConfig.userId;
+    final members = conversation?.members;
+    if (members != null && userId.isNotEmpty) {
+      for (final member in members) {
+        if (member.userId == userId) {
+          final fullName =
+              '${member.metaData?.firstName ?? ''} ${member.metaData?.lastName ?? ''}'
+                  .trim();
+          if (fullName.isNotEmpty) return fullName;
+          break;
+        }
+      }
+    }
+
     return senderUserName;
   }
 
