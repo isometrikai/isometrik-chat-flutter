@@ -573,7 +573,9 @@ mixin IsmChatPageSendMessageCoreMixin {
   /// [conversationId] - ID of the conversation (may be empty for new conversations)
   /// [userId] - ID of the user
   ///
-  /// Returns the conversation ID (existing or newly created).
+  /// Returns the conversation ID (existing or newly created). Returns an empty
+  /// string when creation fails — callers must abort send rather than reuse the
+  /// inbound / stale id.
   ///
   /// Note: This method requires `createBroadcastConversation` to be available
   /// through send_message_broadcast mixin on the controller.
@@ -592,20 +594,34 @@ mixin IsmChatPageSendMessageCoreMixin {
     }
 
     if (chatConversationResponse == null && !isBroadcastConversation) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-        conversation: _controller.conversation!,
-        isGroup: _controller.conversation?.isGroup ?? false,
+      final existingConversation = _controller.conversation;
+      if (existingConversation == null) {
+        IsmChatLog.error(
+          'createConversation failed: chat page conversation is null',
+        );
+        return '';
+      }
+      final created = await _controller.commonController.createConversation(
+        conversation: existingConversation,
+        isGroup: existingConversation.isGroup ?? false,
         userId: [userId ?? ''],
-        metaData: _controller.conversation?.metaData,
+        metaData: existingConversation.metaData,
         searchableTags: [
           IsmChatConfig.communicationConfig.userConfig.userName ??
               _controller.conversationController.userDetails?.userName ??
               '',
-          _controller.conversation?.chatName ?? ''
+          existingConversation.chatName ?? ''
         ],
       );
-      conversationId = _controller.conversation?.conversationId ?? '';
+      final createdId = created?.conversationId ?? '';
+      if (created == null || createdId.isEmpty) {
+        IsmChatLog.error(
+          'createConversation failed: API returned no conversation id',
+        );
+        return '';
+      }
+      _controller.conversation = created;
+      conversationId = createdId;
       IsmChatConfig.onConversationCreated?.call(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
         _controller.conversation,
