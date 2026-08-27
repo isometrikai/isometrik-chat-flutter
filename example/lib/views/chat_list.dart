@@ -39,6 +39,9 @@ class ChatList extends StatelessWidget {
                 chatPageTheme: IsmChatPageTheme(
                   centerMessageTheme:
                       const IsmChatCenterMessageTheme(textColor: Colors.white),
+                  // Bubble padding for all message types (text, audio, media,
+                  // location, contact, …). Bottom ≥ 20 leaves room for time/status.
+                  // contactMessagePadding: const EdgeInsets.all(10),
                   // backgroundColor: const Color(0xFF292030),
                   selfMessageTheme: IsmChatMessageTheme(
                       borderColor: Colors.grey, linkPreviewColor: Colors.white
@@ -77,6 +80,14 @@ class ChatList extends StatelessWidget {
                     conversation: conversation,
                   );
                 },
+                // Host-app custom composer. Comment out to restore SDK default.
+                // Host chat input area — see docs/HOST_CUSTOM_COMPOSER.md
+                // chatInputAreaBuilder: (context, conversation, defaultComposer) {
+                //   return Column(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [YourStrip(...), defaultComposer],
+                //   );
+                // },
                 // backgroundImageUrl: AssetConstants.background,
                 // isShowMessageBlur: (p0, p1) => true,
                 // stackWidget: Container(
@@ -95,13 +106,11 @@ class ChatList extends StatelessWidget {
                 // },
 
                 header: IsmChatPageHeaderProperties(
-
-                    // height: (p0, p1) => 200,
-                    // bottom: (p0, p1) {
-                    //   return Container(
-                    //       alignment: Alignment.center,
-                    //       width: double.infinity,
-                    //       child: const Text('Rahul Saryam'));
+                    // Sticky banner under AppBar — see docs/HOST_CUSTOM_COMPOSER.md
+                    // height: (context, conversation) =>
+                    //     IsmChatDimens.appBarHeight + 40,
+                    // bottom: (context, conversation) {
+                    //   return YourStickyBanner();
                     // },
                     ),
                 // meessageFieldFocusNode: (_, coverstaion, value) {
@@ -229,6 +238,160 @@ class ChatList extends StatelessWidget {
             ),
           );
         },
+      );
+}
+
+/// Example host composer (optional). Prefer `chatInputAreaBuilder` —
+/// see docs/HOST_CUSTOM_COMPOSER.md.
+// ignore: unused_element
+class _ExampleHostComposer extends StatelessWidget {
+  const _ExampleHostComposer();
+
+  static const _navy = Color(0xFF1B3A6B);
+
+  @override
+  Widget build(BuildContext context) => GetX<IsmChatPageController>(
+        tag: IsmChat.i.chatPageTag,
+        builder: (controller) {
+          final input = controller.chatInputController;
+
+          return Material(
+            color: Colors.white,
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (controller.isreplying) ...[
+                      _ReplyBanner(
+                        body: controller.replayMessage?.body ?? '',
+                        onClose: IsmChat.i.cancelComposerReply,
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    Row(
+                      children: [
+                        _CircleAction(
+                          icon: Icons.add,
+                          onTap: () =>
+                              IsmChat.i.openComposerAttachments(context),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ListenableBuilder(
+                            listenable: input,
+                            builder: (_, __) => TextField(
+                              controller: input,
+                              focusNode: IsmChat.i.chatInputFocusNode,
+                              minLines: 1,
+                              maxLines: 4,
+                              textCapitalization: TextCapitalization.sentences,
+                              onChanged: IsmChat.i.onComposerTextChanged,
+                              decoration: InputDecoration(
+                                hintText: 'Message',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 15,
+                                ),
+                                isDense: true,
+                                filled: true,
+                                fillColor: const Color(0xFFF0F0F0),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        ListenableBuilder(
+                          listenable: input,
+                          builder: (_, __) => _CircleAction(
+                            icon: Icons.send_rounded,
+                            onTap: input.text.trim().isEmpty
+                                ? null
+                                : () => IsmChat.i.sendComposerText(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+}
+
+class _CircleAction extends StatelessWidget {
+  const _CircleAction({
+    required this.icon,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+        color: onTap == null
+            ? _ExampleHostComposer._navy.withValues(alpha: 0.4)
+            : _ExampleHostComposer._navy,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Icon(icon, color: Colors.white, size: 22),
+          ),
+        ),
+      );
+}
+
+class _ReplyBanner extends StatelessWidget {
+  const _ReplyBanner({
+    required this.body,
+    required this.onClose,
+  });
+
+  final String body;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F4F6),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                body,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 13, color: Color(0xFF4B5563)),
+              ),
+            ),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              onPressed: onClose,
+              icon: const Icon(Icons.close, size: 18),
+            ),
+          ],
+        ),
       );
 }
 

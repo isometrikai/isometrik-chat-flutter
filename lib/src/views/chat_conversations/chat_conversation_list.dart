@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 /// `ChatConversationList` can be used to show the list of all the conversations user has done.
 class IsmChatConversationList extends StatelessWidget {
@@ -11,73 +10,77 @@ class IsmChatConversationList extends StatelessWidget {
     super.key,
   });
 
+  Future<void> _onRefresh() async {
+    if (!IsmChatUtility.conversationControllerRegistered) {
+      return;
+    }
+    final controller = IsmChatUtility.conversationController;
+    // If user pulled-to-refresh while a search query is present,
+    // clear it first so the refreshed list & query stay consistent.
+    FocusManager.instance.primaryFocus?.unfocus();
+    controller.searchConversationTEC.clear();
+    await controller.getChatConversations(
+      origin: ApiCallOrigin.referesh,
+    );
+    if (Get.isRegistered<IsmChatMqttController>()) {
+      await Get.find<IsmChatMqttController>()
+          .getChatConversationsUnreadCount();
+    }
+  }
+
+  Future<bool> _onLoading() async {
+    if (!IsmChatUtility.conversationControllerRegistered) {
+      return true;
+    }
+    final controller = IsmChatUtility.conversationController;
+    final chats = await controller.getChatConversations(
+      skip: controller.conversations.length.pagination(),
+      origin: ApiCallOrigin.loadMore,
+    );
+    return chats.isEmpty;
+  }
+
   @override
-  Widget build(BuildContext context) => GetX<IsmChatConversationsController>(
-        tag: IsmChat.i.chatListPageTag,
-        builder: (controller) {
-          if (controller.isConversationsLoading) {
-            return const IsmChatLoadingDialog();
-          }
-          if (controller.userConversations.isEmpty) {
-            return SmartRefresher(
-              physics: const ClampingScrollPhysics(),
-              controller: controller.refreshControllerOnEmptyList,
-              enablePullDown: true,
-              enablePullUp: true,
-              onRefresh: () {
-                // If user pulled-to-refresh while a search query is present,
-                // clear it first so the refreshed list & query stay consistent.
-                FocusManager.instance.primaryFocus?.unfocus();
-                controller.searchConversationTEC.clear();
-                controller.getChatConversations(
-                  origin: ApiCallOrigin.referesh,
-                );
-              },
-              child: Center(
-                child: IsmChatProperties.conversationProperties.placeholder ??
-                    const IsmChatEmptyView(
-                      icon: Icon(Icons.chat_outlined),
-                      text: IsmChatStrings.noConversation,
-                    ),
-              ),
-            );
-          }
-          return SizedBox(
-            height: IsmChatProperties.conversationProperties.height ??
-                IsmChatDimens.percentHeight(1),
-            child: kIsWeb
-                ? SlidableAutoCloseBehavior(
-                    child: _ConversationList(),
-                  )
-                : SmartRefresher(
-                    footer: const RefreshFooter(),
-                    physics: const ClampingScrollPhysics(),
-                    controller: controller.refreshController,
-                    enablePullDown: true,
-                    enablePullUp: true,
-                    onRefresh: () {
-                      // Keep search field + refreshed list consistent.
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      controller.searchConversationTEC.clear();
-                      controller.getChatConversations(
-                        origin: ApiCallOrigin.referesh,
-                      );
-                      Get.find<IsmChatMqttController>()
-                          .getChatConversationsUnreadCount();
-                    },
-                    onLoading: () {
-                      controller.getChatConversations(
-                        skip: controller.conversations.length.pagination(),
-                        origin: ApiCallOrigin.loadMore,
-                      );
-                    },
-                    child: SlidableAutoCloseBehavior(
-                      child: _ConversationList(),
-                    ),
-                  ),
+  Widget build(BuildContext context) {
+    // GetX must only rebuild list/empty/loading content. [IsmChatPullToRefresh]
+    // stays outside so host TabBarView / multiple list instances never share
+    // one RefreshController (pull_to_refresh `_refresherState == null`).
+    final content = GetX<IsmChatConversationsController>(
+      tag: IsmChat.i.chatListPageTag,
+      builder: (controller) {
+        if (controller.isConversationsLoading) {
+          return const IsmChatLoadingDialog();
+        }
+        if (controller.userConversations.isEmpty) {
+          return Center(
+            child: IsmChatProperties.conversationProperties.placeholder ??
+                const IsmChatEmptyView(
+                  icon: Icon(Icons.chat_outlined),
+                  text: IsmChatStrings.noConversation,
+                ),
           );
-        },
-      );
+        }
+        return SizedBox(
+          height: IsmChatProperties.conversationProperties.height ??
+              IsmChatDimens.percentHeight(1),
+          child: SlidableAutoCloseBehavior(
+            child: _ConversationList(),
+          ),
+        );
+      },
+    );
+
+    if (kIsWeb) {
+      return content;
+    }
+
+    return IsmChatPullToRefresh(
+      footer: const RefreshFooter(),
+      onRefresh: _onRefresh,
+      onLoading: _onLoading,
+      child: content,
+    );
+  }
 }
 
 class _ConversationList extends StatelessWidget {

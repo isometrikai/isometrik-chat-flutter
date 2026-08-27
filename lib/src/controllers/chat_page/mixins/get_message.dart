@@ -236,57 +236,61 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       _controller.canCallCurrentApi = true;
       final requestedConversationId = conversationID;
 
-      if (_controller.messages.isEmpty) {
-        _controller.isMessagesLoading = true;
-      }
-      final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
-      final paging = _resolveMessagesApiPaging(
-        forPagination: forPagination,
-        messages: messagesList,
-        lastMessageTimestamp: lastMessageTimestamp,
-      );
+      try {
+        if (_controller.messages.isEmpty) {
+          _controller.isMessagesLoading = true;
+        }
+        final messagesList = List<IsmChatMessageModel>.from(_controller.messages);
+        final paging = _resolveMessagesApiPaging(
+          forPagination: forPagination,
+          messages: messagesList,
+          lastMessageTimestamp: lastMessageTimestamp,
+        );
 
-      final data = await _controller.viewModel.getChatMessages(
-        skip: paging.skip,
-        conversationId: conversationID,
-        lastMessageTimestamp: paging.lastMessageTimestamp,
-        isBroadcast: isBroadcast,
-      );
-      // Guard against race conditions: do not apply API results if active chat
-      // changed before response came back.
-      if ((_controller.conversation?.conversationId ?? '') !=
-          requestedConversationId) {
-        _controller.canCallCurrentApi = false;
+        final data = await _controller.viewModel.getChatMessages(
+          skip: paging.skip,
+          conversationId: conversationID,
+          lastMessageTimestamp: paging.lastMessageTimestamp,
+          isBroadcast: isBroadcast,
+        );
+        // Guard against race conditions: do not apply API results if active chat
+        // changed before response came back.
+        if ((_controller.conversation?.conversationId ?? '') !=
+            requestedConversationId) {
+          if (_controller.messages.isEmpty) {
+            _controller.isMessagesLoading = false;
+          }
+          return;
+        }
+
         if (_controller.messages.isEmpty) {
           _controller.isMessagesLoading = false;
         }
-        return;
-      }
 
-      if (_controller.messages.isEmpty) {
-        _controller.isMessagesLoading = false;
-      }
-
-      if (data.isNotEmpty && !_controller.isBroadcast) {
-        await getMessagesFromDB(conversationID);
-      } else if (data.isNotEmpty) {
-        _controller.messages.addAll(data);
-      } else if (_controller.messages.isEmpty ||
-          (_controller.messages.length == 1 &&
-              _controller.messages.first.customType ==
-                  IsmChatCustomMessageType.conversationCreated)) {
-        // API returned nothing — still show the local placeholder row.
-        _controller.messages = _controller.commonController.sortMessages(
-          filterMessages(
-            insertEndtoEndMessage(
-              timeStamp: DateTime.now().millisecondsSinceEpoch,
-              messages: List<IsmChatMessageModel>.from(_controller.messages),
+        if (data.isNotEmpty && !_controller.isBroadcast) {
+          await getMessagesFromDB(conversationID);
+        } else if (data.isNotEmpty) {
+          _controller.messages.addAll(data);
+        } else if (_controller.messages.isEmpty ||
+            (_controller.messages.length == 1 &&
+                _controller.messages.first.customType ==
+                    IsmChatCustomMessageType.conversationCreated)) {
+          // API returned nothing — still show the local placeholder row.
+          _controller.messages = _controller.commonController.sortMessages(
+            filterMessages(
+              insertEndtoEndMessage(
+                timeStamp: DateTime.now().millisecondsSinceEpoch,
+                messages: List<IsmChatMessageModel>.from(_controller.messages),
+              ),
             ),
-          ),
-        );
-        _controller.isMessagesLoading = false;
+          );
+          _controller.isMessagesLoading = false;
+        }
+      } finally {
+        // Always unlock so stacked-chat / failed requests cannot permanently
+        // block older-message pagination (scroll-up load more).
+        _controller.canCallCurrentApi = false;
       }
-      _controller.canCallCurrentApi = false;
     }
   }
 

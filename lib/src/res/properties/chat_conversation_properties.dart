@@ -41,6 +41,7 @@ class IsmChatConversationProperties {
     this.refreshHeader,
     this.refreshFooter,
     this.conversationListEmptyOrNot,
+    this.conversationScreenBuilder,
   }) {
     assert(
       (showCreateChatIcon && onCreateTap != null) || !showCreateChatIcon,
@@ -248,4 +249,20 @@ class IsmChatConversationProperties {
   final Widget? refreshFooter;
 
   final ConditionCallback? conversationListEmptyOrNot;
+
+  /// Replaces the **entire chat-list screen** (Scaffold / header / list).
+  ///
+  /// Return your own Messages UI (search, filters, Shared With You, rows, …).
+  /// Omit or leave `null` to keep the SDK default [IsmChatConversations] layout
+  /// — production apps that do not set this are unchanged.
+  ///
+  /// SDK still initializes MQTT + [IsmChatConversationsController]. Drive data
+  /// and navigation via `IsmChat.i` (`chatListConversations`, `refreshChatList`,
+  /// `openConversation`, etc.). See `docs/HOST_CUSTOM_CHAT_LIST.md`.
+  ///
+  /// Example:
+  /// ```dart
+  /// conversationScreenBuilder: (context) => const MyMessagesScreen(),
+  /// ```
+  final ConversationScreenBuilder? conversationScreenBuilder;
 }

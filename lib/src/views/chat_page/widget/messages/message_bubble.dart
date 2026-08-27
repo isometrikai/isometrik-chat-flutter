@@ -40,39 +40,22 @@ class MessageBubble extends StatelessWidget {
     return IsmChatMediaGridGrouping.isGridHost(group, _message) ? group : null;
   }
 
-  /// Gets appropriate padding based on message type
-  /// Reduces bottom padding for grid messages to minimize space above time/status
-  EdgeInsets _getPaddingForMessage(IsmChatPageController controller) {
+  /// One theme value covers every bubble type (text/audio/media/location/…).
+  EdgeInsets _resolveBubblePadding(IsmChatPageController controller) {
     final groupedMessages = _getGroupedMediaMessages(controller);
     final isGridMessage = groupedMessages != null && groupedMessages.isNotEmpty;
-
-    if (isGridMessage) {
-      // Check if any message in the group has a caption
-      final hasCaption = groupedMessages.any(
-        (msg) => msg.metaData?.caption?.isNotEmpty == true,
-      );
-
-      if (hasCaption) {
-        // More bottom padding when caption is present to make room for time below caption
-        return const EdgeInsets.only(
-          top: 5,
-          bottom: 25, // Extra space for caption + time
-          left: 5,
-          right: 5,
+    final hasCaption = groupedMessages != null &&
+        groupedMessages.any(
+          (msg) => msg.metaData?.caption?.isNotEmpty == true,
         );
-      } else {
-        // Enough bottom padding for grid messages without caption to show time below grid
-        return const EdgeInsets.only(
-          top: 5,
-          bottom: 20, // Space for time below grid
-          left: 5,
-          right: 5,
-        );
-      }
-    }
-
-    // Default padding for other messages
-    return IsmChatDimens.edgeInsets5_5_5_20;
+    return IsmChatPageTheme.resolveBubblePadding(
+      custom: IsmChatConfig.chatTheme.chatPageTheme?.messageBubblePadding,
+      isMediaGrid: isGridMessage,
+      gridHasCaption: hasCaption,
+      showTimeStatusInner: IsmChatProperties
+              .chatPageProperties.messageStatus?.shouldShowTimeStatusInner ??
+          true,
+    );
   }
 
   /// Gets the bottom position for time/status indicator
@@ -196,11 +179,7 @@ class MessageBubble extends StatelessWidget {
           children: [
             SingleChildScrollView(
               padding: !showMessageInCenter
-                  ? (IsmChatProperties.chatPageProperties.messageStatus
-                              ?.shouldShowTimeStatusInner ??
-                          true)
-                      ? _getPaddingForMessage(controller)
-                      : IsmChatDimens.edgeInsets5
+                  ? _resolveBubblePadding(controller)
                   : IsmChatDimens.edgeInsets0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

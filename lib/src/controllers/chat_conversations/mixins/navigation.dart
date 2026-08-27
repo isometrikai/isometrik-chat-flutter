@@ -23,12 +23,15 @@ mixin IsmChatConversationsNavigationMixin on GetxController {
       if (chatPagecontroller.showEmojiBoard) {
         chatPagecontroller.toggleEmojiBoard(false, false);
       }
-      // Defer initialization to allow UI to render first
+      // Show loader before the new GetX mounts (idle: safe). startInit still
+      // waits a frame before other Rx writes for stacked routes.
+      chatPagecontroller.isMessagesLoading = true;
       unawaited(Future.microtask(chatPagecontroller.startInit));
     } else {
       if (!IsmChatUtility.chatPageControllerRegistered) {
         IsmChatPageBinding().dependencies();
       }
+      IsmChatUtility.chatPageController.isMessagesLoading = true;
       await IsmChatRoute.goToRoute(IsmChatPageView(
         viewTag: IsmChat.i.chatPageTag,
       ));

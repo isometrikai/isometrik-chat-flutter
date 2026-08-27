@@ -86,19 +86,25 @@ mixin IsmChatConversationsVariablesMixin on GetxController {
     _currentConversation.value = value;
   }
 
-  /// This variabel use for store refreshcontroller on chat list
+  /// Completes pull-to-refresh after `getChatConversations`.
+  ///
+  /// Do **not** pass this into [SmartRefresher]. Host [TabBarView] /
+  /// multiple [IsmChatConversationList] instances would share it and assert.
+  /// Use [IsmChatPullToRefresh] (one controller per widget) instead.
   final refreshController = RefreshController(
     initialRefresh: false,
     initialLoadStatus: LoadStatus.idle,
   );
 
-  /// This variabel use for store refreshcontroller on chat empty list
+  /// Completes pull-to-refresh on the empty-list path after `getChatConversations`.
+  /// Same rule as [refreshController]: do not attach this to [SmartRefresher].
   final refreshControllerOnEmptyList = RefreshController(
     initialRefresh: false,
     initialLoadStatus: LoadStatus.idle,
   );
 
-  /// This variabel use for store refreshcontroller on search conversation list
+  /// Completes search-list refresh after `getChatSearchConversations`.
+  /// Same rule as [refreshController]: do not attach this to [SmartRefresher].
   final searchConversationrefreshController = RefreshController(
     initialRefresh: false,
     initialLoadStatus: LoadStatus.idle,

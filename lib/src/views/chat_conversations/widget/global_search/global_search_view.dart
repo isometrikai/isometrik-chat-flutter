@@ -67,12 +67,19 @@ class _IsmChatGlobalSearchViewState extends State<IsmChatGlobalSearchView>
                     IsmChatDimens.boxHeight20,
                     Expanded(
                       child: TabBarView(
-                          controller: _tabController,
-                          children: const [
-                            IsmChatConversationSearchView(),
-                            IsmChatMessageSearchView(),
-                            IsmChatUserSearchView()
-                          ]),
+                        controller: _tabController,
+                        children: const [
+                          IsmChatConversationSearchView(
+                            key: ValueKey('ism_chat_search_conversations'),
+                          ),
+                          IsmChatMessageSearchView(
+                            key: ValueKey('ism_chat_search_messages'),
+                          ),
+                          IsmChatUserSearchView(
+                            key: ValueKey('ism_chat_search_people'),
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),

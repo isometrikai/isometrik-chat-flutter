@@ -29,6 +29,15 @@ mixin IsmChatPageVariablesMixin on GetxController {
 
   var searchMessageScrollController = ScrollController();
 
+  /// Guard against re-attaching the same listeners on every [startInit].
+  ///
+  /// The chat page controller is reused across reopen flows, so repeated
+  /// initialization without this can register duplicate scroll listeners.
+  var hasAttachedMessagesScrollListener = false;
+
+  /// Same guard as [hasAttachedMessagesScrollListener] for search results.
+  var hasAttachedSearchScrollListener = false;
+
   final textEditingController = TextEditingController();
 
   final participnatsEditingController = TextEditingController();
@@ -71,7 +80,22 @@ mixin IsmChatPageVariablesMixin on GetxController {
 
   final RxBool _isMessagesLoading = true.obs;
   bool get isMessagesLoading => _isMessagesLoading.value;
-  set isMessagesLoading(bool value) => _isMessagesLoading.value = value;
+
+  /// Skip no-op writes and defer during build. Stacked [IsmChatPageView]
+  /// routes share this controller; a GetX listener calling `setState` while
+  /// Navigator is inflating the new route throws
+  /// `setState() or markNeedsBuild() called during build`.
+  set isMessagesLoading(bool value) {
+    if (_isMessagesLoading.value == value) {
+      return;
+    }
+    IsmChatUtility.notifyRxSafely(() {
+      if (_isMessagesLoading.value == value) {
+        return;
+      }
+      _isMessagesLoading.value = value;
+    });
+  }
 
   final _messages = <IsmChatMessageModel>[].obs;
   List<IsmChatMessageModel> get messages => _messages;
@@ -260,6 +284,23 @@ mixin IsmChatPageVariablesMixin on GetxController {
   final RxBool _canCallCurrentApi = false.obs;
   bool get canCallCurrentApi => _canCallCurrentApi.value;
   set canCallCurrentApi(bool value) => _canCallCurrentApi.value = value;
+
+  /// One-shot rebind when the same chat route switches conversation
+  /// (e.g. profile → Message another user) without pushing a new chat page.
+  ///
+  /// Consumed by [IsmChatPageView] on stack-return so it does not restore the
+  /// previous conversation id over the intentional switch.
+  String? _rebindConversationId;
+
+  void setRebindConversationId(String conversationId) {
+    _rebindConversationId = conversationId;
+  }
+
+  String? consumeRebindConversationId() {
+    final id = _rebindConversationId;
+    _rebindConversationId = null;
+    return id;
+  }
 
   /// Incremented on every chat open so overlapping [startInit] runs from an
   /// older navigation can bail out instead of clearing/loading wrong data.

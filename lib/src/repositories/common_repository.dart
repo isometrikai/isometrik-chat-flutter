@@ -261,17 +261,17 @@ class IsmChatCommonRepository {
           headers: IsmChatUtility.tokenCommonHeader(),
           showLoader: isLoading);
       if (response.hasError) {
-        if (response.errorCode.toString().startsWith('4')) {
-          var error = (jsonDecode(response.data) as Map)['error'] as String? ??
-              'Error in creating conversation';
-          await IsmChatUtility.showErrorDialog(
-            error,
-            onCancel: () {
-              IsmChatRoute.goBack();
-              IsmChatRoute.goBack();
-            },
-          );
-        }
+        // Prefer API `error` / `message` over the old static string.
+        final error = response.apiErrorMessage(
+          fallback: 'Error in creating conversation',
+        );
+        await IsmChatUtility.showErrorDialog(
+          error,
+          onCancel: () {
+            IsmChatRoute.goBack();
+            IsmChatRoute.goBack();
+          },
+        );
         return null;
       }
       return response;

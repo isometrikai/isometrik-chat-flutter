@@ -37,10 +37,17 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
   /// - Animations
   /// - Scroll listeners
   /// - Conversation data
-  void startInit({
+  Future<void> startInit({
     bool isBroadcasts = false,
   }) async {
     final generation = ++_controller.chatOpenGeneration;
+    // Stacked chat routes share this controller. Writing Rx (loading, messages)
+    // from the new route's initState runs during Navigator.build and makes
+    // the underneath GetX call setState → crash. Wait until that frame ends.
+    await IsmChatUtility.waitForNextFrame();
+    if (generation != _controller.chatOpenGeneration) return;
+    if (!IsmChatUtility.chatPageControllerRegistered) return;
+
     _controller
       ..chatInputController.clear()
       ..recordVoice = AudioRecorder()
@@ -65,8 +72,6 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
       // cross-chat message leakage when controller is reused (e.g. web/tab).
       // Without this, old messages can flash/show in a newly opened chat.
       _controller.messages.clear();
-      // Allow UI to render before heavy operations
-      await Future.delayed(Duration.zero);
       if (generation != _controller.chatOpenGeneration) return;
       // Re-sync after the yield — another async path may have updated the
       // selected conversation while we were waiting.

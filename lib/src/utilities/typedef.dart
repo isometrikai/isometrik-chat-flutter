@@ -13,6 +13,12 @@ typedef ConversationCardCallback = Widget Function(
   int,
 );
 
+/// Replaces the **entire chat-list screen** when set on
+/// [IsmChatConversationProperties.conversationScreenBuilder].
+///
+/// Omit / leave null on properties to keep the SDK default UI.
+typedef ConversationScreenBuilder = Widget Function(BuildContext context);
+
 typedef ConversationWidgetCallback = Widget? Function(
   BuildContext,
   IsmChatConversationModel?,
@@ -36,6 +42,19 @@ typedef ContactMessageAvatarBuilder = Widget? Function(
 typedef WidgetCallback = Widget? Function(
   BuildContext,
   IsmChatConversationModel?,
+);
+
+/// Host-owned area **below the message list** (optional strip + composer).
+///
+/// [defaultComposer] is the SDK input bar. Include it to keep typing, replace
+/// it with your own composer, or omit it for a strip-only / no-input layout.
+///
+/// When set on [IsmChatPageProperties.chatInputAreaBuilder], this wins over
+/// deprecated [IsmChatPageProperties.messageFieldBuilder].
+typedef ChatInputAreaBuilder = Widget Function(
+  BuildContext context,
+  IsmChatConversationModel? conversation,
+  Widget defaultComposer,
 );
 
 typedef PopupItemListCallback = List<IsmChatPopupMenuItem> Function(
