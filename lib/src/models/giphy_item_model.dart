@@ -10,7 +10,8 @@ class IsmGiphyItem {
   });
 
   factory IsmGiphyItem.fromMap(Map<String, dynamic> map) {
-    final images = map['images'] as Map<String, dynamic>? ?? {};
+    final images = _asStringKeyedMap(map['images']);
+    // May be {} when Giphy omits/renames renditions — never assume keys exist.
     final preview = _pickImageMap(images, preferStill: true);
     final send = _pickImageMap(images, preferStill: false);
     final sendUrl = send['url'] as String? ?? '';
@@ -21,7 +22,8 @@ class IsmGiphyItem {
       previewUrl: preview['url'] as String? ?? sendUrl,
       sendUrl: sendUrl,
       extension: extension,
-      // Prefer send-rendition size; falls back to preview for layout reservation.
+      // Prefer send-rendition size; fall back to preview. Missing keys → null
+      // via [_parseDimension] (empty maps do not throw on `[]` in Dart).
       width: _parseDimension(send['width'] ?? preview['width']),
       height: _parseDimension(send['height'] ?? preview['height']),
     );
@@ -34,6 +36,9 @@ class IsmGiphyItem {
   final int? width;
   final int? height;
 
+  /// True when this item has a usable CDN URL (filter after parsing from Giphy).
+  bool get hasSendableUrl => sendUrl.isNotEmpty;
+
   static int? _parseDimension(dynamic value) {
     if (value == null) return null;
     if (value is int) return value > 0 ? value : null;
@@ -43,6 +48,18 @@ class IsmGiphyItem {
       return parsed != null && parsed > 0 ? parsed : null;
     }
     return null;
+  }
+
+  /// Normalizes JSON maps that may be `Map<dynamic, dynamic>` after decode.
+  /// Reuse instead of `as Map<String, dynamic>?` on nested Giphy payloads.
+  static Map<String, dynamic> _asStringKeyedMap(dynamic value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+    if (value is Map) {
+      return Map<String, dynamic>.from(value);
+    }
+    return {};
   }
 
   static Map<String, dynamic> _pickImageMap(
@@ -63,18 +80,18 @@ class IsmGiphyItem {
     ];
     final keys = preferStill ? stillKeys : animatedKeys;
     for (final key in keys) {
-      final value = images[key];
-      if (value is Map<String, dynamic> &&
-          (value['url'] as String? ?? '').isNotEmpty) {
-        return value;
+      final candidate = _asStringKeyedMap(images[key]);
+      if ((candidate['url'] as String? ?? '').isNotEmpty) {
+        return candidate;
       }
     }
     for (final value in images.values) {
-      if (value is Map<String, dynamic> &&
-          (value['url'] as String? ?? '').isNotEmpty) {
-        return value;
+      final candidate = _asStringKeyedMap(value);
+      if ((candidate['url'] as String? ?? '').isNotEmpty) {
+        return candidate;
       }
     }
+    // Explicit empty map: callers must null-check url / width / height.
     return {};
   }
 

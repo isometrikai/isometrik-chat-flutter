@@ -14,7 +14,7 @@ const Map<String, String> kIsmChatLocalePt = {
   'online': 'Online',
   'lastSeen': 'Visto por último',
   'today': 'Hoje',
-  'yestarday': 'Ontem',
+  'yesterday': 'Ontem',
   'at': 'às',
   'on': 'em',
   'okay': 'OK',

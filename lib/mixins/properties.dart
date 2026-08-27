@@ -59,6 +59,7 @@ mixin IsmChatPropertiesMixin {
   /// IsmChat.i.setLocale(const Locale('fr'));
   /// ```
   ///
+  /// Unsupported locales fall back to English via [IsmChatL10n.setLocale].
   /// Chat message bodies are not translated — only titles / labels / dialogs.
   void setLocale(Locale locale) => IsmChatL10n.setLocale(locale);
 }

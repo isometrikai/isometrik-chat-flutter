@@ -51,7 +51,9 @@ class Constants {
   static const int portForWeb = 2096;
 
   /// Demo UI language for the example app + chat SDK (`en` / `fr` / `pt`).
-  /// Used by [AppConfig.appLocale]; change there or here for quick testing.
+  ///
+  /// Used by [AppConfig.appLocale] via [AppConfig.resolveLocale]; unsupported
+  /// or empty values fall back to English. Change here for quick testing.
   static const String languageCode = 'en';
 
   // static const String hostname = 'connections.isometrik.io';

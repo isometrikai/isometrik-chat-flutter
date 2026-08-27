@@ -184,12 +184,25 @@ class IsmChatMessageField extends StatelessWidget {
                                           'image/webp',
                                         ],
                                         onContentInserted: (content) {
-                                          unawaited(
-                                            controller
-                                                .sendKeyboardInsertedContent(
-                                              content,
-                                            ),
-                                          );
+                                          // Note: try/catch around unawaited() only catches sync
+                                          // throws. Await inside so paste/GIF insert failures
+                                          // are logged instead of becoming silent Future errors.
+                                          unawaited((() async {
+                                            try {
+                                              await controller
+                                                  .sendKeyboardInsertedContent(
+                                                content,
+                                              );
+                                            } catch (e, st) {
+                                              IsmChatLog.error(
+                                                'Keyboard content insert failed: $e',
+                                                st,
+                                              );
+                                              IsmChatUtility.showToast(
+                                                'Unable to send media',
+                                              );
+                                            }
+                                          })());
                                         },
                                       ),
                                       contextMenuBuilder:

@@ -23,8 +23,7 @@ class IsmChatConversationList extends StatelessWidget {
       origin: ApiCallOrigin.referesh,
     );
     if (Get.isRegistered<IsmChatMqttController>()) {
-      await Get.find<IsmChatMqttController>()
-          .getChatConversationsUnreadCount();
+      await Get.find<IsmChatMqttController>().getChatConversationsUnreadCount();
     }
   }
 
@@ -54,7 +53,7 @@ class IsmChatConversationList extends StatelessWidget {
         if (controller.userConversations.isEmpty) {
           return Center(
             child: IsmChatProperties.conversationProperties.placeholder ??
-                const IsmChatEmptyView(
+                IsmChatEmptyView(
                   icon: Icon(Icons.chat_outlined),
                   text: IsmChatStrings.noConversation,
                 ),

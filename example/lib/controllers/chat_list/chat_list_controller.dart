@@ -127,8 +127,8 @@ class ChatListController extends GetxController {
       },
     );
 
-    // Keep SDK UI language in sync with example config (English by default).
-    AppConfig.applyLocale();
+    // Keep SDK UI language in sync with example config after SDK init.
+    await AppConfig.applyLocale();
 
     // Start timer after successful initialization
     // _startLastActiveTimer();

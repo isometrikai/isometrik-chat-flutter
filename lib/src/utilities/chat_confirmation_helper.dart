@@ -30,11 +30,14 @@ class IsmChatConfirmationHelper {
   static Future<void> presentDefault(IsmChatConfirmationRequest request) async {
     final labels = request.actions.map((a) => a.label).toList();
     final callbacks = request.actions.map((a) => a.onPressed).toList();
+    // Prefer custom [content]; else wrap [body] in Text. Both null → null
+    // (AlertDialog allows null content — title-only confirmations).
+    final body = request.body;
     await IsmChatContextWidget.showDialogContext(
       content: IsmChatAlertDialogBox(
         title: request.title,
         content: request.content ??
-            (request.body == null ? null : Text(request.body!)),
+            (body != null ? Text(body) : null),
         actionLabels: labels.isEmpty ? null : labels,
         callbackActions: callbacks.isEmpty ? null : callbacks,
         cancelLabel: request.cancelLabel ?? IsmChatStrings.cancel,

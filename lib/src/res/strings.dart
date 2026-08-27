@@ -43,7 +43,10 @@ class IsmChatStrings {
   static String get online => IsmChatL10n.get('online');
   static String get lastSeen => IsmChatL10n.get('lastSeen');
   static String get today => IsmChatL10n.get('today');
-  static String get yestarday => IsmChatL10n.get('yestarday');
+  static String get yesterday => IsmChatL10n.get('yesterday');
+  /// Deprecated typo alias — use [yesterday].
+  @Deprecated('Use yesterday')
+  static String get yestarday => yesterday;
   static String get at => IsmChatL10n.get('at');
   static String get on => IsmChatL10n.get('on');
   static String get okay => IsmChatL10n.get('okay');

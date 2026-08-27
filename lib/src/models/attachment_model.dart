@@ -44,9 +44,8 @@ class AttachmentModel {
         // Pixel size used to reserve GIF/sticker layout before decode.
         mediaWidth: _parseDimension(map['mediaWidth'] ?? map['width']),
         mediaHeight: _parseDimension(map['mediaHeight'] ?? map['height']),
-        bytes: map['bytes'].runtimeType is String && map['bytes'] != 'null'
-            ? (map['bytes'] as String? ?? '[]').strigToUnit8List
-            : Uint8List(0),
+        // Prefer base64 (see [toMap]); still accepts legacy list-string form.
+        bytes: _parseBytes(map['bytes']),
         attachmentType: map['attachmentType'] == null
             ? IsmChatMediaType.image
             : IsmChatMediaType.fromMap(map['attachmentType'] as int),
@@ -83,6 +82,59 @@ class AttachmentModel {
       return parsed != null && parsed > 0 ? parsed : null;
     }
     return null;
+  }
+
+  /// Restores [bytes] from map/JSON.
+  ///
+  /// Supported forms (reuse this helper — do not re-implement ad hoc):
+  /// - base64 string (preferred; written by [toMap])
+  /// - legacy `Uint8List.toString()` / JSON array string e.g. `"[1, 2, 3]"`
+  /// - raw [Uint8List] or `List<int>`
+  static Uint8List _parseBytes(dynamic value) {
+    if (value == null || value == '' || value == 'null') {
+      return Uint8List(0);
+    }
+    if (value is Uint8List) {
+      return value;
+    }
+    if (value is List) {
+      try {
+        return Uint8List.fromList(List<int>.from(value));
+      } catch (_) {
+        return Uint8List(0);
+      }
+    }
+    if (value is! String) {
+      return Uint8List(0);
+    }
+    final encoded = value.trim();
+    if (encoded.isEmpty || encoded == 'null') {
+      return Uint8List(0);
+    }
+    // Legacy path: decimal list from bytes.toString() / jsonEncode(list).
+    if (encoded.startsWith('[')) {
+      try {
+        return encoded.strigToUnit8List;
+      } catch (_) {
+        return Uint8List(0);
+      }
+    }
+    try {
+      return base64Decode(encoded);
+    } catch (_) {
+      return Uint8List(0);
+    }
+  }
+
+  /// Serializes [bytes] for map/JSON (base64). Empty/null → `''`.
+  ///
+  /// Do not use [Uint8List.toString] — it is not a stable wire format and
+  /// inflates payload size vs base64.
+  static String _encodeBytes(Uint8List? value) {
+    if (value == null || value.isEmpty) {
+      return '';
+    }
+    return base64Encode(value);
   }
 
   /// Aspect ratio for layout; null when dimensions are unknown.
@@ -145,7 +197,8 @@ class AttachmentModel {
         'stillUrl': stillUrl,
         'mediaWidth': mediaWidth,
         'mediaHeight': mediaHeight,
-        'bytes': bytes.isNullOrEmpty == true ? '' : bytes.toString(),
+        // Base64 preserves binary; see [_encodeBytes] / [_parseBytes].
+        'bytes': _encodeBytes(bytes),
         'attachmentType': attachmentType?.value,
       }.removeNullValues();
 

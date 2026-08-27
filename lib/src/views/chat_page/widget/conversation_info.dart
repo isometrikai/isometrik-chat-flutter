@@ -307,44 +307,47 @@ class _IsmChatConverstaionInfoViewState
                                       return;
                                     }
                                   }
-                                  IsmChatRoute.goToRoute(IsmChatProfilePicView(
-                                    userName: controller
-                                                .conversation?.isGroup ==
-                                            true
-                                        ? controller
-                                                .conversation
-                                                ?.conversationTitle
-                                                ?.capitalizeFirst ??
-                                            ''
-                                        : (() {
-                                            final opponent = controller
-                                                .conversation?.opponentDetails;
-                                            final first =
-                                                opponent?.metaData?.firstName ??
-                                                    '';
-                                            final last =
-                                                opponent?.metaData?.lastName ??
-                                                    '';
-                                            final fullName =
-                                                '$first $last'.trim();
-                                            return (fullName.isNotEmpty
-                                                        ? fullName
-                                                        : (opponent?.userName ??
-                                                            ''))
-                                                    .capitalizeFirst ??
-                                                '';
-                                          })(),
-                                    imageUrl:
-                                        controller.conversation?.isGroup == true
-                                            ? controller.conversation
-                                                    ?.conversationImageUrl ??
-                                                ''
-                                            : controller
-                                                    .conversation
-                                                    ?.opponentDetails
-                                                    ?.profileUrl ??
-                                                '',
-                                  ));
+                                  // Names/URLs come from server conversation data.
+                                  // [IsmChatProfilePicView] validates the image URL
+                                  // before NetworkImage; [Text] is display-safe (no HTML).
+                                  final isGroup =
+                                      controller.conversation?.isGroup == true;
+                                  final resolvedName = isGroup
+                                      ? controller.conversation
+                                              ?.conversationTitle
+                                              ?.capitalizeFirst ??
+                                          ''
+                                      : (() {
+                                          final opponent = controller
+                                              .conversation?.opponentDetails;
+                                          final first =
+                                              opponent?.metaData?.firstName ??
+                                                  '';
+                                          final last =
+                                              opponent?.metaData?.lastName ??
+                                                  '';
+                                          final fullName =
+                                              '$first $last'.trim();
+                                          return (fullName.isNotEmpty
+                                                      ? fullName
+                                                      : (opponent?.userName ??
+                                                          ''))
+                                                  .capitalizeFirst ??
+                                              '';
+                                        })();
+                                  final resolvedImageUrl = isGroup
+                                      ? controller.conversation
+                                              ?.conversationImageUrl ??
+                                          ''
+                                      : controller.conversation?.opponentDetails
+                                              ?.profileUrl ??
+                                          '';
+                                  IsmChatRoute.goToRoute(
+                                    IsmChatProfilePicView(
+                                      userName: resolvedName.trim(),
+                                      imageUrl: resolvedImageUrl.trim(),
+                                    ),
+                                  );
                                 },
                                 child: IsmChatImage.profile(
                                   controller.conversation?.profileUrl ?? '',

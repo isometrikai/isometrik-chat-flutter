@@ -14,7 +14,7 @@ const Map<String, String> kIsmChatLocaleEn = {
   'online': 'Online',
   'lastSeen': 'Last seen',
   'today': 'Today',
-  'yestarday': 'Yesterday',
+  'yesterday': 'Yesterday',
   'at': 'at',
   'on': 'on',
   'okay': 'Okay',
