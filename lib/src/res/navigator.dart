@@ -12,7 +12,10 @@ class IsmChatRoute {
       );
 
   static void goBack<T>([T? result]) {
-    IsmChatConfig.kNavigatorKey.currentState?.pop(result);
+    final nav = IsmChatConfig.kNavigatorKey.currentState;
+    // Avoid invalid stack / assert when nothing can be popped (common on web).
+    if (nav == null || !nav.canPop()) return;
+    nav.pop(result);
 
     // Navigator.of(IsmChatConfig.kNavigatorKey.currentContext!).pop(result);
   }

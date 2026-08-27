@@ -128,7 +128,7 @@ class IsmChatImageEditView extends StatelessWidget {
                       }
                     } else {
                       await IsmChatContextWidget.showDialogContext(
-                        content: const IsmChatAlertDialogBox(
+                        content: IsmChatAlertDialogBox(
                           title: IsmChatStrings.youCanNotSend,
                           cancelLabel: IsmChatStrings.okay,
                         ),

@@ -737,10 +737,28 @@ enum IsmChatFocusMenuType {
   save,
   delete;
 
+  /// Localized UI label via [IsmChatL10n]. Prefer this over [toString] for display.
+  String get label {
+    switch (this) {
+      case IsmChatFocusMenuType.info:
+        return IsmChatStrings.focusMenuInfo;
+      case IsmChatFocusMenuType.copy:
+        return IsmChatStrings.focusMenuCopy;
+      case IsmChatFocusMenuType.selectMessage:
+        return IsmChatStrings.focusMenuSelectMessage;
+      case IsmChatFocusMenuType.reply:
+        return IsmChatStrings.focusMenuReply;
+      case IsmChatFocusMenuType.forward:
+        return IsmChatStrings.focusMenuForward;
+      case IsmChatFocusMenuType.save:
+        return IsmChatStrings.save;
+      case IsmChatFocusMenuType.delete:
+        return IsmChatStrings.delete;
+    }
+  }
+
   @override
-  String toString() => this == IsmChatFocusMenuType.selectMessage
-      ? 'Select Message'
-      : '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
+  String toString() => label;
 }
 
 enum IsmChatAttachmentType {

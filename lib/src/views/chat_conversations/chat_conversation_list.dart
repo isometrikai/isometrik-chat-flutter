@@ -23,8 +23,7 @@ class IsmChatConversationList extends StatelessWidget {
       origin: ApiCallOrigin.referesh,
     );
     if (Get.isRegistered<IsmChatMqttController>()) {
-      await Get.find<IsmChatMqttController>()
-          .getChatConversationsUnreadCount();
+      await Get.find<IsmChatMqttController>().getChatConversationsUnreadCount();
     }
   }
 
@@ -54,7 +53,7 @@ class IsmChatConversationList extends StatelessWidget {
         if (controller.userConversations.isEmpty) {
           return Center(
             child: IsmChatProperties.conversationProperties.placeholder ??
-                const IsmChatEmptyView(
+                IsmChatEmptyView(
                   icon: Icon(Icons.chat_outlined),
                   text: IsmChatStrings.noConversation,
                 ),
@@ -221,11 +220,16 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                           flex: 1,
                           backgroundColor: IsmChatColors.redColor,
                           foregroundColor: IsmChatColors.whiteColor,
-                          icon: const Icon(
-                            Icons.delete_rounded,
+                          icon: Icon(
+                            widget.conversation.isGroup == true
+                                ? Icons.logout_rounded
+                                : Icons.delete_rounded,
                             color: IsmChatColors.whiteColor,
                           ).icon,
-                          label: IsmChatStrings.delete,
+                          // Groups: swipe shows Exit Group; 1:1 keeps Delete.
+                          label: widget.conversation.isGroup == true
+                              ? IsmChatStrings.exitGroup
+                              : IsmChatStrings.delete,
                         ),
                     ],
                   ),

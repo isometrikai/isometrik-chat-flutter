@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
@@ -37,6 +38,9 @@ Future<void> initialize() async {
   Get.put(DeviceConfig()).init();
   await AppConfig.getUserData();
   await LocalNoticeService().setup();
+  // Await so MaterialApp / SDK never mount with an unapplied locale after async init.
+  // [applyLocale] normalizes [AppConfig.appLocale] (from Constants / future prefs).
+  await AppConfig.applyLocale();
 }
 
 /// Call this funcation for get notifcaiton when app killed
@@ -114,30 +118,38 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       builder: (_, child) => GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: IsmChatUtility.hideKeyboard,
-        child: MaterialApp.router(
-          key: const Key('ChatApp'),
-          title: 'Isomterik flutter web chat',
-          locale: const Locale('en', 'US'),
-          // localizationsDelegates:  [
-          //   ...GlobalMaterialLocalizations.delegates,
-          //   GlobalWidgetsLocalizations.delegate,
-          // ],
-          supportedLocales: const [Locale('en', 'US')],
-          theme: ThemeData.light(useMaterial3: true).copyWith(
-            primaryColor: AppColors.whiteColor,
-            extensions: [],
-          ),
-          // darkTheme: ThemeData.dark(useMaterial3: true)
-          //     .copyWith(primaryColor: AppColors.primaryColorDark),
-          // darkTheme: ThemeData.dark(useMaterial3: true)
-          //     .copyWith(primaryColor: AppColors.primaryColorDark),
-          debugShowCheckedModeBanner: false,
+        // Rebuild MaterialApp when AppConfig.setLocale / applyLocale runs
+        // (e.g. after async init or a language change), so locale stays valid.
+        child: ValueListenableBuilder<Locale>(
+          valueListenable: AppConfig.localeListenable,
+          builder: (context, locale, _) => MaterialApp.router(
+            key: const Key('ChatApp'),
+            title: 'Isomterik flutter web chat',
+            // Always a validated locale from AppConfig.supportedLocales.
+            locale: locale,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            // Shared allow-list — keep in sync via AppConfig (do not hardcode here).
+            supportedLocales: AppConfig.supportedLocales,
+            theme: ThemeData.light(useMaterial3: true).copyWith(
+              primaryColor: AppColors.whiteColor,
+              extensions: [],
+            ),
+            // darkTheme: ThemeData.dark(useMaterial3: true)
+            //     .copyWith(primaryColor: AppColors.primaryColorDark),
+            // darkTheme: ThemeData.dark(useMaterial3: true)
+            //     .copyWith(primaryColor: AppColors.primaryColorDark),
+            debugShowCheckedModeBanner: false,
 
-          routerConfig: AppRouter.router,
-          // translations: AppTranslations(),
-          // initialRoute:
-          //     AppConfig.userDetail != null ? ChatList.route : LoginView.route,
-          // getPages: AppPages.pages,
+            routerConfig: AppRouter.router,
+            // translations: AppTranslations(),
+            // initialRoute:
+            //     AppConfig.userDetail != null ? ChatList.route : LoginView.route,
+            // getPages: AppPages.pages,
+          ),
         ),
       ),
     );

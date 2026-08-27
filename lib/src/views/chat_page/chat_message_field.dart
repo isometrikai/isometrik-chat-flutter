@@ -170,6 +170,41 @@ class IsmChatMessageField extends StatelessWidget {
                                           // The message composer should support paste by default across platforms,
                                           // so we keep this enabled here.
                                           true,
+                                      // Android soft keyboards (Gboard / OxygenOS GIF tray) insert
+                                      // GIFs via IME commitContent. Without this config the OS
+                                      // shows "This app does not support GIFs here".
+                                      // Reuse: point onContentInserted at
+                                      // IsmChatPageController.sendKeyboardInsertedContent.
+                                      contentInsertionConfiguration:
+                                          ContentInsertionConfiguration(
+                                        allowedMimeTypes: const [
+                                          'image/gif',
+                                          'image/png',
+                                          'image/jpeg',
+                                          'image/webp',
+                                        ],
+                                        onContentInserted: (content) {
+                                          // Note: try/catch around unawaited() only catches sync
+                                          // throws. Await inside so paste/GIF insert failures
+                                          // are logged instead of becoming silent Future errors.
+                                          unawaited((() async {
+                                            try {
+                                              await controller
+                                                  .sendKeyboardInsertedContent(
+                                                content,
+                                              );
+                                            } catch (e, st) {
+                                              IsmChatLog.error(
+                                                'Keyboard content insert failed: $e',
+                                                st,
+                                              );
+                                              IsmChatUtility.showToast(
+                                                'Unable to send media',
+                                              );
+                                            }
+                                          })());
+                                        },
+                                      ),
                                       contextMenuBuilder:
                                           (context, editableTextState) {
                                         final builder = IsmChatProperties
@@ -493,7 +528,7 @@ class _MicOrSendButton extends StatelessWidget {
                         ..seconds = 0;
                     } else {
                       await Get.dialog(
-                        const IsmChatAlertDialogBox(
+                        IsmChatAlertDialogBox(
                           title: IsmChatStrings.youCanNotSend,
                           cancelLabel: IsmChatStrings.okay,
                         ),
@@ -519,7 +554,7 @@ class _MicOrSendButton extends StatelessWidget {
                   final state = await IsmChatBlob.checkPermission('microphone');
                   if (state == 'prompt') {
                     unawaited(Get.dialog(
-                      const IsmChatAlertDialogBox(
+                      IsmChatAlertDialogBox(
                         title: IsmChatStrings.micePermission,
                         cancelLabel: IsmChatStrings.okay,
                       ),
@@ -528,7 +563,7 @@ class _MicOrSendButton extends StatelessWidget {
                     return;
                   } else if (state == 'denied') {
                     await Get.dialog(
-                      const IsmChatAlertDialogBox(
+                      IsmChatAlertDialogBox(
                         title: IsmChatStrings.micePermissionBlock,
                         cancelLabel: IsmChatStrings.okay,
                       ),

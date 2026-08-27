@@ -69,7 +69,8 @@ class IsmGiphyService {
     return data
         .whereType<Map<String, dynamic>>()
         .map(IsmGiphyItem.fromMap)
-        .where((item) => item.sendUrl.isNotEmpty)
+        // Drop items where _pickImageMap found no usable rendition (empty sendUrl).
+        .where((item) => item.hasSendableUrl)
         .toList();
   }
 }
