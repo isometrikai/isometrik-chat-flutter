@@ -197,7 +197,8 @@ mixin IsmChatPageUiStateManagementMixin on GetxController {
     }
     final attachmentCardTheme =
         IsmChatThemeResolver.attachmentCardFromConfig(context);
-    final selectedAttachment = await showModalBottomSheet<IsmChatAttachmentType>(
+    final selectedAttachment =
+        await showModalBottomSheet<IsmChatAttachmentType>(
       context: context,
       builder: (context) => const IsmChatAttachmentCard(),
       elevation: 0,
@@ -247,4 +248,3 @@ mixin IsmChatPageUiStateManagementMixin on GetxController {
     }
   }
 }
-

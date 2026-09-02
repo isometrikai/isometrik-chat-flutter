@@ -136,7 +136,7 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                         .applyIsmOpacity(.2)
                     : null,
                 child: UnconstrainedBox(
-                  clipBehavior: Clip.antiAlias,
+                  clipBehavior: Clip.none,
                   alignment: showMessageInCenter
                       ? Alignment.center
                       : widget._message?.sentByMe == true

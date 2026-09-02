@@ -39,6 +39,16 @@ class ChatList extends StatelessWidget {
                 chatPageTheme: IsmChatPageTheme(
                   centerMessageTheme:
                       const IsmChatCenterMessageTheme(textColor: Colors.white),
+                  // Mobile: widen bubbles to 80% of screen (SDK default is 60%).
+                  // Web keeps SDK defaults when this is null.
+                  messageConstraints: IsmChatResponsive.isWeb(context)
+                      ? null
+                      : IsmChatMessageConstraints(
+                          messageConstraints: BoxConstraints(
+                            maxWidth: context.width * .8,
+                            minWidth: context.width * .25,
+                          ),
+                        ),
                   // Bubble padding for all message types (text, audio, media,
                   // location, contact, …). Bottom ≥ 20 leaves room for time/status.
                   // contactMessagePadding: const EdgeInsets.all(10),

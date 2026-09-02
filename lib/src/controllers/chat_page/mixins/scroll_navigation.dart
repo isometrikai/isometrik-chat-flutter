@@ -134,7 +134,8 @@ mixin IsmChatPageScrollNavigationMixin on GetxController {
     }
     final now = DateTime.now();
     final last = _lastOlderMessagesRequestAt;
-    if (last != null && now.difference(last) < const Duration(milliseconds: 400)) {
+    if (last != null &&
+        now.difference(last) < const Duration(milliseconds: 400)) {
       return;
     }
     _lastOlderMessagesRequestAt = now;
@@ -225,18 +226,122 @@ mixin IsmChatPageScrollNavigationMixin on GetxController {
 
   /// Scrolls to the message with the specified id.
   void scrollToMessage(String messageId, {Duration? duration}) async {
-    if (_controller.indexedMessageList[messageId] != null) {
-      final scrollController = _controller.messagesScrollController;
-      if (scrollController.positions.length != 1) {
-        return;
+    if (messageId.isEmpty) {
+      return;
+    }
+
+    var index = IsmChatPageViewModel.reversedScrollIndexForMessageId(
+      _controller.messages,
+      messageId: messageId,
+    );
+    if (index == null) {
+      await _loadOlderMessagesUntilFound(messageId);
+      index = IsmChatPageViewModel.reversedScrollIndexForMessageId(
+        _controller.messages,
+        messageId: messageId,
+      );
+    }
+    if (index == null) {
+      return;
+    }
+
+    await _scrollToMessageIndex(
+      index,
+      duration: duration ?? IsmChatConfig.animationDuration,
+    );
+  }
+
+  /// scroll_to_index reveals a tag via the viewport. After MQTT inserts a row,
+  /// keep-alive tags can still be in tagMap while their RenderBox has no size
+  /// (NEEDS-LAYOUT) — that is the assertion QA hit.
+  Future<void> _scrollToMessageIndex(
+    int index, {
+    required Duration duration,
+  }) async {
+    final scrollController = _controller.messagesScrollController;
+    if (scrollController.positions.length != 1) {
+      return;
+    }
+
+    if (!_isScrollTagLaidOut(scrollController, index)) {
+      await SchedulerBinding.instance.endOfFrame;
+    }
+    if (!_isScrollTagLaidOut(scrollController, index) &&
+        scrollController.hasClients) {
+      final position = scrollController.position;
+      final nudged = (position.pixels + 1.0)
+          .clamp(
+            position.minScrollExtent,
+            position.maxScrollExtent,
+          )
+          .toDouble();
+      if (nudged != position.pixels) {
+        scrollController.jumpTo(nudged);
       }
+      await SchedulerBinding.instance.endOfFrame;
+    }
+    if (scrollController.positions.length != 1) {
+      return;
+    }
+    if (!_isScrollTagLaidOut(scrollController, index)) {
+      final position = scrollController.position;
+      final estimated = (index * (scrollController.suggestedRowHeight ?? 72))
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble();
+      await scrollController.animateTo(
+        estimated,
+        duration: duration,
+        curve: Curves.ease,
+      );
+      await SchedulerBinding.instance.endOfFrame;
+    }
+    if (scrollController.positions.length != 1) {
+      return;
+    }
+    if (!_isScrollTagLaidOut(scrollController, index)) {
+      return;
+    }
+
+    try {
       await scrollController.scrollToIndex(
-        _controller.indexedMessageList[messageId]!,
-        duration: duration ?? IsmChatConfig.animationDuration,
+        index,
+        duration: duration,
         preferPosition: AutoScrollPosition.middle,
       );
-    } else {
+    } catch (e, st) {
+      IsmChatLog.error('Quote scroll failed: $e', st);
+    }
+  }
+
+  bool _isScrollTagLaidOut(AutoScrollController controller, int index) {
+    final ctx = controller.tagMap[index]?.context;
+    if (ctx == null || !ctx.mounted) {
+      return false;
+    }
+    final object = ctx.findRenderObject();
+    return object is RenderBox && object.hasSize && object.attached;
+  }
+
+  /// Quoted parent may sit above the currently loaded window.
+  /// ponytail: 10 pages / 1s wait — enough for typical history, not unbounded.
+  Future<void> _loadOlderMessagesUntilFound(String messageId) async {
+    const maxPages = 10;
+    for (var page = 0; page < maxPages; page++) {
+      if (IsmChatPageViewModel.reversedScrollIndexForMessageId(
+            _controller.messages,
+            messageId: messageId,
+          ) !=
+          null) {
+        return;
+      }
+      for (var wait = 0; wait < 20 && _controller.canCallCurrentApi; wait++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+      final before = _controller.messages.length;
       await _controller.getMessagesFromAPI(forPagination: true);
+      if (_controller.messages.length <= before) {
+        return;
+      }
     }
   }
 }

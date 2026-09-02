@@ -459,19 +459,66 @@ class IsmChatPageViewModel {
   Map<String, int> generateIndexedMessageList(
       List<IsmChatMessageModel> messages) {
     final indexedMap = <String, int>{};
-    var i = 0;
-    for (var x in messages.reversed) {
-      if (![
+    for (var i = 0; i < messages.length; i++) {
+      final x = messages[messages.length - 1 - i];
+      if ([
         IsmChatCustomMessageType.date,
         IsmChatCustomMessageType.block,
         IsmChatCustomMessageType.unblock,
         IsmChatCustomMessageType.conversationCreated,
       ].contains(x.customType)) {
-        indexedMap[x.messageId!] = i;
+        continue;
       }
-      i++;
+      final id = x.messageId;
+      if (id == null || id.isEmpty) {
+        continue;
+      }
+      indexedMap[id] = i;
     }
     return indexedMap;
+  }
+
+  /// ListView is `reverse: true`, so index 0 is the newest row (including date
+  /// separators). Used at tap time so quote-jump does not depend on a stale map.
+  static int? reversedScrollIndexForMessageId(
+    List<IsmChatMessageModel> messages, {
+    required String messageId,
+  }) {
+    if (messageId.isEmpty || messages.isEmpty) {
+      return null;
+    }
+
+    IsmChatMessageModel? target;
+    for (final msg in messages) {
+      if (msg.messageId == messageId) {
+        target = msg;
+        break;
+      }
+    }
+    if (target == null) {
+      return null;
+    }
+
+    var scrollId = messageId;
+    if (target.isGridDisplayableMedia) {
+      final chronological = messages
+          .where((msg) => msg.customType != IsmChatCustomMessageType.date)
+          .toList();
+      final group = IsmChatMediaGridGrouping.collect(chronological, target);
+      if (IsmChatMediaGridGrouping.shouldHide(group, target)) {
+        final hostId = group.first.messageId;
+        if (hostId != null && hostId.isNotEmpty) {
+          scrollId = hostId;
+        }
+      }
+    }
+
+    for (var i = 0; i < messages.length; i++) {
+      if (messages[messages.length - 1 - i].messageId == scrollId) {
+        return i;
+      }
+    }
+    return null;
   }
 
   Future<IsmChatResponseModel?> addReacton({required Reaction reaction}) async {

@@ -22,6 +22,48 @@ class IsmChatPageView extends StatefulWidget {
 
   final String? viewTag;
 
+  /// Whether this chat page should keep [messagesScrollController] attached.
+  ///
+  /// [ModalRoute.isCurrent] is false for both a stacked chat page *and* a
+  /// popup (reaction sheet, attachment sheet, dialog). Detaching the shared
+  /// controller in the popup case creates a new [ScrollPosition] at offset 0,
+  /// which a reverse message list treats as "jump to latest". Popups do not
+  /// drive [ModalRoute.secondaryAnimation] (`PageRoute.canTransitionTo` is
+  /// false for [PopupRoute]); a full page on top does.
+  @visibleForTesting
+  static bool shouldAttachMessagesScrollController({
+    required bool isCurrentRoute,
+    required AnimationStatus? secondaryAnimationStatus,
+  }) {
+    if (isCurrentRoute) {
+      return true;
+    }
+    return secondaryAnimationStatus == null ||
+        secondaryAnimationStatus == AnimationStatus.dismissed;
+  }
+
+  /// Whether becoming the current route again has to reload this chat.
+  ///
+  /// [ModalRoute.isCurrent] also flips for popups opened over the chat (reaction
+  /// list, attachment sheet, dialogs). Reloading for those replaces
+  /// [IsmChatPageController.messages] and rebuilds the list, which drops the
+  /// reader's scroll position, so only reload when the shared controller no
+  /// longer points at this route's chat or a rebind to another chat is pending.
+  @visibleForTesting
+  static bool shouldReloadOnBecomingCurrent({
+    required String openedConversationId,
+    required String currentConversationId,
+    required String? rebindConversationId,
+  }) {
+    if (openedConversationId.isEmpty) {
+      return false;
+    }
+    if (rebindConversationId?.isNotEmpty == true) {
+      return true;
+    }
+    return currentConversationId != openedConversationId;
+  }
+
   @override
   State<IsmChatPageView> createState() => _IsmChatPageViewState();
 }
@@ -65,17 +107,17 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     }
   }
 
-  /// When a stacked route above this chat is popped, re-attach state for this
-  /// page: unlock pagination and restore this route's conversation if another
-  /// chat overwrote the shared controller.
-  void _handleRouteVisibility(bool isCurrentRoute) {
-    if (isCurrentRoute && !_wasCurrentRoute) {
+  /// When a stacked *page* above this chat is popped, re-attach state.
+  /// Popups (sheets/dialogs) keep scroll-controller ownership, so they must
+  /// not run this restore path.
+  void _handleRouteVisibility(bool attachMessagesScrollController) {
+    if (attachMessagesScrollController && !_wasCurrentRoute) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         unawaited(_restoreChatAfterReturningToStack());
       });
     }
-    _wasCurrentRoute = isCurrentRoute;
+    _wasCurrentRoute = attachMessagesScrollController;
   }
 
   Future<void> _restoreChatAfterReturningToStack() async {
@@ -92,9 +134,15 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
     controller.canCallCurrentApi = false;
 
     final openedId = _openedConversationId;
-    if (openedId.isEmpty) return;
-
     final currentId = controller.conversation?.conversationId ?? '';
+    if (!IsmChatPageView.shouldReloadOnBecomingCurrent(
+      openedConversationId: openedId,
+      currentConversationId: currentId,
+      rebindConversationId: rebindId,
+    )) {
+      return;
+    }
+
     if (currentId == openedId) {
       // Same conversation: refresh list so pagination skip matches local history.
       await controller.getMessagesFromDB(openedId);
@@ -206,8 +254,13 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
   @override
   Widget build(BuildContext context) {
     // Rebuild when this route becomes current again after a stacked push/pop.
-    final isCurrentRoute = ModalRoute.of(context)?.isCurrent ?? true;
-    _handleRouteVisibility(isCurrentRoute);
+    final route = ModalRoute.of(context);
+    final attachMessagesScrollController =
+        IsmChatPageView.shouldAttachMessagesScrollController(
+      isCurrentRoute: route?.isCurrent ?? true,
+      secondaryAnimationStatus: route?.secondaryAnimation?.status,
+    );
+    _handleRouteVisibility(attachMessagesScrollController);
 
     return CustomWillPopScope(
       onWillPop: () async {
@@ -216,11 +269,14 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
       },
       child: GetPlatform.isIOS
           ? _SwipeGestureDetector(
-              onSwipeRight:
-                  IsmChat.i.chatPageTag == null ? navigateBack : null,
-              child: _IsmChatPageView(isCurrentRoute: isCurrentRoute),
+              onSwipeRight: IsmChat.i.chatPageTag == null ? navigateBack : null,
+              child: _IsmChatPageView(
+                attachMessagesScrollController: attachMessagesScrollController,
+              ),
             )
-          : _IsmChatPageView(isCurrentRoute: isCurrentRoute),
+          : _IsmChatPageView(
+              attachMessagesScrollController: attachMessagesScrollController,
+            ),
     );
   }
 }
@@ -235,12 +291,12 @@ class _IsmChatPageViewState extends State<IsmChatPageView>
 /// - Emoji board
 /// - Scroll-to-bottom button
 class _IsmChatPageView extends StatelessWidget {
-  const _IsmChatPageView({required this.isCurrentRoute});
+  const _IsmChatPageView({required this.attachMessagesScrollController});
 
-  /// Only the top-most chat route should own the shared [messagesScrollController].
-  /// Off-stage stacked pages pass `false` so the controller is not attached to
-  /// multiple scroll views (breaks scroll + older-message pagination).
-  final bool isCurrentRoute;
+  /// Only the top-most *page* should own the shared [messagesScrollController].
+  /// Off-stage stacked chat pages pass `false`. Popups over this chat keep
+  /// `true` so the reverse list does not recreate its [ScrollPosition].
+  final bool attachMessagesScrollController;
 
   Widget _defaultComposer(IsmChatPageController controller) => Container(
         padding: IsmChatConfig
@@ -467,12 +523,10 @@ class _IsmChatPageView extends StatelessWidget {
                                                     ? Align(
                                                         alignment:
                                                             Alignment.topCenter,
-                                                        child:
-                                                            NotificationListener<
-                                                                ScrollNotification>(
-                                                          onNotification:
-                                                              controller
-                                                                  .handleMessagesScrollNotification,
+                                                        child: NotificationListener<
+                                                            ScrollNotification>(
+                                                          onNotification: controller
+                                                              .handleMessagesScrollNotification,
                                                           child:
                                                               ListView.builder(
                                                             physics:
@@ -481,10 +535,11 @@ class _IsmChatPageView extends StatelessWidget {
                                                             // current (top) chat route. Stacked pages
                                                             // underneath keep `null` so scroll/pagination
                                                             // keep working after popping back.
-                                                            controller: isCurrentRoute
-                                                                ? controller
-                                                                    .messagesScrollController
-                                                                : null,
+                                                            controller:
+                                                                attachMessagesScrollController
+                                                                    ? controller
+                                                                        .messagesScrollController
+                                                                    : null,
                                                             scrollDirection:
                                                                 Axis.vertical,
                                                             shrinkWrap: true,
@@ -496,21 +551,37 @@ class _IsmChatPageView extends StatelessWidget {
                                                             reverse: true,
                                                             addAutomaticKeepAlives:
                                                                 true,
-                                                            itemCount: controller
-                                                                .messages
-                                                                .length,
-                                                            itemBuilder: (_,
-                                                                    index) =>
+                                                            itemCount:
                                                                 controller
-                                                                        .controllerIsRegister
-                                                                    ? IsmChatMessage(
-                                                                        index,
-                                                                        controller
-                                                                                .messages[
-                                                                            index],
-                                                                      )
-                                                                    : IsmChatDimens
-                                                                        .box0,
+                                                                    .messages
+                                                                    .length,
+                                                            itemBuilder: (_,
+                                                                    index) {
+                                                              if (!controller
+                                                                  .controllerIsRegister) {
+                                                                return IsmChatDimens
+                                                                    .box0;
+                                                              }
+                                                              final messages =
+                                                                  controller
+                                                                      .messages;
+                                                              final message = messages[
+                                                                  messages.length -
+                                                                      1 -
+                                                                      index];
+                                                              return IsmChatMessage(
+                                                                index,
+                                                                message,
+                                                                key: ValueKey(
+                                                                  message.messageId
+                                                                              ?.isNotEmpty ==
+                                                                          true
+                                                                      ? message
+                                                                          .messageId!
+                                                                      : 'sentAt-${message.sentAt}',
+                                                                ),
+                                                              );
+                                                            },
                                                           ),
                                                         ),
                                                       )
@@ -555,15 +626,16 @@ class _IsmChatPageView extends StatelessWidget {
                                                 ?.isLastMessageCurrentUserRemovedFromGroup ==
                                             true)) ...[
                                   _MessageNotAllowedWidget(
-                                    showMessage: controller.isActionAllowed ==
-                                                true ||
-                                            controller.conversation
-                                                    ?.lastMessageDetails
-                                                    ?.customType ==
-                                                IsmChatCustomMessageType
-                                                    .removeMember
-                                        ? IsmChatStrings.removeGroupMessage
-                                        : IsmChatStrings.leftGroupMessage,
+                                    showMessage:
+                                        controller.isActionAllowed == true ||
+                                                controller
+                                                        .conversation
+                                                        ?.lastMessageDetails
+                                                        ?.customType ==
+                                                    IsmChatCustomMessageType
+                                                        .removeMember
+                                            ? IsmChatStrings.removeGroupMessage
+                                            : IsmChatStrings.leftGroupMessage,
                                   )
                                 ] else if (IsmChatProperties
                                             .chatPageProperties
@@ -575,7 +647,8 @@ class _IsmChatPageView extends StatelessWidget {
                                             .messageAllowedConfig
                                             ?.isShowTextfiledConfig
                                             ?.isShowMessageAllowed
-                                            .call(context, controller.conversation) ==
+                                            .call(context,
+                                                controller.conversation) ==
                                         true)) ...[
                                   // Custom message restriction from properties
                                   _MessageNotAllowedWidget(
@@ -595,7 +668,9 @@ class _IsmChatPageView extends StatelessWidget {
                                         ?.call(
                                             context, controller.conversation),
                                   )
-                                ] else if (controller.conversation?.isOpponentDetailsEmpty == true) ...[
+                                ] else if (controller
+                                        .conversation?.isOpponentDetailsEmpty ==
+                                    true) ...[
                                   // Opponent user has been deleted
                                   const _MessageNotAllowedWidget(
                                     showMessage:

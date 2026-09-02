@@ -25,7 +25,9 @@ mixin IsmChatPageVariablesMixin on GetxController {
 
   var groupTitleController = TextEditingController();
 
-  var messagesScrollController = AutoScrollController();
+  var messagesScrollController = AutoScrollController(
+    suggestedRowHeight: 72,
+  );
 
   var searchMessageScrollController = ScrollController();
 
@@ -70,7 +72,8 @@ mixin IsmChatPageVariablesMixin on GetxController {
   bool get showEmojiBoard => _showEmojiBoard.value;
   set showEmojiBoard(bool value) => _showEmojiBoard.value = value;
 
-  final Rx<IsmChatEmojiBoardTab> _emojiBoardTab = IsmChatEmojiBoardTab.emoji.obs;
+  final Rx<IsmChatEmojiBoardTab> _emojiBoardTab =
+      IsmChatEmojiBoardTab.emoji.obs;
   IsmChatEmojiBoardTab get emojiBoardTab => _emojiBoardTab.value;
   set emojiBoardTab(IsmChatEmojiBoardTab value) => _emojiBoardTab.value = value;
 

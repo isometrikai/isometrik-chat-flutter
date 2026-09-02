@@ -118,37 +118,22 @@ class _MessageCardState extends State<MessageCard>
                       },
             child: SlideTransition(
               position: animation!,
-              child: InkWell(
-                splashColor: IsmChatColors.transparent,
-                onHover: (value) {
+              child: MouseRegion(
+                onEnter: (_) {
                   if (controller
                           .conversationController.isRenderChatPageaScreen !=
                       IsRenderChatPageScreen.none) {
                     return;
                   }
-                  if (value) {
-                    controller.onMessageHoverIndex = widget.index;
-                  } else {
-                    controller.onMessageHoverIndex = -1;
-                  }
+                  controller.onMessageHoverIndex = widget.index;
                 },
-                borderRadius: BorderRadius.zero,
-                hoverColor: IsmChatColors.transparent,
-                focusColor: IsmChatColors.transparent,
-                highlightColor: IsmChatColors.transparent,
-                onTap: () {
-                  // Media preview is handled by thumbnail/grid tap inside
-                  // media widgets to avoid caption/text taps opening preview.
-                  if (widget.message.customType ==
-                          IsmChatCustomMessageType.video ||
-                      widget.message.customType ==
-                          IsmChatCustomMessageType.image) {
+                onExit: (_) {
+                  if (controller
+                          .conversationController.isRenderChatPageaScreen !=
+                      IsRenderChatPageScreen.none) {
                     return;
                   }
-                  controller.onMessageTap(
-                    context: context,
-                    message: widget.message,
-                  );
+                  controller.onMessageHoverIndex = -1;
                 },
                 child: Column(
                   crossAxisAlignment: widget.message.sentByMe
@@ -157,49 +142,85 @@ class _MessageCardState extends State<MessageCard>
                   children: [
                     Stack(
                       clipBehavior: Clip.none,
+                      alignment: widget.message.sentByMe
+                          ? Alignment.topRight
+                          : Alignment.topLeft,
                       children: [
-                        AutoScrollTag(
-                          controller: controller.messagesScrollController,
-                          index: widget.index,
-                          key: Key('scroll-${widget.message.messageId}'),
-                          child: kIsWeb
-                              ? IsmChatProperties
-                                      .chatPageProperties.messageBuilder
-                                      ?.call(
-                                          context,
-                                          widget.message,
-                                          widget.message.customType!,
-                                          widget.showMessageInCenter) ??
-                                  MessageBubble(
-                                    message: widget.message,
-                                    showMessageInCenter:
-                                        widget.showMessageInCenter,
-                                    index: widget.index,
-                                  )
-                              : Hero(
-                                  tag: widget.message,
-                                  child: IsmChatProperties
-                                          .chatPageProperties.messageBuilder
-                                          ?.call(
-                                              context,
-                                              widget.message,
-                                              widget.message.customType!,
-                                              widget.showMessageInCenter) ??
-                                      MessageBubble(
-                                        message: widget.message,
-                                        showMessageInCenter:
-                                            widget.showMessageInCenter,
-                                        index: widget.index,
-                                      ),
-                                ),
+                        if (widget.message.reactions?.isNotEmpty == true)
+                          IgnorePointer(
+                            child: SizedBox(
+                              width: ImsChatReaction.layoutWidth(
+                                widget.message,
+                              ),
+                              height: 1,
+                            ),
+                          ),
+                        InkWell(
+                          splashColor: IsmChatColors.transparent,
+                          hoverColor: IsmChatColors.transparent,
+                          highlightColor: IsmChatColors.transparent,
+                          onTap: () {
+                            if (widget.message.customType ==
+                                    IsmChatCustomMessageType.video ||
+                                widget.message.customType ==
+                                    IsmChatCustomMessageType.image) {
+                              return;
+                            }
+                            controller.onMessageTap(
+                              context: context,
+                              message: widget.message,
+                            );
+                          },
+                          child: AutoScrollTag(
+                            controller: controller.messagesScrollController,
+                            index: widget.index,
+                            key: Key('scroll-${widget.message.messageId}'),
+                            child: kIsWeb
+                                ? IsmChatProperties
+                                        .chatPageProperties.messageBuilder
+                                        ?.call(
+                                            context,
+                                            widget.message,
+                                            widget.message.customType!,
+                                            widget.showMessageInCenter) ??
+                                    MessageBubble(
+                                      message: widget.message,
+                                      showMessageInCenter:
+                                          widget.showMessageInCenter,
+                                      index: widget.index,
+                                    )
+                                : Hero(
+                                    tag: widget.message,
+                                    child: IsmChatProperties
+                                            .chatPageProperties.messageBuilder
+                                            ?.call(
+                                                context,
+                                                widget.message,
+                                                widget.message.customType!,
+                                                widget.showMessageInCenter) ??
+                                        MessageBubble(
+                                          message: widget.message,
+                                          showMessageInCenter:
+                                              widget.showMessageInCenter,
+                                          index: widget.index,
+                                        ),
+                                  ),
+                          ),
                         ),
                         if (widget.message.reactions?.isNotEmpty == true)
                           Positioned(
                             right: widget.message.sentByMe ? 0 : null,
                             left: widget.message.sentByMe ? null : 0,
                             bottom: IsmChatDimens.six,
-                            child: ImsChatReaction(
-                              message: widget.message,
+                            child: UnconstrainedBox(
+                              alignment: widget.message.sentByMe
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              constrainedAxis: Axis.vertical,
+                              clipBehavior: Clip.none,
+                              child: ImsChatReaction(
+                                message: widget.message,
+                              ),
                             ),
                           ),
                       ],
