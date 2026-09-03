@@ -360,19 +360,26 @@ class IsmChatForwardView extends StatelessWidget {
                                           controller.currentConversation!);
                                 }
 
-                                if (await IsmChatProperties.chatPageProperties
-                                        .messageAllowedConfig?.isMessgeAllowed
-                                        ?.call(
-                                            IsmChatConfig.kNavigatorKey
-                                                    .currentContext ??
-                                                IsmChatConfig.context,
-                                            IsmChatUtility.chatPageController
-                                                .conversation!,
-                                            IsmChatCustomMessageType.forward,
-                                            IsmChatUtility.chatPageController
-                                                .chatInputController.text
-                                                .trim()) ??
-                                    true) {
+                                // messageAllowedConfig is optional. Prefer `?.`
+                                // + `?? true` (same contract as the
+                                // MessageAllowedConfig? extension): no filter
+                                // configured → allow. Never `?? false` — that
+                                // would block every forward in hosts that do
+                                // not set a safety filter.
+                                final allowed = await IsmChatProperties
+                                        .chatPageProperties
+                                        .messageAllowedConfig
+                                        ?.shouldAllowOutboundSend(
+                                      context: IsmChatConfig.kNavigatorKey
+                                              .currentContext ??
+                                          IsmChatConfig.context,
+                                      conversation: conversation,
+                                      customType:
+                                          IsmChatCustomMessageType.forward,
+                                      messageText: message.body,
+                                    ) ??
+                                    true;
+                                if (allowed) {
                                   await controller.sendForwardMessage(
                                     customType: message.customType?.name ?? '',
                                     userIds: controller.selectedUserList
