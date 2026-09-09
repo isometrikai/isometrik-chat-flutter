@@ -51,10 +51,7 @@ class IsmChatConversationList extends StatelessWidget {
           return const IsmChatLoadingDialog();
         }
         if (controller.userConversations.isEmpty) {
-          // Searching with no matches must not reuse the "no chats yet" /
-          // host placeholder (e.g. "No Messages") — show search empty copy.
-          final isSearching =
-              controller.searchConversationTEC.text.trim().isNotEmpty;
+          final isSearching = controller.isSearchingConversations;
           return Center(
             child: isSearching
                 ? IsmChatProperties.conversationProperties.searchPlaceholder ??
