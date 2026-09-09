@@ -275,7 +275,7 @@ class _ErrorImage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(IsmChatDimens.eight),
                 ),
                 alignment: Alignment.center,
-                child: const Text(
+                child: Text(
                   IsmChatStrings.errorLoadingImage,
                 ),
               ),

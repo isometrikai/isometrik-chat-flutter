@@ -48,5 +48,19 @@ mixin IsmChatPropertiesMixin {
   /// ```
   String? get chatListPageTag => _delegate.chatListPageTag;
   set chatListPageTag(String? value) => _delegate.chatListPageTag = value;
+
+  /// Active SDK UI locale (`en` / `fr` / `pt`).
+  Locale get locale => IsmChatL10n.locale;
+
+  /// Switch SDK UI language when the host app language changes.
+  ///
+  /// Example (from app settings):
+  /// ```dart
+  /// IsmChat.i.setLocale(const Locale('fr'));
+  /// ```
+  ///
+  /// Unsupported locales fall back to English via [IsmChatL10n.setLocale].
+  /// Chat message bodies are not translated — only titles / labels / dialogs.
+  void setLocale(Locale locale) => IsmChatL10n.setLocale(locale);
 }
 

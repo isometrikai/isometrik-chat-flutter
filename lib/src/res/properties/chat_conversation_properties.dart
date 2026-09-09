@@ -183,9 +183,11 @@ class IsmChatConversationProperties {
   final bool? Function(BuildContext, IsmChatConversationModel)?
       endActionSlidableEnable;
 
-  /// Provide this height parameter to set the maximum height for conversation list
+  /// Optional fixed height for the conversation list viewport.
   ///
-  /// If not provided, Screen height will be taken
+  /// Prefer leaving this null so the list fills its parent (e.g. [Expanded]).
+  /// Do not use full screen height here — that creates empty scroll space when
+  /// there are few conversations.
   final double? height;
 
   /// The header to display above the conversation UI.

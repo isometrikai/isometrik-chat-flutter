@@ -102,7 +102,7 @@ extension DateConvertor on int {
       return '${IsmChatStrings.lastSeen} ${IsmChatStrings.today} ${IsmChatStrings.at} ${DateFormat.jm().format(toDate(userId: userId, conversationId: conversationId))}';
     }
     if (now.difference(timeStamp) <= const Duration(days: 1)) {
-      return '${IsmChatStrings.lastSeen} ${IsmChatStrings.yestarday} ${IsmChatStrings.at} ${DateFormat.jm().format(toDate(userId: userId, conversationId: conversationId))}';
+      return '${IsmChatStrings.lastSeen} ${IsmChatStrings.yesterday} ${IsmChatStrings.at} ${DateFormat.jm().format(toDate(userId: userId, conversationId: conversationId))}';
     }
     if (now.difference(timeStamp) <= const Duration(days: 7)) {
       return '${IsmChatStrings.lastSeen} ${IsmChatStrings.at} ${DateFormat('E h:mm a').format(toDate(userId: userId, conversationId: conversationId))}';
@@ -124,7 +124,7 @@ extension DateConvertor on int {
       return DateFormat.jm().format(toDate());
     }
     if (now.difference(timeStamp) <= const Duration(days: 1)) {
-      return IsmChatStrings.yestarday.capitalizeFirst!;
+      return IsmChatStrings.yesterday.capitalizeFirst!;
     }
     return IsmChatConfig.isMonthFirst == true
         ? DateFormat('MM/dd/yyyy').format(toDate())
@@ -154,7 +154,7 @@ extension DateConvertor on int {
           .format(toDate(userId: userId, conversationId: conversationId));
     }
     if (now.difference(timeStamp) <= const Duration(days: 1)) {
-      return IsmChatStrings.yestarday.capitalizeFirst!;
+      return IsmChatStrings.yesterday.capitalizeFirst!;
     }
     return IsmChatConfig.isMonthFirst == true
         ? DateFormat('MM/dd/yyyy')

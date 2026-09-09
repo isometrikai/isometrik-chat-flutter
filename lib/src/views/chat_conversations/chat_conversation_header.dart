@@ -57,8 +57,8 @@ class IsmChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                                     IsmChatConfig.context,
                             builder: (context) => IsmChatAlertDialogBox(
                               title: '${IsmChatStrings.logout}?',
-                              content: const Text(IsmChatStrings.logoutMessage),
-                              actionLabels: const [
+                              content: Text(IsmChatStrings.logoutMessage),
+                              actionLabels: [
                                 IsmChatStrings.logout,
                               ],
                               callbackActions: [
@@ -215,8 +215,8 @@ class _MoreIcon extends StatelessWidget {
           await IsmChatContextWidget.showDialogContext(
             content: IsmChatAlertDialogBox(
               title: '${IsmChatStrings.logout}?',
-              content: const Text(IsmChatStrings.logoutMessage),
-              actionLabels: const [
+              content: Text(IsmChatStrings.logoutMessage),
+              actionLabels: [
                 IsmChatStrings.logout,
               ],
               callbackActions: [
@@ -244,7 +244,7 @@ class _MoreIcon extends StatelessWidget {
                   color: IsmChatConfig.chatTheme.primaryColor,
                 ),
                 IsmChatDimens.boxWidth8,
-                const Text(IsmChatStrings.boradcastMessge),
+                Text(IsmChatStrings.boradcastMessge),
               ],
             ),
           )
@@ -258,7 +258,7 @@ class _MoreIcon extends StatelessWidget {
                 color: IsmChatConfig.chatTheme.primaryColor,
               ),
               IsmChatDimens.boxWidth8,
-              const Text(IsmChatStrings.blockedUsers),
+              Text(IsmChatStrings.blockedUsers),
             ],
           ),
         ),
@@ -271,7 +271,7 @@ class _MoreIcon extends StatelessWidget {
                 color: IsmChatConfig.chatTheme.primaryColor,
               ),
               IsmChatDimens.boxWidth8,
-              const Text(IsmChatStrings.broadcastList),
+              Text(IsmChatStrings.broadcastList),
             ],
           ),
         ),
@@ -285,7 +285,7 @@ class _MoreIcon extends StatelessWidget {
                   color: IsmChatConfig.chatTheme.primaryColor,
                 ),
                 IsmChatDimens.boxWidth8,
-                const Text(IsmChatStrings.newGroup),
+                Text(IsmChatStrings.newGroup),
               ],
             ),
           ),
@@ -319,7 +319,7 @@ class _MoreIcon extends StatelessWidget {
                   color: IsmChatConfig.chatTheme.primaryColor,
                 ),
                 IsmChatDimens.boxWidth8,
-                const Text(IsmChatStrings.logout),
+                Text(IsmChatStrings.logout),
               ],
             ),
           ),

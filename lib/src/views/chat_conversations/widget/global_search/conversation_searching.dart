@@ -50,7 +50,16 @@ class IsmChatConversationSearchView extends StatelessWidget {
             onLoading: _onLoading,
             child: controller.isConversationsLoading
                 ? const IsmChatLoadingDialog()
-                : SizedBox(
+                : controller.searchConversationList.isEmpty
+                    ? IsmChatEmptyView(
+                        icon: Icon(
+                          Icons.search_off_outlined,
+                          size: IsmChatDimens.fifty,
+                          color: IsmChatColors.greyColor,
+                        ),
+                        text: IsmChatStrings.noResultsFound,
+                      )
+                    : SizedBox(
                     height: IsmChatProperties.conversationProperties.height ??
                         IsmChatDimens.percentHeight(1),
                     child: ListView.builder(

@@ -281,7 +281,7 @@ class IsmChatUserView extends StatelessWidget {
                             }
                             unawaited(controller.getChatConversations());
                           },
-                          child: const Text(IsmChatStrings.unblock),
+                          child: Text(IsmChatStrings.unblock),
                         ),
                       );
                     },

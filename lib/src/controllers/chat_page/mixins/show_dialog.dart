@@ -24,7 +24,7 @@ mixin IsmChatShowDialogMixin on GetxController {
     required String title,
     List<String>? actionLabels,
     List<VoidCallback>? callbackActions,
-    String cancelLabel = IsmChatStrings.cancel,
+    String? cancelLabel,
     VoidCallback? onCancel,
     Widget? content,
     bool barrierDismissible = true,
@@ -34,7 +34,7 @@ mixin IsmChatShowDialogMixin on GetxController {
         title: title,
         actionLabels: actionLabels,
         callbackActions: callbackActions,
-        cancelLabel: cancelLabel,
+        cancelLabel: cancelLabel ?? IsmChatStrings.cancel,
         onCancel: onCancel,
         content: content,
         barrierDismissible: barrierDismissible,
@@ -76,6 +76,8 @@ mixin IsmChatShowDialogMixin on GetxController {
     }
     await _showThemedAlertDialog(
       title: request.title,
+      content: request.content ??
+          (request.body == null ? null : Text(request.body!)),
       actionLabels: request.actions.isEmpty
           ? null
           : request.actions.map((a) => a.label).toList(),
@@ -154,16 +156,27 @@ mixin IsmChatShowDialogMixin on GetxController {
   void showDialogForChangeGroupTitle() async {
     _controller.groupTitleController.text =
         _controller.conversation?.chatName ?? '';
-    await _showThemedAlertDialog(
-      title: IsmChatStrings.enterNewGroupTitle,
-      content: _themedDialogInput(_controller.groupTitleController),
-      actionLabels: const [IsmChatStrings.okay],
-      callbackActions: [
-        () => _controller.changeGroupTitle(
-            conversationTitle: _controller.groupTitleController.text,
-            conversationId: _controller.conversation?.conversationId ?? '',
-            isLoading: true),
-      ],
+    // Host can customize via chatConfirmationPresenter
+    // ([IsmChatConfirmationType.changeGroupTitle]).
+    await _presentChatConfirmation(
+      IsmChatConfirmationRequest(
+        type: IsmChatConfirmationType.changeGroupTitle,
+        title: IsmChatStrings.enterNewGroupTitle,
+        conversation: _controller.conversation,
+        textController: _controller.groupTitleController,
+        content: _themedDialogInput(_controller.groupTitleController),
+        actions: [
+          IsmChatConfirmationAction(
+            id: IsmChatConfirmationActionId.changeGroupTitle,
+            label: IsmChatStrings.okay,
+            onPressed: () => _controller.changeGroupTitle(
+              conversationTitle: _controller.groupTitleController.text,
+              conversationId: _controller.conversation?.conversationId ?? '',
+              isLoading: true,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -231,7 +244,7 @@ mixin IsmChatShowDialogMixin on GetxController {
       );
     } else {
       await _presentChatConfirmation(
-        const IsmChatConfirmationRequest(
+        IsmChatConfirmationRequest(
           type: IsmChatConfirmationType.cannotBlockOpponent,
           title: IsmChatStrings.cannotBlock,
           cancelLabel: IsmChatStrings.okay,
@@ -452,7 +465,7 @@ mixin IsmChatShowDialogMixin on GetxController {
     // In that state the user can't block back.
     if (!(_controller.conversation?.isChattingAllowed ?? true)) {
       await _presentChatConfirmation(
-        const IsmChatConfirmationRequest(
+        IsmChatConfirmationRequest(
           type: IsmChatConfirmationType.cannotBlockWhenTheyBlockedMe,
           title: IsmChatStrings.cannotBlockWhenAlreadyBlocked,
           cancelLabel: IsmChatStrings.okay,
@@ -485,29 +498,43 @@ mixin IsmChatShowDialogMixin on GetxController {
     var isUserAdmin = _controller.groupMembers.any((e) =>
         e.userId == IsmChatConfig.communicationConfig.userConfig.userId &&
         e.isAdmin);
+    final conversation = _controller.conversation;
     if (adminCount == 1 && !askToLeave && isUserAdmin) {
-      await _showThemedAlertDialog(
-        title: IsmChatStrings.areYouSure,
-        content: const Text(IsmChatStrings.youAreOnlyAdmin),
-        actionLabels: const [IsmChatStrings.exit],
-        callbackActions: [
-          () => showDialogExitButton(true),
-        ],
-        cancelLabel: IsmChatStrings.assignAdmin,
+      // Only-admin warning — host can customize via chatConfirmationPresenter.
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.exitGroupOnlyAdmin,
+          title: IsmChatStrings.areYouSure,
+          body: IsmChatStrings.youAreOnlyAdmin,
+          conversation: conversation,
+          cancelLabel: IsmChatStrings.assignAdmin,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.exitGroup,
+              label: IsmChatStrings.exit,
+              onPressed: () => showDialogExitButton(true),
+            ),
+          ],
+        ),
       );
     } else {
-      await _showThemedAlertDialog(
-        title: 'Exit ${_controller.conversation?.chatName ?? ''}?',
-        content: const Text(
-          'Only group admins will be notified that you left the group',
-        ),
-        actionLabels: const ['Exit'],
-        callbackActions: [
-          () async => await _controller.leaveGroup(
+      await _presentChatConfirmation(
+        IsmChatConfirmationRequest(
+          type: IsmChatConfirmationType.exitGroup,
+          title: 'Exit ${conversation?.chatName ?? ''}?',
+          body: IsmChatStrings.exitGroupBody,
+          conversation: conversation,
+          actions: [
+            IsmChatConfirmationAction(
+              id: IsmChatConfirmationActionId.exitGroup,
+              label: IsmChatStrings.exitGroup,
+              onPressed: () async => await _controller.leaveGroup(
                 adminCount: adminCount,
                 isUserAdmin: isUserAdmin,
-              )
-        ],
+              ),
+            ),
+          ],
+        ),
       );
     }
   }

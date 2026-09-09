@@ -15,7 +15,7 @@ mixin IsmChatPageCameraOperationsMixin on GetxController {
     } on CameraException catch (e) {
       if (e.code == 'CameraAccessDenied') {
         await IsmChatContextWidget.showDialogContext(
-          content: const IsmChatAlertDialogBox(
+          content: IsmChatAlertDialogBox(
             title: IsmChatStrings.cameraPermissionBlock,
             cancelLabel: IsmChatStrings.okay,
           ),
@@ -62,7 +62,7 @@ mixin IsmChatPageCameraOperationsMixin on GetxController {
         final state = await IsmChatBlob.checkPermission('microphone');
         if (state == 'denied') {
           unawaited(IsmChatContextWidget.showDialogContext(
-            content: const IsmChatAlertDialogBox(
+            content: IsmChatAlertDialogBox(
               title: IsmChatStrings.micePermissionBlock,
               cancelLabel: IsmChatStrings.okay,
             ),

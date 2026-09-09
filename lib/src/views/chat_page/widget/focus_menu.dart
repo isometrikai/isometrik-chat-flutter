@@ -124,12 +124,20 @@ class IsmChatFocusMenu extends StatelessWidget {
                                       _focusMenuItemStyle(context, item);
                                   return IsmChatTapHandler(
                                     onTap: () async {
+                                      if (!context.mounted) return;
                                       controller.closeOverlay();
-                                      await controller.onMenuItemSelected(
-                                        item,
-                                        message,
-                                        context,
-                                      );
+                                      try {
+                                        await controller.onMenuItemSelected(
+                                          item,
+                                          message,
+                                          context,
+                                        );
+                                      } catch (e, st) {
+                                        IsmChatLog.error(
+                                          'Focus menu action failed: $e',
+                                          st,
+                                        );
+                                      }
                                     },
                                     child: Container(
                                       height: IsmChatConfig
@@ -143,21 +151,25 @@ class IsmChatFocusMenu extends StatelessWidget {
                                         color: itemStyle.backgroundColor,
                                       ),
                                       child: Row(
-                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(
-                                            item.toString(),
-                                            style: IsmChatStyles.w400Black12
-                                                .copyWith(
-                                              fontSize: IsmChatConfig
-                                                  .chatTheme
-                                                  .chatPageTheme
-                                                  ?.messgaeFocusedTheme
-                                                  ?.fontSize,
-                                              color: itemStyle.labelColor,
+                                          Expanded(
+                                            child: Text(
+                                              item.label,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: false,
+                                              style: IsmChatStyles.w400Black12
+                                                  .copyWith(
+                                                fontSize: IsmChatConfig
+                                                    .chatTheme
+                                                    .chatPageTheme
+                                                    ?.messgaeFocusedTheme
+                                                    ?.fontSize,
+                                                color: itemStyle.labelColor,
+                                              ),
                                             ),
                                           ),
-                                          const Spacer(),
+                                          IsmChatDimens.boxWidth8,
                                           Icon(
                                             item.icon,
                                             color: itemStyle.iconColor,
@@ -190,130 +202,186 @@ class IsmChatFocusMenu extends StatelessWidget {
           },
           child: Scaffold(
             backgroundColor: Colors.transparent,
+            // Edge-to-edge Android often reports MediaQuery.padding.bottom as 0;
+            // use viewPadding (same pattern as EmojiBoard) so Delete stays above
+            // the system navigation bar.
             body: SafeArea(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: blur ?? 4,
-                      sigmaY: blur ?? 4,
-                    ),
-                    child: Container(
-                      color: (blurBackgroundColor ?? Colors.black)
-                          .applyIsmOpacity(0.5),
-                    ),
-                  ),
-                  Container(
-                    alignment: message.sentByMe
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    padding: IsmChatDimens.edgeInsets8,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: message.sentByMe
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          if (canReact && !controller.isBroadcast)
-                            _FocusAnimationBuilder(
-                              animation: animation,
-                              child: ReactionGrid(message),
-                            ),
-                          IsmChatDimens.boxHeight8,
-                          Hero(
-                            tag: message,
-                            child: IsmChatProperties
-                                    .chatPageProperties.messageBuilder
-                                    ?.call(context, message,
-                                        message.customType!, false) ??
-                                MessageBubble(
-                                  message: message,
-                                  showMessageInCenter: false,
-                                  index: _messageReversedIndexForGridPreview(),
+              bottom: false,
+              child: Builder(
+                builder: (context) {
+                  final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
+                  return Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: blur ?? 4,
+                          sigmaY: blur ?? 4,
+                        ),
+                        child: Container(
+                          color: (blurBackgroundColor ?? Colors.black)
+                              .applyIsmOpacity(0.5),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: IsmChatDimens.eight,
+                          right: IsmChatDimens.eight,
+                          top: IsmChatDimens.eight,
+                          bottom: IsmChatDimens.eight + bottomInset,
+                        ),
+                        child: Align(
+                          alignment: message.sentByMe
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: SingleChildScrollView(
+                            // Keep the action menu (esp. Delete) in view when the
+                            // message preview is tall (e.g. link + image card).
+                            reverse: true,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: message.sentByMe
+                                  ? CrossAxisAlignment.end
+                                  : CrossAxisAlignment.start,
+                              children: [
+                                if (canReact && !controller.isBroadcast)
+                                  _FocusAnimationBuilder(
+                                    animation: animation,
+                                    child: ReactionGrid(message),
+                                  ),
+                                IsmChatDimens.boxHeight8,
+                                Hero(
+                                  tag: message,
+                                  child: IsmChatProperties
+                                          .chatPageProperties.messageBuilder
+                                          ?.call(context, message,
+                                              message.customType!, false) ??
+                                      MessageBubble(
+                                        message: message,
+                                        showMessageInCenter: false,
+                                        index:
+                                            _messageReversedIndexForGridPreview(),
+                                      ),
                                 ),
-                          ),
-                          IsmChatDimens.boxHeight8,
-                          _FocusAnimationBuilder(
-                            animation: animation,
-                            child: Container(
-                              width: IsmChatDimens.oneHundredSeventy,
-                              decoration: BoxDecoration(
-                                color: IsmChatConfig.chatTheme
-                                        .chatPageHeaderTheme
-                                        ?.popupBackgroundColor ??
-                                    (IsmChatThemeResolver.brightness(context) ==
-                                            Brightness.dark
-                                        ? const Color(0xFF353535)
-                                        : IsmChatColors.whiteColor),
-                                borderRadius: BorderRadius.circular(
-                                  IsmChatDimens.sixteen,
-                                ),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: GetBuilder<IsmChatPageController>(
-                                  tag: IsmChat.i.chatPageTag,
-                                  builder: (controller) => ListView.builder(
-                                        itemCount: message.focusMenuList.length,
-                                        shrinkWrap: true,
-                                        itemBuilder: (_, index) {
-                                          var item =
-                                              message.focusMenuList[index];
-                                          final itemStyle =
-                                              _focusMenuItemStyle(
-                                                  context, item);
-                                          return IsmChatTapHandler(
-                                            onTap: () async {
-                                              Navigator.of(context).pop();
-                                              controller.closeOverlay();
-                                              await WidgetsBinding.instance
-                                                  .endOfFrame;
-                                              if (!context.mounted) return;
-                                              await controller
-                                                  .onMenuItemSelected(
-                                                item,
-                                                message,
-                                                context,
-                                              );
-                                            },
-                                            child: Container(
-                                              height: IsmChatDimens.forty,
-                                              padding:
-                                                  IsmChatDimens.edgeInsets16_0,
-                                              decoration: BoxDecoration(
-                                                color: itemStyle.backgroundColor,
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    item.toString(),
-                                                    style: IsmChatStyles
-                                                        .w400Black12
-                                                        .copyWith(
-                                                      color:
-                                                          itemStyle.labelColor,
+                                IsmChatDimens.boxHeight8,
+                                _FocusAnimationBuilder(
+                                  animation: animation,
+                                  child: Container(
+                                    width: IsmChatDimens.oneHundredSeventy,
+                                    decoration: BoxDecoration(
+                                      color: IsmChatConfig
+                                              .chatTheme
+                                              .chatPageHeaderTheme
+                                              ?.popupBackgroundColor ??
+                                          (IsmChatThemeResolver.brightness(
+                                                      context) ==
+                                                  Brightness.dark
+                                              ? const Color(0xFF353535)
+                                              : IsmChatColors.whiteColor),
+                                      borderRadius: BorderRadius.circular(
+                                        IsmChatDimens.sixteen,
+                                      ),
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: GetBuilder<IsmChatPageController>(
+                                        tag: IsmChat.i.chatPageTag,
+                                        builder: (controller) =>
+                                            ListView.builder(
+                                              itemCount:
+                                                  message.focusMenuList.length,
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemBuilder: (_, index) {
+                                                var item = message
+                                                    .focusMenuList[index];
+                                                final itemStyle =
+                                                    _focusMenuItemStyle(
+                                                        context, item);
+                                                return IsmChatTapHandler(
+                                                  onTap: () async {
+                                                    // Menu route context is disposed after pop —
+                                                    // never use it for follow-up UI. Dismiss first,
+                                                    // then run the action on the app navigator context.
+                                                    if (!context.mounted) {
+                                                      return;
+                                                    }
+                                                    Navigator.of(context).pop();
+                                                    controller.closeOverlay();
+                                                    await WidgetsBinding
+                                                        .instance.endOfFrame;
+                                                    final safeContext =
+                                                        IsmChatConfig
+                                                                .kNavigatorKey
+                                                                .currentContext ??
+                                                            IsmChatConfig
+                                                                .context;
+                                                    if (!safeContext.mounted) {
+                                                      return;
+                                                    }
+                                                    try {
+                                                      await controller
+                                                          .onMenuItemSelected(
+                                                        item,
+                                                        message,
+                                                        safeContext,
+                                                      );
+                                                    } catch (e, st) {
+                                                      IsmChatLog.error(
+                                                        'Focus menu action failed: $e',
+                                                        st,
+                                                      );
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    height: IsmChatDimens.forty,
+                                                    padding: IsmChatDimens
+                                                        .edgeInsets16_0,
+                                                    decoration: BoxDecoration(
+                                                      color: itemStyle
+                                                          .backgroundColor,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            item.label,
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            softWrap: false,
+                                                            style: IsmChatStyles
+                                                                .w400Black12
+                                                                .copyWith(
+                                                              color: itemStyle
+                                                                  .labelColor,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        IsmChatDimens.boxWidth8,
+                                                        Icon(
+                                                          item.icon,
+                                                          color: itemStyle
+                                                              .iconColor,
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                                  const Spacer(),
-                                                  Icon(
-                                                    item.icon,
-                                                    color: itemStyle.iconColor,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      )),
+                                                );
+                                              },
+                                            )),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             ),
           ),

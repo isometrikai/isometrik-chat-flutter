@@ -23,8 +23,7 @@ class IsmChatConversationList extends StatelessWidget {
       origin: ApiCallOrigin.referesh,
     );
     if (Get.isRegistered<IsmChatMqttController>()) {
-      await Get.find<IsmChatMqttController>()
-          .getChatConversationsUnreadCount();
+      await Get.find<IsmChatMqttController>().getChatConversationsUnreadCount();
     }
   }
 
@@ -52,21 +51,37 @@ class IsmChatConversationList extends StatelessWidget {
           return const IsmChatLoadingDialog();
         }
         if (controller.userConversations.isEmpty) {
+          // Searching with no matches must not reuse the "no chats yet" /
+          // host placeholder (e.g. "No Messages") — show search empty copy.
+          final isSearching =
+              controller.searchConversationTEC.text.trim().isNotEmpty;
           return Center(
-            child: IsmChatProperties.conversationProperties.placeholder ??
-                const IsmChatEmptyView(
-                  icon: Icon(Icons.chat_outlined),
-                  text: IsmChatStrings.noConversation,
-                ),
+            child: isSearching
+                ? IsmChatEmptyView(
+                    icon: Icon(
+                      Icons.search_off_outlined,
+                      size: IsmChatDimens.fifty,
+                      color: IsmChatColors.greyColor,
+                    ),
+                    text: IsmChatStrings.noResultsFound,
+                  )
+                : IsmChatProperties.conversationProperties.placeholder ??
+                    IsmChatEmptyView(
+                      icon: Icon(Icons.chat_outlined),
+                      text: IsmChatStrings.noConversation,
+                    ),
           );
         }
-        return SizedBox(
-          height: IsmChatProperties.conversationProperties.height ??
-              IsmChatDimens.percentHeight(1),
-          child: SlidableAutoCloseBehavior(
-            child: _ConversationList(),
-          ),
+        // Fill the [Expanded] parent — do not force `percentHeight(1)` (full
+        // screen). That made short lists scroll into a large empty region.
+        final list = SlidableAutoCloseBehavior(
+          child: _ConversationList(),
         );
+        final maxHeight = IsmChatProperties.conversationProperties.height;
+        if (maxHeight != null) {
+          return SizedBox(height: maxHeight, child: list);
+        }
+        return list;
       },
     );
 
@@ -91,9 +106,11 @@ class _ConversationList extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView.separated(
         padding: IsmChatDimens.edgeInsets0_10,
-        shrinkWrap: true,
+        // Fill available height from parent [Expanded] / [SmartRefresher].
+        // shrinkWrap + full-screen height left blank scroll space under few chats.
         itemCount: controller.userConversations.length,
         controller: controller.conversationScrollController,
+        physics: const ClampingScrollPhysics(),
         separatorBuilder: (_, __) =>
             IsmChatProperties.conversationProperties.conversationDivider ??
             IsmChatDimens.boxHeight2,
@@ -221,11 +238,16 @@ class _SlidableWidgetState extends State<_SlidableWidget>
                           flex: 1,
                           backgroundColor: IsmChatColors.redColor,
                           foregroundColor: IsmChatColors.whiteColor,
-                          icon: const Icon(
-                            Icons.delete_rounded,
+                          icon: Icon(
+                            widget.conversation.isGroup == true
+                                ? Icons.logout_rounded
+                                : Icons.delete_rounded,
                             color: IsmChatColors.whiteColor,
                           ).icon,
-                          label: IsmChatStrings.delete,
+                          // Groups: swipe shows Exit Group; 1:1 keeps Delete.
+                          label: widget.conversation.isGroup == true
+                              ? IsmChatStrings.exitGroup
+                              : IsmChatStrings.delete,
                         ),
                     ],
                   ),
