@@ -57,14 +57,15 @@ class IsmChatConversationList extends StatelessWidget {
               controller.searchConversationTEC.text.trim().isNotEmpty;
           return Center(
             child: isSearching
-                ? IsmChatEmptyView(
-                    icon: Icon(
-                      Icons.search_off_outlined,
-                      size: IsmChatDimens.fifty,
-                      color: IsmChatColors.greyColor,
-                    ),
-                    text: IsmChatStrings.noResultsFound,
-                  )
+                ? IsmChatProperties.conversationProperties.searchPlaceholder ??
+                    IsmChatEmptyView(
+                      icon: Icon(
+                        Icons.search_off_outlined,
+                        size: IsmChatDimens.fifty,
+                        color: IsmChatColors.greyColor,
+                      ),
+                      text: IsmChatStrings.noResultsFound,
+                    )
                 : IsmChatProperties.conversationProperties.placeholder ??
                     IsmChatEmptyView(
                       icon: Icon(Icons.chat_outlined),

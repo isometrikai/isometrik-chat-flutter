@@ -25,6 +25,7 @@ class IsmChatConversationProperties {
     this.startActionSlidableEnable,
     this.endActionSlidableEnable,
     this.placeholder,
+    this.searchPlaceholder,
     this.height,
     this.header,
     this.shouldShowAppBar = false,
@@ -137,6 +138,12 @@ class IsmChatConversationProperties {
 
   /// A placeholder widget to display when there are no chat items.
   final Widget? placeholder;
+
+  /// A placeholder widget when conversation search returns no matches.
+  ///
+  /// Same role as [placeholder], but only for an active search with empty
+  /// results. If null, the SDK shows [IsmChatStrings.noResultsFound].
+  final Widget? searchPlaceholder;
 
   /// A callback that determines whether a chat item can be slid.
   ///
