@@ -6,6 +6,38 @@ import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 class WebMediaPreview extends StatelessWidget {
   const WebMediaPreview({super.key});
 
+  /// Optional safety filter used by Enter-key and send-FAB.
+  ///
+  /// `messageAllowedConfig` is nullable. Use `?.` + `?? true` so a missing
+  /// filter still allows send (same contract as the MessageAllowedConfig?
+  /// extension). `?? false` would block every web media send in hosts that
+  /// never set a filter. `shouldAllowOutboundSend` is a method, not a
+  /// callback — do not use `.call(...)`.
+  Future<bool> _shouldAllowWebMediaSend({
+    required BuildContext context,
+    required IsmChatPageController controller,
+  }) async {
+    if (controller.webMedia.isEmpty) {
+      return false;
+    }
+    final media = controller.webMedia[controller.assetsIndex];
+    final isVideo = IsmChatConstants.videoExtensions.contains(
+      media.platformFile.extension,
+    );
+    final caption = controller.textEditingController.text.trim();
+    return await IsmChatProperties.chatPageProperties.messageAllowedConfig
+            ?.shouldAllowOutboundSend(
+          context: context,
+          conversation: controller.conversation,
+          customType: isVideo
+              ? IsmChatCustomMessageType.video
+              : IsmChatCustomMessageType.image,
+          messageText:
+              caption.isNotEmpty ? caption : (media.caption ?? '').trim(),
+        ) ??
+        true;
+  }
+
   @override
   Widget build(BuildContext context) => GetX<IsmChatPageController>(
         tag: IsmChat.i.chatPageTag,
@@ -177,18 +209,10 @@ class WebMediaPreview extends StatelessWidget {
                                 onKeyEvent: (event) async {
                                   if (event.logicalKey ==
                                       LogicalKeyboardKey.enter) {
-                                    if (await IsmChatProperties
-                                            .chatPageProperties
-                                            .messageAllowedConfig
-                                            ?.isMessgeAllowed
-                                            ?.call(
-                                                context,
-                                                controller.conversation,
-                                                IsmChatCustomMessageType
-                                                    .image,
-                                                controller.chatInputController.text
-                                                    .trim()) ??
-                                        true) {
+                                    if (await _shouldAllowWebMediaSend(
+                                      context: context,
+                                      controller: controller,
+                                    )) {
                                       controller.sendMediaWeb();
                                     }
                                   }
@@ -226,13 +250,10 @@ class WebMediaPreview extends StatelessWidget {
                             IsmChatDimens.boxWidth20,
                             IsmChatStartChatFAB(
                               onTap: () async {
-                                if (await IsmChatProperties.chatPageProperties
-                                        .messageAllowedConfig?.isMessgeAllowed
-                                        ?.call(context, controller.conversation,
-                                            IsmChatCustomMessageType.image,
-                                            controller.chatInputController.text
-                                                .trim()) ??
-                                    true) {
+                                if (await _shouldAllowWebMediaSend(
+                                  context: context,
+                                  controller: controller,
+                                )) {
                                   controller.sendMediaWeb();
                                 }
                               },

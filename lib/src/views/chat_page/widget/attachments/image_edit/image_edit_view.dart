@@ -110,12 +110,15 @@ class IsmChatImageEditView extends StatelessWidget {
                         paidMediaMetaData = result.metaData;
                       }
                       IsmChatRoute.goBack();
-                      if (await IsmChatProperties.chatPageProperties
-                              .messageAllowedConfig?.isMessgeAllowed
-                              ?.call(context, controller.conversation,
-                                  IsmChatCustomMessageType.image,
-                                  controller.chatInputController.text.trim()) ??
-                          true) {
+                      final allowed = await IsmChatProperties
+                          .chatPageProperties.messageAllowedConfig
+                          .shouldAllowOutboundSend(
+                        context: context,
+                        conversation: controller.conversation,
+                        customType: IsmChatCustomMessageType.image,
+                        messageText: controller.chatInputController.text.trim(),
+                      );
+                      if (allowed) {
                         await controller.sendImage(
                           conversationId:
                               controller.conversation?.conversationId ?? '',

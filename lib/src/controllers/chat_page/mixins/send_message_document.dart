@@ -22,32 +22,46 @@ mixin IsmChatPageSendMessageDocumentMixin {
     required String conversationId,
     required String userId,
   }) async {
-    if (await IsmChatProperties
-            .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-            ?.call(
-                IsmChatConfig.kNavigatorKey.currentContext ??
-                    IsmChatConfig.context,
-                IsmChatUtility.chatPageController.conversation!,
-                IsmChatCustomMessageType.file,
-                _controller.chatInputController.text.trim()) ??
-        true) {
-      final result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-        withData: true,
-      );
+    final allowed = await IsmChatProperties
+        .chatPageProperties.messageAllowedConfig
+        .shouldAllowOutboundSend(
+      context:
+          IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
+      conversation: _controller.conversation,
+      customType: IsmChatCustomMessageType.file,
+      messageText: _controller.chatInputController.text.trim(),
+    );
+    if (!allowed) {
+      return;
+    }
 
-      if (result?.files.isNotEmpty ?? false) {
-        // Note: createConversation is provided by send_message_core mixin
-        conversationId = await _controller.createConversation(
-            conversationId: conversationId, userId: userId);
-        for (final file in result!.files) {
-          await _sendPickedDocumentFile(
-            conversationId: conversationId,
-            file: file,
-          );
-        }
+    // Resolve the conversation immediately after the allow-check and before
+    // the file picker. Reuse this pattern in other attachment send paths:
+    // never send against the inbound/stale id if creation fails or returns ''.
+    final resolvedConversationId = await _controller.createConversation(
+      conversationId: conversationId,
+      userId: userId,
+    );
+    if (resolvedConversationId.isEmpty) {
+      IsmChatLog.error(
+        'sendDocument aborted: conversation creation returned an empty id',
+      );
+      return;
+    }
+
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+      withData: true,
+    );
+
+    if (result?.files.isNotEmpty ?? false) {
+      for (final file in result!.files) {
+        await _sendPickedDocumentFile(
+          conversationId: resolvedConversationId,
+          file: file,
+        );
       }
     }
   }

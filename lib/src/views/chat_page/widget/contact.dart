@@ -77,15 +77,16 @@ class IsmChatContactView extends StatelessWidget {
               : FloatingActionButton(
                   onPressed: () async {
                     IsmChatRoute.goBack();
-                    if (await IsmChatProperties.chatPageProperties
-                            .messageAllowedConfig?.isMessgeAllowed
-                            ?.call(
-                                IsmChatConfig.kNavigatorKey.currentContext ??
-                                    IsmChatConfig.context,
-                                controller.conversation,
-                                IsmChatCustomMessageType.contact,
-                                controller.chatInputController.text.trim()) ??
-                        true) {
+                    final allowed = await IsmChatProperties
+                        .chatPageProperties.messageAllowedConfig
+                        .shouldAllowOutboundSend(
+                      context: IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context,
+                      conversation: controller.conversation,
+                      customType: IsmChatCustomMessageType.contact,
+                      messageText: controller.chatInputController.text.trim(),
+                    );
+                    if (allowed) {
                       controller.sendContact(
                         conversationId:
                             controller.conversation?.conversationId ?? '',

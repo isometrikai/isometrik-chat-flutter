@@ -235,15 +235,16 @@ class _IsmChatVideoViewState extends State<IsmChatVideoView> {
                     }
                     IsmChatRoute.goBack();
                     IsmChatRoute.goBack();
-                    if (await IsmChatProperties.chatPageProperties
-                            .messageAllowedConfig?.isMessgeAllowed
-                            ?.call(
-                                IsmChatConfig.kNavigatorKey.currentContext ??
-                                    IsmChatConfig.context,
-                                controller.conversation,
-                                IsmChatCustomMessageType.video,
-                                controller.chatInputController.text.trim()) ??
-                        true) {
+                    final allowed = await IsmChatProperties
+                        .chatPageProperties.messageAllowedConfig
+                        .shouldAllowOutboundSend(
+                      context: IsmChatConfig.kNavigatorKey.currentContext ??
+                          IsmChatConfig.context,
+                      conversation: controller.conversation,
+                      customType: IsmChatCustomMessageType.video,
+                      messageText: controller.chatInputController.text.trim(),
+                    );
+                    if (allowed) {
                       await controller.sendVideo(
                         webMediaModel: webMediaModel!,
                         conversationId:

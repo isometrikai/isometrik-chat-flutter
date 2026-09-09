@@ -231,6 +231,11 @@ mixin IsmChatPageSendMessageCoreMixin {
   /// [conversationId] - ID of the conversation
   /// [userId] - ID of the user
   /// [pushNotifications] - Whether to send push notifications
+  /// [keepLocalOnly] - When true (host safety filter), the bubble is shown and
+  ///   saved to the main DB with [IsmChatMessageModel.isInvalidMessage], but
+  ///   the send API is never called and the message is not put in pending.
+  /// [localBlockReason] - Optional reason forwarded to
+  ///   [MessageAllowedConfig.onMessageSendBlocked] for host logging.
   ///
   /// Note: This method requires `createConversation` and `sendMessage`
   /// to be available on the controller.
@@ -238,6 +243,8 @@ mixin IsmChatPageSendMessageCoreMixin {
     required String conversationId,
     required String userId,
     bool pushNotifications = true,
+    bool keepLocalOnly = false,
+    String? localBlockReason,
   }) async {
     conversationId = await _controller.createConversation(
         conversationId: conversationId, userId: userId);
@@ -270,10 +277,20 @@ mixin IsmChatPageSendMessageCoreMixin {
       readByAll: false,
       sentAt: sentAt,
       sentByMe: true,
+      // Local-only blocked sends reuse the same failed-send UI (error icon).
+      isInvalidMessage: keepLocalOnly,
       metaData: () {
         final meta = IsmChatMetaData(
           messageSentAt: sentAt,
           isOnelyEmoji: IsmChatUtility.isOnlyEmoji(originalBody),
+          // Host safety filter metadata (phishing keepLocal, etc.).
+          customMetaData: keepLocalOnly
+              ? {
+                  'localSendBlocked': true,
+                  if (localBlockReason != null)
+                    'localSendBlockReason': localBlockReason,
+                }
+              : null,
           replyMessage: _controller.isreplying
               ? IsmChatReplyMessageModel(
                   forMessageType: IsmChatCustomMessageType.text,
@@ -294,7 +311,10 @@ mixin IsmChatPageSendMessageCoreMixin {
               : null,
         );
         // Keep original only on device for pending retry; stripped before API.
-        if (maskingEnabled && originalBody != displayBody) {
+        // Not needed for keepLocalOnly (never sent to API).
+        if (!keepLocalOnly &&
+            maskingEnabled &&
+            originalBody != displayBody) {
           return IsmChatSensitiveContentMasker.attachLocalUnmasked(
             meta: meta,
             originalBody: originalBody,
@@ -322,6 +342,22 @@ mixin IsmChatPageSendMessageCoreMixin {
     _controller.isreplying = false;
     _controller.chatInputController.clear();
     _controller.isMessageSent = false;
+
+    // keepLocalOnly: persist on main only (never pending → never API retry).
+    if (keepLocalOnly) {
+      if (!_controller.isBroadcast) {
+        await IsmChatConfig.dbWrapper
+            ?.saveMessage(textMessage, IsmChatDbBox.main);
+        _controller.updateLastMessagOnCurrentTime(textMessage);
+      }
+      IsmChatProperties.chatPageProperties.messageAllowedConfig
+          ?.notifyMessageSendBlocked(
+        decision: IsmChatMessageSendDecision.keepLocal(reason: localBlockReason),
+        message: textMessage,
+      );
+      return;
+    }
+
     if (!_controller.isBroadcast) {
       await IsmChatConfig.dbWrapper
           ?.saveMessage(textMessage, IsmChatDbBox.pending);
@@ -537,7 +573,9 @@ mixin IsmChatPageSendMessageCoreMixin {
   /// [conversationId] - ID of the conversation (may be empty for new conversations)
   /// [userId] - ID of the user
   ///
-  /// Returns the conversation ID (existing or newly created).
+  /// Returns the conversation ID (existing or newly created). Returns an empty
+  /// string when creation fails — callers must abort send rather than reuse the
+  /// inbound / stale id.
   ///
   /// Note: This method requires `createBroadcastConversation` to be available
   /// through send_message_broadcast mixin on the controller.
@@ -556,20 +594,34 @@ mixin IsmChatPageSendMessageCoreMixin {
     }
 
     if (chatConversationResponse == null && !isBroadcastConversation) {
-      _controller.conversation =
-          await _controller.commonController.createConversation(
-        conversation: _controller.conversation!,
-        isGroup: _controller.conversation?.isGroup ?? false,
+      final existingConversation = _controller.conversation;
+      if (existingConversation == null) {
+        IsmChatLog.error(
+          'createConversation failed: chat page conversation is null',
+        );
+        return '';
+      }
+      final created = await _controller.commonController.createConversation(
+        conversation: existingConversation,
+        isGroup: existingConversation.isGroup ?? false,
         userId: [userId ?? ''],
-        metaData: _controller.conversation?.metaData,
+        metaData: existingConversation.metaData,
         searchableTags: [
           IsmChatConfig.communicationConfig.userConfig.userName ??
               _controller.conversationController.userDetails?.userName ??
               '',
-          _controller.conversation?.chatName ?? ''
+          existingConversation.chatName ?? ''
         ],
       );
-      conversationId = _controller.conversation?.conversationId ?? '';
+      final createdId = created?.conversationId ?? '';
+      if (created == null || createdId.isEmpty) {
+        IsmChatLog.error(
+          'createConversation failed: API returned no conversation id',
+        );
+        return '';
+      }
+      _controller.conversation = created;
+      conversationId = createdId;
       IsmChatConfig.onConversationCreated?.call(
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
         _controller.conversation,
