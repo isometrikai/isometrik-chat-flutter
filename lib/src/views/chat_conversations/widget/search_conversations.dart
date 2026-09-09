@@ -33,6 +33,7 @@ class IsmChatSearchConversation extends StatelessWidget {
                         );
                         break;
                       default:
+                        controller.searchConversationQuery = '';
                         await controller.getConversationsFromDB();
                     }
                   });
@@ -47,6 +48,7 @@ class IsmChatSearchConversation extends StatelessWidget {
                         focusColor: IsmChatColors.transparent,
                         onPressed: () {
                           controller.searchConversationTEC.clear();
+                          controller.searchConversationQuery = '';
                           controller.getConversationsFromDB();
                         },
                         icon: const Icon(

@@ -24,6 +24,17 @@ mixin IsmChatConversationsVariablesMixin on GetxController {
   /// This variable use for store  for searching feature
   TextEditingController searchConversationTEC = TextEditingController();
 
+  /// Active conversation-list search query (reactive for GetX empty-state).
+  /// Prefer this over [searchConversationTEC].text — TEC changes do not rebuild GetX.
+  final RxString _searchConversationQuery = ''.obs;
+  String get searchConversationQuery => _searchConversationQuery.value;
+  set searchConversationQuery(String value) =>
+      _searchConversationQuery.value = value;
+
+  /// True when the chat list is filtered by a non-empty search query.
+  bool get isSearchingConversations =>
+      searchConversationQuery.trim().isNotEmpty;
+
   /// This variable use for get all method and varibles from IsmChatCommonController
   IsmChatCommonController get commonController =>
       Get.find<IsmChatCommonController>();

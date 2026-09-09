@@ -150,33 +150,31 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
         .map((conversation) => conversation.normalizeOpponentDetails())
         .toList();
     _controller.isConversationsLoading = false;
-    if (_controller.conversations.length <= 1) {
-      IsmChatProperties.conversationProperties.conversationListEmptyOrNot
-          ?.call(_controller.conversations.isEmpty);
-      return;
-    }
-    _controller.conversations.sort((a, b) => (b.lastMessageDetails?.sentAt ?? 0)
-        .compareTo(a.lastMessageDetails?.sentAt ?? 0));
-    final opponentEmptyData = <IsmChatConversationModel>[];
-    final opponentData = <IsmChatConversationModel>[];
-    for (var x in _controller.conversations) {
-      if (x.isGroup == false && x.opponentDetails?.userId.isEmpty == true) {
-        opponentEmptyData.add(x);
-      } else {
-        opponentData.add(x);
-      }
-    }
-    opponentData.addAll(opponentEmptyData);
-    _controller.conversations = opponentData;
 
+    if (_controller.conversations.length > 1) {
+      _controller.conversations
+          .sort((a, b) => (b.lastMessageDetails?.sentAt ?? 0)
+              .compareTo(a.lastMessageDetails?.sentAt ?? 0));
+      final opponentEmptyData = <IsmChatConversationModel>[];
+      final opponentData = <IsmChatConversationModel>[];
+      for (var x in _controller.conversations) {
+        if (x.isGroup == false && x.opponentDetails?.userId.isEmpty == true) {
+          opponentEmptyData.add(x);
+        } else {
+          opponentData.add(x);
+        }
+      }
+      opponentData.addAll(opponentEmptyData);
+      _controller.conversations = opponentData;
+    }
+
+    // Always apply search filter — previously skipped when length <= 1, so a
+    // single non-matching chat never showed [searchPlaceholder].
     if (searchTag?.isNotEmpty == true) {
       final rawSearchText = (searchTag ?? '').trim().toLowerCase();
-      // Normalize multiple spaces so queries like "liam   theo" still match.
       final normalizedSearchText =
           rawSearchText.replaceAll(RegExp(r'\s+'), ' ');
       _controller.conversations = _controller.conversations.where((e) {
-        // Use "contains" instead of "startsWith" so existing conversations
-        // still match when the query appears mid-string (e.g., group titles).
         if (e.isGroup == true) {
           return (e.conversationTitle ?? '').toLowerCase().contains(
                     normalizedSearchText,
@@ -185,31 +183,27 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
                         (x) => x.toLowerCase().contains(normalizedSearchText),
                       ) ??
                   false);
-        } else {
-          final userName = (e.opponentDetails?.userName ?? '').toLowerCase();
-          final firstName =
-              (e.opponentDetails?.metaData?.firstName ?? '').toLowerCase();
-          final lastName =
-              (e.opponentDetails?.metaData?.lastName ?? '').toLowerCase();
-          final identifier =
-              (e.opponentDetails?.userIdentifier ?? '').toLowerCase();
-
-          // Chat list usually displays "First Last". Support searching the same
-          // string (and reverse order) in addition to username.
-          final fullName = '$firstName $lastName'.trim();
-          final fullNameRev = '$lastName $firstName'.trim();
-          final normalizedFullName =
-              fullName.replaceAll(RegExp(r'\s+'), ' ').trim();
-          final normalizedFullNameRev =
-              fullNameRev.replaceAll(RegExp(r'\s+'), ' ').trim();
-
-          return userName.contains(normalizedSearchText) ||
-              identifier.contains(normalizedSearchText) ||
-              firstName.contains(normalizedSearchText) ||
-              lastName.contains(normalizedSearchText) ||
-              normalizedFullName.contains(normalizedSearchText) ||
-              normalizedFullNameRev.contains(normalizedSearchText);
         }
+        final userName = (e.opponentDetails?.userName ?? '').toLowerCase();
+        final firstName =
+            (e.opponentDetails?.metaData?.firstName ?? '').toLowerCase();
+        final lastName =
+            (e.opponentDetails?.metaData?.lastName ?? '').toLowerCase();
+        final identifier =
+            (e.opponentDetails?.userIdentifier ?? '').toLowerCase();
+        final fullName = '$firstName $lastName'.trim();
+        final fullNameRev = '$lastName $firstName'.trim();
+        final normalizedFullName =
+            fullName.replaceAll(RegExp(r'\s+'), ' ').trim();
+        final normalizedFullNameRev =
+            fullNameRev.replaceAll(RegExp(r'\s+'), ' ').trim();
+
+        return userName.contains(normalizedSearchText) ||
+            identifier.contains(normalizedSearchText) ||
+            firstName.contains(normalizedSearchText) ||
+            lastName.contains(normalizedSearchText) ||
+            normalizedFullName.contains(normalizedSearchText) ||
+            normalizedFullNameRev.contains(normalizedSearchText);
       }).toList();
     }
 
@@ -242,12 +236,40 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     ApiCallOrigin? origin,
     String? searchTag,
   }) async {
+    // Keep reactive search flag in sync so empty-state shows searchPlaceholder.
+    // - Explicit [searchTag] updates the query (including '' to clear).
+    // - Pull-to-refresh clears search.
+    // - Load-more keeps the current query and re-applies it locally.
+    if (searchTag != null) {
+      final trimmedSearch = searchTag.trim();
+      _controller.searchConversationQuery = trimmedSearch;
+      _controller.searchConversationTEC.value = TextEditingValue(
+        text: trimmedSearch,
+        selection: TextSelection.collapsed(offset: trimmedSearch.length),
+      );
+    } else if (origin == ApiCallOrigin.referesh) {
+      _controller.searchConversationQuery = '';
+      _controller.searchConversationTEC.clear();
+    }
+
+    final resolvedSearch = () {
+      if (searchTag != null) {
+        final t = searchTag.trim();
+        return t.isEmpty ? null : t;
+      }
+      if (origin == ApiCallOrigin.loadMore &&
+          _controller.searchConversationQuery.trim().isNotEmpty) {
+        return _controller.searchConversationQuery.trim();
+      }
+      return null;
+    }();
+
     if (_controller.conversations.isEmpty) {
       _controller.isConversationsLoading = true;
     }
     var chats = await _controller.viewModel.getChatConversations(
       skip: skip,
-      searchTag: searchTag,
+      searchTag: resolvedSearch,
     );
 
     if (IsmChatProperties.conversationModifier != null) {
@@ -289,7 +311,7 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     // - If API returns empty for queries like "liam theo", we should still be able
     //   to match cached conversations locally.
     await _controller.getConversationsFromDB(
-      searchTag: searchTag,
+      searchTag: resolvedSearch,
     );
 
     if (_controller.conversations.isEmpty) {

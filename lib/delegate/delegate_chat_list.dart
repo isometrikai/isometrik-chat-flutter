@@ -56,9 +56,9 @@ mixin IsmChatDelegateChatListMixin {
       return;
     }
     final trimmed = query.trim();
-    controller.searchConversationTEC.text = query;
     if (trimmed.isEmpty) {
       await controller.getChatConversations(
+        searchTag: '',
         origin: ApiCallOrigin.referesh,
       );
       return;
