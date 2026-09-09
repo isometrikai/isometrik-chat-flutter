@@ -128,6 +128,7 @@ const Map<String, String> kIsmChatLocaleFr = {
   'noMessageFound': 'Aucun message trouvé',
   'noSearch': 'Vous n\'avez encore rien recherché',
   'noConversationFound': 'Aucune conversation trouvée',
+  'noResultsFound': 'Aucun résultat trouvé',
   'forwarded': 'Transféré',
   'logoutMessage': 'Voulez-vous vraiment vous déconnecter ?',
   'removeGroupMessage': 'Vous avez été retiré du groupe… !',

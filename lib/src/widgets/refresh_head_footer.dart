@@ -130,19 +130,32 @@ class RefreshFooter extends StatelessWidget {
         builder: (_, mode) {
           switch (mode) {
             case LoadStatus.failed:
-            case LoadStatus.idle:
-            case LoadStatus.canLoading:
+              return Center(
+                child: Padding(
+                  padding: IsmChatDimens.edgeInsetsTop20,
+                  child: Text(
+                    'Load failed',
+                    style: IsmChatStyles.w400Grey14,
+                  ),
+                ),
+              );
             case LoadStatus.noMore:
+              // Only reserve footer space when there is truly no more data.
               return IsmChatProperties.conversationProperties.refreshFooter ??
                   Center(
-                      child: Padding(
-                    padding: IsmChatDimens.edgeInsetsTop20,
-                    child: Text(
-                      'No more data',
-                      style: IsmChatStyles.w400Grey14,
+                    child: Padding(
+                      padding: IsmChatDimens.edgeInsetsTop20,
+                      child: Text(
+                        'No more data',
+                        style: IsmChatStyles.w400Grey14,
+                      ),
                     ),
-                  ));
-
+                  );
+            case LoadStatus.idle:
+            case LoadStatus.canLoading:
+              // Idle/canLoading must not paint a tall placeholder — that
+              // created excessive empty space under short conversation lists.
+              return const SizedBox.shrink();
             default:
               return const _SmartRefreshDialog();
           }

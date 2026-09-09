@@ -160,6 +160,8 @@ class IsmChatStrings {
   static String get noMessageFound => IsmChatL10n.get('noMessageFound');
   static String get noSearch => IsmChatL10n.get('noSearch');
   static String get noConversationFound => IsmChatL10n.get('noConversationFound');
+  /// Empty state when conversation / chat search has no matches.
+  static String get noResultsFound => IsmChatL10n.get('noResultsFound');
   static String get forwarded => IsmChatL10n.get('forwarded');
   static String get logoutMessage => IsmChatL10n.get('logoutMessage');
   static String get removeGroupMessage => IsmChatL10n.get('removeGroupMessage');

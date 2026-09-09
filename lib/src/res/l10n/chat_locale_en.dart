@@ -128,6 +128,8 @@ const Map<String, String> kIsmChatLocaleEn = {
   'noMessageFound': 'No Messages found',
   'noSearch': 'You haven\'t searched anything yet',
   'noConversationFound': 'No conversation found',
+  // Empty state when chat / conversation search returns nothing.
+  'noResultsFound': 'No results found',
   'forwarded': 'Forwarded',
   'logoutMessage': 'Are you sure you want to logout',
   'removeGroupMessage': 'You have been removed out of the group...!',
