@@ -184,6 +184,12 @@ mixin IsmChatPageSendMessageCoreMixin {
   ///
   /// Optional [text] is written into `chatInputController` first. Returns
   /// `false` when blocked, empty, already sending, or disallowed.
+  ///
+  /// **Reuse:** this is the only text-send gate. Send-button, Enter-key, and
+  /// `IsmChat.i.sendComposerText` all land here so host filters in
+  /// [MessageAllowedConfig.onBeforeSendMessage] (or legacy `isMessgeAllowed`)
+  /// run once. Do not call [sendTextMessage] from a composer without going
+  /// through this method.
   Future<bool> trySendTextFromComposer({String? text}) async {
     if (text != null) {
       _controller.chatInputController.text = text;
@@ -197,21 +203,30 @@ mixin IsmChatPageSendMessageCoreMixin {
     if (body.isEmpty || _controller.isMessageSent) {
       return false;
     }
-    final allowed = await IsmChatProperties.chatPageProperties
-            .messageAllowedConfig?.isMessgeAllowed
-            ?.call(
-              IsmChatConfig.kNavigatorKey.currentContext ??
-                  IsmChatConfig.context,
-              _controller.conversation,
-              _controller.isreplying
-                  ? IsmChatCustomMessageType.reply
-                  : IsmChatCustomMessageType.text,
-              body,
-            ) ??
-        true;
-    if (!allowed) {
+    final customType = _controller.isreplying
+        ? IsmChatCustomMessageType.reply
+        : IsmChatCustomMessageType.text;
+    // Snapshot config before await — host may swap messageAllowedConfig mid-send.
+    final allowedConfig =
+        IsmChatProperties.chatPageProperties.messageAllowedConfig;
+    final decision = await allowedConfig.resolveOutboundSendDecision(
+      context: IsmChatConfig.kNavigatorKey.currentContext ??
+          IsmChatConfig.context,
+      conversation: _controller.conversation,
+      customType: customType,
+      messageText: body,
+    );
+
+    if (decision.shouldBlock) {
+      allowedConfig?.notifyMessageSendBlocked(
+        decision: decision,
+        body: body,
+        conversation: _controller.conversation,
+        customType: customType,
+      );
       return false;
     }
+
     await _controller.getMentionedUserList(body);
     if (_controller.chatInputController.text.trim().isEmpty ||
         _controller.isMessageSent) {
@@ -222,6 +237,8 @@ mixin IsmChatPageSendMessageCoreMixin {
       ..sendTextMessage(
         conversationId: _controller.conversation?.conversationId ?? '',
         userId: _controller.conversation?.opponentDetails?.userId ?? '',
+        keepLocalOnly: decision.shouldKeepLocal,
+        localBlockReason: decision.reason,
       );
     return true;
   }
