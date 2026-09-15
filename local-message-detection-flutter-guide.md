@@ -157,6 +157,8 @@ IsmChatProperties.chatPageProperties = IsmChatPageProperties(
 - `keepLocal` — bubble shown + saved to main DB with `isInvalidMessage`, **no API**
 - Legacy `isMessgeAllowed` (`bool`) still works: `false` ≡ `block`
 
+The SDK invokes this from `trySendTextFromComposer` — send button, Enter key, and `IsmChat.i.sendComposerText`. Assign the config on `IsmChatProperties.chatPageProperties` (or `IsmChatApp(chatPageProperties: …)`). Custom composers must send via `sendComposerText`, not `sendTextMessage` directly.
+
 Optional phase-2 ML block (skip if not implemented yet):
 
 ```dart

@@ -1064,17 +1064,18 @@ mixin IsmChatPageSendMessageMediaMixin {
     final extension = _extensionFromMimeType(content.mimeType);
     final isGif = _isGifExtension(extension);
     // Resolve context again after awaits — navigator key may have changed.
+    // Reuse shouldAllowOutboundSend so onBeforeSendMessage (not only legacy
+    // isMessgeAllowed) gates keyboard-inserted images/GIFs too.
     final allowedContext =
         IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context;
     final allowed = await IsmChatProperties
-            .chatPageProperties.messageAllowedConfig?.isMessgeAllowed
-            ?.call(
-          allowedContext,
-          _controller.conversation,
-          IsmChatCustomMessageType.image,
-          '',
-        ) ??
-        true;
+        .chatPageProperties.messageAllowedConfig
+        .shouldAllowOutboundSend(
+      context: allowedContext,
+      conversation: _controller.conversation,
+      customType: IsmChatCustomMessageType.image,
+      messageText: '',
+    );
     if (!allowed) {
       return;
     }
