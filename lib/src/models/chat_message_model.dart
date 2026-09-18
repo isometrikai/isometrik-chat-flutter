@@ -104,6 +104,7 @@ class IsmChatMessageModel {
     this.mentionedUsers,
     this.initiatorId,
     this.initiatorName,
+    this.initiatorImageUrl,
     this.members,
     this.memberId,
     this.memberName,
@@ -282,6 +283,7 @@ class IsmChatMessageModel {
               .toList(),
       initiatorId: map['initiatorId'] as String? ?? '',
       initiatorName: map['initiatorName'] as String? ?? '',
+      initiatorImageUrl: map['initiatorImageUrl'] as String? ?? '',
       callDurations: map['callDurations'] == null
           ? []
           : List<CallDuration>.from(
@@ -418,6 +420,7 @@ class IsmChatMessageModel {
         mentionedUsers: [],
         initiatorId: '',
         initiatorName: '',
+        initiatorImageUrl: '',
         members: [],
         reactions: null,
         notificationBody: '',
@@ -471,6 +474,7 @@ class IsmChatMessageModel {
         mentionedUsers: [],
         initiatorId: '',
         initiatorName: '',
+        initiatorImageUrl: '',
         members: [],
         reactions: null,
         notificationBody: '',
@@ -554,6 +558,7 @@ class IsmChatMessageModel {
         'mentionedUsers': mentionedUsers?.map((e) => e.toMap()).toList(),
         'initiatorId': initiatorId,
         'initiatorName': initiatorName,
+        'initiatorImageUrl': initiatorImageUrl,
         'members': members?.map((e) => e.toMap()).toList(),
         'memberId': memberId,
         'memberName': memberName,
@@ -605,6 +610,7 @@ class IsmChatMessageModel {
   String? messageId;
   String? deviceId;
   String? initiatorName;
+  String? initiatorImageUrl;
   List<UserDetails>? members;
   int? adminCount;
   IsmChatMessageType? messageType;
