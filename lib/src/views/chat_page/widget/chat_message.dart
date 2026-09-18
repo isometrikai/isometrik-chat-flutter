@@ -180,9 +180,10 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                         controller.conversation,
                                       ) ??
                                       widget._message?.senderInfo?.profileUrl ??
-                                      '',
+                                      (widget._message?.initiatorImageUrl ??
+                                          ''),
                                   name: widget._message?.senderInfo?.userName ??
-                                      '',
+                                      (widget._message?.initiatorName ?? ''),
                                   dimensions: IsmChatConfig.chatTheme
                                           .chatPageTheme?.profileImageSize ??
                                       35,
