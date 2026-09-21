@@ -1,5 +1,6 @@
-# Uncomment this line to define a global platform for your project
-# platform :ios, '13.0'
+# Current Xcode (SDK 27.x) only supports IPHONEOS_DEPLOYMENT_TARGET 15.0–27.0.
+# Keep this in sync with Runner.xcodeproj and AppFrameworkInfo.plist.
+platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -35,10 +36,12 @@ target 'Runner' do
 end
 
 post_install do |installer|
+  # Force every generated/pod target to 15.0 so Xcode does not inherit
+  # older plugin defaults (13.0/14.0) that fail Target Integrity checks.
   installer.generated_projects.each do |project|
     project.targets.each do |target|
         target.build_configurations.each do |config|
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
         end
     end
   end
@@ -47,6 +50,7 @@ post_install do |installer|
     
     # ADD THE NEXT SECTION
     target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'AUDIO_SESSION_MICROPHONE=0',
