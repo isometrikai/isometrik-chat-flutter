@@ -283,8 +283,11 @@ void _trackCallMeetingLiveness(IsmChatMessageModel message) {
     IsmChatCallMeetingLiveness.markEnded(message.meetingId);
     return;
   }
+  if (action == IsmChatActionEvents.memberJoin.name) {
+    IsmChatCallMeetingLiveness.markConnected(message.meetingId);
+    return;
+  }
   if (action == IsmChatActionEvents.meetingCreated.name ||
-      action == IsmChatActionEvents.memberJoin.name ||
       action == IsmChatActionEvents.memberLeave.name) {
     IsmChatCallMeetingLiveness.markLive(message.meetingId);
   }

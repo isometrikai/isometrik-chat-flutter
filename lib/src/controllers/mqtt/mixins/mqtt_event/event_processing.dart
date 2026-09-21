@@ -161,7 +161,23 @@ mixin IsmChatMqttEventProcessingMixin {
         break;
       case IsmChatActionEvents.memberLeave:
       case IsmChatActionEvents.memberJoin:
-        if (self is IsmChatMqttEventGroupOperationsMixin &&
+        // Group-call presence (payload has meetingId). Conversation
+        // membership events have no meetingId and still go through
+        // [handleMemberJoinAndLeave] below.
+        if (self is IsmChatMqttEventCallsMixin) {
+          (self as IsmChatMqttEventCallsMixin).handleGroupCallMemberPresence(
+            actionModel,
+            payload: payload,
+          );
+        }
+        final hasMeetingId = (actionModel.meetingId ?? '').trim().isNotEmpty ||
+            (payload?['meetingId'] ?? payload?['meeting_id'])
+                    ?.toString()
+                    .trim()
+                    .isNotEmpty ==
+                true;
+        if (!hasMeetingId &&
+            self is IsmChatMqttEventGroupOperationsMixin &&
             self is IsmChatMqttEventUtilitiesMixin) {
           (self as IsmChatMqttEventGroupOperationsMixin)
               .handleMemberJoinAndLeave(actionModel);

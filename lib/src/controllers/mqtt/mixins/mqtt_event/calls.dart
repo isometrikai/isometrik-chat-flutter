@@ -77,6 +77,34 @@ mixin IsmChatMqttEventCallsMixin {
     }
   }
 
+  /// Group-call `memberJoin` / `memberLeave` (MQTT has [meetingId]).
+  ///
+  /// Conversation membership uses the same action names but has no meetingId —
+  /// those are ignored here and still handled by [handleMemberJoinAndLeave].
+  /// Reuse: 1:1 uses [joinRequestAccept] for connected; group uses memberJoin.
+  void handleGroupCallMemberPresence(
+    IsmChatMqttActionModel actionModel, {
+    Map<String, dynamic>? payload,
+  }) {
+    String? pick(String? value) {
+      final v = value?.trim() ?? '';
+      return v.isEmpty ? null : v;
+    }
+
+    final meetingId = pick(actionModel.meetingId) ??
+        pick(payload?['meetingId']?.toString()) ??
+        pick(payload?['meeting_id']?.toString());
+    if (meetingId == null) return;
+    final actionName = actionModel.action.toString();
+    if (actionName == IsmChatActionEvents.memberJoin.name) {
+      IsmChatCallMeetingLiveness.markConnected(meetingId);
+    } else if (actionName == IsmChatActionEvents.memberLeave.name) {
+      // Remaining members can still be in the room.
+      IsmChatCallMeetingLiveness.markLive(meetingId);
+    }
+    _refreshLiveCallTiles(meetingId);
+  }
+
   /// Build a mergeable call bubble from the Status hang-up payload.
   ///
   /// Reuse: [IsmChatMessageModel.fromMap] already parses `callDurations`,

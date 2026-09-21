@@ -29,6 +29,14 @@ void main() {
     expect(IsmChatCallMeetingLiveness.isConnected('meet-1'), isFalse);
   });
 
+  test('group memberJoin is connected like joinRequestAccept', () {
+    IsmChatCallMeetingLiveness.markLive('meet-g');
+    expect(IsmChatCallMeetingLiveness.isConnected('meet-g'), isFalse);
+    IsmChatCallMeetingLiveness.markConnected('meet-g');
+    expect(IsmChatCallMeetingLiveness.isLive('meet-g'), isTrue);
+    expect(IsmChatCallMeetingLiveness.isConnected('meet-g'), isTrue);
+  });
+
   test('clear wipes session state like logout', () {
     IsmChatCallMeetingLiveness.markLive('meet-1');
     IsmChatCallMeetingLiveness.markConnected('meet-1');

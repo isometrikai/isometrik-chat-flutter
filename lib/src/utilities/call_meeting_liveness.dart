@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 ///
 /// Reuse from MQTT call handlers and host call tiles:
 /// - [markLive] on `meetingCreated` (ringing)
-/// - [markConnected] on `joinRequestAccept` (other user joined)
+/// - [markConnected] on `joinRequestAccept` (1:1) or `memberJoin` (group)
 /// - [markEnded] on `meetingEnded*`
 /// History fetch must not call [markLive].
 ///
@@ -36,7 +36,8 @@ class IsmChatCallMeetingLiveness {
     _bump();
   }
 
-  /// Other party accepted / joined (`joinRequestAccept`). Still live until hang-up.
+  /// Other party accepted / joined (`joinRequestAccept` or group `memberJoin`).
+  /// Still live until hang-up.
   static void markConnected(String? meetingId) {
     final id = meetingId?.trim() ?? '';
     if (id.isEmpty) return;
