@@ -497,6 +497,38 @@ extension LastMessageBody on LastMessageDetails {
   }
 }
 
+/// Call / meeting rows that share [meetingId] and merge into one chat bubble.
+extension SdkCallBubbleMessage on IsmChatMessageModel {
+  bool get isSdkCallBubbleMessage =>
+      customType == IsmChatCustomMessageType.oneToOneCall ||
+      customType == IsmChatCustomMessageType.audioCall ||
+      customType == IsmChatCustomMessageType.videoCall ||
+      customType == IsmChatCustomMessageType.groupCall;
+
+  /// List key for one bubble per [meetingId]. Suffix live/connected/ended so
+  /// keep-alive tiles cannot stay on "Ringing" after MQTT liveness changes.
+  String get listWidgetKey {
+    if (isSdkCallBubbleMessage && !meetingId.isNullOrEmpty) {
+      final actionName = (action ?? '').trim();
+      if (actionName.startsWith('meetingEnded') ||
+          IsmChatCallMeetingLiveness.isEnded(meetingId)) {
+        return 'call-$meetingId-ended';
+      }
+      if (IsmChatCallMeetingLiveness.isConnected(meetingId)) {
+        return 'call-$meetingId-in';
+      }
+      if (IsmChatCallMeetingLiveness.isLive(meetingId)) {
+        return 'call-$meetingId-ring';
+      }
+      return 'call-$meetingId';
+    }
+    if (messageId?.isNotEmpty == true) {
+      return messageId!;
+    }
+    return 'sentAt-$sentAt';
+  }
+}
+
 /// Member leave system messages are only visible to group admins.
 extension MemberLeaveVisibility on IsmChatMessageModel {
   bool isVisibleInGroupChat(IsmChatConversationModel? conversation) {

@@ -158,6 +158,7 @@ class IsmChatMqttViewModel {
         IsmChatActionEvents.meetingCreated.name,
         IsmChatActionEvents.meetingEndedByHost.name,
         IsmChatActionEvents.meetingEndedDueToRejectionByAll.name,
+        IsmChatActionEvents.meetingEndedDueToNoUserPublishing.name,
       ].contains(e.action),
     );
     return messages;

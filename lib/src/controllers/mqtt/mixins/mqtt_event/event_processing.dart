@@ -33,7 +33,7 @@ mixin IsmChatMqttEventProcessingMixin {
           .map((e) => e.toString())
           .contains(action)) {
         final actionModel = IsmChatMqttActionModel.fromMap(payload);
-        _handleAction(actionModel);
+        _handleAction(actionModel, payload: payload);
       }
     } else {
       final message = IsmChatMessageModel.fromMap(payload);
@@ -86,7 +86,12 @@ mixin IsmChatMqttEventProcessingMixin {
   /// Handles an MQTT action.
   ///
   /// * `actionModel`: The MQTT action model to handle
-  void _handleAction(IsmChatMqttActionModel actionModel) async {
+  /// * `payload`: Raw map so call hang-up can merge `callDurations` /
+  ///   `missedByMembers` that [IsmChatMqttActionModel] does not keep.
+  void _handleAction(
+    IsmChatMqttActionModel actionModel, {
+    Map<String, dynamic>? payload,
+  }) async {
     final self = this;
     switch (actionModel.action) {
       case IsmChatActionEvents.typingEvent:
@@ -223,8 +228,11 @@ mixin IsmChatMqttEventProcessingMixin {
       case IsmChatActionEvents.meetingCreated:
       case IsmChatActionEvents.meetingEndedByHost:
       case IsmChatActionEvents.meetingEndedDueToRejectionByAll:
+      case IsmChatActionEvents.meetingEndedDueToNoUserPublishing:
+      case IsmChatActionEvents.joinRequestAccept:
         if (self is IsmChatMqttEventCallsMixin) {
-          (self as IsmChatMqttEventCallsMixin).handleOneToOneCall(actionModel);
+          (self as IsmChatMqttEventCallsMixin)
+              .handleOneToOneCall(actionModel, payload: payload);
         }
         break;
     }

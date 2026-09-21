@@ -15,14 +15,20 @@ mixin IsmChatMqttEventMessageHandlersMixin {
   // ignore: unused_element
   // This method is called from event_processing.dart via mixin composition
   Future<void> handleMessage(IsmChatMessageModel message) async {
+    _trackCallMeetingLiveness(message);
     final self = this;
+    var isOwnMessage = false;
     if (self is IsmChatMqttEventUtilitiesMixin) {
       final utils = self as IsmChatMqttEventUtilitiesMixin;
-      if (utils.isSenderMe(message.senderInfo?.userId,
-          deviceId: message.deviceId)) {
+      isOwnMessage = utils.isSenderMe(message.senderInfo?.userId,
+          deviceId: message.deviceId);
+      // Allow own call bubbles through so the initiator sees "In call" at start.
+      if (isOwnMessage && !message.isSdkCallBubbleMessage) {
         return;
       }
-      utils.handleUnreadMessages(message.senderInfo?.userId ?? '');
+      if (!isOwnMessage) {
+        utils.handleUnreadMessages(message.senderInfo?.userId ?? '');
+      }
     }
     if (!IsmChatUtility.conversationControllerRegistered) {
       return;
@@ -41,16 +47,20 @@ mixin IsmChatMqttEventMessageHandlersMixin {
         } else {
           controller.messages.add(message);
         }
-        // Same rules as [getMessagesFromDB]: hide meetingCreated rows, merge call events.
+        // Same rules as [getMessagesFromDB]: merge call events into one bubble.
         controller.messages = controller.commonController.sortMessages(
           controller.filterMessages(
             List<IsmChatMessageModel>.from(controller.messages),
           ),
         );
+        controller.update();
       }
     }
     if (conversation == null) return;
-    if (conversation.lastMessageDetails?.messageId == message.messageId) return;
+    if (!isOwnMessage &&
+        conversation.lastMessageDetails?.messageId == message.messageId) {
+      return;
+    }
 
     // Never apply an incoming message to the wrong group when multiple groups
     // share the same members/name but have different conversationIds.
@@ -59,7 +69,9 @@ mixin IsmChatMqttEventMessageHandlersMixin {
     if (!hideMemberLeave) {
       // To handle and show last message & unread count in conversation list
       conversation = conversation.copyWith(
-        unreadMessagesCount: IsmChatResponsive.isWeb(
+        unreadMessagesCount: isOwnMessage
+            ? conversation.unreadMessagesCount
+            : IsmChatResponsive.isWeb(
                     IsmChatConfig.kNavigatorKey.currentContext ??
                         IsmChatConfig.context) &&
                 (IsmChatUtility.chatPageControllerRegistered &&
@@ -79,7 +91,10 @@ mixin IsmChatMqttEventMessageHandlersMixin {
           conversationId: message.conversationId ?? '',
           body: message.body,
           customType: message.customType,
-          action: '',
+          action: message.action ?? '',
+          meetingId: message.meetingId,
+          meetingType: message.meetingType,
+          callDurations: message.callDurations,
           deliverCount: 0,
           deliveredTo: [],
           readCount: 0,
@@ -93,11 +108,27 @@ mixin IsmChatMqttEventMessageHandlersMixin {
       final messages = Map<String, IsmChatMessageModel>.from(
         conversation.messages ?? {},
       );
-      messages[message.key] = message;
-      conversation = conversation.copyWith(messages: messages);
+      final mergedMessages = IsmChatDBWrapper.mergeCallMessageIntoMap(
+        messages,
+        message,
+      );
+      conversation = conversation.copyWith(messages: mergedMessages);
+      await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
+    } else {
+      return;
     }
-    await IsmChatConfig.dbWrapper?.saveConversation(conversation: conversation);
     unawaited(IsmChatUtility.conversationController.getConversationsFromDB());
+    if (isOwnMessage) {
+      if (!IsmChatUtility.chatPageControllerRegistered) {
+        return;
+      }
+      var chatController = IsmChatUtility.chatPageController;
+      if (chatController.conversation?.conversationId != message.conversationId) {
+        return;
+      }
+      unawaited(chatController.getMessagesFromDB(message.conversationId ?? ''));
+      return;
+    }
     final controller = Get.find<IsmChatMqttController>();
     await controller.pingMessageDelivered(
       conversationId: message.conversationId ?? '',
@@ -242,4 +273,19 @@ String _decryptedNotificationBody(IsmChatMessageModel message) {
       ? groupcastId
       : message.conversationId ?? '';
   return IsmChatUtility.decryptMessage(encryptedText, decryptionId);
+}
+
+/// MQTT / new chat rows only — never call from history/API load.
+void _trackCallMeetingLiveness(IsmChatMessageModel message) {
+  if (!message.isSdkCallBubbleMessage) return;
+  final action = (message.action ?? '').trim();
+  if (action.startsWith('meetingEnded')) {
+    IsmChatCallMeetingLiveness.markEnded(message.meetingId);
+    return;
+  }
+  if (action == IsmChatActionEvents.meetingCreated.name ||
+      action == IsmChatActionEvents.memberJoin.name ||
+      action == IsmChatActionEvents.memberLeave.name) {
+    IsmChatCallMeetingLiveness.markLive(message.meetingId);
+  }
 }
