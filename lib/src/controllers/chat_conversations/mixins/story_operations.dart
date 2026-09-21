@@ -23,9 +23,26 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
     String? caption,
     bool sendPushNotification = false,
   }) async {
+    final resolvedStoryMediaUrl = storyMediaUrl?.trim() ?? '';
+    if (resolvedStoryMediaUrl.isEmpty) {
+      IsmChatLog.error('replayOnStories aborted: storyMediaUrl is empty');
+      return;
+    }
+    if (userDetails.userId.trim().isEmpty) {
+      IsmChatLog.error('replayOnStories aborted: userId is empty');
+      return;
+    }
+
+    var resolvedConversationId = conversationId.trim();
     final chatConversationResponse =
-        await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+        await IsmChatConfig.dbWrapper?.getConversation(resolvedConversationId);
     if (chatConversationResponse == null) {
+      if (_controller.currentConversation == null) {
+        IsmChatLog.error(
+          'replayOnStories aborted: currentConversation is null',
+        );
+        return;
+      }
       final conversation = await _controller.commonController.createConversation(
         conversation: _controller.currentConversation!,
         userId: [userDetails.userId],
@@ -36,17 +53,41 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
           userDetails.userName
         ],
       );
-      conversationId = conversation?.conversationId ?? '';
+      resolvedConversationId = conversation?.conversationId?.trim() ?? '';
+      if (resolvedConversationId.isEmpty) {
+        IsmChatLog.error(
+          'replayOnStories aborted: createConversation returned no id',
+        );
+        return;
+      }
+      _controller.currentConversation = _controller.currentConversation!.copyWith(
+        conversationId: resolvedConversationId,
+      );
+      _controller.currentConversationId = resolvedConversationId;
     }
-    IsmChatMessageModel? imageMessage;
+
     final sentAt = DateTime.now().millisecondsSinceEpoch;
-    final bytes = await IsmChatUtility.getUint8ListFromUrl(storyMediaUrl ?? '');
-    final nameWithExtension = storyMediaUrl?.split('/').last ?? '';
-    final mediaId = nameWithExtension.replaceAll(RegExp(r'[^0-9]'), '');
-    final extension = nameWithExtension.split('.').last;
-    imageMessage = IsmChatMessageModel(
+    var mediaSize = 0;
+    try {
+      final bytes =
+          await IsmChatUtility.getUint8ListFromUrl(resolvedStoryMediaUrl);
+      mediaSize = bytes.length;
+    } catch (e, st) {
+      // Size is optional for the API — same fallback as sendMessageWithImageUrl.
+      IsmChatLog.error('replayOnStories: story media size lookup failed', st);
+    }
+
+    final nameWithExtension = resolvedStoryMediaUrl.split('/').last;
+    var mediaId = nameWithExtension.replaceAll(RegExp(r'[^0-9]'), '');
+    if (mediaId.isEmpty) {
+      mediaId = sentAt.toString();
+    }
+    final extension = nameWithExtension.contains('.')
+        ? nameWithExtension.split('.').last
+        : 'jpeg';
+    final imageMessage = IsmChatMessageModel(
       body: IsmChatStrings.image,
-      conversationId: conversationId,
+      conversationId: resolvedConversationId,
       senderInfo: UserDetails(
           userProfileImageUrl:
               IsmChatConfig.communicationConfig.userConfig.userProfile ?? '',
@@ -60,11 +101,11 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
       attachments: [
         AttachmentModel(
           attachmentType: IsmChatMediaType.image,
-          thumbnailUrl: storyMediaUrl,
-          size: bytes.length,
+          thumbnailUrl: resolvedStoryMediaUrl,
+          size: mediaSize,
           name: nameWithExtension,
           mimeType: 'image/jpeg',
-          mediaUrl: storyMediaUrl,
+          mediaUrl: resolvedStoryMediaUrl,
           mediaId: mediaId,
           extension: extension,
         )
@@ -84,6 +125,11 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
       ),
     );
 
+    await IsmChatConfig.dbWrapper?.saveMessage(
+      imageMessage,
+      IsmChatDbBox.pending,
+    );
+
     final notificationTitle =
         IsmChatConfig.communicationConfig.userConfig.userName ??
             userDetails.userName;
@@ -99,13 +145,13 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
       createdAt: sentAt,
       deviceId: imageMessage.deviceId ?? '',
       messageType: imageMessage.messageType?.value ?? 0,
-      notificationBody: imageMessage.body,
+      notificationBody: IsmChatStrings.sentImage,
       notificationTitle: notificationTitle,
       attachments: [imageMessage.attachments?.first.toMap() ?? {}],
       customType: imageMessage.customType?.value ?? '',
       metaData: imageMessage.metaData,
       parentMessageId: imageMessage.parentMessageId,
-      isUpdateMesage: false,
+      isUpdateMesage: true,
     );
   }
 }

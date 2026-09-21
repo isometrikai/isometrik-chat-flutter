@@ -112,7 +112,7 @@ class IsmChatConversationModel {
             : {},
         outSideMessage: map['outSideMessage'] != null
             ? OutSideMessage.fromMap(
-                map['messageFromOutSide'] as Map<String, dynamic>)
+                map['outSideMessage'] as Map<String, dynamic>)
             : null,
         customType: map['customType'] as String? ?? '',
         searchableTags: map['searchableTags'] != null ? List<String>.from(map['searchableTags'] as List<dynamic>) : [],
