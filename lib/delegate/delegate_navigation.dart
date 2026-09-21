@@ -350,15 +350,20 @@ mixin IsmChatDelegateNavigationMixin {
             IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
             conversation);
     await controller.updateLocalConversation(conversation);
-    if (storyMediaUrl == null) {
+    final resolvedConversationId =
+        conversation.conversationId?.trim().isNotEmpty == true
+            ? conversation.conversationId!.trim()
+            : controller.getConversationId(userId);
+    final resolvedStoryMediaUrl = storyMediaUrl?.trim();
+    if (resolvedStoryMediaUrl == null || resolvedStoryMediaUrl.isEmpty) {
       await controller.goToChatPage();
     } else {
       await controller.replayOnStories(
-        conversationId: conversationId,
+        conversationId: resolvedConversationId,
         userDetails: conversation.opponentDetails!,
         caption: outSideMessage?.caption ?? '',
         sendPushNotification: pushNotifications,
-        storyMediaUrl: storyMediaUrl,
+        storyMediaUrl: resolvedStoryMediaUrl,
       );
     }
   }

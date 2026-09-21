@@ -68,6 +68,28 @@ class _IsmChatMessageState extends State<IsmChatMessage>
     super.didUpdateWidget(oldWidget);
   }
 
+  /// Group-message avatar URL: host override → senderInfo → initiatorImageUrl.
+  /// Empty strings are treated as missing so the next source is used.
+  String _groupSenderProfileUrl(
+      BuildContext context, IsmChatPageController controller) {
+    final customUrl = IsmChatProperties
+        .chatPageProperties.messageSenderProfileUrl
+        ?.call(context, widget._message!, controller.conversation);
+    if (!customUrl.isNullOrEmpty) return customUrl!;
+
+    final senderUrl = widget._message?.senderInfo?.profileUrl;
+    if (!senderUrl.isNullOrEmpty) return senderUrl!;
+
+    return widget._message?.initiatorImageUrl ?? '';
+  }
+
+  /// Group-message avatar name: senderInfo → initiatorName.
+  String _groupSenderName() {
+    final senderName = widget._message?.senderInfo?.userName;
+    if (!senderName.isNullOrEmpty) return senderName!;
+    return widget._message?.initiatorName ?? '';
+  }
+
   /// Checks if this message should be hidden because it's part of a grid group
   /// but not the first message in that group
   bool _shouldHideMessage(IsmChatPageController controller) {
@@ -172,18 +194,8 @@ class _IsmChatMessageState extends State<IsmChatMessage>
                                   );
                                 },
                                 child: IsmChatImage.profile(
-                                  IsmChatProperties.chatPageProperties
-                                          .messageSenderProfileUrl
-                                          ?.call(
-                                        context,
-                                        widget._message!,
-                                        controller.conversation,
-                                      ) ??
-                                      widget._message?.senderInfo?.profileUrl ??
-                                      (widget._message?.initiatorImageUrl ??
-                                          ''),
-                                  name: widget._message?.senderInfo?.userName ??
-                                      (widget._message?.initiatorName ?? ''),
+                                  _groupSenderProfileUrl(context, controller),
+                                  name: _groupSenderName(),
                                   dimensions: IsmChatConfig.chatTheme
                                           .chatPageTheme?.profileImageSize ??
                                       35,

@@ -573,12 +573,8 @@ class _IsmChatPageView extends StatelessWidget {
                                                                 index,
                                                                 message,
                                                                 key: ValueKey(
-                                                                  message.messageId
-                                                                              ?.isNotEmpty ==
-                                                                          true
-                                                                      ? message
-                                                                          .messageId!
-                                                                      : 'sentAt-${message.sentAt}',
+                                                                  message
+                                                                      .listWidgetKey,
                                                                 ),
                                                               );
                                                             },

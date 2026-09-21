@@ -233,18 +233,22 @@ class IsmChatMessageModel {
                         ),
                 )
               : null,
-      metaData: map['metaData'] != null
-          ? IsmChatMetaData.fromMap(map['metaData'] as Map<String, dynamic>)
+      metaData: map['metaData'] is Map
+          ? IsmChatMetaData.fromMap(
+              Map<String, dynamic>.from(map['metaData'] as Map),
+            )
           : null,
       messagingDisabled: map['messagingDisabled'] as bool? ?? false,
       membersCount: map['membersCount'] as int? ?? 0,
-      lastReadAt: map['lastReadAt'].runtimeType == List
-          ? List<IsmChatLastReadAt>.from(map['lastReadAt'] as List<dynamic>)
-          : map['lastReadAt'].runtimeType == Map
-              ? IsmChatLastReadAt.fromNetworkMap(
-                  map['lastReadAt'] as Map<String, dynamic>? ??
-                      <String, dynamic>{})
-              : [],
+      lastReadAt: map['lastReadAt'] == null
+          ? []
+          : map['lastReadAt'].runtimeType == List
+              ? List<IsmChatLastReadAt>.from(map['lastReadAt'] as List<dynamic>)
+              : map['lastReadAt'].runtimeType == Map
+                  ? IsmChatLastReadAt.fromNetworkMap(
+                      Map<String, dynamic>.from(map['lastReadAt'] as Map),
+                    )
+                  : [],
       attachments: map['attachments'] != null
           ? (map['attachments'] as List<dynamic>)
               .map((e) => AttachmentModel.fromMap(e as Map<String, dynamic>))
@@ -284,13 +288,7 @@ class IsmChatMessageModel {
       initiatorId: map['initiatorId'] as String? ?? '',
       initiatorName: map['initiatorName'] as String? ?? '',
       initiatorImageUrl: map['initiatorImageUrl'] as String? ?? '',
-      callDurations: map['callDurations'] == null
-          ? []
-          : List<CallDuration>.from(
-              (map['callDurations'] as List).map(
-                (e) => CallDuration.fromMap(e as Map<String, dynamic>),
-              ),
-            ),
+      callDurations: CallDuration.listFrom(map['callDurations']),
       members: map['members'] == null
           ? []
           : List<UserDetails>.from(
@@ -675,6 +673,7 @@ class IsmChatMessageModel {
     String? initiatorId,
     String? messageId,
     String? initiatorName,
+    String? initiatorImageUrl,
     String? deviceId,
     ConversationConfigModel? config,
     int? adminCount,
@@ -738,7 +737,11 @@ class IsmChatMessageModel {
         messageType: messageType ?? this.messageType,
         sentByMe: sentByMe ?? this.sentByMe,
         mentionedUsers: mentionedUsers ?? this.mentionedUsers,
-        initiatorName: initiatorId ?? this.initiatorName,
+        // Keep initiatorName/initiatorImageUrl across copyWith. fromMap() always
+        // rebuilds via copyWith; dropping these made API values show as null
+        // (e.g. group sender avatar in chat_message.dart).
+        initiatorName: initiatorName ?? this.initiatorName,
+        initiatorImageUrl: initiatorImageUrl ?? this.initiatorImageUrl,
         members: members ?? this.members,
         memberId: memberId ?? this.memberId,
         memberName: memberName ?? this.memberName,
@@ -931,10 +934,38 @@ class CallDuration {
     this.durationInMilliseconds,
   });
 
-  factory CallDuration.fromMap(Map<String, dynamic> map) => CallDuration(
-        memberId: map['memberId'] as String? ?? '',
-        durationInMilliseconds: map['durationInMilliseconds'] as int? ?? 0,
+  factory CallDuration.fromMap(Map<String, dynamic> map) {
+    final raw = map['durationInMilliseconds'];
+    int ms = 0;
+    if (raw is int) {
+      ms = raw;
+    } else if (raw is double) {
+      ms = raw.toInt();
+    } else if (raw is String) {
+      ms = int.tryParse(raw) ?? 0;
+    }
+    return CallDuration(
+      memberId: map['memberId']?.toString() ?? '',
+      durationInMilliseconds: ms,
+    );
+  }
+
+  /// MQTT / history lists are often `List<Map<dynamic, dynamic>>`.
+  static List<CallDuration> listFrom(dynamic raw) {
+    if (raw is! List) return [];
+    final out = <CallDuration>[];
+    for (final item in raw) {
+      if (item is! Map) continue;
+      out.add(
+        CallDuration.fromMap(
+          Map<String, dynamic>.from(
+            item.map((k, v) => MapEntry(k.toString(), v)),
+          ),
+        ),
       );
+    }
+    return out;
+  }
 
   factory CallDuration.fromJson(String source) =>
       CallDuration.fromMap(json.decode(source) as Map<String, dynamic>);

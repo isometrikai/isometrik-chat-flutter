@@ -95,13 +95,7 @@ class LastMessageDetails {
       memberId: map['memberId'] as String? ?? '',
       audioOnly: map['audioOnly'] as bool? ?? false,
       isInvalidMessage: map['isInvalidMessage'] as bool? ?? false,
-      callDurations: map['callDurations'] == null
-          ? []
-          : List<CallDuration>.from(
-              (map['callDurations'] as List).map(
-                (e) => CallDuration.fromMap(e as Map<String, dynamic>),
-              ),
-            ),
+      callDurations: CallDuration.listFrom(map['callDurations']),
       meetingId: map['meetingId'] as String? ?? '',
       meetingType:
           map['meetingType'] != null ? map['meetingType'] as int? ?? 0 : null,

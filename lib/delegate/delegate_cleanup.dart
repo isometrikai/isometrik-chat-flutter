@@ -8,6 +8,7 @@ mixin IsmChatDelegateCleanupMixin {
   /// Logs out and cleans up all resources.
   Future<void> logout() async {
     try {
+      IsmChatCallMeetingLiveness.clear();
       await IsmChatConfig.dbWrapper?.deleteChatLocalDb();
       await Future.wait([
         Get.delete<IsmChatConversationsController>(

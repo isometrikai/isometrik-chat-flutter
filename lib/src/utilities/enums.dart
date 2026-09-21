@@ -578,6 +578,8 @@ enum IsmChatActionEvents {
   meetingEndedByHost,
   meetingCreated,
   meetingEndedDueToRejectionByAll,
+  meetingEndedDueToNoUserPublishing,
+  joinRequestAccept,
   messageDetailsUpdated;
 
   factory IsmChatActionEvents.fromName(String name) {
@@ -642,6 +644,10 @@ enum IsmChatActionEvents {
         return IsmChatActionEvents.meetingCreated;
       case 'meetingEndedDueToRejectionByAll':
         return IsmChatActionEvents.meetingEndedDueToRejectionByAll;
+      case 'meetingEndedDueToNoUserPublishing':
+        return IsmChatActionEvents.meetingEndedDueToNoUserPublishing;
+      case 'joinRequestAccept':
+        return IsmChatActionEvents.joinRequestAccept;
       case 'messageDetailsUpdated':
         return IsmChatActionEvents.messageDetailsUpdated;
       default:
@@ -712,6 +718,10 @@ enum IsmChatActionEvents {
         return 'meetingCreated';
       case IsmChatActionEvents.meetingEndedDueToRejectionByAll:
         return 'meetingEndedDueToRejectionByAll';
+      case IsmChatActionEvents.meetingEndedDueToNoUserPublishing:
+        return 'meetingEndedDueToNoUserPublishing';
+      case IsmChatActionEvents.joinRequestAccept:
+        return 'joinRequestAccept';
       case IsmChatActionEvents.messageDetailsUpdated:
         return 'messageDetailsUpdated';
     }
