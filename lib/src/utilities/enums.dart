@@ -104,7 +104,8 @@ enum IsmChatCustomMessageType {
   audioCall(101),
   videoCall(102),
   groupCall(103),
-  livestream(104);
+  livestream(104),
+  story(105);
 
   const IsmChatCustomMessageType(this.number);
 
@@ -186,6 +187,7 @@ enum IsmChatCustomMessageType {
       'AudioCall': IsmChatCustomMessageType.audioCall,
       'GroupCall': IsmChatCustomMessageType.groupCall,
       'Livestream': IsmChatCustomMessageType.livestream,
+      'Story': IsmChatCustomMessageType.story,
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -417,6 +419,8 @@ enum IsmChatCustomMessageType {
         return 'GroupCall';
       case IsmChatCustomMessageType.livestream:
         return 'Livestream';
+      case IsmChatCustomMessageType.story:
+        return 'Story';
     }
   }
 }

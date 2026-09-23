@@ -95,6 +95,7 @@ class IsmChatMessageWrapper extends StatelessWidget {
       case IsmChatCustomMessageType.counterExchangeOffer:
       case IsmChatCustomMessageType.profileLink:
       case IsmChatCustomMessageType.livestream:
+      case IsmChatCustomMessageType.story:
         return IsmChatSocialMessage(message);
     }
   }
@@ -170,6 +171,7 @@ class IsmChatMessageWrapperWithMetaData extends StatelessWidget {
         return IsmOneToOneCallMessage(message);
       case IsmChatCustomMessageType.audioCall:
       case IsmChatCustomMessageType.videoCall:
+      case IsmChatCustomMessageType.story:
       case IsmChatCustomMessageType.groupCall:
       case IsmChatCustomMessageType.productLink:
       case IsmChatCustomMessageType.socialLink:

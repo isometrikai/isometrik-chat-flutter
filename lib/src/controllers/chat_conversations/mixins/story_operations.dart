@@ -43,7 +43,8 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
         );
         return;
       }
-      final conversation = await _controller.commonController.createConversation(
+      final conversation =
+          await _controller.commonController.createConversation(
         conversation: _controller.currentConversation!,
         userId: [userDetails.userId],
         metaData: _controller.currentConversation?.metaData,
@@ -60,7 +61,8 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
         );
         return;
       }
-      _controller.currentConversation = _controller.currentConversation!.copyWith(
+      _controller.currentConversation =
+          _controller.currentConversation!.copyWith(
         conversationId: resolvedConversationId,
       );
       _controller.currentConversationId = resolvedConversationId;
@@ -97,7 +99,7 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
           userId: IsmChatConfig.communicationConfig.userConfig.userId,
           online: false,
           lastSeen: 0),
-      customType: IsmChatCustomMessageType.image,
+      customType: IsmChatCustomMessageType.story,
       attachments: [
         AttachmentModel(
           attachmentType: IsmChatMediaType.image,
@@ -155,4 +157,3 @@ mixin IsmChatConversationsStoryOperationsMixin on GetxController {
     );
   }
 }
-
