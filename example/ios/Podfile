@@ -1,5 +1,7 @@
-# Uncomment this line to define a global platform for your project
-# platform :ios, '13.0'
+# Minimum iOS version for the example app.
+# Xcode's supported deployment-target range starts at 15.0, so anything
+# lower (the old 13.0 default) fails Target Integrity on Pods.xcodeproj.
+platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -35,18 +37,23 @@ target 'Runner' do
 end
 
 post_install do |installer|
+  # Pin the generated Pods project itself. Target-level settings alone
+  # still leave Pods.xcodeproj reporting 13.0 to Xcode.
   installer.generated_projects.each do |project|
-    project.targets.each do |target|
-        target.build_configurations.each do |config|
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-        end
+    project.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     end
   end
+
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-    
-    # ADD THE NEXT SECTION
+
+    # Re-apply after Flutter's pod helper. That helper deletes
+    # IPHONEOS_DEPLOYMENT_TARGET for pods whose spec is below iOS 13
+    # so they inherit, which would otherwise bring back a target
+    # older than Xcode allows (15.0–27.0).
     target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'AUDIO_SESSION_MICROPHONE=0',

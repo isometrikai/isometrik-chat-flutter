@@ -460,7 +460,16 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
     final isSwitchingConversation =
         previousConversationId != nextConversationId;
 
-    _controller.currentConversation = normalizedConversation;
+    // List / notification models often omit [messages]. Merge Hive history
+    // before assigning or saving so we never wipe local chat on a chat switch.
+    var toSave = normalizedConversation;
+    if (!toSave.hasCachedMessages && nextConversationId.isNotEmpty) {
+      final existing =
+          await IsmChatConfig.dbWrapper?.getConversation(nextConversationId);
+      toSave = toSave.withCachedMessagesFrom(existing);
+    }
+
+    _controller.currentConversation = toSave;
     _controller.currentConversationId = nextConversationId;
 
     // The chat page controller is often reused (especially on web). Point it
@@ -471,32 +480,19 @@ mixin IsmChatConversationsConversationOperationsMixin on GetxController {
       final chatPage = IsmChatUtility.chatPageController;
       if (isSwitchingConversation) {
         chatPage
-          ..conversation = normalizedConversation
+          ..conversation = toSave
           ..isActionAllowed = false
           ..isCoverationApiDetails = true
           ..canCallCurrentApi = false
           ..messages.clear();
       } else {
         // Same open chat: keep the visible message list; only refresh metadata.
-        chatPage.conversation = normalizedConversation.copyWith(
-          messages: normalizedConversation.messages ??
-              chatPage.conversation?.messages,
+        chatPage.conversation = toSave.copyWith(
+          messages: toSave.messages ?? chatPage.conversation?.messages,
         );
       }
     }
 
-    // Persist metadata, but never wipe Hive messages on a metadata-only update
-    // that omitted the messages map (common for unblock / list-driven patches).
-    var toSave = normalizedConversation;
-    if (!isSwitchingConversation &&
-        (toSave.messages == null || toSave.messages!.isEmpty) &&
-        nextConversationId.isNotEmpty) {
-      final existing =
-          await IsmChatConfig.dbWrapper?.getConversation(nextConversationId);
-      if (existing?.messages?.isNotEmpty == true) {
-        toSave = toSave.copyWith(messages: existing!.messages);
-      }
-    }
     await IsmChatConfig.dbWrapper?.saveConversation(
       conversation: toSave,
     );

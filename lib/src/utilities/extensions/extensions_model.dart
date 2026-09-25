@@ -11,6 +11,27 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:isometrik_chat_flutter/isometrik_chat_flutter.dart';
 
+/// Hive vs conversation-list merge helpers.
+///
+/// Conversation-list / notification models often omit [messages] and only
+/// carry [lastMessageDetails]. Reuse [withCachedMessagesFrom] whenever we
+/// persist or open a conversation so those stubs never wipe local history.
+extension IsmChatConversationCachedMessages on IsmChatConversationModel {
+  /// True when this model already holds at least one cached chat message.
+  bool get hasCachedMessages => messages != null && messages!.isNotEmpty;
+
+  /// Copies Hive (or any cache) message history onto this model when missing.
+  ///
+  /// If this object already has messages, it is returned unchanged.
+  IsmChatConversationModel withCachedMessagesFrom(
+    IsmChatConversationModel? cache,
+  ) {
+    if (hasCachedMessages) return this;
+    if (cache?.hasCachedMessages != true) return this;
+    return copyWith(messages: cache!.messages);
+  }
+}
+
 /// Extension for IsmChatConversationModel to check block status.
 extension BlockStatus on IsmChatConversationModel {
   /// True when the signed-in user is a group admin.

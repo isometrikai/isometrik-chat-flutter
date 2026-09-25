@@ -21,6 +21,20 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     _controller.closeOverlay();
     final requestedConversationId = conversationId;
 
+    // Paint already-hydrated Hive messages immediately (notification / list
+    // tap merge them onto currentConversation). Hive is still re-read below
+    // so pending + latest cache can replace this without holding the loader.
+    final inMemory = _controller.conversation?.messages;
+    if (inMemory != null &&
+        inMemory.isNotEmpty &&
+        (_controller.conversation?.conversationId ?? '') ==
+            requestedConversationId) {
+      _applyLocalMessageMap(
+        requestedConversationId,
+        Map<String, IsmChatMessageModel>.from(inMemory),
+      );
+    }
+
     await IsmChatBlockUnblockCoordinator.pruneBlockBannersIfChatAllowed(
       conversationId,
     );
@@ -72,6 +86,29 @@ mixin IsmChatPageGetMessageMixin on GetxController {
     } else {
       await IsmChatConfig.dbWrapper
           ?.removeConversation(conversationId, IsmChatDbBox.pending);
+    }
+
+    // Hive returned nothing after we already painted in-memory history.
+    // Keep that paint instead of replacing it with the empty placeholder.
+    if (safeMessages.isEmpty && _controller.messages.isNotEmpty) {
+      _controller.isMessagesLoading = false;
+      return;
+    }
+
+    _applyLocalMessageMap(requestedConversationId, safeMessages);
+  }
+
+  /// Sorts, filters, and assigns [safeMessages] to the open chat UI.
+  ///
+  /// Reused for the instant in-memory paint and the Hive/pending refresh.
+  void _applyLocalMessageMap(
+    String requestedConversationId,
+    Map<String, IsmChatMessageModel> safeMessages,
+  ) {
+    if ((_controller.conversation?.conversationId ?? '') !=
+        requestedConversationId) {
+      _controller.isMessagesLoading = false;
+      return;
     }
     var localMessages = safeMessages.values.toList();
     if (!IsmChatBlockUnblockCoordinator.isConversationBlocked(

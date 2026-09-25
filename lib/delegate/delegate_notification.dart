@@ -91,29 +91,32 @@ mixin IsmChatDelegateNotificationMixin {
         return;
       }
 
-      // Ensure controllers are initialized
+      // Controller + Hive must exist before we open the chat (cold start from
+      // a killed app runs this in parallel with [IsmChat.i.initialize]).
+      await _ensureConversationStackForNotification();
       if (!IsmChatUtility.conversationControllerRegistered) {
-        IsmChatCommonBinding().dependencies();
-        IsmChatConversationsBinding().dependencies();
-        // Wait for controller to be ready
-        while (!IsmChatUtility.conversationControllerRegistered) {
-          await Future.delayed(const Duration(milliseconds: 100));
-        }
+        IsmChatLog.error(
+            'handleNotificationPayload: conversation controller not registered');
+        return;
       }
 
       final conversationController = IsmChatUtility.conversationController;
 
-      // Try to get conversation from local database first
-      var conversation = conversationController.getConversation(conversationId);
-
-      // If not found locally, try to get from database
-      conversation ??=
+      // Prefer Hive for the message map; the in-memory list item is usually a
+      // stub (lastMessageDetails only). Merge so list metadata is kept.
+      final memoryConversation =
+          conversationController.getConversation(conversationId);
+      final dbConversation =
           await IsmChatConfig.dbWrapper?.getConversation(conversationId);
+      var conversation = memoryConversation?.withCachedMessagesFrom(
+            dbConversation,
+          ) ??
+          dbConversation;
 
       // If still not found, try to create from message data if available
-      if (conversation == null && notificationData.containsKey('senderInfo')) {
+      if (conversation == null && payload.containsKey('senderInfo')) {
         try {
-          final message = IsmChatMessageModel.fromMap(notificationData);
+          final message = IsmChatMessageModel.fromMap(payload);
           final senderInfo = message.senderInfo;
           if (senderInfo != null && senderInfo.userId.isNotEmpty) {
             await (this as IsmChatDelegate).chatFromOutside(
@@ -130,16 +133,18 @@ mixin IsmChatDelegateNotificationMixin {
         }
       }
 
-      // If conversation found, navigate to it
+      // If conversation found, navigate to it.
+      // [updateLocalConversation] also sets currentConversation (after merging
+      // Hive messages); do not reassign the pre-merge stub afterwards.
       if (conversation != null) {
-        await conversationController
-          ..updateLocalConversation(conversation)
-          ..currentConversation = conversation;
+        await conversationController.updateLocalConversation(conversation);
+        final opened =
+            conversationController.currentConversation ?? conversation;
 
         // Call onChatTap callback if available
         IsmChatProperties.conversationProperties.onChatTap?.call(
           IsmChatConfig.kNavigatorKey.currentContext ?? IsmChatConfig.context,
-          conversation,
+          opened,
         );
 
         // Navigate to chat page
@@ -151,6 +156,27 @@ mixin IsmChatDelegateNotificationMixin {
     } catch (e, stackTrace) {
       IsmChatLog.error(
           'handleNotificationPayload error: $e\nStackTrace: $stackTrace');
+    }
+  }
+
+  /// Waits until the conversation controller and Hive wrapper exist.
+  ///
+  /// Bounded so a hung SDK init cannot block notification navigation forever.
+  Future<void> _ensureConversationStackForNotification() async {
+    if (!IsmChatUtility.conversationControllerRegistered) {
+      IsmChatCommonBinding().dependencies();
+      IsmChatConversationsBinding().dependencies();
+    }
+    var attempts = 0;
+    while (!IsmChatUtility.conversationControllerRegistered &&
+        attempts < 50) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      attempts++;
+    }
+    attempts = 0;
+    while (IsmChatConfig.dbWrapper == null && attempts < 50) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      attempts++;
     }
   }
 }

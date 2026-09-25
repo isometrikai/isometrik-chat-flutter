@@ -204,20 +204,21 @@ mixin IsmChatPageLifecycleInitializationMixin on GetxController {
           openGeneration != _controller.chatOpenGeneration) {
         return;
       }
-      // Do not block message sync on conversation-details. After leaving one
-      // group and opening another, a slow/stale details request used to
-      // delay `getMessagesFromAPI`, and a stuck `canCallCurrentApi` from the
-      // previous chat could skip the fetch entirely — empty screen until re-open.
-      await Future.wait([
-        _controller.getConverstaionDetails(),
-        _controller.getMessagesFromAPI(),
-      ]);
-      if (openGeneration != null &&
-          openGeneration != _controller.chatOpenGeneration) {
-        return;
-      }
-      await _controller.getMessageForStatus();
-      await _controller.readAllMessages();
+      // Local messages are already on screen. Do not hold the chat open path
+      // on conversation-details / message APIs (notification taps and slow
+      // networks used to wait seconds before the first paint could settle).
+      unawaited(() async {
+        await Future.wait([
+          _controller.getConverstaionDetails(),
+          _controller.getMessagesFromAPI(),
+        ]);
+        if (openGeneration != null &&
+            openGeneration != _controller.chatOpenGeneration) {
+          return;
+        }
+        await _controller.getMessageForStatus();
+        await _controller.readAllMessages();
+      }());
       _controller.checkUserStatus();
     } else {
       await _controller.getBroadcastMessages(

@@ -245,10 +245,9 @@ mixin IsmChatDelegateNavigationMixin {
     // Set the conversation in chat page controller
     IsmChatUtility.chatPageController.conversation = conversation;
 
-    // Update local conversation
-    await conversationController
-      ..updateLocalConversation(conversation)
-      ..currentConversation = conversation;
+    // [updateLocalConversation] already assigns currentConversation after
+    // merging Hive messages — do not overwrite with the pre-merge model.
+    await conversationController.updateLocalConversation(conversation);
 
     // Navigate to conversation info view
     if (IsmChatResponsive.isWeb(
