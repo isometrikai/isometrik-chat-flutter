@@ -16,9 +16,14 @@ mixin IsmChatPageContactGroupOperationsMixin on GetxController {
     } else {
       _controller.contactList = _controller.searchContactList
           .where(
-            (e) =>
-                (e.contact.displayName.didMatch(query)) ||
-                e.contact.phones.first.number.didMatch(query),
+            (e) {
+              // displayName is nullable in flutter_contacts 2.x.
+              final name = e.contact.safeDisplayName;
+              final number = e.contact.phones.isEmpty
+                  ? ''
+                  : e.contact.phones.first.number;
+              return name.didMatch(query) || number.didMatch(query);
+            },
           )
           .toList();
       if (_controller.contactList.isEmpty) {

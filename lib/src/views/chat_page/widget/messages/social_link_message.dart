@@ -63,7 +63,9 @@ class IsmChatSocialMessage extends StatelessWidget {
                                       () async {
                                         await IsmChatUtility
                                             .openContactSaveScreen(
-                                          Contact(phones: [Phone(e.text)]),
+                                          Contact(
+                                            phones: [Phone(number: e.text)],
+                                          ),
                                         );
                                       },
                                     ],
