@@ -71,10 +71,12 @@ mixin IsmChatPageUiStateManagementMixin on GetxController {
         _controller.isSearchSelect = false;
         _controller.isLoadingContact = false; // false => show loader in UI
         try {
-          // Prefer flutter_contacts permission flow (plugin requirement on iOS).
+          // flutter_contacts 2.x: read permission is requested through
+          // FlutterContacts.permissions. `has` is true for granted and limited.
           // Fall back to permission_handler for legacy behavior.
+          await FlutterContacts.permissions.request(PermissionType.read);
           final granted =
-              await FlutterContacts.requestPermission(readonly: true) ||
+              await FlutterContacts.permissions.has(PermissionType.read) ||
                   await IsmChatUtility.requestPermission(Permission.contacts);
           if (!granted) {
             // If the permission is blocked (user hit "Don't allow" previously),
@@ -89,15 +91,21 @@ mixin IsmChatPageUiStateManagementMixin on GetxController {
 
           unawaited(IsmChatRoute.goToRoute(const IsmChatContactView()));
 
-          final contacts = await FlutterContacts.getContacts(
-            withProperties: true,
-            withPhoto: true,
+          // 2.x replaced getContacts(withProperties:, withPhoto:) with getAll.
+          // Thumbnail is enough for the picker avatar; full-size photos are not
+          // loaded. See [IsmChatDeviceContactExtension.avatarBytes].
+          final contacts = await FlutterContacts.getAll(
+            properties: {
+              ContactProperty.name,
+              ContactProperty.phone,
+              ContactProperty.photoThumbnail,
+            },
           );
           for (final x in contacts) {
             if (x.phones.isEmpty) continue;
             final number = x.phones.first.number;
             final isEmailLike = number.contains('@') && number.contains('.com');
-            if (isEmailLike || x.displayName.isEmpty) continue;
+            if (isEmailLike || x.safeDisplayName.isEmpty) continue;
 
             final isContactContain = _controller.contactList.any(
               (element) => element.contact.phones.first.number == number,

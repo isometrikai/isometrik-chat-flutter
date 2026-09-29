@@ -331,7 +331,9 @@ class IsmChatCommonController extends GetxController {
   void handleSorSelectedContact(List<SelectedContact> list) {
     if (list.isEmpty) return;
     for (var i = 0, length = list.length; i < length; i++) {
-      var tag = list[i].contact.displayName[0].toUpperCase();
+      // displayName is nullable in flutter_contacts 2.x.
+      final name = list[i].contact.safeDisplayName;
+      final tag = name.isEmpty ? '#' : name[0].toUpperCase();
       if (RegExp('[A-Z]').hasMatch(tag)) {
         list[i].tagIndex = tag;
       } else {

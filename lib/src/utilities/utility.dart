@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:flutter_contacts/flutter_contacts.dart' hide PermissionStatus;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gal/gal.dart';
 import 'package:get/get.dart';
@@ -565,7 +565,8 @@ class IsmChatUtility {
   /// Opens the platform contact-save UI with [contact] pre-filled.
   ///
   /// - **Android / iOS:** native "new contact" screen via
-  ///   [FlutterContacts.openExternalInsert] (no contacts read permission needed).
+  ///   `FlutterContacts.native.showCreator` (no contacts read permission needed).
+  ///   flutter_contacts 2.x replaced `openExternalInsert` with this call.
   /// - **Web:** downloads a `.vcf` file the user can import into their address book.
   static Future<void> openContactSaveScreen(Contact contact) async {
     if (kIsWeb) {
@@ -574,7 +575,7 @@ class IsmChatUtility {
     }
 
     try {
-      await FlutterContacts.openExternalInsert(contact);
+      await FlutterContacts.native.showCreator(contact: contact);
     } on PlatformException catch (e, st) {
       IsmChatLog.error('openContactSaveScreen: $e', st);
       await _shareContactVCard(contact);
@@ -584,9 +585,16 @@ class IsmChatUtility {
     }
   }
 
+  /// vCard text for download and share.
+  ///
+  /// flutter_contacts 2.x removed `Contact.toVCard()`. Export lives on
+  /// `FlutterContacts.vCard`.
+  static String _contactVCard(Contact contact) =>
+      FlutterContacts.vCard.export(contact);
+
   static void _downloadContactVCard(Contact contact) {
-    final vCard = contact.toVCard();
-    final displayName = contact.displayName.trim();
+    final vCard = _contactVCard(contact);
+    final displayName = contact.safeDisplayName;
     final fileName = displayName.isNotEmpty
         ? '${displayName.replaceAll(RegExp(r'[^\w\s-]'), '').trim()}.vcf'
         : 'contact.vcf';
@@ -602,7 +610,7 @@ class IsmChatUtility {
     try {
       final dir = await getTemporaryDirectory();
       final file = File(join(dir.path, 'contact.vcf'));
-      await file.writeAsString(contact.toVCard());
+      await file.writeAsString(_contactVCard(contact));
       await SharePlus.instance.share(
         ShareParams(files: [XFile(file.path)]),
       );

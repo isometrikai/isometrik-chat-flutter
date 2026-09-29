@@ -893,6 +893,41 @@ class IsmChatMediaGridGrouping {
       group.length >= 2 && !group.first.hasSameMediaGridIdentityAs(current);
 }
 
+/// flutter_contacts 2.x helpers for a device [Contact].
+///
+/// 2.x made [Contact.displayName] nullable and moved image bytes onto [Photo]
+/// (`thumbnail` / `fullSize`) instead of a raw byte list on `photo`.
+/// Reuse these getters anywhere chat UI reads a device contact so the null
+/// and photo-shape handling stays in one place.
+extension IsmChatDeviceContactExtension on Contact {
+  /// Trimmed display name, or empty when the platform did not provide one.
+  String get safeDisplayName => (displayName ?? '').trim();
+
+  /// Avatar bytes. Thumbnail first, then full size. Empty photos are ignored.
+  Uint8List? get avatarBytes {
+    final bytes = photo?.thumbnail ?? photo?.fullSize;
+    if (bytes == null || bytes.isEmpty) return null;
+    return bytes;
+  }
+
+  /// `[1, 2, 3]` form that `strigToUnit8List` and `IsmChatImage` decode.
+  ///
+  /// `Uint8List.toString()` is what older builds stored. Do not use
+  /// [Photo.toString], which is not a byte list.
+  String get avatarBytesString => avatarBytes?.toString() ?? '';
+
+  /// Android E.164 number when present, otherwise the typed number.
+  ///
+  /// [Phone.normalizedNumber] is null on iOS in flutter_contacts 2.x.
+  String? get primaryPhoneNumber {
+    if (phones.isEmpty) return null;
+    final phone = phones.first;
+    final normalized = phone.normalizedNumber;
+    if (normalized != null && normalized.isNotEmpty) return normalized;
+    return phone.number;
+  }
+}
+
 /// Shared-contact metadata helpers for device contacts integration.
 extension IsmChatContactMetaDatExtension on IsmChatContactMetaDatModel {
   /// Safely decodes [contactImageUrl] (JSON byte list from shared contacts).
@@ -917,11 +952,15 @@ extension IsmChatContactMetaDatExtension on IsmChatContactMetaDatModel {
     final parts = name.split(RegExp(r'\s+'));
     final first = parts.isNotEmpty ? parts.first : '';
     final last = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+    final bytes = contactPhotoBytes;
     return Contact(
-      displayName: name,
+      // displayName is read-only in flutter_contacts 2.x; the editor uses [name].
       name: Name(first: first, last: last),
-      phones: identifier.isNotEmpty ? [Phone(identifier)] : [],
-      photo: contactPhotoBytes,
+      phones: identifier.isNotEmpty ? [Phone(number: identifier)] : [],
+      // 2.x takes a [Photo], not a raw byte list.
+      photo: bytes == null
+          ? null
+          : Photo(thumbnail: bytes, fullSize: bytes),
     );
   }
 

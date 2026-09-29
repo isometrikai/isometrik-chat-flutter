@@ -153,11 +153,8 @@ class IsmChatContactView extends StatelessWidget {
                                           width: IsmChatDimens.forty,
                                           height: IsmChatDimens.forty,
                                           child: IsmChatImage.profile(
-                                            user.contact.photo?.isNotEmpty ==
-                                                    true
-                                                ? user.contact.photo!.toString()
-                                                : '',
-                                            name: user.contact.displayName,
+                                            user.contact.avatarBytesString,
+                                            name: user.contact.safeDisplayName,
                                             isNetworkImage: false,
                                             isBytes: true,
                                           ),
@@ -182,7 +179,7 @@ class IsmChatContactView extends StatelessWidget {
                                     SizedBox(
                                       height: IsmChatDimens.twentyEight,
                                       child: Text(
-                                        user.contact.displayName,
+                                        user.contact.safeDisplayName,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
                                         textAlign: TextAlign.center,
@@ -242,20 +239,22 @@ class IsmChatContactView extends StatelessWidget {
                           var user = controller.contactList[index];
                           var subTitle = user.contact.phones.first.number;
                           var susTag = user.getSuspensionTag();
-                          if (!user.contact.displayName.didMatch(searchText)) {
+                          // displayName is nullable in flutter_contacts 2.x.
+                          final displayName = user.contact.safeDisplayName;
+                          if (!displayName.didMatch(searchText)) {
                             return const SizedBox.shrink();
                           }
 
-                          var before = user.contact.displayName.substring(
+                          var before = displayName.substring(
                             0,
-                            user.contact.displayName.toLowerCase().indexOf(
+                            displayName.toLowerCase().indexOf(
                                   searchText.toLowerCase(),
                                 ),
                           );
-                          var match = user.contact.displayName.substring(
+                          var match = displayName.substring(
                               before.length,
                               (before.length) + searchText.length);
-                          var after = user.contact.displayName
+                          var after = displayName
                               .substring((before.length) + (match.length));
 
                           return Column(
@@ -296,10 +295,8 @@ class IsmChatContactView extends StatelessWidget {
                                   },
                                   dense: true,
                                   leading: IsmChatImage.profile(
-                                    user.contact.photo?.isNotEmpty == true
-                                        ? user.contact.photo!.toString()
-                                        : '',
-                                    name: user.contact.displayName,
+                                    user.contact.avatarBytesString,
+                                    name: displayName,
                                     isNetworkImage: false,
                                     isBytes: true,
                                   ),
