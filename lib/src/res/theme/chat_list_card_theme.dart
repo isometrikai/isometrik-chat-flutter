@@ -12,6 +12,7 @@ class IsmChatListCardTheme {
     this.iconSize,
     this.backgroundColor,
     this.messageStatusTheme,
+    this.senderTextStyle,
   });
 
   IsmChatListCardTheme.light()
@@ -24,6 +25,7 @@ class IsmChatListCardTheme {
         backgroundColor =
             IsmChatConfig.chatTheme.primaryColor?.applyIsmOpacity(.2),
         messageCountTheme = const MessageCountTheme(),
+        senderTextStyle = IsmChatStyles.w400Black12,
         messageStatusTheme = IsmChatMessageStatusTheme(
           readCheckColor: IsmChatColors.blueColor,
           unreadCheckColor: IsmChatColors.greyColor,
@@ -34,7 +36,8 @@ class IsmChatListCardTheme {
       : trailingBackgroundColor = IsmChatColors.backgroundColorLight,
         subTitleColor = IsmChatColors.backgroundColorLight,
         trailingTextStyle = IsmChatStyles.w400White10,
-        subTitleTextStyle = IsmChatStyles.w400Black10,
+        subTitleTextStyle = IsmChatStyles.w400Black12,
+        senderTextStyle = IsmChatStyles.w400White10,
         titleTextStyle = IsmChatStyles.w600Black12,
         iconSize = 15,
         backgroundColor =
@@ -49,6 +52,7 @@ class IsmChatListCardTheme {
   final Color? trailingBackgroundColor;
   final TextStyle? trailingTextStyle;
   final TextStyle? subTitleTextStyle;
+  final TextStyle? senderTextStyle;
   final TextStyle? titleTextStyle;
   final Color? subTitleColor;
   final MessageCountTheme? messageCountTheme;
