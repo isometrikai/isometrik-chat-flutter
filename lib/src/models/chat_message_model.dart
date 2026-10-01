@@ -504,9 +504,11 @@ class IsmChatMessageModel {
             .map(
               (e) => IsmChatContactMetaDatModel(
                 contactId: e.id,
-                contactIdentifier: e.phones.first.normalizedNumber,
-                contactName: e.displayName,
-                contactImageUrl: e.photo != null ? e.photo.toString() : '',
+                contactIdentifier: e.phones.first.normalizedNumber ??
+                    e.phones.first.number,
+                contactName: e.displayName ?? '',
+                contactImageUrl:
+                    (e.photo?.thumbnail ?? e.photo?.fullSize)?.toString() ?? '',
               ),
             )
             .toList();

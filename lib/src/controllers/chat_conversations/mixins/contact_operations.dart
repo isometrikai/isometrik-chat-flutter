@@ -64,7 +64,8 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
                 isBlocked: false,
               ))
           .toList());
-      _controller.forwardedListDuplicat = List<SelectedMembers>.from(_controller.forwardedList);
+      _controller.forwardedListDuplicat =
+          List<SelectedMembers>.from(_controller.forwardedList);
     } else {
       _controller.forwardedList = List.from(users)
           .map(
@@ -87,7 +88,8 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
     }
 
     if (response == null && searchTag.isEmpty && isGroupConversation == false) {
-      unawaited(_controller.getContacts(isLoading: isLoading, searchTag: searchTag));
+      unawaited(
+          _controller.getContacts(isLoading: isLoading, searchTag: searchTag));
       _controller.callApiOrNot = true;
       return _controller.forwardedList;
     }
@@ -160,7 +162,8 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
                 .map((e) => SelectedMembers(
                       isUserSelected: _controller.selectedUserList.isEmpty
                           ? false
-                          : _controller.selectedUserList.any((d) => d.userId == e.userId),
+                          : _controller.selectedUserList
+                              .any((d) => d.userId == e.userId),
                       userDetails: e,
                       isBlocked: false,
                     ))
@@ -180,10 +183,12 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
                   a.userDetails.userName.compareTo(b.userDetails.userName));
 
               _controller.forwardedList.addAll(batchedContacts);
-              _controller.forwardedListDuplicat = List<SelectedMembers>.from(_controller.forwardedList);
+              _controller.forwardedListDuplicat =
+                  List<SelectedMembers>.from(_controller.forwardedList);
 
               // Sort and update suspension tags only once per batch update
-              _controller.commonController.handleSorSelectedMembers(_controller.forwardedList);
+              _controller.commonController
+                  .handleSorSelectedMembers(_controller.forwardedList);
 
               // Clear batched contacts
               batchedContacts.clear();
@@ -197,8 +202,10 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
                 a.userDetails.userName.compareTo(b.userDetails.userName));
 
             _controller.forwardedList.addAll(batchedContacts);
-            _controller.forwardedListDuplicat = List<SelectedMembers>.from(_controller.forwardedList);
-            _controller.commonController.handleSorSelectedMembers(_controller.forwardedList);
+            _controller.forwardedListDuplicat =
+                List<SelectedMembers>.from(_controller.forwardedList);
+            _controller.commonController
+                .handleSorSelectedMembers(_controller.forwardedList);
           }
           hasMoreContacts = false;
         }
@@ -213,8 +220,10 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
               a.userDetails.userName.compareTo(b.userDetails.userName));
 
           _controller.forwardedList.addAll(batchedContacts);
-          _controller.forwardedListDuplicat = List<SelectedMembers>.from(_controller.forwardedList);
-          _controller.commonController.handleSorSelectedMembers(_controller.forwardedList);
+          _controller.forwardedListDuplicat =
+              List<SelectedMembers>.from(_controller.forwardedList);
+          _controller.commonController
+              .handleSorSelectedMembers(_controller.forwardedList);
         }
         hasMoreContacts = false;
       }
@@ -282,7 +291,9 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
                 isUserSelected: false,
                 userDetails: UserDetails(
                     userProfileImageUrl: '',
-                    userName: _controller.hashMapSendContactSync[e.contactNo ?? ''] ?? '',
+                    userName:
+                        _controller.hashMapSendContactSync[e.contactNo ?? ''] ??
+                            '',
                     userIdentifier:
                         '${e.countryCode ?? ''} ${e.contactNo ?? ''}',
                     userId: e.userId ?? '',
@@ -303,62 +314,82 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
     }
   }
 
-  /// Fetches and fills the local contacts into a usable model.
-  void fillContact() async {
-    final localList = [];
-    var contacts = await FlutterContacts.getContacts(
-        withProperties: true, withPhoto: true);
+  /// Fetches device contacts and maps them into [ContactSyncModel] for sync.
+  ///
+  /// flutter_contacts 2.x replaced `getContacts(withProperties:, withPhoto:)`
+  /// with [FlutterContacts.getAll]. ID and display name are always returned;
+  /// name and phone must be requested explicitly. Photos are omitted because
+  /// contact sync only needs the name and number.
+  ///
+  /// Email-like numbers are skipped. A number is stored only when it includes
+  /// `+` (the typed number, or Android's E.164 [Phone.normalizedNumber], which
+  /// is null on iOS). The first three characters are treated as the country
+  /// code, matching the previous sync payload.
+  Future<void> fillContact() async {
+    final localList = <ContactSyncModel>[];
+    final contacts = await FlutterContacts.getAll(
+      properties: {
+        ContactProperty.name,
+        ContactProperty.phone,
+      },
+    );
     _controller.hashMapSendContactSync.clear();
-    for (final x in contacts) {
-      if (x.phones.isNotEmpty) {
-        final phone = x.phones.first.number;
-        if (!((phone.contains('@')) && (phone.contains('.com'))) &&
-            x.displayName.isNotEmpty) {
-          if (x.phones.isNotEmpty) {
-            if (x.phones.first.number.contains('+')) {
-              final code = x.phones.first.number.removeAllWhitespace;
-              localList.add(
-                ContactSyncModel(
-                  contactNo: code.substring(3, code.length),
-                  countryCode: code.substring(0, 3),
-                  firstName: x.name.first,
-                  fullName: '${x.name.first} ${x.name.last}',
-                  lastName: x.name.last,
-                ),
-              );
-              _controller.hashMapSendContactSync[code.substring(3, code.length)] =
-                  '${x.name.first} ${x.name.last}';
-              _controller.hashMapSendContactSync['${x.name.first} ${x.name.last}'] =
-                  code.substring(3, code.length);
-            } else if (x.phones.first.normalizedNumber.contains('+')) {
-              final code = x.phones.first.normalizedNumber.removeAllWhitespace;
-              localList.add(
-                ContactSyncModel(
-                  contactNo: code.substring(3, code.length),
-                  countryCode: code.substring(0, 3),
-                  firstName: x.name.first,
-                  fullName: '${x.name.first} ${x.name.last}',
-                  lastName: x.name.last,
-                ),
-              );
-              _controller.hashMapSendContactSync[code.substring(3, code.length)] =
-                  '${x.name.first} ${x.name.last}';
-              _controller.hashMapSendContactSync['${x.name.first} ${x.name.last}'] =
-                  code.substring(3, code.length);
-            }
-          }
-        }
-      }
+
+    for (final contact in contacts) {
+      if (contact.phones.isEmpty) continue;
+
+      final phone = contact.phones.first;
+      final rawNumber = phone.number;
+      final isEmailLike = rawNumber.contains('@') && rawNumber.contains('.com');
+      final displayName = (contact.displayName ?? '').trim();
+      if (isEmailLike || displayName.isEmpty) continue;
+
+      final dialable = _internationalNumber(phone);
+      if (dialable == null || dialable.length < 4) continue;
+
+      final firstName = contact.name?.first ?? '';
+      final lastName = contact.name?.last ?? '';
+      final fullName = '$firstName $lastName'.trim();
+      final countryCode = dialable.substring(0, 3);
+      final contactNo = dialable.substring(3);
+
+      localList.add(
+        ContactSyncModel(
+          contactNo: contactNo,
+          countryCode: countryCode,
+          firstName: firstName,
+          fullName: fullName,
+          lastName: lastName,
+        ),
+      );
+      _controller.hashMapSendContactSync[contactNo] = fullName;
+      _controller.hashMapSendContactSync[fullName] = contactNo;
     }
-    _controller.sendContactSync.clear();
-    _controller.sendContactSync = List.from(localList);
+
+    _controller.sendContactSync
+      ..clear()
+      ..addAll(localList);
+  }
+
+  /// Returns a `+` number with whitespace removed, or null when neither the
+  /// typed number nor the platform normalized number is international.
+  ///
+  /// Reused by [fillContact]. [Phone.normalizedNumber] is Android-only in
+  /// flutter_contacts 2.x, so iOS falls through to the typed number.
+  String? _internationalNumber(Phone phone) {
+    final raw = phone.number.removeAllWhitespace;
+    if (raw.contains('+')) return raw;
+
+    final normalized = phone.normalizedNumber?.removeAllWhitespace ?? '';
+    if (normalized.contains('+')) return normalized;
+    return null;
   }
 
   /// Requests permission to access contacts.
   Future<void> askPermissions() async {
     final granted = await IsmChatUtility.requestPermission(Permission.contacts);
     if (granted) {
-      _controller.fillContact();
+      unawaited(_controller.fillContact());
       return;
     }
 
@@ -435,4 +466,3 @@ mixin IsmChatConversationsContactOperationsMixin on GetxController {
     if (res != null) {}
   }
 }
-

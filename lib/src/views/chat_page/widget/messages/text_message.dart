@@ -91,7 +91,9 @@ class _IsmChatTextMessageState extends State<IsmChatTextMessage> {
                                         () async {
                                           await IsmChatUtility
                                               .openContactSaveScreen(
-                                            Contact(phones: [Phone(e.text)]),
+                                            Contact(
+                                              phones: [Phone(number: e.text)],
+                                            ),
                                           );
                                         },
                                       ],

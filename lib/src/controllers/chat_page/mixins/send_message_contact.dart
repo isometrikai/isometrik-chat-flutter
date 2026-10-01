@@ -52,11 +52,11 @@ mixin IsmChatPageSendMessageContactMixin {
             .map(
               (e) => IsmChatContactMetaDatModel(
                 contactId: e.id,
-                contactName: e.displayName,
-                contactImageUrl: e.photo != null ? e.photo.toString() : '',
-                contactIdentifier: GetPlatform.isAndroid
-                    ? e.phones.first.normalizedNumber
-                    : e.phones.first.number,
+                contactName: e.safeDisplayName,
+                // avatarBytesString keeps the `[1, 2, 3]` form the message
+                // bubble decodes. Photo.toString() is not a byte list in 2.x.
+                contactImageUrl: e.avatarBytesString,
+                contactIdentifier: e.primaryPhoneNumber,
               ),
             )
             .toList(),
