@@ -632,19 +632,25 @@ class _MicOrSendButton extends StatelessWidget {
                 child: child,
               ),
               child: controller.showSendButton
-                  ? const Icon(
+                  ? Icon(
                       Icons.send_rounded,
-                      color: IsmChatColors.whiteColor,
+                      color: IsmChatConfig.chatTheme.chatPageTheme
+                              ?.sendButtonTheme?.iconColor ??
+                          IsmChatColors.whiteColor,
                     )
                   : IsmChatProperties.chatPageProperties.features
                           .contains(IsmChatFeature.audioMessage)
-                      ? const Icon(
+                      ? Icon(
                           Icons.mic_rounded,
-                          color: IsmChatColors.whiteColor,
+                          color: IsmChatConfig.chatTheme.chatPageTheme
+                                  ?.sendButtonTheme?.iconColor ??
+                              IsmChatColors.whiteColor,
                         )
-                      : const Icon(
+                      : Icon(
                           Icons.send_rounded,
-                          color: IsmChatColors.whiteColor,
+                          color: IsmChatConfig.chatTheme.chatPageTheme
+                                  ?.sendButtonTheme?.iconColor ??
+                              IsmChatColors.whiteColor,
                         ),
             ),
           ),
