@@ -206,7 +206,7 @@ extension ModelConversion on IsmChatConversationModel {
         : lastMessageDetails?.senderName;
 
     final listSubtitleStyle =
-        IsmChatConfig.chatTheme.chatListCardThemData?.subTitleTextStyle ??
+        IsmChatConfig.chatTheme.chatListCardThemData?.senderTextStyle ??
             IsmChatStyles.w400Black12;
 
     return Text(
