@@ -120,7 +120,7 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         body: '', sentAt: 0, customType: null, sentByMe: false);
     var dummymessages = List<IsmChatMessageModel>.from(messages);
     for (var x in dummymessages) {
-      if (!_isSdkCallBubbleCustomType(x.customType)) {
+      if (!x.isSdkCallBubbleMessage) {
         continue;
       }
       if (x.meetingId != filterMessage.meetingId) {
@@ -130,8 +130,11 @@ mixin IsmChatPageGetMessageMixin on GetxController {
       if (x.action == IsmChatActionEvents.meetingCreated.name) {
         filterMessage = filterMessage.copyWith(meetingType: x.meetingType);
       } else {
+        // Keep the first row's sentAt so the bubble stays in place when updated.
+        final anchorSentAt = filterMessage.sentAt;
         filterMessage = x.copyWith(
-          meetingType: filterMessage.meetingType,
+          meetingType: filterMessage.meetingType ?? x.meetingType,
+          sentAt: anchorSentAt,
         );
       }
       messages.removeWhere((e) =>
@@ -147,25 +150,11 @@ mixin IsmChatPageGetMessageMixin on GetxController {
         );
       }
     }
-    // Never show standalone "meetingCreated" rows; merge logic above still uses
-    // them to carry [meetingType] into the follow-up call event for the same [meetingId].
-    messages.removeWhere(
-      (e) =>
-          e.action == IsmChatActionEvents.meetingCreated.name &&
-          _isSdkCallBubbleCustomType(e.customType),
-    );
     messages.removeWhere(
       (m) => !m.isVisibleInGroupChat(_controller.conversation),
     );
     return messages;
   }
-
-  /// Call / meeting rows that share [meetingId] and merge in [filterMessages].
-  bool _isSdkCallBubbleCustomType(IsmChatCustomMessageType? t) =>
-      t == IsmChatCustomMessageType.oneToOneCall ||
-      t == IsmChatCustomMessageType.audioCall ||
-      t == IsmChatCustomMessageType.videoCall ||
-      t == IsmChatCustomMessageType.groupCall;
 
   /// Count of real chat rows (excludes UI-only date / conversation-created rows).
   int _realMessageCount(List<IsmChatMessageModel> messages) => messages

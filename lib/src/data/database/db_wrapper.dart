@@ -451,6 +451,107 @@ class IsmChatDBWrapper {
     return messgges;
   }
 
+  /// One canonical call row per [meetingId]; keeps earliest [sentAt] as map key.
+  static Map<String, IsmChatMessageModel> mergeCallMessageIntoMap(
+    Map<String, IsmChatMessageModel> messages,
+    IsmChatMessageModel incoming,
+  ) {
+    if (!incoming.isSdkCallBubbleMessage ||
+        incoming.meetingId.isNullOrEmpty) {
+      messages[incoming.key] = incoming;
+      return messages;
+    }
+
+    IsmChatMessageModel? existing;
+    for (final entry in messages.entries) {
+      if (entry.value.meetingId == incoming.meetingId &&
+          entry.value.isSdkCallBubbleMessage) {
+        existing = entry.value;
+        break;
+      }
+    }
+
+    if (existing == null) {
+      messages[incoming.key] = incoming;
+      return messages;
+    }
+
+    final anchorSentAt = existing.sentAt;
+    final incomingDurations = incoming.callDurations
+            ?.where((d) => (d.durationInMilliseconds ?? 0) > 0)
+            .toList() ??
+        const <CallDuration>[];
+    var merged = incoming.copyWith(
+      sentAt: anchorSentAt,
+      meetingType: existing.meetingType ?? incoming.meetingType,
+      customType: incoming.isSdkCallBubbleMessage
+          ? incoming.customType
+          : (existing.customType ?? incoming.customType),
+      messageId: _firstNonEmpty(incoming.messageId, existing.messageId),
+      conversationId:
+          _firstNonEmpty(incoming.conversationId, existing.conversationId),
+      senderInfo: incoming.senderInfo ?? existing.senderInfo,
+      initiatorId: _firstNonEmpty(incoming.initiatorId, existing.initiatorId),
+      callDurations:
+          incomingDurations.isNotEmpty ? incoming.callDurations : existing.callDurations,
+    );
+    merged = merged.copyWith(
+      sentByMe: IsmChatMessageModel.resolveSentByMe(merged),
+    );
+
+    messages.removeWhere((_, value) =>
+        value.meetingId == incoming.meetingId &&
+        value.isSdkCallBubbleMessage);
+    messages[merged.key] = merged;
+    return messages;
+  }
+
+  /// Upserts a call bubble so each [meetingId] has a single persisted row.
+  Future<void> upsertCallMessage(
+    IsmChatMessageModel message, [
+    IsmChatDbBox dbBox = IsmChatDbBox.main,
+  ]) async {
+    final conversationId = message.conversationId ?? '';
+    if (conversationId.isEmpty) return;
+
+    var conversation = await getConversation(conversationId, dbBox: dbBox);
+    if (conversation == null) return;
+
+    final mergedMessages = mergeCallMessageIntoMap(
+      Map<String, IsmChatMessageModel>.from(conversation.messages ?? {}),
+      message,
+    );
+    // Keep conversation preview in sync (e.g. meetingEndedDueToNoUserPublishing
+    // must not stay on "In call" / meetingCreated). Match even when last.meetingId
+    // was never stored on LastMessageDetails.
+    var last = conversation.lastMessageDetails;
+    final incomingMeetingId = message.meetingId?.trim() ?? '';
+    final lastMeetingId = last?.meetingId?.trim() ?? '';
+    final lastIsSameCall = last != null &&
+        incomingMeetingId.isNotEmpty &&
+        (lastMeetingId == incomingMeetingId ||
+            (lastMeetingId.isEmpty && _isCallCustomType(last.customType)));
+    if (last != null &&
+        lastIsSameCall &&
+        (message.action ?? '').isNotEmpty) {
+      last = last.copyWith(
+        action: message.action,
+        meetingId: incomingMeetingId,
+        callDurations: (message.callDurations?.isNotEmpty ?? false)
+            ? message.callDurations
+            : last.callDurations,
+        metaData: message.metaData ?? last.metaData,
+      );
+    }
+    await saveConversation(
+      conversation: conversation.copyWith(
+        messages: mergedMessages,
+        lastMessageDetails: last,
+      ),
+      dbBox: dbBox,
+    );
+  }
+
   Future<void> saveMessage(
     IsmChatMessageModel message, [
     IsmChatDbBox dbBox = IsmChatDbBox.main,
@@ -594,5 +695,17 @@ class IsmChatDBWrapper {
         }
         break;
     }
+  }
+
+  static bool _isCallCustomType(IsmChatCustomMessageType? type) =>
+      type == IsmChatCustomMessageType.oneToOneCall ||
+      type == IsmChatCustomMessageType.audioCall ||
+      type == IsmChatCustomMessageType.videoCall ||
+      type == IsmChatCustomMessageType.groupCall;
+
+  static String? _firstNonEmpty(String? a, String? b) {
+    if (a != null && a.trim().isNotEmpty) return a;
+    if (b != null && b.trim().isNotEmpty) return b;
+    return a ?? b;
   }
 }

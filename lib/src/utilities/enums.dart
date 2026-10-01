@@ -104,7 +104,8 @@ enum IsmChatCustomMessageType {
   audioCall(101),
   videoCall(102),
   groupCall(103),
-  livestream(104);
+  livestream(104),
+  story(105);
 
   const IsmChatCustomMessageType(this.number);
 
@@ -186,6 +187,7 @@ enum IsmChatCustomMessageType {
       'AudioCall': IsmChatCustomMessageType.audioCall,
       'GroupCall': IsmChatCustomMessageType.groupCall,
       'Livestream': IsmChatCustomMessageType.livestream,
+      'Story': IsmChatCustomMessageType.story,
     };
     var type = value.split('.').last;
     return map[type] ?? IsmChatCustomMessageType.text;
@@ -417,6 +419,8 @@ enum IsmChatCustomMessageType {
         return 'GroupCall';
       case IsmChatCustomMessageType.livestream:
         return 'Livestream';
+      case IsmChatCustomMessageType.story:
+        return 'Story';
     }
   }
 }
@@ -578,6 +582,8 @@ enum IsmChatActionEvents {
   meetingEndedByHost,
   meetingCreated,
   meetingEndedDueToRejectionByAll,
+  meetingEndedDueToNoUserPublishing,
+  joinRequestAccept,
   messageDetailsUpdated;
 
   factory IsmChatActionEvents.fromName(String name) {
@@ -642,6 +648,10 @@ enum IsmChatActionEvents {
         return IsmChatActionEvents.meetingCreated;
       case 'meetingEndedDueToRejectionByAll':
         return IsmChatActionEvents.meetingEndedDueToRejectionByAll;
+      case 'meetingEndedDueToNoUserPublishing':
+        return IsmChatActionEvents.meetingEndedDueToNoUserPublishing;
+      case 'joinRequestAccept':
+        return IsmChatActionEvents.joinRequestAccept;
       case 'messageDetailsUpdated':
         return IsmChatActionEvents.messageDetailsUpdated;
       default:
@@ -712,6 +722,10 @@ enum IsmChatActionEvents {
         return 'meetingCreated';
       case IsmChatActionEvents.meetingEndedDueToRejectionByAll:
         return 'meetingEndedDueToRejectionByAll';
+      case IsmChatActionEvents.meetingEndedDueToNoUserPublishing:
+        return 'meetingEndedDueToNoUserPublishing';
+      case IsmChatActionEvents.joinRequestAccept:
+        return 'joinRequestAccept';
       case IsmChatActionEvents.messageDetailsUpdated:
         return 'messageDetailsUpdated';
     }

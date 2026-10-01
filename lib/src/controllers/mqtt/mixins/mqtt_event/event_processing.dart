@@ -33,7 +33,7 @@ mixin IsmChatMqttEventProcessingMixin {
           .map((e) => e.toString())
           .contains(action)) {
         final actionModel = IsmChatMqttActionModel.fromMap(payload);
-        _handleAction(actionModel);
+        _handleAction(actionModel, payload: payload);
       }
     } else {
       final message = IsmChatMessageModel.fromMap(payload);
@@ -86,7 +86,12 @@ mixin IsmChatMqttEventProcessingMixin {
   /// Handles an MQTT action.
   ///
   /// * `actionModel`: The MQTT action model to handle
-  void _handleAction(IsmChatMqttActionModel actionModel) async {
+  /// * `payload`: Raw map so call hang-up can merge `callDurations` /
+  ///   `missedByMembers` that [IsmChatMqttActionModel] does not keep.
+  void _handleAction(
+    IsmChatMqttActionModel actionModel, {
+    Map<String, dynamic>? payload,
+  }) async {
     final self = this;
     switch (actionModel.action) {
       case IsmChatActionEvents.typingEvent:
@@ -156,7 +161,23 @@ mixin IsmChatMqttEventProcessingMixin {
         break;
       case IsmChatActionEvents.memberLeave:
       case IsmChatActionEvents.memberJoin:
-        if (self is IsmChatMqttEventGroupOperationsMixin &&
+        // Group-call presence (payload has meetingId). Conversation
+        // membership events have no meetingId and still go through
+        // [handleMemberJoinAndLeave] below.
+        if (self is IsmChatMqttEventCallsMixin) {
+          (self as IsmChatMqttEventCallsMixin).handleGroupCallMemberPresence(
+            actionModel,
+            payload: payload,
+          );
+        }
+        final hasMeetingId = (actionModel.meetingId ?? '').trim().isNotEmpty ||
+            (payload?['meetingId'] ?? payload?['meeting_id'])
+                    ?.toString()
+                    .trim()
+                    .isNotEmpty ==
+                true;
+        if (!hasMeetingId &&
+            self is IsmChatMqttEventGroupOperationsMixin &&
             self is IsmChatMqttEventUtilitiesMixin) {
           (self as IsmChatMqttEventGroupOperationsMixin)
               .handleMemberJoinAndLeave(actionModel);
@@ -223,8 +244,11 @@ mixin IsmChatMqttEventProcessingMixin {
       case IsmChatActionEvents.meetingCreated:
       case IsmChatActionEvents.meetingEndedByHost:
       case IsmChatActionEvents.meetingEndedDueToRejectionByAll:
+      case IsmChatActionEvents.meetingEndedDueToNoUserPublishing:
+      case IsmChatActionEvents.joinRequestAccept:
         if (self is IsmChatMqttEventCallsMixin) {
-          (self as IsmChatMqttEventCallsMixin).handleOneToOneCall(actionModel);
+          (self as IsmChatMqttEventCallsMixin)
+              .handleOneToOneCall(actionModel, payload: payload);
         }
         break;
     }

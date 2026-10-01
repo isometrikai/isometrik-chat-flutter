@@ -30,6 +30,7 @@ class IsmChatMqttActionModel {
     this.attachments,
     this.metaData,
     this.isGroup,
+    this.meetingId,
   });
   factory IsmChatMqttActionModel.fromJson(String source) =>
       IsmChatMqttActionModel.fromMap(
@@ -127,8 +128,10 @@ class IsmChatMqttActionModel {
                 .map((e) => AttachmentModel.fromMap(e as Map<String, dynamic>))
                 .toList()
             : null,
-        metaData: map['metaData'] != null
-            ? IsmChatMetaData.fromMap(map['metaData'] as Map<String, dynamic>)
+        metaData: map['metaData'] is Map
+            ? IsmChatMetaData.fromMap(
+                Map<String, dynamic>.from(map['metaData'] as Map),
+              )
             : null,
         members: map['members'] != null
             ? List<UserDetails>.from(
@@ -138,6 +141,9 @@ class IsmChatMqttActionModel {
               )
             : [],
         isGroup: map['isGroup'] as bool? ?? false,
+        meetingId: map['meetingId'] as String? ??
+            map['meeting_id'] as String? ??
+            '',
       );
 
   final String? conversationId;
@@ -165,6 +171,7 @@ class IsmChatMqttActionModel {
   final List<AttachmentModel>? attachments;
   final IsmChatMetaData? metaData;
   final bool? isGroup;
+  final String? meetingId;
 
   IsmChatMqttActionModel copyWith({
     String? conversationId,
@@ -192,6 +199,7 @@ class IsmChatMqttActionModel {
     List<AttachmentModel>? attachments,
     IsmChatMetaData? metaData,
     bool? isGroup,
+    String? meetingId,
   }) =>
       IsmChatMqttActionModel(
         conversationId: conversationId ?? this.conversationId,
@@ -219,6 +227,7 @@ class IsmChatMqttActionModel {
         attachments: attachments ?? this.attachments,
         metaData: metaData ?? this.metaData,
         isGroup: isGroup ?? this.isGroup,
+        meetingId: meetingId ?? this.meetingId,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
