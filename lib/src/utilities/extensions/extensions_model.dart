@@ -205,9 +205,13 @@ extension ModelConversion on IsmChatConversationModel {
         ? 'You'
         : lastMessageDetails?.senderName;
 
+    final listSubtitleStyle =
+        IsmChatConfig.chatTheme.chatListCardThemData?.subTitleTextStyle ??
+            IsmChatStyles.w400Black12;
+
     return Text(
       '$senderName: ',
-      style: IsmChatStyles.w500Black12,
+      style: listSubtitleStyle,
     );
   }
 
@@ -797,7 +801,8 @@ extension MentionMessage on IsmChatMessageModel {
     if (batchA != null && batchB != null) {
       return batchA == batchB;
     }
-    return (sentAt - other.sentAt).abs() <= IsmChatMediaGridGrouping.timeWindowMs;
+    return (sentAt - other.sentAt).abs() <=
+        IsmChatMediaGridGrouping.timeWindowMs;
   }
 
   bool hasSameMediaGridIdentityAs(IsmChatMessageModel other) {
@@ -828,8 +833,7 @@ class IsmChatMediaGridGrouping {
     if (batchId != null) {
       final batchGroup = chronologicMessages
           .where(
-            (msg) =>
-                msg.isGridDisplayableMedia && msg.mediaBatchId == batchId,
+            (msg) => msg.isGridDisplayableMedia && msg.mediaBatchId == batchId,
           )
           .toList()
         ..sort((a, b) => a.sentAt.compareTo(b.sentAt));
@@ -849,7 +853,8 @@ class IsmChatMediaGridGrouping {
 
     for (var i = anchorIndex; i >= 0; i--) {
       final msg = chronologicMessages[i];
-      if (!msg.isGridDisplayableMedia || msg.sentByMe != anchorMessage.sentByMe) {
+      if (!msg.isGridDisplayableMedia ||
+          msg.sentByMe != anchorMessage.sentByMe) {
         break;
       }
       if (!msg.sharesMediaGridWith(anchorMessage)) {
@@ -860,7 +865,8 @@ class IsmChatMediaGridGrouping {
 
     for (var i = groupStartIndex; i < chronologicMessages.length; i++) {
       final msg = chronologicMessages[i];
-      if (!msg.isGridDisplayableMedia || msg.sentByMe != anchorMessage.sentByMe) {
+      if (!msg.isGridDisplayableMedia ||
+          msg.sentByMe != anchorMessage.sentByMe) {
         break;
       }
       if (grouped.isNotEmpty &&
@@ -958,9 +964,7 @@ extension IsmChatContactMetaDatExtension on IsmChatContactMetaDatModel {
       name: Name(first: first, last: last),
       phones: identifier.isNotEmpty ? [Phone(number: identifier)] : [],
       // 2.x takes a [Photo], not a raw byte list.
-      photo: bytes == null
-          ? null
-          : Photo(thumbnail: bytes, fullSize: bytes),
+      photo: bytes == null ? null : Photo(thumbnail: bytes, fullSize: bytes),
     );
   }
 
